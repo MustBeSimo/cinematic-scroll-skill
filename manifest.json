@@ -1,0 +1,69 @@
+{
+  "name": "cinematic-scroll",
+  "version": "1.0.0",
+  "description": "Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing pages — from a single self-contained scroll section to a full Shopify-Editions-style release website with AI-generated visual assets (React, Next.js, choreo-3d, GSAP, Framer Motion, fal.ai). Use for scroll choreography, pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites.",
+  "author": {
+    "name": "Simone Leonelli",
+    "email": "simoneitalia@gmail.com"
+  },
+  "license": "MIT",
+  "licenseFile": "LICENSE",
+  "price": 0,
+  "currency": "USD",
+  "maintained": false,
+  "maintenanceNote": "Provided as-is. Not actively maintained — issues and PRs welcome but may not get a timely response.",
+  "category": "frontend",
+  "tags": [
+    "react",
+    "nextjs",
+    "gsap",
+    "framer-motion",
+    "scroll",
+    "3d",
+    "parallax",
+    "animation",
+    "cinematic",
+    "fal.ai",
+    "ai-images",
+    "shopify-editions",
+    "release-page",
+    "landing-page",
+    "tailwind"
+  ],
+  "compatibility": {
+    "claude": ">=3.5",
+    "agentskills.io": "1.x"
+  },
+  "entry": "SKILL.md",
+  "templates": "templates/nextjs/",
+  "repository": "https://github.com/MustBeSimo/cinematic-scroll-skill",
+  "homepage": "https://w230.net",
+  "requires": {
+    "npmPackages": [
+      "choreo-3d",
+      "framer-motion",
+      "gsap",
+      "lenis",
+      "@fal-ai/client",
+      "@fal-ai/server-proxy",
+      "next",
+      "react",
+      "react-dom",
+      "tailwindcss"
+    ],
+    "envVars": [
+      "FAL_KEY",
+      "FAL_IMAGE_MODEL"
+    ]
+  },
+  "modes": [
+    {
+      "name": "Scroll artifact",
+      "description": "Single self-contained HTML or .tsx scroll section / page. No build step, no AI keys. Fast preview."
+    },
+    {
+      "name": "Full release site",
+      "description": "Tested Next.js App Router templates + fal.ai asset pipeline for a complete cinematic release website. Bring your own fal.ai key."
+    }
+  ]
+}

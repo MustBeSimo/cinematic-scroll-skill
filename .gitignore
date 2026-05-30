@@ -1,0 +1,25 @@
+# Dependencies (templates are source — consumers install in their own project)
+node_modules/
+.pnp
+.pnp.js
+
+# Env / secrets — never commit fal.ai keys
+.env
+.env.local
+.env*.local
+
+# Build output (if anyone runs the template in place)
+.next/
+out/
+dist/
+build/
+
+# Generated AI assets (regenerable, can be large)
+templates/nextjs/public/generated/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
