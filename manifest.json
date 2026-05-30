@@ -4,7 +4,7 @@
   "description": "Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing pages — from a single self-contained scroll section to a full Shopify-Editions-style release website with AI-generated visual assets (React, Next.js, choreo-3d, GSAP, Framer Motion, fal.ai). Use for scroll choreography, pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites.",
   "author": {
     "name": "Simone Leonelli",
-    "email": "simoneitalia@gmail.com"
+    "email": "simone@w230.net"
   },
   "license": "MIT",
   "licenseFile": "LICENSE",
