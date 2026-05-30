@@ -5,7 +5,7 @@
 > **License:** MIT — free for any use, personal or commercial.
 > **Status:** Provided as-is. Built and battle-tested on real projects, then opened up. Not actively maintained — issues and PRs are welcome but may sit. No warranty, no support SLA.
 
-Built by [Simone Leonelli](https://w230.net) · [simoneitalia@gmail.com](mailto:simoneitalia@gmail.com)
+Built by [Simone Leonelli](https://w230.net) · [simone@w230.net](mailto:simone@w230.net)
 
 ---
 
