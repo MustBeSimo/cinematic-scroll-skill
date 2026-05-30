@@ -1,5 +1,11 @@
 # Cinematic Scroll
 
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">
+  <img src="assets/scroll-demo.gif" alt="Cinematic scroll demo — pinned chapters, multi-depth parallax, and a tracking index rail, from the Renaissance example" width="100%">
+</a>
+
+<sub>↑ A real scroll capture of the [live Renaissance example](https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/) — pinned chapters, multi-depth parallax, and a tracking index rail. Click to scroll it yourself.</sub>
+
 **A free, open-source Agent Skill (Claude · Cursor · Hermes) for building cinematic, scroll-driven websites** — pinned chapters, multi-depth parallax, 3D tilt, environment-morphing backgrounds, and full Shopify-Editions-style release pages with optional AI-generated visuals.
 
 > **License:** MIT — free for any use, personal or commercial.
