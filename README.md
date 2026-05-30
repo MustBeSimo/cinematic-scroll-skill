@@ -1,5 +1,15 @@
 # Cinematic Scroll
 
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.png">
+    <img src="assets/banner-dark.png" alt="Cinematic Scroll — a free Agent Skill for scroll-driven websites. Two finishes: Petroleum Editorial (dark) and Swiss Museum (light)." width="100%">
+  </picture>
+</a>
+
+<sub>↑ The <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">live landing page</a> adapts to your GitHub theme — <b>Petroleum Editorial</b> in dark mode, <b>Swiss Museum</b> in light. Toggle either finish on the site.</sub>
+
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">
   <img src="assets/scroll-demo.gif" alt="Cinematic scroll demo — pinned chapters, multi-depth parallax, and a tracking index rail, from the Renaissance example" width="100%">
 </a>
