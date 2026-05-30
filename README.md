@@ -137,4 +137,4 @@ The reference direction is Shopify Editions, used **only** as an art-direction b
 
 MIT © 2026 Simone Leonelli — see [LICENSE](./LICENSE).
 
-Built something with it? I'd genuinely love to see it: **simoneitalia@gmail.com**
+Built something with it? I'd genuinely love to see it: **simone@w230.net**
