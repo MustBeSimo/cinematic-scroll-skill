@@ -449,6 +449,14 @@ Reference `performance-budget.md` Section 1 (Permitted Properties).
    200ms after it ends, max 3 simultaneous elements. Never globally.
 Reference `performance-budget.md` Section 2.
 
+7. **Optional accelerator — compile from a choreography document.** If the
+   technical spec is expressed as a `scroll-choreography.json`, run the bundled
+compiler to emit the GSAP ScrollTrigger + Lenis code instead of hand-writing it:
+`node compile-choreography.mjs my-scene.json --out scene.js`. The compiler maps
+the schema's CSS property names to GSAP shorthand (`translateX`→`x`,
+`rotateZ`→`rotation`, …) — a mapping that is easy to get wrong by hand and
+silently no-ops in GSAP if you do. See `scroll-choreography-compilation.md`.
+
 7. **Follow the `technical-spec.md` exactly.** Do not improvise animation
    configs that differ from the approved spec.
 

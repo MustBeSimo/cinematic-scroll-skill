@@ -2,9 +2,32 @@
 
 > How the declarative schema becomes running GSAP ScrollTrigger code.
 
+## ▶ It's real: `compile-choreography.mjs`
+
+This pipeline ships as a working, dependency-free Node compiler at the repo root.
+It reads a choreography document and emits runnable GSAP ScrollTrigger + Lenis code.
+
+```bash
+# compile the bundled example (the schema's examples[0]) and print to stdout
+node compile-choreography.mjs --example
+
+# compile your own choreography to a file
+node compile-choreography.mjs my-scene.json --out scene.js
+```
+
+The compiler's most important job: it maps the schema's CSS-style property names
+(`translateX`, `translateY`, `rotateZ`…) to **GSAP's shorthand** (`x`, `y`,
+`rotation`…). GSAP silently ignores the CSS names, so this mapping — centralized
+in one table in the compiler — is the difference between motion and a no-op. The
+emitted code uses `gsap.timeline` + `ScrollTrigger` per chapter (pin, scrub,
+layer parallax, title reveal, colour morph, velocity nodes), Lenis forwarded to
+`ScrollTrigger.update`, and a `prefers-reduced-motion` guard that skips all motion.
+
+The sections below document the conceptual pipeline the compiler implements.
+
 ## Overview
 
-`scroll-choreography.json` is a **declarative, cinematic grammar** for scroll-driven experiences. It does not execute directly. Instead, it passes through a 5-step compilation pipeline that produces production-ready TypeScript configuration.
+`scroll-choreography.json` is a **declarative, cinematic grammar** for scroll-driven experiences. It does not execute directly. Instead, it passes through the compilation pipeline — now implemented in `compile-choreography.mjs` — producing production-ready GSAP code.
 
 ## Input
 
