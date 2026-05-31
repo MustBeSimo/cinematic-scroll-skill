@@ -143,9 +143,20 @@
   /* split cards: text left over a tint, image right */
   .gcard.split .body{max-width:54%}
   .gcard.split .img{left:auto;width:52%;clip-path:polygon(12% 0,100% 0,100% 100%,0 100%)}
-  .gcard .scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(105deg, var(--card) 30%, color-mix(in srgb,var(--card) 30%,transparent) 62%, transparent)}
-  .gcard.full .scrim{background:linear-gradient(180deg, color-mix(in srgb,var(--card) 10%,transparent), color-mix(in srgb,var(--card) 78%,transparent))}
-  .gcard.full .body{max-width:60%}
+  /* universal angled band behind text — 75% opacity so the image shows through
+     subtly on EVERY card (readability without fully hiding the art) */
+  .gcard .scrim{position:absolute;inset:0;z-index:1;opacity:.75;
+    background:linear-gradient(105deg,
+      var(--card) 0%,
+      var(--card) 42%,
+      color-mix(in srgb,var(--card) 55%,transparent) 60%,
+      transparent 78%)}
+  /* full cards now share the SAME angled band + a diagonal image clip, so the
+     composition matches the readable split cards instead of bleeding through */
+  .gcard.full .img{left:auto;width:62%;clip-path:polygon(22% 0,100% 0,100% 100%,0 100%)}
+  .gcard.full .body{max-width:58%}
+  .gcard.full.wide .img{width:64%;clip-path:polygon(28% 0,100% 0,100% 100%,0 100%)}
+  .gcard.full.wide .body{max-width:56%}
   .gcard.accent{--card:var(--accent2)}
   .gcard.accent .num,.gcard.accent .barline{color:#E9D9C9;background-color:#E9D9C9}
   .gcard.accent h3,.gcard.accent p{color:#F1E4D8}
