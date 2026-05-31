@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateEditionImage, submitEditionImage } from '@/lib/fal-generate';
 import { resolveModelId, type FalImageModelId } from '@/lib/fal-models';
 import type { EditionAssetPrompt } from '@/lib/prompt-contract';
+import { rateLimit, requireBearer } from '@/lib/api-guard';
 
 export const runtime = 'nodejs';
 // fal-ai/flux-2-pro typically completes in 3-8s. Allow 60s headroom.
@@ -15,6 +16,14 @@ type RequestBody = EditionAssetPrompt & {
 };
 
 export async function POST(req: NextRequest) {
+  // Guard the FAL_KEY: throttle every caller, and (if GENERATE_API_SECRET is set)
+  // require a bearer token. Without this, a deployed URL is an anonymous billing drain.
+  const limited = rateLimit(req);
+  if (limited) return limited;
+
+  const unauthorized = requireBearer(req);
+  if (unauthorized) return unauthorized;
+
   if (!process.env.FAL_KEY) {
     return NextResponse.json(
       { error: 'FAL_KEY missing. Add it to .env.local (see .env.example).' },
