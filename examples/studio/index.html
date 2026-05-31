@@ -65,7 +65,11 @@
     position:sticky; top:0; height:100vh; overflow:hidden;
     display:grid; grid-template-columns:1fr; align-content:center;
     padding:0 clamp(18px,5vw,72px);
+    perspective:1400px;                 /* scroll-driven 3D camera depth */
+    perspective-origin:60% 50%;
   }
+  .figwrap, .copytext, .aicard{ transform-style:preserve-3d; }
+  .figwrap .frame{ transform-style:preserve-3d; }
 
   /* giant grotesk type — the hero element */
   .copytext{ position:relative; z-index:6; max-width:min(92vw,1400px); will-change:transform,opacity; }
@@ -261,7 +265,17 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
     return; // skip the rAF parallax engine entirely on mobile
   }
 
-  /* desktop parallax — unified approach→pin→exit timeline (never starts invisible) */
+  /* desktop parallax — BOLD cinematic engine.
+     Unified approach→pin→exit timeline T∈[0,1]; never starts invisible.
+     Layers move on different planes with real scroll-driven 3D:
+       • figure: Y-drift + Z-dolly toward viewer + rotateY/rotateX camera swing
+       • giant type: per-word Z-stagger (words arrive at staggered depths) + rotateX settle
+       • ghost watermark: long horizontal sweep, counter-axis to the type
+       • card: faster drift + slight rotateY  */
+  let mx=0,my=0;            // pointer for the live 3D camera, blended with scroll
+  if(!isTouch && !reduce){
+    addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); },{passive:true});
+  }
   let ticking=false;
   function parallax(){
     const vh=innerHeight;
@@ -269,36 +283,52 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
       const rect=sec.getBoundingClientRect();
       const total=sec.offsetHeight+vh;
       const T=clamp((vh-rect.top)/total,0,1);
-      const enter=smooth(0.08,0.30,T);
-      const exit=1-smooth(0.68,0.86,T);
+      const enter=smooth(0.06,0.32,T);
+      const exit=1-smooth(0.66,0.88,T);
       const live=enter*exit;
-      const drift=0.46-T;
+      const drift=0.46-T;                 // signed, ~0 at hold
+      const onStage = T>0.04 && T<0.96;   // only drive 3D while in view (perf)
 
       const fig=sec.querySelector('.figwrap');
       if(fig){ const d=+fig.dataset.depth;
-        fig.style.transform=`translateY(calc(-50% + ${(drift*170*d).toFixed(1)}px)) scale(${(1.04-0.04*enter).toFixed(3)})`;
-        fig.style.opacity=(0.1+0.9*live).toFixed(3);
+        // Z-dolly: arrives from -260px toward the viewer; bigger Y travel
+        const z = -260*(1-enter) + drift*120*d;
+        const y = drift*300*d;
+        const sc = 0.9 + 0.1*enter;
+        // scroll-driven camera swing + subtle pointer blend
+        const ry = drift*22 + (onStage? mx*10 : 0);
+        const rx = -drift*12 + (onStage? -my*7 : 0);
+        fig.style.transform =
+          `translateY(calc(-50% + ${y.toFixed(1)}px)) translateZ(${z.toFixed(1)}px) `+
+          `rotateY(${ry.toFixed(2)}deg) rotateX(${rx.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+        fig.style.opacity=(0.08+0.92*live).toFixed(3);
       }
       const ghost=sec.querySelector('.ghost');
       if(ghost){ const d=+ghost.dataset.depth;
-        ghost.style.transform=`translate(calc(-50% + ${(drift*420*d).toFixed(0)}px),-50%)`;
+        // long horizontal sweep + slight scale breathing, deep behind everything
+        ghost.style.transform=
+          `translate(calc(-50% + ${(drift*620*d).toFixed(0)}px),-50%) translateZ(-340px) scale(${(1.06-0.06*enter).toFixed(3)})`;
       }
       const copy=sec.querySelector('.copytext');
       if(copy){
-        copy.style.transform=`translateY(${(drift*70).toFixed(1)}px)`;
-        copy.style.opacity=(0.06+0.94*live).toFixed(3);
+        // whole block: gentle counter-drift + rotateX settle (type tilts up into place)
+        copy.style.transform=`translateY(${(drift*90).toFixed(1)}px) rotateX(${(drift*7).toFixed(2)}deg)`;
+        copy.style.opacity=(0.05+0.95*live).toFixed(3);
         const words=copy.querySelectorAll('h2 .w'); const n=words.length;
-        words.forEach((w,k)=>{ const t0=0.05+(k/n)*0.16; const wp=smooth(t0,t0+0.12,T);
+        words.forEach((w,k)=>{
+          const t0=0.05+(k/n)*0.20; const wp=smooth(t0,t0+0.14,T);
+          // each word flies in from its own depth + slight Y — staggered 3D arrival
+          const wz=(1-wp)*-220; const wy=(1-wp)*44;
           w.style.opacity=wp.toFixed(3);
-          w.style.transform=`translateY(${((1-wp)*30).toFixed(1)}px)`;
+          w.style.transform=`translateY(${wy.toFixed(1)}px) translateZ(${wz.toFixed(0)}px)`;
         });
         const rev=copy.querySelector('.reveal');
-        if(rev) rev.style.opacity=(smooth(0.12,0.32,T)*exit).toFixed(3);
+        if(rev) rev.style.opacity=(smooth(0.14,0.34,T)*exit).toFixed(3);
       }
       const card=sec.querySelector('.aicard');
       if(card){ const d=+card.dataset.depth;
-        card.style.transform=`translateY(${(drift*130*(d-1)*2.6).toFixed(1)}px)`;
-        card.style.opacity=(0.95*smooth(0.18,0.38,T)*(1-smooth(0.64,0.84,T))).toFixed(3);
+        card.style.transform=`translateY(${(drift*150*(d-1)*2.6).toFixed(1)}px) translateZ(40px) rotateY(${(drift*-10).toFixed(2)}deg)`;
+        card.style.opacity=(0.95*smooth(0.18,0.40,T)*(1-smooth(0.62,0.84,T))).toFixed(3);
       }
     }
     ticking=false;
@@ -306,18 +336,21 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
   function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(parallax); } }
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',()=>{ticking=true;requestAnimationFrame(parallax);},{passive:true});
+  // pointer also re-renders so the figure's camera-swing blend stays live at rest
+  if(!isTouch && !reduce) addEventListener('pointermove',onScroll,{passive:true});
   parallax(); // initial paint
 
-  /* 3D tilt on the stills (non-touch) */
+  /* second-order inner micro-tilt on the image itself (adds depth over the
+     figure's scroll camera; lives on .pic so it doesn't fight .figwrap) */
   if(!isTouch && !reduce){
     document.querySelectorAll('.frame').forEach(frame=>{
       const pic=frame.querySelector('.pic');
       frame.addEventListener('pointermove',ev=>{
         const r=frame.getBoundingClientRect();
         const px=(ev.clientX-r.left)/r.width-0.5, py=(ev.clientY-r.top)/r.height-0.5;
-        pic.style.transform=`rotateY(${px*9}deg) rotateX(${-py*7}deg)`;
+        pic.style.transform=`translateZ(40px) rotateY(${px*7}deg) rotateX(${-py*5}deg)`;
       });
-      frame.addEventListener('pointerleave',()=>{pic.style.transform='rotateY(0) rotateX(0)';});
+      frame.addEventListener('pointerleave',()=>{pic.style.transform='translateZ(0) rotateY(0) rotateX(0)';});
     });
   }
 })();

@@ -168,7 +168,19 @@
   /* ───── DEMO CTA ───── */
   .demo{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,56px);align-items:center;margin-top:clamp(36px,5vw,60px)}
   @media(max-width:820px){.demo{grid-template-columns:1fr}}
+  /* two finished examples, side by side */
+  .twoup{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,40px);margin-top:clamp(36px,5vw,60px)}
+  @media(max-width:820px){.twoup{grid-template-columns:1fr}}
+  .twoup .ex{display:flex;flex-direction:column;gap:14px}
+  .twoup .ex .meta .num{font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.2em;color:var(--accent)}
+  .twoup .ex .meta h3{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:clamp(1.4rem,2.4vw,1.9rem);line-height:1.05;text-transform:uppercase;letter-spacing:.01em;margin-top:6px}
+  .twoup .ex .meta p{color:var(--muted);font-size:.94rem;margin-top:8px;max-width:42ch}
   .demo .shot{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--line2);box-shadow:var(--shadow)}
+  .twoup .shot{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--line2);box-shadow:var(--shadow);display:block}
+  .twoup .shot img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;display:block}
+  .twoup .shot .play{position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 18%,transparent);transition:background .3s}
+  .twoup .shot:hover .play{background:transparent}
+  .twoup .shot .play span{width:54px;height:54px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:16px;padding-left:3px}
   .demo .shot img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top}
   .demo .shot .play{position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 18%,transparent);transition:background .3s}
   .demo .shot:hover .play{background:transparent}
@@ -235,10 +247,10 @@
       <h1 id="title">Cinematic Scroll</h1>
       <p class="sub"><b>GSAP ScrollTrigger + Lenis smooth scroll</b> for cinematic, professional storytelling — from a single pinned section to a full Shopify-Editions-style release page with AI-generated art.</p>
       <div class="cta">
-        <a class="btn primary" href="./examples/renaissance/">▶ Open the live demo</a>
+        <a class="btn primary" href="#demo">▶ See the live demos</a>
         <a class="btn ghost" href="https://github.com/MustBeSimo/cinematic-scroll-skill">Get the skill — free</a>
       </div>
-      <div class="meta"><b>MIT licensed.</b> This page is itself a live example — and it has two finishes. Scroll.</div>
+      <div class="meta"><b>MIT licensed.</b> Two finished examples in opposite styles — Renaissance editorial &amp; brutalist portfolio. The motion is the constant; the look is yours.</div>
     </div>
     <div class="fig" id="heroFig">
       <div class="pic">
@@ -288,24 +300,34 @@
 
   <!-- DEMO -->
   <section class="block" id="demo"><div class="wrap">
-    <div class="eyebrow reveal">The flagship example</div>
-    <h2 class="head reveal">Classic Touch — the Renaissance Edition.</h2>
-    <p class="lead reveal">Eight chapters, manifest-driven, in a single build-free HTML file: pinned parallax, scroll-spy rail, gold↔oxblood atmosphere morph, 3D hero tilt. It mirrors the production React/Next.js edition at <a href="https://www.w230.net/reinassence" style="color:var(--accent)">w230.net/reinassence</a>.</p>
-    <div class="demo">
-      <a class="shot reveal" href="./examples/renaissance/" aria-label="Open the Renaissance live demo">
-        <img src="./assets/scroll-demo.gif" alt="Animated scroll capture of the Renaissance example" loading="lazy" />
-        <span class="play"><span>▶</span></span>
-      </a>
-      <div class="reveal">
-        <h3 class="display" style="font-weight:600;font-size:clamp(1.5rem,3vw,2.1rem);text-transform:uppercase;letter-spacing:.01em;margin-bottom:14px">Open it. Scroll it. View source.</h3>
-        <p style="color:var(--muted)">No framework, no build step, no API keys. Drop your own art into <span class="mono" style="color:var(--accent)">assets/</span> and edit the <span class="mono" style="color:var(--accent)">CHAPTERS</span> array — the whole page regenerates from that data.</p>
-        <pre class="code"><span class="c"># Cursor</span>
-drop the folder into .cursor/skills/
-
-<span class="c"># Claude</span>
-Settings → Skills → <span class="k">Upload skill</span></pre>
+    <div class="eyebrow reveal">Two finished examples</div>
+    <h2 class="head reveal">One grammar. Opposite worlds.</h2>
+    <p class="lead reveal">Same engine, two clashing aesthetics — proof the look is a variable, not a default. Each is a single build-free HTML file: pinned parallax, scroll-spy rail, background morph, scroll-driven 3D. Click either to scroll the real thing.</p>
+    <div class="twoup">
+      <div class="ex reveal">
+        <a class="shot" href="./examples/renaissance/" aria-label="Open the Renaissance live demo">
+          <img src="./assets/scroll-demo.gif" alt="Animated scroll capture of the Renaissance editorial example" loading="lazy" />
+          <span class="play"><span>▶</span></span>
+        </a>
+        <div class="meta">
+          <div class="num">① Renaissance editorial</div>
+          <h3>Classic Touch.</h3>
+          <p>Warm, classical, ornate. Oil-painting heroes, gold↔oxblood morph, serif display. Mirrors <a href="https://www.w230.net/reinassence" style="color:var(--accent)">w230.net/reinassence</a>.</p>
+        </div>
+      </div>
+      <div class="ex reveal">
+        <a class="shot" href="./examples/studio/" aria-label="Open the brutalist studio live demo">
+          <img src="./assets/studio-scroll-demo.gif" alt="Animated scroll capture of the brutalist creative-director example" loading="lazy" />
+          <span class="play"><span>▶</span></span>
+        </a>
+        <div class="meta">
+          <div class="num">② Brutalist portfolio</div>
+          <h3>Maya Torres.</h3>
+          <p>Cold, modern, severe. Giant grotesk type, monochrome + electric-blue accent, grey↔ink morph, scroll-driven 3D camera. A fictional creative-director portfolio.</p>
+        </div>
       </div>
     </div>
+    <p class="lead reveal" style="margin-top:clamp(28px,4vw,44px)">No framework, no build step, no API keys. Drop your own art into <span class="mono" style="color:var(--accent)">assets/</span> and edit the <span class="mono" style="color:var(--accent)">chapters</span> data — the whole page regenerates. <b>The motion is the constant; the aesthetic is yours.</b></p>
   </div></section>
 
   <!-- FOOTER -->

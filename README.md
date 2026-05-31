@@ -69,12 +69,20 @@ Same engine, deliberately clashing aesthetics. Both are **single, build-free `in
 <table>
   <tr>
     <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/"><img src="assets/scroll-demo.gif" alt="Renaissance editorial example — warm classical scroll demo" width="100%"></a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/"><img src="assets/studio-scroll-demo.gif" alt="Brutalist creative-director example — monochrome scroll demo with 3D motion" width="100%"></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/"><b>① Renaissance editorial →</b></a><br>
       <sub>Warm, classical, ornate. Oil-painting heroes, gold↔oxblood morph, serif display. Mirrors the production edition at <a href="https://www.w230.net/reinassence">w230.net/reinassence</a>.</sub>
     </td>
     <td width="50%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/"><b>② Brutalist creative-director →</b></a><br>
-      <sub>Cold, modern, severe. Giant grotesk type, monochrome + electric-blue accent, grey↔ink morph. A fictional CD portfolio in the spirit of spare Swiss-editorial sites.</sub>
+      <sub>Cold, modern, severe. Giant grotesk type, monochrome + electric-blue accent, grey↔ink morph, scroll-driven 3D camera. A fictional CD portfolio in the spirit of spare Swiss-editorial sites.</sub>
     </td>
   </tr>
 </table>
