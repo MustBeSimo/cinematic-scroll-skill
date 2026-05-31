@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Maya Torres — Creative Director · cinematic-scroll example</title>
+<meta name="description" content="A brutalist Swiss-editorial cinematic-scroll page — giant grotesk type, monochrome + electric accent, parallax stills. The second flagship example for the cinematic-scroll Agent Skill." />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Maya Torres — Creative Director" />
+<meta property="og:description" content="Brutalist cinematic scroll — giant type, monochrome, parallax. Built with the cinematic-scroll Agent Skill." />
+<meta property="og:type" content="website" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Archivo (grotesk display + UI), JetBrains Mono (labels) -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#111113; --grey:#E6E6E6; --grey2:#D4D4D6; --white:#FFFFFF;
+    --muted:#6B6B70; --accent:#0F4CFF;
+    --bg:#E6E6E6; --fg:#111113; --fg-muted:#6B6B70; --line:rgba(17,17,19,.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:'Archivo',system-ui,sans-serif; font-weight:500;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    transition:background .6s linear, color .6s linear;
+  }
+  ::selection{ background:var(--accent); color:#fff; }
+
+  /* ── fixed masthead ───────────────────────────────────────── */
+  .masthead{
+    position:fixed; inset:0 0 auto 0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px clamp(18px,4vw,56px);
+    mix-blend-mode:difference; color:#fff; /* legible over any morph */
+    pointer-events:none;
+  }
+  .masthead .mark{ font-weight:800; letter-spacing:-.02em; font-size:16px; pointer-events:auto;}
+  .masthead nav{ display:flex; gap:clamp(14px,2.4vw,34px); font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase; pointer-events:auto;}
+  .masthead nav a{ color:inherit; text-decoration:none; opacity:.85;}
+  @media (max-width:680px){ .masthead nav{ display:none; } }
+
+  /* ── progress + index rail ────────────────────────────────── */
+  .rail{
+    position:fixed; right:clamp(12px,2vw,26px); top:50%; transform:translateY(-50%);
+    z-index:40; display:flex; flex-direction:column; gap:13px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; mix-blend-mode:difference; color:#fff;
+  }
+  .rail .r{ display:flex; align-items:center; gap:10px; justify-content:flex-end; opacity:.5; transition:opacity .3s; }
+  .rail .r .ln{ width:22px; height:1px; background:currentColor; transition:width .3s; }
+  .rail .r.on{ opacity:1; }
+  .rail .r.on .ln{ width:46px; background:var(--accent); height:2px; }
+  @media (max-width:680px){ .rail{ display:none; } }
+
+  /* ── chapter section ──────────────────────────────────────── */
+  section{
+    position:relative; min-height:235vh;          /* pin room */
+  }
+  .stage{
+    position:sticky; top:0; height:100vh; overflow:hidden;
+    display:grid; grid-template-columns:1fr; align-content:center;
+    padding:0 clamp(18px,5vw,72px);
+  }
+
+  /* giant grotesk type — the hero element */
+  .copytext{ position:relative; z-index:6; max-width:min(92vw,1400px); will-change:transform,opacity; }
+  .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:clamp(10px,1vw,12px); letter-spacing:.34em; text-transform:uppercase; color:var(--accent); margin-bottom:clamp(14px,2vw,26px); }
+  h2.giant{
+    font-weight:900; line-height:.86; letter-spacing:-.03em; text-transform:uppercase;
+    font-size:clamp(2.8rem,11.5vw,11rem);
+  }
+  h2.giant .w{ display:inline-block; margin-right:.12em; will-change:transform,opacity; }
+  h2.giant .w.accent{ color:var(--accent); }
+  .lede{ margin-top:clamp(20px,2.6vw,34px); max-width:46ch; font-size:clamp(1rem,1.5vw,1.32rem); line-height:1.5; color:var(--fg-muted); font-weight:500; }
+
+  /* ghost watermark word sliding across */
+  .ghost{
+    position:absolute; z-index:1; font-weight:900; text-transform:uppercase;
+    font-size:clamp(8rem,30vw,28rem); line-height:.8; letter-spacing:-.04em;
+    color:var(--fg); opacity:.04; white-space:nowrap; pointer-events:none;
+    top:50%; left:50%; transform:translate(-50%,-50%); will-change:transform;
+  }
+
+  /* framed parallax still (under the type) */
+  .figwrap{ position:absolute; z-index:3; right:clamp(18px,5vw,72px); top:50%;
+    width:clamp(280px,38vw,560px); aspect-ratio:4/5; transform:translateY(-50%);
+    will-change:transform,opacity; perspective:1200px; }
+  .frame{ position:relative; width:100%; height:100%; }
+  .pic{
+    position:absolute; inset:0; background-size:cover; background-position:center;
+    background-color:var(--grey2);
+    filter:grayscale(1) contrast(1.06);
+    transition:transform .25s ease-out;
+    box-shadow:0 30px 80px rgba(0,0,0,.28);
+  }
+  /* CSS-only placeholder visual (when no real image present) */
+  .pic.placeholder{
+    background-image:
+      repeating-linear-gradient(135deg, rgba(0,0,0,.05) 0 2px, transparent 2px 7px),
+      radial-gradient(120% 90% at 30% 20%, #fafafa 0%, #cfcfd2 55%, #2a2a2e 100%);
+  }
+  .pic::after{ /* grain */
+    content:""; position:absolute; inset:0; opacity:.5; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  }
+  .figcap{ position:absolute; left:0; bottom:-26px; display:flex; justify-content:space-between; width:100%;
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.18em; color:var(--fg-muted); }
+  /* corner brackets */
+  .frame .br{ position:absolute; width:26px; height:26px; border:2px solid var(--accent); }
+  .frame .br.tl{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
+  .frame .br.tr{ top:-1px; right:-1px; border-left:0; border-bottom:0; }
+  .frame .br.bl{ bottom:-1px; left:-1px; border-right:0; border-top:0; }
+  .frame .br.brc{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
+
+  /* floating mono UI card (foreground) */
+  .aicard{ position:absolute; z-index:7; left:clamp(18px,5vw,72px); bottom:clamp(60px,12vh,120px);
+    width:min(300px,72vw); padding:14px 16px; background:rgba(255,255,255,.86);
+    border:1px solid var(--line); backdrop-filter:blur(6px);
+    font-family:'JetBrains Mono',monospace; will-change:transform,opacity; }
+  .aicard .t{ font-size:11px; color:var(--accent); margin-bottom:6px; letter-spacing:.04em; }
+  .aicard .b{ font-size:11px; line-height:1.5; color:var(--ink); }
+  section.dark .aicard{ background:rgba(20,20,22,.82); }
+  section.dark .aicard .b{ color:#e8e8ea; }
+
+  /* mobile / reduced-motion fallback */
+  @media (max-width:680px){
+    section{ min-height:auto; padding:14vh 0; }
+    .stage{ position:static; height:auto; display:block; }
+    .figwrap{ position:static; width:100%; transform:none; margin:24px 0 40px; aspect-ratio:16/10; opacity:1!important; }
+    .ghost{ display:none; }
+    .aicard{ position:static; margin-top:18px; }
+    h2.giant{ font-size:18vw; }
+    .copytext .w,.copytext .reveal{ opacity:1!important; transform:none!important; letter-spacing:normal!important; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .copytext .w,.copytext .reveal,.figwrap{ opacity:1!important; transform:none!important; letter-spacing:normal!important; }
+  }
+
+  footer{ padding:14vh clamp(18px,5vw,72px) 16vh; }
+  footer .big{ font-weight:900; text-transform:uppercase; font-size:clamp(2rem,8vw,6rem); line-height:.9; letter-spacing:-.03em; }
+  footer .big a{ color:var(--accent); text-decoration:none; }
+  footer .meta{ margin-top:28px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:var(--fg-muted); text-transform:uppercase; }
+  footer .meta a{ color:inherit; }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mark">MAYA TORRES</div>
+  <nav>
+    <a href="#work">Work</a>
+    <a href="#recognition">Recognition</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<div class="rail" id="rail"></div>
+
+<main id="app"></main>
+
+<footer id="contact">
+  <div class="big">Let’s make work<br>that <a href="mailto:studio@example.com">matters →</a></div>
+  <div class="meta">Built with the <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a> Agent Skill · fictional persona, no real brands · one of many possible aesthetics</div>
+</footer>
+
+<script type="module">
+import { CHAPTERS, PALETTE } from './chapters.js';
+
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const smooth=(e0,e1,x)=>{ if(x<=e0)return 0; if(x>=e1)return 1; const t=(x-e0)/(e1-e0); return t*t*(3-2*t); };
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isTouch = matchMedia('(pointer: coarse)').matches;
+const isMobile = () => innerWidth <= 680;
+
+const app = document.getElementById('app');
+const rail = document.getElementById('rail');
+
+// preflight: which real images exist? (fall back to CSS placeholder)
+function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=>res(true); i.onerror=()=>res(false); i.src=src; }); }
+
+const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(' ')[0]||'').toUpperCase();
+
+(async () => {
+  for (const ch of CHAPTERS){
+    const sec = document.createElement('section');
+    sec.id = ch.id.replace(/^\d+-/,'');
+    if (ch.depthTextDark) sec.classList.add('dark');
+    sec.dataset.morph = ch.morph;
+    sec.dataset.dark = ch.depthTextDark ? '1':'0';
+
+    const titleHTML = ch.title.map(([chunk,acc]) =>
+      chunk.split(' ').map(w=>`<span class="w${acc?' accent':''}">${w}</span>`).join(' ')
+    ).join(' ');
+
+    const imgPath = `assets/${ch.id}.jpg`;
+    const hasImg = await probe(imgPath);
+    const picStyle = hasImg ? `background-image:url('${imgPath}')` : '';
+    const picClass = hasImg ? 'pic' : 'pic placeholder';
+
+    sec.innerHTML = `
+      <div class="stage">
+        <div class="ghost" data-depth="0.3">${ghostWord(ch.title)}</div>
+        <div class="figwrap" data-depth="0.5">
+          <div class="frame">
+            <span class="br tl"></span><span class="br tr"></span><span class="br bl"></span><span class="br brc"></span>
+            <div class="${picClass}" style="${picStyle}"></div>
+            <div class="figcap"><span>${ch.fig}</span><span>${ch.figLabel}</span></div>
+          </div>
+        </div>
+        <div class="copytext">
+          <div class="eyebrow">${ch.eyebrow}</div>
+          <h2 class="giant">${titleHTML}</h2>
+          <p class="lede reveal">${ch.body}</p>
+        </div>
+        <div class="aicard" data-depth="1.25">
+          <div class="t">${ch.card.tag}</div>
+          <div class="b">${ch.card.body}</div>
+        </div>
+      </div>`;
+    app.appendChild(sec);
+
+    const r = document.createElement('div');
+    r.className='r'; r.dataset.id=ch.id;
+    r.innerHTML = `<span>${ch.id.split('-')[0].padStart(2,'0')}</span><span class="ln"></span>`;
+    rail.appendChild(r);
+  }
+
+  const sections = [...document.querySelectorAll('section')];
+  const rails = [...rail.querySelectorAll('.r')];
+
+  /* background morph + active rail via the centered chapter */
+  const spy = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if (e.isIntersecting){
+        const idx = sections.indexOf(e.target);
+        document.body.style.background = e.target.dataset.morph;
+        const dark = e.target.dataset.dark==='1';
+        document.body.style.setProperty('--fg', dark ? '#FFFFFF':'#111113');
+        document.body.style.setProperty('--fg-muted', dark ? '#9A9AA0':'#6B6B70');
+        rails.forEach((r,i)=> r.classList.toggle('on', i===idx));
+      }
+    });
+  },{ threshold:.5 });
+  sections.forEach(s=>spy.observe(s));
+
+  /* mobile / reduced-motion: fade-up only */
+  if (reduce || isMobile()){
+    const up=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');up.unobserve(e.target);}});},{threshold:.15});
+    document.querySelectorAll('.reveal').forEach(el=>up.observe(el));
+    return; // skip the rAF parallax engine entirely on mobile
+  }
+
+  /* desktop parallax — unified approach→pin→exit timeline (never starts invisible) */
+  let ticking=false;
+  function parallax(){
+    const vh=innerHeight;
+    for(const sec of sections){
+      const rect=sec.getBoundingClientRect();
+      const total=sec.offsetHeight+vh;
+      const T=clamp((vh-rect.top)/total,0,1);
+      const enter=smooth(0.08,0.30,T);
+      const exit=1-smooth(0.68,0.86,T);
+      const live=enter*exit;
+      const drift=0.46-T;
+
+      const fig=sec.querySelector('.figwrap');
+      if(fig){ const d=+fig.dataset.depth;
+        fig.style.transform=`translateY(calc(-50% + ${(drift*170*d).toFixed(1)}px)) scale(${(1.04-0.04*enter).toFixed(3)})`;
+        fig.style.opacity=(0.1+0.9*live).toFixed(3);
+      }
+      const ghost=sec.querySelector('.ghost');
+      if(ghost){ const d=+ghost.dataset.depth;
+        ghost.style.transform=`translate(calc(-50% + ${(drift*420*d).toFixed(0)}px),-50%)`;
+      }
+      const copy=sec.querySelector('.copytext');
+      if(copy){
+        copy.style.transform=`translateY(${(drift*70).toFixed(1)}px)`;
+        copy.style.opacity=(0.06+0.94*live).toFixed(3);
+        const words=copy.querySelectorAll('h2 .w'); const n=words.length;
+        words.forEach((w,k)=>{ const t0=0.05+(k/n)*0.16; const wp=smooth(t0,t0+0.12,T);
+          w.style.opacity=wp.toFixed(3);
+          w.style.transform=`translateY(${((1-wp)*30).toFixed(1)}px)`;
+        });
+        const rev=copy.querySelector('.reveal');
+        if(rev) rev.style.opacity=(smooth(0.12,0.32,T)*exit).toFixed(3);
+      }
+      const card=sec.querySelector('.aicard');
+      if(card){ const d=+card.dataset.depth;
+        card.style.transform=`translateY(${(drift*130*(d-1)*2.6).toFixed(1)}px)`;
+        card.style.opacity=(0.95*smooth(0.18,0.38,T)*(1-smooth(0.64,0.84,T))).toFixed(3);
+      }
+    }
+    ticking=false;
+  }
+  function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(parallax); } }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',()=>{ticking=true;requestAnimationFrame(parallax);},{passive:true});
+  parallax(); // initial paint
+
+  /* 3D tilt on the stills (non-touch) */
+  if(!isTouch && !reduce){
+    document.querySelectorAll('.frame').forEach(frame=>{
+      const pic=frame.querySelector('.pic');
+      frame.addEventListener('pointermove',ev=>{
+        const r=frame.getBoundingClientRect();
+        const px=(ev.clientX-r.left)/r.width-0.5, py=(ev.clientY-r.top)/r.height-0.5;
+        pic.style.transform=`rotateY(${px*9}deg) rotateX(${-py*7}deg)`;
+      });
+      frame.addEventListener('pointerleave',()=>{pic.style.transform='rotateY(0) rotateX(0)';});
+    });
+  }
+})();
+</script>
+</body>
+</html>

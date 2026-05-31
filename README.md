@@ -62,16 +62,27 @@ A complete Next.js App Router project scaffolded from tested templates: chaptere
 
 ---
 
-## A worked example, end to end
+## Two worked examples — opposite worlds, identical grammar
 
-To show the grammar on a finished page, **[`examples/renaissance/`](./examples/renaissance/)** builds one aesthetic all the way out — a Renaissance editorial — as a **single, build-free `index.html`**: pinned chapters, multi-depth parallax, scroll-spy rail, gold↔oxblood background morph, and 3D hero tilt, all from the skill's vanilla grammar. It mirrors the production React/Next.js edition at **[w230.net/reinassence](https://www.w230.net/reinassence)**.
+Same engine, deliberately clashing aesthetics. Both are **single, build-free `index.html` files** (GitHub-Pages-native): pinned chapters, multi-depth parallax, scroll-spy rail, background morph, 3D tilt — all from the skill's vanilla grammar. Proof the look is a variable, not a default.
 
-It's one worked example of many possible — swap the palette, references, and copy in your prompt and the same machinery produces any of the worlds above.
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/"><b>① Renaissance editorial →</b></a><br>
+      <sub>Warm, classical, ornate. Oil-painting heroes, gold↔oxblood morph, serif display. Mirrors the production edition at <a href="https://www.w230.net/reinassence">w230.net/reinassence</a>.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/"><b>② Brutalist creative-director →</b></a><br>
+      <sub>Cold, modern, severe. Giant grotesk type, monochrome + electric-blue accent, grey↔ink morph. A fictional CD portfolio in the spirit of spare Swiss-editorial sites.</sub>
+    </td>
+  </tr>
+</table>
 
-### ▶ [**Open the live demo →**](https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/)
+Two prompts, two finished worlds. Swap the palette, references, and copy and the same machinery produces any of the aesthetics above.
 
 ```bash
-python3 -m http.server 8099   # or just open the file — then http://localhost:8099/examples/renaissance/
+python3 -m http.server 8099   # then open /examples/renaissance/  or  /examples/studio/
 ```
 
 ```bash
