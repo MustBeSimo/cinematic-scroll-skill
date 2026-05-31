@@ -19,7 +19,7 @@
 **A free, open-source Agent Skill (Claude · Cursor · Hermes) for building cinematic, scroll-driven websites in any visual style.** You describe the aesthetic — palette, mood, references — and get pinned chapters, multi-depth parallax, 3D tilt, environment-morphing backgrounds, and full Shopify-Editions-style release pages, art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
 
 > **License:** MIT — free for any use, personal or commercial.
-> **Status:** Provided as-is. Built and battle-tested on real projects, then opened up. Not actively maintained — issues and PRs are welcome but may sit. No warranty, no support SLA.
+> **Status:** Provided as-is. Developed from applied experiments and working demos, then released as an open-source skill. Not actively maintained — issues and PRs are welcome but may sit. No warranty, no support SLA.
 
 Built by [Simone Leonelli](https://w230.net) · [simone@w230.net](mailto:simone@w230.net)
 
@@ -93,10 +93,6 @@ Two prompts, two finished worlds. Swap the palette, references, and copy and the
 python3 -m http.server 8099   # then open /examples/renaissance/  or  /examples/studio/
 ```
 
-```bash
-python3 -m http.server 8099   # or just open the file — then http://localhost:8099/examples/renaissance/
-```
-
 **Under the motion, every chapter ships with:**
 
 | | |
@@ -105,7 +101,7 @@ python3 -m http.server 8099   # or just open the file — then http://localhost:
 | **Editorial type** | Oversized titles with word-stagger / clip-path mask / letter-spacing-scrub reveals |
 | **Atmosphere morphs** | Backgrounds crossfade between chapter color-worlds as you scroll |
 | **AI art direction** | fal.ai-generated heroes (FLUX.2, Nano Banana, Imagen) — or bring your own images |
-| **Bulletproof basics** | Reduced-motion fallback, iOS video safety, mobile-stacked layout, 60fps compositor-only paths |
+| **Bulletproof basics** | Reduced-motion fallback, iOS video safety, mobile-stacked layout, transform/opacity-only hot paths designed for smooth scrolling; benchmark on target devices before production deployment. |
 
 ---
 
@@ -140,7 +136,7 @@ npm run dev
 
 Open `http://localhost:3000` — a full 8-chapter cinematic page, CSS-only visuals, **zero AI setup**.
 
-Want real generated chapter art? Add a [fal.ai](https://fal.ai) key (you bring your own — ~$0.50 for 8 images) and run:
+Want real generated chapter art? Add your own [fal.ai](https://fal.ai) key and run the command below. Generation cost varies by model and resolution — see `MODELS.md` and current fal.ai pricing before running a batch.
 
 ```bash
 npm run setup        # interactive key wizard → writes .env.local
@@ -186,7 +182,7 @@ The motion primitives target the [`choreo-3d`](https://www.npmjs.com/package/cho
 
 ## Originality & legal
 
-The reference direction is Shopify Editions, used **only** as an art-direction benchmark — chaptered release storytelling. The skill never copies Shopify's assets, logos, copy, source, or exact compositions, and never bakes readable UI text into generated images or imitates a named living artist. You own everything it generates for you.
+The reference direction is Shopify Editions, used **only** as an art-direction benchmark — chaptered release storytelling. The skill never copies Shopify's assets, logos, copy, source, or exact compositions, and never bakes readable UI text into generated images or imitates a named living artist. Generated assets may be used subject to fal.ai, model-provider and input-rights terms. Review output before commercial deployment.
 
 ## License
 

@@ -1,6 +1,7 @@
 ---
 name: cinematic-scroll
-description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing pages — from a single self-contained scroll section to a full Shopify-Editions-style release website with AI-generated visual assets (React, Next.js, choreo-3d, GSAP, Framer Motion, fal.ai). Use for scroll choreography, pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, AI launch pages, or editorial commerce microsites.
+description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with AI-generated visuals (Mode B). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 director grammars, and a transform/opacity performance budget as built-in craft constraints.
+version: 2.0.0
 ---
 
 <!--
@@ -16,71 +17,637 @@ skill is invoked. It's long and technical by design.
 
 # Cinematic Scroll
 
-Reusable patterns + production templates for building cinematic, scroll-driven React pages: pinned chapters, multi-depth parallax, 3D mouse tilt, environment-morphing backgrounds, reduced-motion-safe degradation, and (optionally) a full Next.js release site with fal.ai-generated visuals.
+Reusable patterns + production templates for building cinematic, scroll-driven
+React pages: pinned chapters, multi-depth parallax, 3D mouse tilt,
+environment-morphing backgrounds, reduced-motion-safe degradation, and
+(optionally) a full Next.js release site with fal.ai-generated visuals.
+
+This is v2.0 — built on a **5-phase gated pipeline**. Every phase produces a
+reviewable artifact. The user approves each phase before the next begins.
+This replaces the v1.0 one-shot generation model with a process that
+consistently produces production-quality output.
 
 ## The aesthetic is the user's — the motion is yours
 
-**This skill supplies the *motion grammar*, never a fixed look.** The pinned chapters, parallax, tilt, title choreography, and morphing backgrounds are the constant; the visual world — palette, typography, imagery, mood — comes entirely from the user's brief. Before building, derive the aesthetic from what they ask for (their brand, references, palette, or vibe). If they haven't said, **ask** or offer 2–3 distinct directions — do not default to any one style.
-
-The same machinery must be able to produce, for example: a **brutalist** black-on-white editorial drop, a **quiet-luxury** earth-toned launch, a **Gen-Z neon** product page, a **sci-fi noir** game reveal, an **organic wellness** story, a **retro analogue** archive, a **minimal Linear/Swiss** release, or a **Renaissance** editorial. None of these is "the" style. The worked example in `examples/renaissance/` is *one* such world built end-to-end — treat it as a reference for the motion and structure, **not** as the aesthetic to reproduce.
-
-The reference direction for the *interaction pattern* (not the look) is Shopify Editions Winter 2026: a release-notes page treated as a visual world. Do not copy Shopify assets, layout, logos, source code, or exact composition. Borrow the product pattern only: dramatic chaptered scrolling, layered imagery, modern UI artifacts, large type, persistent navigation, indexed structure, and a product-update taxonomy — then dress it in the user's chosen aesthetic.
+**This skill supplies the *motion grammar*, never a fixed look.** The pinned
+chapters, parallax, tilt, title choreography, and morphing backgrounds are the
+constant; the visual world — palette, typography, imagery, mood — comes entirely
+from the user's brief. Derive the aesthetic from what they ask for (brand,
+references, palette, vibe, or a director grammar from `references/film-archetypes.md`).
+If they haven't said, **ask** or offer 2–3 distinct directions — never default to
+any one style. The same machinery must produce a brutalist black-on-white drop, a
+quiet-luxury launch, a neon Gen-Z page, a sci-fi noir reveal, an organic wellness
+story, or a Renaissance editorial. None is "the" style. The two worked examples
+(`examples/renaissance`, `examples/studio`) are *opposite* worlds from the same
+engine — proof the look is a variable, not a default.
 
 ---
 
-## Two modes — pick by scope
+# Philosophy
 
-This skill operates at two altitudes. **Decide which the user is asking for, then follow that mode.** The motion grammar (the "Mandatory motion + craft requirements" below) is identical for both.
+## 1. Taste is non-negotiable
+
+The difference between slop and craft is anti-convergence. This skill ships
+with `taste-guardrails.md` — 11 banned patterns, a cinematic vocabulary,
+pacing rules, and anti-convergence principles. These are **hard constraints**,
+not suggestions. An agent that does not enforce taste produces tasteless
+output regardless of prompt quality. Every generated file is checked against
+the banned patterns list before delivery.
+
+## 2. Process over prompt
+
+A great prompt is not enough. The 5-phase gated pipeline ensures that
+**auditing**, **planning**, **specifying**, **building**, and **polishing**
+happen as discrete, reviewable steps. The user sees a `cinematic-audit.md`
+before any code is written. They approve a `motion-storyboard.md` before
+any animation is implemented. Process de-risks the output.
+
+## 3. Film grammar over web patterns
+
+Scroll is not "web design." It is **digital cinematography**. The cinematic
+vocabulary in `taste-guardrails.md` (Section 2) maps 12 film techniques to
+scroll equivalents — dolly zooms, whip pans, rack focus, tracking shots,
+crane shots. Every scroll behavior names the film technique it implements.
+This is how we produce cinema, not PowerPoint transitions.
+
+## 4. Measurable quality
+
+Every output has reviewable artifacts. Every phase has a decision gate.
+Every build is checked against `performance-budget.md` (Section 6, 11-point
+pre-launch checklist). Quality is not a feeling — it is a checklist.
+
+---
+
+# The 5-Phase Pipeline
+
+Each phase produces a reviewable `.md` artifact. The user reviews and
+approves each phase before proceeding. The agent never skips a phase
+without explicit user consent.
+
+---
+
+## Phase 1: Cinematic Audit
+
+**Purpose:** Analyze the brand/content, define the emotional arc, select
+the director grammar, and establish the motion personality.
+
+| | |
+|---|---|
+| **Input** | User's brief, brand materials (palette, logo, copy), reference sites, target audience, device context |
+| **Output** | `cinematic-audit.md` |
+| **Decision gate** | User approves the emotional arc and director grammar before proceeding |
+
+### Agent instructions
+
+1. Ask the user about their brand's motion personality if not provided:
+   - "What emotion should the first 3 seconds produce?"
+   - "Is your brand closer to a Kubrick museum or a Gerwig scrapbook?"
+   - "Who is scrolling this — a curious visitor or a decision-maker?"
+
+2. Select a **director grammar** from `references/film-archetypes.md`.
+   Read the archetypes file (Section 1-7) and match the brief to ONE primary
+director. Document the choice in the audit with rationale. Never mix more
+than 2 directors; if hybridity is needed, choose one primary and one accent.
+
+3. Define the **emotional arc** across the full scroll journey:
+   - Opening emotion (what the user feels at scroll position 0)
+   - Mid-journey turning point (where the narrative shifts)
+   - Closing emotion (what the user carries away)
+   - Pacing rhythm: glacial / medium / energetic / variable
+
+4. Document:
+   - Brand motion personality (3-5 adjectives)
+   - Emotional arc definition (opening → midpoint → closing)
+   - Audience analysis (device split, technical sophistication, attention span)
+   - Device context (primary viewport, performance tier expectation)
+   - Accessibility requirements (reduced-motion needs, WCAG target)
+   - Director grammar selection (primary + optional accent, with rationale)
+   - Color temperature progression across chapters (warm → cool → neutral)
+   - Typography strategy (display font + body font, from archetype)
+
+### Output: `cinematic-audit.md`
+
+```markdown
+# Cinematic Audit — [Project Name]
+
+## Brand Motion Personality
+[3-5 adjectives, e.g., "precise, clinical, data-driven, restrained"]
+
+## Emotional Arc
+- **Opening (0-20%):** [emotion, e.g., "awe at scale"]
+- **Discovery (20-50%):** [emotion, e.g., "curiosity, information hunger"]
+- **Turning Point (50%):** [emotion, e.g., "realization of complexity"]
+- **Climax (50-80%):** [emotion, e.g., "confidence, trust"]
+- **Resolution (80-100%):** [emotion, e.g., "clarity, call to action"]
+
+## Audience Analysis
+- Primary device: [desktop/mobile/tablet split]
+- Technical sophistication: [low/medium/high]
+- Expected attention span: [short <2min / medium 2-5min / long >5min]
+
+## Device Context
+- Primary viewport: [e.g., 1440px desktop, 390px mobile]
+- Performance tier: [flagship/mid-range/budget/mixed]
+
+## Accessibility Requirements
+- WCAG target: [AA/AAA]
+- Reduced-motion support: [required/preferred]
+
+## Director Grammar
+- **Primary:** [e.g., David Fincher — clinical precision, data-driven]
+- **Accent (optional):** [e.g., Kubrick for the authority moment]
+- **Rationale:** [why this grammar matches the brand]
+
+## Color Temperature Progression
+[Chapter-by-chapter temperature plan: warm → cool → neutral → warm]
+
+## Typography Strategy
+- Display: [font family, sizing approach]
+- Body: [font family, sizing approach]
+- Source: [from film-archetypes.md Section X]
+```
+
+---
+
+## Phase 2: Motion Storyboard
+
+**Purpose:** Plan the scroll sequence — chapters, patterns, transitions,
+depth layers, timing, and mobile degradation.
+
+| | |
+|---|---|
+| **Input** | `cinematic-audit.md` |
+| **Output** | `motion-storyboard.md` |
+| **Decision gate** | User approves the chapter structure and pattern choices before proceeding |
+
+### Agent instructions
+
+1. Design a **chapter breakdown** of 5-8 chapters. Each chapter is one
+   pinned section with a distinct visual world. The total scroll distance
+should be 1500-3000vh for the full experience.
+
+2. Select **ONE pattern from `references/scroll-patterns.md` per chapter**.
+   The 12 available patterns (Section 1-12) are:
+   - Pinned Hero, Scrubbed Timeline, Velocity-Reactive, Sticky Narrative,
+     Chaptered Release, Parallax Gallery, 3D Product Orbit, Editorial Longread,
+     Data Story, Landing Sequence, Portfolio Reveal, Archive Explorer.
+   Document the pattern choice and rationale for each chapter.
+
+3. Ensure **no adjacent chapters use the same pattern or transition type**.
+   This is a hard rule from `taste-guardrails.md` Section 4.4. Alternate:
+   fade → slide → scale → rotate → crossfade → wipe.
+
+4. Configure **depth layers per chapter** following the selected pattern's
+   depth configuration. Reference `taste-guardrails.md` Section 4.3: never
+repeat a depth multiplier between adjacent chapters. Maximum 7 layers per
+chapter (`taste-guardrails.md` Section 1.7).
+
+5. Verify **all pinned sections respect the 150-400vh rule** from
+   `taste-guardrails.md` Section 3.2 and 3.3. No pin shorter than 150vh,
+no pin longer than 400vh.
+
+6. Ensure **breathing room between chapters**: minimum 80vh of free-scroll
+   space between pinned chapters (`taste-guardrails.md` Section 3.4).
+
+7. Specify the **title reveal style per chapter**, rotating through the
+   vocabulary in `taste-guardrails.md` Section 4.5. Never use the same
+treatment twice in a row.
+
+8. Document the **mobile degradation plan** per chapter using the tier
+   system from `performance-budget.md` Section 3.
+
+### Output: `motion-storyboard.md`
+
+```markdown
+# Motion Storyboard — [Project Name]
+
+## Chapter Map
+
+| # | ID | Pattern | Pin Duration | Transition | Title Reveal |
+|---|---|---|---|---|---|
+| 1 | hero | Pinned Hero | 250vh | Crane shot down | Mask reveal |
+| 2 | problem | Sticky Narrative | 200vh | Fade through black | Word stagger |
+| 3 | solution | Chaptered Release | 300vh | Whip pan right | Letter-spacing scrub |
+| 4 | ... | ... | ... | ... | ... |
+
+## Chapter Details
+
+### Chapter 1: [ID] — [Pattern from scroll-patterns.md Section X]
+**Pin duration:** [X]vh
+**Pattern reference:** `references/scroll-patterns.md` Section [X]
+**Depth layers:**
+| Layer | Depth | Role | Content |
+|---|---|---|---|
+| 0 | 0.15 | Atmospheric far | [description] |
+| 1 | 0.30 | Mid-far | [description] |
+| ... | ... | ... | ... |
+**Title reveal:** [technique from taste-guardrails.md Section 4.5]
+**Transition to next:** [film technique from taste-guardrails.md Section 2]
+**Mobile degradation:** [plan from performance-budget.md Section 3]
+**Color temperature:** [warm/cool/neutral]
+
+[Repeat for each chapter]
+
+## Transition Map
+
+| From | To | Type | Film Technique | Duration (scroll) |
+|---|---|---|---|---|
+| ch1 | ch2 | [type] | [e.g., Crane shot] | [X]vh |
+| ... | ... | ... | ... | ... |
+
+## Timing / Pacing Spec
+
+- Default rhythm: 1.2s scroll per 100vh (`taste-guardrails.md` Section 3.1)
+- Total experience scroll distance: [X]vh
+- Estimated scroll time at normal speed: [X] seconds
+- Title reveal duration per chapter: 30-40% of pin range (Section 3.5)
+- Stagger offset: 5-8% per element, max 5 elements before overlap (Section 3.6)
+- Snap dead zone: never within 10vh of pin start/end (Section 3.7)
+- Motion density limit: max 3 simultaneous motion types per 50vh window (Section 3.8)
+
+## Mobile Degradation Plan
+
+[Per-chapter summary of mobile strategy, referencing performance-budget.md
+Section 3 tier degradation]
+
+## Anti-Convergence Checklist
+
+- [ ] No adjacent chapters share the same pattern
+- [ ] No adjacent chapters share the same transition type
+- [ ] No adjacent chapters share the same title reveal style
+- [ ] No depth multiplier is repeated between adjacent chapters
+- [ ] Color temperature alternates between chapters
+- [ ] All pins are 150-400vh
+- [ ] All pins have 80vh breathing room between them
+```
+
+---
+
+## Phase 3: Technical Spec
+
+**Purpose:** Output the Lenis/GSAP/ScrollTrigger implementation plan with
+exact configs, performance budget allocation, and asset requirements.
+
+| | |
+|---|---|
+| **Input** | `motion-storyboard.md` + `references/performance-budget.md` |
+| **Output** | `technical-spec.md` |
+| **Decision gate** | User confirms the tech stack and approves performance budget before proceeding |
+
+### Agent instructions
+
+1. **Select packages:**
+   - Smooth scroll: Lenis (`lenis` npm package — NOT `@studio-freight/lenis`)
+     OR GSAP ScrollSmoother (preferred when GSAP is already in the build)
+   - Animation: GSAP + ScrollTrigger + SplitText (all now free)
+   - Motion primitives: `choreo-3d` for pinning orchestration
+   - Framework: React 19 + Next.js App Router (Mode B) or vanilla (Mode A)
+
+2. **Specify exact GSAP ScrollTrigger configs** for every pinned chapter:
+   - `scrub` value (0.3-0.8 range per `performance-budget.md` Section 7)
+   - `start` and `end` positions
+   - `pin` configuration
+   - `snap` behavior if applicable
+   - Easing functions per role (hero entrance, exit, micro-interaction,
+     chapter transition — from `taste-guardrails.md` Section 4.1)
+
+3. **Allocate performance budget** from `performance-budget.md`:
+   - Layer count per viewport (max 10 desktop, 4 mobile — Section 2)
+   - will-change strategy (Section 2)
+   - Image budget per chapter (Section 5)
+   - Font budget (Section 5)
+   - JS budget (Section 5)
+
+4. **Flag any performance risks:** If the storyboard requests more than
+   7 layers per chapter, more than 3 simultaneous motion types in a 50vh
+window, or pins approaching the 400vh limit, flag it here with mitigation.
+
+5. **Document asset requirements:** Images, videos, fonts, with specifications
+   for each (format, dimensions, generation prompts if using fal.ai).
+
+6. **Specify mobile degradation implementation** per chapter, referencing
+   `performance-budget.md` Section 3 (Mobile Degradation Matrix).
+
+### Output: `technical-spec.md`
+
+```markdown
+# Technical Spec — [Project Name]
+
+## Package Selection
+
+| Package | Version | Purpose |
+|---|---|---|
+| gsap | ^3.13 | Core animation engine |
+| lenis | ^1.3.23 | Smooth scroll (alternative: GSAP ScrollSmoother) |
+| choreo-3d | latest | Pinning orchestration, ScrollLayer, ScrollChoreography |
+| @gsap/react | latest | useGSAP hook for React integration |
+| next | ^15 | Framework (Mode B only) |
+
+## Component Architecture
+
+[Diagram or list of components and their responsibilities]
+
+## Animation Timeline Specs
+
+### Chapter 1: [ID]
+```javascript
+// GSAP ScrollTrigger configuration
+ScrollTrigger.create({
+  trigger: '#ch1',
+  start: 'top top',
+  end: '+=250vh',
+  pin: true,
+  scrub: 0.5,
+  snap: { /* ... */ },
+});
+```
+**Scroll-scrub values:** [list]
+**Easing functions:** [per-role assignment]
+**Layer animation details:** [per-layer transform specs]
+
+[Repeat for each chapter]
+
+## Performance Budget Allocation
+
+| Resource | Budget | Actual | Status |
+|---|---|---|---|
+| Compositor layers (desktop) | 10 max | [X] | OK/RISK |
+| Compositor layers (mobile) | 4 max | [X] | OK/RISK |
+| Images per chapter | 3 max | [X] | OK/RISK |
+| Total image weight | 500KB/ch | [X] | OK/RISK |
+| Font families | 2 max | [X] | OK/RISK |
+| Animation JS | 100KB gz | [X] | OK/RISK |
+
+## Asset Requirements
+
+| Chapter | Asset | Type | Spec | Prompt/Source |
+|---|---|---|---|---|
+| 1 | hero-bg | image | 1920x1080 WebP | [prompt or URL] |
+| ... | ... | ... | ... | ... |
+
+## Mobile Degradation Implementation
+
+[Per-chapter mobile strategy with specific code approach]
+
+## Performance Risks & Mitigations
+
+| Risk | Severity | Mitigation |
+|---|---|---|
+| [e.g., 8 layers in ch3] | High | Reduce to 5, use opacity faking |
+| ... | ... | ... |
+
+## GSAP Defaults
+
+```javascript
+ScrollTrigger.defaults({
+  markers: false,
+  scrub: 0.5,
+  invalidateOnRefresh: true,
+  fastScrollEnd: true,
+  preventOverlaps: true,
+});
+```
+```
+
+---
+
+## Phase 4: Build
+
+**Purpose:** Generate the code.
+
+| | |
+|---|---|
+| **Input** | `technical-spec.md` |
+| **Output** | Mode A (self-contained HTML) or Mode B (Next.js project) |
+| **Decision gate** | Implicit — the code IS the deliverable |
+
+### Agent instructions
+
+1. **Apply ALL taste guardrails as hard constraints.** Before delivering,
+   check every output against the banned patterns list in
+`taste-guardrails.md` Section 1. Violating these rules is a bug, not a
+style choice.
+
+2. **Ensure reduced-motion fallback** for every scroll-driven effect.
+   When `prefers-reduced-motion: reduce` is active: disable pinning, disable
+parallax, show static compositions, set all transitions to instant.
+Reference `performance-budget.md` Section 3, Tier 4.
+
+3. **Verify mobile degradation is implemented.** Every pinned section must
+   have a mobile fallback below 768px. Use IntersectionObserver fade-up,
+no pinning, stacked layout. Reference `performance-budget.md` Section 3.
+
+4. **Name the cinematic technique in code comments.** Every scroll-driven
+   animation must have a comment naming the film technique it implements
+(from `taste-guardrails.md` Section 2).
+
+5. **Only animate `transform` and `opacity` in hot scroll paths.** Never
+   `width`, `height`, `top`, `left`, `filter`, `box-shadow`.
+Reference `performance-budget.md` Section 1 (Permitted Properties).
+
+6. **Use `will-change` strategically** — 200ms before animation starts,
+   200ms after it ends, max 3 simultaneous elements. Never globally.
+Reference `performance-budget.md` Section 2.
+
+7. **Follow the `technical-spec.md` exactly.** Do not improvise animation
+   configs that differ from the approved spec.
+
+8. **If using fal.ai assets**, follow the server-side generation pattern,
+   never expose `FAL_KEY` in client code. Reference `MODELS.md` for model
+selection and cost.
+
+### Mode A vs Mode B
+
+This phase operates in two modes. Follow the mode specified in the
+`technical-spec.md`.
 
 | | **Mode A — Scroll artifact** | **Mode B — Full release site** |
 |---|---|---|
-| Use when | "Build a scroll section / hero / pinned chapter / parallax demo" | "Build a full release / launch / product-story website", "Shopify-Editions-style page", "with AI-generated images" |
-| Output | One self-contained `.html` (preferred for instant preview) or a `.tsx` component | A Next.js App Router project scaffolded from `templates/nextjs/` |
+| Use when | Single section / hero / pinned chapter / parallax demo | Full release / launch / product-story website |
+| Output | One self-contained `.html` (inline CSS + JS) or `.tsx` component | Next.js App Router project from `templates/nextjs/` |
 | Build step | None | `npm install && npm run dev` |
 | AI assets | None (CSS/SVG/static only) | Optional fal.ai pipeline (bring your own key) |
-| Section to follow | **§ MODE A** | **§ MODE B** |
+| GSAP | Not included (zero-dependency by design) | Full GSAP + plugins (now free) |
+| Smooth scroll | rAF-throttled handlers | Lenis or ScrollSmoother |
 
-If the request is ambiguous, default to **Mode A** for a single section and **Mode B** when the user says "site", "page", "release", "launch", or "landing".
+If the request is ambiguous, default to **Mode A** for a single section
+and **Mode B** when the user says "site", "page", "release", "launch",
+or "landing".
+
+### Mode A build rules
+
+- Single self-contained HTML file: `<!DOCTYPE html>` ... `</html>`, inline
+  CSS + JS, renders immediately with no build step.
+- No GSAP, no Lenis, no npm packages. `requestAnimationFrame`-throttled
+  scroll handlers only.
+- `perspective: 1200px` on chapter wrapper. 3D transforms on at least one
+  layer (`rotateX` ±4deg max, `rotateY` ±2deg max).
+- Minimum 5 depth layers per chapter.
+- Type reveal: use one of mask reveal, word stagger, letter stagger,
+  vertical mask, or scrub letter-spacing.
+- `clamp()` for all typography. No fixed `px` for `font-size`.
+- Progress HUD in top-right for sandbox/iframe environments.
+- Reduced-motion check: `prefers-reduced-motion: reduce` → static
+  composition, no scroll binding.
+
+### Mode B build rules
+
+- Scaffold from `templates/nextjs/` — copy bundled files **verbatim**.
+  Do NOT regenerate `package.json`, `ChapterScene.tsx`, `fal-models.ts`,
+`fal-generate.ts`, or API routes from memory. The templates contain
+tested, production-safe code.
+- `choreo-3d` for motion primitives: `ScrollChoreography`, `ScrollLayer`,
+  `ScrollDepthImage`, `ScrollBackgroundMorph`, `useTilt3D`, `useMouseSpring`.
+- GSAP plugins (all free): `ScrollTrigger`, `SplitText`, `ScrollSmoother`.
+  Register once: `gsap.registerPlugin(ScrollTrigger, SplitText, ScrollSmoother)`.
+- `@gsap/react`'s `useGSAP()` hook with a `scope` for cleanup.
+- Lenis (`lenis` package — NOT `@studio-freight/lenis`) for smooth scroll.
+  Forward Lenis RAF tick to `ScrollTrigger.update`.
+- `lib/editions-manifest.ts` — 6-12 chapters, each with: `id`, `eyebrow`,
+  `title`, `summary`, `features`, `accent`, `background`, `foreground`,
+`poster`, `video`.
+- `ChapterScene.tsx` — the 7-layer cinematic scene. Do NOT downgrade it:
+  never collapse to 2 layers, never remove `perspective: 1200px`, never
+replace word-stagger with plain opacity fade, never drop mobile fallback.
+- `lib/fal-models.ts` adapter for all image generation — never inline
+  `image_size`, `aspect_ratio`, or `negative_prompt`.
+- fal.ai key stays server-side only. Never in client components or `.env`.
+
+### Output: Mode A (single file) or Mode B (project directory)
 
 ---
 
-## Output rule — always produce runnable code (both modes)
+## Phase 5: Polish
 
-**Do not stop at an explanation.** Every invocation must produce a complete, runnable artifact placed where the user can run it. Architecture notes are welcome as a short preamble (≤5 lines), but the code is mandatory.
+**Purpose:** Performance audit, accessibility check, mobile verification,
+and final quality gate.
 
-**Correct response shape:**
+| | |
+|---|---|
+| **Input** | The built code (Mode A HTML or Mode B project) |
+| **Output** | `polish-report.md` |
+| **Decision gate** | All 11 pre-launch checks must pass. User reviews the polish report. |
 
+### Agent instructions
+
+1. **Run the performance-budget.md monitoring checklist** (Section 6).
+   All 11 pre-launch checks must be verified:
+   - [ ] Chrome DevTools Performance: 10s scroll recording, < 5% red frames
+   - [ ] Lighthouse Performance score > 90
+   - [ ] WebPageTest filmstrip: smooth visual progression during scroll
+   - [ ] iPhone 12 Safari: no visible stutter during fast scroll
+   - [ ] iPhone SE: content accessible, no broken layout on budget tier
+   - [ ] Reduced-motion test: all content visible, no broken layout
+   - [ ] Battery test: 5min continuous scrolling drains < 3% battery
+   - [ ] Memory test: tab memory does not grow > 50MB after 5min scrolling
+   - [ ] Layer count: < 10 layers desktop, < 4 on mobile
+   - [ ] No layout thrashing: no purple "Layout" bars during scroll
+   - [ ] Network: no images load during scroll animation
+
+2. **Verify no banned patterns survived.** Re-check the code against
+   `taste-guardrails.md` Section 1 (Banned Patterns).
+
+3. **Confirm emotional arc matches Phase 1 audit.** Scroll through the
+   entire experience and verify the emotional progression matches the
+`cinematic-audit.md` definition.
+
+4. **Verify all reduced-motion fallbacks.** Test with macOS → Accessibility
+   → Reduce Motion ON. All content must be visible and usable.
+
+5. **Verify mobile degradation.** Test at 375px viewport. All pinned
+   sections must be converted to stacked layout. No broken tap targets.
+
+6. **Verify accessibility:** All images have meaningful `alt` text (or
+   `alt=""` if decorative). All interactive elements have focus states.
+`aria-label` on visual navigation controls. Keyboard navigation works.
+
+7. **Measure scroll jank** using the protocol from `performance-budget.md`
+   Section 4 (Scroll Jank Measurement Protocol).
+
+### Output: `polish-report.md`
+
+```markdown
+# Polish Report — [Project Name]
+
+## Performance Audit
+
+### Scroll Jank Measurement
+- Test device: [e.g., MacBook Pro M3]
+- Recording duration: 10 seconds
+- Frames dropped: [X] / [total] ([X]%)
+- Status: [PASS / FAIL] (target: < 5%)
+
+### Lighthouse Scores
+| Metric | Score | Target | Status |
+|---|---|---|---|
+| Performance | [X] | > 90 | OK/FAIL |
+| Accessibility | [X] | > 95 | OK/FAIL |
+| Best Practices | [X] | > 90 | OK/FAIL |
+| SEO | [X] | > 90 | OK/FAIL |
+
+### Layer Count
+- Desktop: [X] layers (budget: 10) — OK/FAIL
+- Mobile: [X] layers (budget: 4) — OK/FAIL
+
+## Accessibility Checklist
+
+- [ ] All images have alt text
+- [ ] Focus states on all interactive elements
+- [ ] Keyboard navigation works
+- [ ] aria-label on visual nav controls
+- [ ] Color contrast ≥ 4.5:1 for body text
+- [ ] Reduced-motion: content visible and usable
+- [ ] Screen reader compatible
+
+## Mobile Test Results
+
+| Device | OS | Browser | Result |
+|---|---|---|---|
+| iPhone 15 Pro | iOS 17 | Safari | PASS/FAIL |
+| iPhone 12 | iOS 17 | Safari | PASS/FAIL |
+| iPhone SE | iOS 17 | Safari | PASS/FAIL |
+| Samsung S24 | Android 14 | Chrome | PASS/FAIL |
+| Pixel 6 | Android 14 | Chrome | PASS/FAIL |
+
+## Banned Patterns Check
+
+- [ ] No filter animation during scroll
+- [ ] No layout property animation (width/height/top/left)
+- [ ] No setState in scroll handlers
+- [ ] No >7 layers per chapter
+- [ ] No same easing for every animation
+- [ ] No same transition type between adjacent chapters
+
+## Emotional Arc Verification
+
+| Scroll Position | Expected Emotion | Actual | Match |
+|---|---|---|---|
+| 0-20% | [from audit] | [observed] | Y/N |
+| 20-50% | [from audit] | [observed] | Y/N |
+| 50% | [from audit] | [observed] | Y/N |
+| 50-80% | [from audit] | [observed] | Y/N |
+| 80-100% | [from audit] | [observed] | Y/N |
+
+## Final Fixes Applied
+
+[List any fixes applied during the polish phase]
+
+## Ship Recommendation
+
+[GO / NO-GO with reasoning]
 ```
-[Brief plan / architecture note — 5 lines max]
-[Full runnable artifact, or files written one tool call per file]
-[2-3 lines: how to run / scroll / what to look for first]
-```
-
-Never end a response with only an explanation. Always close with the artifact.
 
 ---
 
-## Quality bar — match these references (both modes)
+# Mandatory Motion + Craft Requirements
 
-Output must compete with:
+Every artifact MUST satisfy ALL of these. No exceptions for "demo simplicity"
+— the demo IS the product.
 
-- **Shopify Editions** (Winter / Summer drops) — the primary reference: multi-chapter release worlds
-- **Apple product launch pages** (`apple.com/iphone`, `apple.com/vision-pro`) — pinned cinematic sequences
-- **Linear release notes** (`linear.app/releases`) — editorial typography + restraint
-- **Stripe Sessions** — depth-of-field + atmospheric morphing
-- **Awwwards SOTD nominees** in Editorial + Product Launch categories
+## 1. Multi-depth field — minimum 5 layers
 
-"Looks like a Bootstrap landing page" or "looks like a Tailwind UI template" = failure. Output should look studio-crafted. If constraints (no imagery budget, sandbox, tight deadline) prevent this tier, **say so explicitly** and deliver the highest-quality fallback the constraints allow — never ship mid-tier silently.
-
----
-
-## Mandatory motion + craft requirements (both modes)
-
-Every artifact MUST satisfy ALL of these. No exceptions for "demo simplicity" — the demo IS the product.
-
-### 1. Multi-depth field — minimum 5 layers
-
-Two-layer parallax (bg + fg) is amateur. A real depth field uses 5-7 layers at distinct depth multipliers:
+Two-layer parallax is amateur. A real depth field uses 5-7 layers at
+distinct depth multipliers. Pick at least 5 of these 7 slots:
 
 | Depth | Role | Examples |
 |---|---|---|
@@ -92,576 +659,337 @@ Two-layer parallax (bg + fg) is amateur. A real depth field uses 5-7 layers at d
 | 1.20 | Foreground accents | Floating numbers, edge labels, brackets |
 | 1.40 | Closest overlays | Cursor highlights, badges, scroll cue |
 
-Lower depth = slower = perceptually farther. Pick at least 5 of these 7 slots for any cinematic chapter.
+## 2. 3D perspective camera
 
-### 2. 3D perspective camera
+Set `perspective: 1200px` on the chapter wrapper. Use scroll-driven 3D
+transforms on at least one layer: `rotateX(±4deg max)`, `rotateY(±2deg max)`,
+`translateZ(0px → -80px)`. Disable all 3D rotation on touch devices AND
+when `prefers-reduced-motion: reduce`.
 
-Set `perspective: 1200px` on the chapter wrapper (or `perspective: none` for flat sections, but never omit the declaration). Use scroll-driven 3D transforms on at least one layer:
-
-- `rotateX(±4deg max)` — gentle pitch (avoid motion sickness)
-- `rotateY(±2deg max)` — subtle yaw, great for hero figures
-- `translateZ(0px → -80px)` — dolly-back effect for chapter transitions
-- `scale + rotateX` combo for "swooping" entrances
-
-Disable all 3D rotation on touch devices AND when `prefers-reduced-motion: reduce`.
-
-### 3. Type reveal patterns
+## 3. Type reveal patterns
 
 Plain `opacity: 0 → 1` on oversized titles is lazy. Use one of:
+word stagger, letter stagger, mask reveal (`clip-path: inset`), vertical mask,
+scrub letter-spacing. Combine with `translateY()` and `opacity`.
 
-- **Word stagger** — split into words, each enters on a 5% offset over 20-30% of pin scroll
-- **Letter stagger** — for short titles (≤12 chars), animate letter by letter
-- **Mask reveal** — `clip-path: inset(0 100% 0 0)` → `inset(0 0 0 0)` (horizontal wipe)
-- **Vertical mask** — `clip-path: inset(100% 0 0 0)` → `inset(0 0 0 0)` (upward reveal)
-- **Scrub letter-spacing** — `letter-spacing: 0.4em → 0em` ("settling" effect)
+## 4. Smooth scrolling — mandatory in production
 
-Combine with `translateY()` and `opacity` for layered impact.
+- **Mode A:** `requestAnimationFrame`-throttled scroll handlers (not raw
+  `scroll` events). No packages — dependency-free by design.
+- **Mode B:** Lenis (`lenis` npm — NOT `@studio-freight/lenis`) OR GSAP
+  `ScrollSmoother` (preferred when GSAP is already in the build). Forward
+Lenis RAF tick to `ScrollTrigger.update` if using both.
 
-### 4. Smooth scrolling — mandatory in production output
+## 5. GSAP is now free — use the premium plugins in Mode B
 
-Production artifacts MUST wrap the page in smooth scroll. Two valid options:
-- **GSAP ScrollSmoother** (preferred when GSAP is already in the build) — now **free** (see § GSAP below), GSAP-native, no RAF-forwarding glue, and integrates with ScrollTrigger automatically.
-- **Lenis** (`lenis` npm package — **not** `@studio-freight/lenis`, which is deprecated and capped at 1.0.42) — lighter, framework-agnostic. If used alongside GSAP, forward Lenis's RAF tick to `ScrollTrigger.update`.
-
-Native browser scroll is jittery on macOS trackpads and produces visible stepping on scroll-scrubbed animations.
-
-Single-file HTML demos (sandbox previews) skip both and MUST use `requestAnimationFrame`-throttled scroll handlers (not raw `scroll` events) — this keeps them dependency-free and build-free, which is the whole point of the demo tier.
-
-### 4b. GSAP is now free — use the premium plugins in Mode B
-
-As of the **Webflow acquisition (2025), GSAP is 100% free, including every former Club plugin** (SplitText, MorphSVG, DrawSVG, ScrollSmoother, ScrollTrigger, Inertia, etc.) — free for commercial use too. In the **Next.js build (Mode B)**, prefer these GSAP-native plugins over hand-rolled equivalents:
+As of the Webflow acquisition (2025), GSAP is 100% free including every
+former Club plugin. In Mode B, prefer:
 
 | Want | Use the free plugin | Instead of |
 |---|---|---|
-| Per-word / per-line / per-char title reveals | **SplitText** (`gsap/SplitText`) — accessible, handles reflow | manually wrapping words in `<span>` |
-| Pinned chapters + scroll-scrubbed reveals | **ScrollTrigger** (`gsap/ScrollTrigger`) | custom IntersectionObserver pinning |
+| Per-word/per-char reveals | **SplitText** (`gsap/SplitText`) | Manual word `<span>` wrapping |
+| Pinned chapters + scroll-scrub | **ScrollTrigger** (`gsap/ScrollTrigger`) | Custom IntersectionObserver pinning |
 | Smooth scroll | **ScrollSmoother** (`gsap/ScrollSmoother`) | Lenis + RAF forwarding |
-| Shared-element / layout transitions | **Flip** (`gsap/Flip`) | manual FLIP math |
+| Layout transitions | **Flip** (`gsap/Flip`) | Manual FLIP math |
 
-Register once: `gsap.registerPlugin(ScrollTrigger, SplitText, ScrollSmoother)`. In React use `@gsap/react`'s `useGSAP()` hook with a `scope` and let it handle cleanup. `choreo-3d` already orchestrates ScrollTrigger under the hood; when you need a primitive it doesn't expose, drop to these plugins directly rather than re-implementing them.
+Register once: `gsap.registerPlugin(ScrollTrigger, SplitText, ScrollSmoother)`.
 
-> **Companion skill:** for low-level GSAP syntax, plugin APIs, and framework-specific patterns, install the official **[`greensock/gsap-skills`](https://github.com/greensock/gsap-skills)** (`npx skills add https://github.com/greensock/gsap-skills`). It teaches the *GSAP API*; this skill teaches the *cinematic aesthetic system* on top. They stack.
-
-The single-file HTML demos remain GSAP-free on purpose (zero-dependency, runs from `file://`). Do **not** add GSAP to them — their motion is hand-rolled rAF by design.
-
-### 5. Mobile-responsive — mandatory
+## 6. Mobile-responsive — mandatory
 
 - `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`
-- All typography in `clamp(min, fluid, max)` — never fixed `px` for `font-size`
-- Disable pinned scroll below `768px` — replace with IntersectionObserver-driven fade-up (sticky+JS scroll fights iOS Safari momentum)
+- Typography in `clamp(min, fluid, max)` — never fixed `px` for `font-size`
+- Disable pinned scroll below 768px — IntersectionObserver fade-up
 - `env(safe-area-inset-*)` padding on fixed nav / overlays
-- Tap targets ≥ `44px` square (Apple HIG minimum)
+- Tap targets ≥ 44px square
 - Mobile-first: design at 375px viewport FIRST, then scale up
 
-### 6. Loading sequence
+## 7. Loading sequence
 
-- Preload critical background images with `<link rel="preload" as="image">`
-- Show a poster / blurred low-res placeholder (LQIP) during decode
-- First paint readable within ~1.5s on simulated 4G — never a black page
-- In Next.js, use `<Image>` with `priority` on above-the-fold imagery; lazy-load below-the-fold chapters
+- Preload critical backgrounds with `<link rel="preload" as="image">`
+- Show poster / blurred LQIP placeholder during decode
+- First paint readable within ~1.5s on simulated 4G
+- In Next.js, `<Image>` with `priority` on above-the-fold imagery
 
-### 7. Performance — 60fps on M1 + iPhone 13
+## 8. Performance — 60fps on M1 + iPhone 13
 
-- Only `transform` and `opacity` mutate per scroll frame — never `width`, `height`, `top`, `left`, `filter`, `box-shadow`
-- `will-change: transform` on animated layers ONLY (never globally — kills GPU memory)
+- Only `transform` and `opacity` mutate per scroll frame
+- `will-change: transform` on animated layers ONLY (never globally)
 - `translate3d(0,0,0)` to force GPU compositing where needed
-- Cache `getBoundingClientRect()` once on init + resize, never per scroll frame
-- No layout reads in scroll handlers (no `offsetTop`, `clientHeight` per frame)
-- Chrome DevTools Performance flame chart = all green (composite only) during scroll
-- Lighthouse Performance ≥ 90 on the generated page
+- Cache `getBoundingClientRect()` once on init + resize, never per frame
+- No layout reads in scroll handlers
+- Chrome DevTools Performance flame chart = all green (composite only)
+- Lighthouse Performance ≥ 90
+
+## 9. Component rules
+
+- Every full-screen chapter: `id` + single `<section>` wrapper + `eyebrow`,
+  `title`, `summary`, `features`, `asset`, `accent`
+- All text overlays = **selectable HTML**, never baked into images
+- `aria-label` on visual navigation controls
+- Avoid scroll hijacking — pin per chapter, not the whole page
+- On mobile: collapse pinned scenes into stacked vertical cards
+- Prefer 16:9 backgrounds, 4:5 foreground figures
 
 ---
 
-## Core principles (both modes)
+# Core Principles
 
-1. **Reduced motion first.** Every effect must degrade gracefully when `prefers-reduced-motion: reduce` is set. Pin hooks skip GSAP, layers snap to a stable mid-keyframe, tilt returns zeros.
-2. **iOS WebKit video safety.** Safari/iOS Chrome freezes `<video>` frames inside a `transform-style: preserve-3d` ancestor that updates. Detect touch (`(hover: none) and (pointer: coarse)`) and bypass the 3D wrapper for video.
+1. **Reduced motion first.** Every effect degrades gracefully when
+   `prefers-reduced-motion: reduce` is set. Pin hooks skip GSAP, layers snap
+to stable mid-keyframe, tilt returns zeros.
+
+2. **iOS WebKit video safety.** Safari freezes `<video>` frames inside a
+   `transform-style: preserve-3d` ancestor that updates. Detect touch and
+bypass the 3D wrapper for video.
+
 3. **Animate transform + opacity only** in hot scroll paths.
-4. **Pin chapters, not the page.** Each cinematic block opts into pinning. The rest of the document scrolls normally. Long single pins fight smooth-scroll libraries.
-5. **Deterministic motion.** Any procedural value (seed, jitter, keyframe array) must be stable across re-renders so SSR and resize don't shift layout.
+
+4. **Pin chapters, not the page.** Each cinematic block opts into pinning.
+   The rest of the document scrolls normally.
+
+5. **Deterministic motion.** Any procedural value must be stable across
+   re-renders so SSR and resize don't shift layout.
 
 ---
 
-## Component rules (both modes)
+# Quality Bar
 
-- Every full-screen chapter must have an `id` and a single `<section>` wrapper, plus `eyebrow`, `title`, `summary`, `features`, `asset`, `accent`.
-- All text overlays must be **selectable HTML**, never baked into images.
-- Use `aria-label` on visual navigation controls (chapter index, dots, arrows).
-- Avoid scroll hijacking. Pin only the chapter body, not the entire page forever.
-- On mobile, collapse pinned scenes into stacked vertical cards with the same content order.
-- Prefer 16:9 backgrounds and 4:5 foreground figures. `object-fit: cover` for backgrounds, `object-fit: contain` for figures.
-- In Next.js, use `next/image` over raw `<img>`.
+Output must compete with:
 
----
+- **Shopify Editions** (Winter/Summer drops) — multi-chapter release worlds
+- **Apple product launch pages** — pinned cinematic sequences
+- **Linear release notes** — editorial typography + restraint
+- **Stripe Sessions** — depth-of-field + atmospheric morphing
+- **Awwwards SOTD nominees** in Editorial + Product Launch categories
 
-## Performance gates (both modes)
-
-| Gate | Requirement |
-|---|---|
-| Images | WebP or AVIF, max 2400px long edge for backgrounds |
-| Video | Muted, looped, `playsInline`, MP4 or WebM, `preload="metadata"` on touch |
-| Animation | Only `transform` and `opacity` in scroll paths |
-| Bundle | Code-split heavy chapters; lazy-load below-the-fold media |
-| Mobile | No `preserve-3d` ancestor around active video on touch devices |
-| Reduced motion | Pinning and heavy transforms disabled |
-| Failure | If a media URL fails, show gradient / poster / static image fallback |
+"Looks like a Bootstrap landing page" or "looks like a Tailwind UI template"
+= failure. Output should look studio-crafted. If constraints prevent this tier,
+**say so explicitly** and deliver the highest-quality fallback the constraints
+allow — never ship mid-tier silently.
 
 ---
 
-## QA checklist (both modes)
+# fal.ai Integration (Mode B)
 
-- [ ] `npm run lint` passes (Mode B)
-- [ ] `npm run typecheck` passes (Mode B)
-- [ ] `npm run build` passes (Mode B)
-- [ ] Every image has meaningful `alt` text (or `alt=""` if purely decorative)
-- [ ] `prefers-reduced-motion: reduce` produces a usable, non-pinned page
-- [ ] Mobile Safari plays or gracefully skips video loops
-- [ ] Page is readable with all media disabled (network throttle test)
-- [ ] Chapter scroll-spy updates the morph and the index
-- [ ] No layout shift when chapter assets load (intrinsic sizes / poster frames)
-- [ ] The page is inspired by the reference but not a visual clone
+This skill includes NO keys or credits. Every user creates their own fal.ai
+account. The page works **without fal.ai** — `ChapterDemoVisual` renders
+stunning CSS-only chapter visuals at $0.
+
+## Setup
+
+1. Walk new users through `examples/GETTING_STARTED.md`
+2. Sign up at [fal.ai](https://fal.ai), create API key, add `FAL_KEY` to `.env.local`
+3. Restart dev server after adding env vars
+4. Never put `FAL_KEY` in client components or committed `.env` files
+5. Mention they can skip fal.ai and use static images
+
+## Technical rules
+
+1. Never expose `FAL_KEY` in browser code
+2. Use `@fal-ai/server-proxy/nextjs` — export `GET`, `POST`, **and `PUT`**
+3. Always go through `lib/fal-models.ts` — never inline `image_size` or `negative_prompt`
+4. Use server routes for production asset generation
+5. Use `fal.subscribe` for ≤5 chapters; `fal.queue.submit` + webhook for >5
+6. Set `allowedEndpoints` on the proxy + `allowUnauthorizedRequests: false`
+7. Model IDs configurable via environment variables
+
+See `MODELS.md` for the full model menu, cost table, and per-model parameter
+differences. Default: `fal-ai/flux-2-pro` (~$0.06/img, ~4s).
 
 ---
 
-## Legal and originality rules (both modes)
+# Quick-Start (For Expert Users)
 
-- Do not reproduce the Shopify logo, screenshots, copy, proprietary illustrations, exact section design, or exact visual scene.
+Experienced users can skip the full pipeline by providing a complete brief
+upfront. The agent runs all 5 phases internally and delivers the final output
+in one shot. Use these prompts as templates.
+
+## Quick-Start A: Single scroll section (Mode A)
+
+> Build a cinematic-scroll pinned hero chapter for my [brand/product].
+> Director grammar: [Kubrick/Fincher/Anderson/Nolan/Villeneuve/Gerwig/Zhao].
+> [N] chapters, [color palette], [typography feel].
+> Pin duration [X]vh. Output: single self-contained HTML file.
+
+The agent internally runs Phase 1-3 assumptions, builds (Phase 4), and
+delivers a performance-annotated file with inline polish notes (Phase 5
+lightweight).
+
+## Quick-Start B: Full release site (Mode B)
+
+> Scaffold a complete Shopify-Editions-tier cinematic release page for
+> [product]. Director: [name]. [N] chapters. Demo mode first — no fal.ai
+> key required. Copy templates verbatim from `templates/nextjs/`.
+
+The agent runs the full pipeline internally: cinematic audit (assumed),
+storyboard (assumed), technical spec (assumed), build (Mode B), and delivers
+with a lightweight polish checklist.
+
+## Quick-Start C: Existing project upgrade
+
+> Add a cinematic-scroll pinned chapter to my existing [React/Next.js] project.
+> Use choreo-3d primitives. Pattern: [Pinned Hero/Chaptered Release/etc from
+> scroll-patterns.md]. Pin [X]vh, [N] layers. Match my existing [palette/typography].
+
+The agent runs Phase 2-4 only, integrating with the existing codebase.
+
+---
+
+# Example Prompts — Full Pipeline (5-Phase)
+
+These examples show how the complete gated pipeline works end-to-end.
+
+## Example 1: Fintech Trust Page (Fincher Grammar)
+
+> **Phase 1:** We're a fintech app that needs to communicate trust and
+> precision. Our brand is clinical, data-driven, restrained. Audience:
+> decision-makers on desktop. Build a cinematic-scroll experience using
+> the David Fincher director grammar from `references/film-archetypes.md`
+> Section 2. Output: `cinematic-audit.md`.
+>
+> **Phase 2:** Based on the audit, design a 6-chapter motion storyboard.
+> Chapters: Authority, Problem, Solution, Product, Proof, CTA. Use
+> Chaptered Release pattern for chapters 1 and 5, Sticky Narrative for
+> chapter 2, Data Story for chapter 4. Reference `references/scroll-patterns.md`
+> Sections 5, 4, and 9. Output: `motion-storyboard.md`.
+>
+> **Phase 3:** Produce the technical spec. Use GSAP ScrollTrigger + Lenis +
+> choreo-3d. Scrub 0.5, pin spacing true. Reference `performance-budget.md`
+> Sections 1, 2, and 7 for all constraints. Output: `technical-spec.md`.
+>
+> **Phase 4:** Build Mode B — Next.js project from templates. 6 chapters,
+> Fincher palette (ash grey, steel blue, sickly yellow-green, black).
+> CSS-only demo mode for first run. Output: project directory.
+>
+> **Phase 5:** Run the full polish checklist. Verify all 11 pre-launch
+> checks from `performance-budget.md` Section 6. Confirm no banned patterns
+> from `taste-guardrails.md` Section 1 survived. Output: `polish-report.md`.
+
+## Example 2: Wellness Brand (Gerwig + Zhao Hybrid)
+
+> **Phase 1:** We're a longevity science company. We want warmth,
+> approachability, and land-connection. Primary grammar: Greta Gerwig
+> (`references/film-archetypes.md` Section 6). Accent grammar: Chloé Zhao
+> (Section 7) for the landscape chapters. Output: `cinematic-audit.md`.
+>
+> **Phase 2:** Design a 5-chapter storyboard. Chapters: Welcome, Science,
+> Nature, Product, Community. Use Pinned Hero for ch1, Editorial Longread
+> for ch2, Parallax Gallery for ch3, Chaptered Release for ch4, Landing
+> Sequence for ch5. Reference `references/scroll-patterns.md` Sections 1,
+> 8, 6, 5, and 10. Output: `motion-storyboard.md`.
+>
+> **Phase 3:** Technical spec with warm palette progression (rose → peach →
+> amber → sage → cream). GSAP + Lenis. Mobile: disable parallax below 768px,
+> convert to stacked IntersectionObserver fades. Reference `performance-budget.md`
+> Section 3 (Mobile Degradation Matrix). Output: `technical-spec.md`.
+>
+> **Phase 4:** Build Mode B. 5 chapters, organic editorial aesthetic.
+> fal.ai for chapter images: `historicalLayer: 'atelier'`, painterly botanical
+> subjects. Demo mode for first run. Output: project directory.
+>
+> **Phase 5:** Polish. Verify emotional arc matches Phase 1: welcome (warmth)
+> → science (curiosity) → nature (awe) → product (trust) → community
+> (belonging). Run 11-point checklist. Output: `polish-report.md`.
+
+## Example 3: Sci-Fi Game Reveal (Nolan Grammar, Mode A)
+
+> **Phase 1:** We're launching a sci-fi game expansion. We want cosmic scale,
+> event-level drama, layered realities. Director: Christopher Nolan
+> (`references/film-archetypes.md` Section 4). Audience: gamers, 70% desktop.
+> Output: `cinematic-audit.md`.
+>
+> **Phase 2:** Design a 7-chapter storyboard. Chapters: Teaser, World, Lore,
+> Characters, Gameplay, Release, CTA. Use Pinned Hero for ch1, Chaptered
+> Release for ch2 and ch3, 3D Product Orbit for ch5, Landing Sequence for
+> ch7. Reference `references/scroll-patterns.md` Sections 1, 5, 5, 7, and 10.
+> Max 7 layers in ch2 (the deepest chapter). Output: `motion-storyboard.md`.
+>
+> **Phase 3:** Technical spec. Mode A output (single HTML). rAF-throttled
+> scroll, no packages. 5-7 depth layers per chapter. 3D camera:
+> `rotateX(±4deg)`, `translateZ(0 → -80px)`. Performance budget: all
+> `transform` + `opacity` only, `will-change` on 3 elements max. Reference
+> `performance-budget.md` Sections 1 and 2. Output: `technical-spec.md`.
+>
+> **Phase 4:** Build Mode A. Single self-contained HTML. Near-black backgrounds,
+> deep teal and crimson accents, heavy grain overlay. 7 chapters, each pinned
+> 200-300vh. Title reveals: mask wipe, word stagger, letter-spacing scrub,
+> scale-down entrance — varied per chapter per `taste-guardrails.md` Section 4.5.
+> Reduced-motion fallback: static compositions. Progress HUD included.
+> Output: `index.html`.
+>
+> **Phase 5:** Polish the HTML. Verify: compositor-only scroll paths, < 5%
+> dropped frames on 10s recording, reduced-motion shows all content, mobile
+> <768px stacks with no pinning. No banned patterns from `taste-guardrails.md`
+> Section 1. Output: `polish-report.md`.
+
+---
+
+# What's in the Box
+
+```
+cinematic-scroll-skill/
+├── SKILL.md                      # Agent contract (5-phase pipeline) [this file]
+├── taste-guardrails.md           # Quality enforcement system (11 banned patterns,
+│                                 #   cinematic vocabulary, pacing rules,
+│                                 #   anti-convergence principles)
+├── manifest.json                 # Skill manifest (v2.0.0)
+├── MODELS.md                     # fal.ai model menu and cost table
+├── README.md                     # Human-facing overview
+├── LICENSE                       # MIT
+├── references/
+│   ├── scroll-patterns.md        # 12 proven scroll patterns (Sections 1-12),
+│   │                             #   each with use case, depth config, transition,
+│   │                             #   mobile strategy, performance budget
+│   ├── film-archetypes.md        # 7 director grammars (Sections 1-7):
+│   │                             #   Kubrick, Fincher, Anderson, Nolan,
+│   │                             #   Villeneuve, Gerwig, Zhao — each with scroll
+│   │                             #   behavior, color, pacing, type, depth, transitions
+│   └── performance-budget.md     # 60fps production contract:
+│                                 #   frame budget, permitted/forbidden properties,
+│                                 #   will-change strategy, mobile degradation matrix
+│                                 #   (4 tiers), benchmark targets, asset budgets,
+│                                 #   11-point pre-launch monitoring checklist,
+│                                 #   GSAP-specific rules, failure modes
+├── examples/
+│   ├── PROMPTS.md               # 20+ trigger prompts (Mode A and B)
+│   ├── GETTING_STARTED.md       # fal.ai setup walkthrough
+│   └── KNOWN_ISSUES.md          # QA log of known issues and fixes
+├── templates/nextjs/            # Next.js App Router template:
+│                                 #   package.json, ChapterScene.tsx (7-layer scene),
+│                                 #   ChapterDemoVisual.tsx (CSS-only fallback),
+│                                 #   EditionsPage.tsx (orchestrator),
+│                                 #   fal proxy routes, fal client/lib/scripts,
+│                                 #   SmoothScrollProvider, use-device hooks,
+│                                 #   globals.css with fluid type scale,
+│                                 #   tailwind.config.ts, tsconfig.json
+└── assets/                      # Shared static assets
+```
+
+---
+
+# Legal and Originality Rules
+
+- Do not reproduce the Shopify logo, screenshots, copy, proprietary
+  illustrations, exact section design, or exact visual scene.
 - Do not generate images that imitate a living artist by name.
-- Do not bake readable UI copy into generated images unless the user specifically asks and the target model supports reliable text.
-- Build UI text, labels, nav, cards, numbers, and feature lists as HTML/CSS so they remain editable, accessible, and crisp.
-- Use the reference only as an art-direction benchmark: chaptered release storytelling, not a clone target.
-- If the user asks to clone a proprietary site exactly, respond by making an original system that uses the reference as inspiration.
+- Do not bake readable UI copy into generated images unless the user
+  specifically asks and the target model supports reliable text.
+- Build UI text, labels, nav, cards, numbers, and feature lists as HTML/CSS
+  so they remain editable, accessible, and crisp.
+- Use references only as art-direction benchmarks — chaptered release
+  storytelling, not clone targets.
+- If the user asks to clone a proprietary site exactly, respond by making
+  an original system that uses the reference as inspiration.
 
 ---
----
 
-# § MODE A — Scroll artifact (single section / page, no build)
+# Anti-Patterns
 
-Use this for "build a scroll section / hero / pinned chapter / parallax demo" requests. Produce a **single self-contained HTML file** (`<!DOCTYPE html>` … `</html>`, inline CSS + JS) so the artifact renders immediately with no build step. If the user's project is React/Next.js, also produce a `.tsx` file plus a companion `index.html` demo.
-
-## Primitives — `choreo-3d`
-
-When `choreo-3d` is available, import:
-
-```ts
-import {
-  // Hooks
-  useScrollPin,
-  useScrollPinContext,
-  useTilt3D,
-  useMouseSpring,
-  // Components
-  ScrollChoreography,
-  ScrollLayer,
-  ScrollDepthImage,
-  ScrollBackgroundMorph,
-} from 'choreo-3d';
-```
-
-| Primitive | Use it for |
-|---|---|
-| `ScrollBackgroundMorph` | Crossfade chapter atmospheres / color worlds based on active section id |
-| `ScrollChoreography` | Pin a chapter while scroll drives the reveal |
-| `ScrollLayer` | Interpolate subject, UI panels, oversized titles, foreground props inside a pinned chapter |
-| `ScrollDepthImage` | Render a hero figure with parallax + scale swell + optional 3D hover tilt + ping-pong video loops |
-| `useMouseSpring` | Subtle pointer drift on decorative foreground elements (global) |
-| `useTilt3D` | Tactile hover tilt on hero cards / glass panels (local, non-touch only) |
-| `useScrollPin` | Build your own pinned context when `ScrollChoreography` isn't flexible enough |
-
-## No-package fallback (sandbox / CDN-restricted environments)
-
-When `choreo-3d` **cannot be installed** (no npm, CDN sandbox, StackBlitz without installs), build the **identical behaviour** with sticky positioning + `rAF`-throttled scroll + inline keyframe interpolation + a `prefers-reduced-motion` check. Name the functions the same so the code reads like the real package.
-
-```ts
-// Equivalent to useScrollPin
-function useScrollProgress(ref, pinDistance) {
-  const [progress, setProgress] = React.useState(0);
-  React.useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setProgress(1); return;       // snap to end-state, no scroll binding
-    }
-    function onScroll() {
-      const rect = ref.current?.getBoundingClientRect();
-      if (!rect) return;
-      const p = Math.max(0, Math.min(1, -rect.top / (pinDistance - window.innerHeight)));
-      setProgress(p);
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [ref, pinDistance]);
-  return progress;
-}
-
-// Equivalent to ScrollLayer keyframe interpolation
-function interpolate(p, keyframes) {
-  const keys = Object.keys(keyframes[0]).filter(k => k !== 'at');
-  const lo = [...keyframes].reverse().find(f => f.at <= p) ?? keyframes[0];
-  const hi = keyframes.find(f => f.at >= p) ?? keyframes[keyframes.length - 1];
-  const t = hi.at === lo.at ? 1 : (p - lo.at) / (hi.at - lo.at);
-  return Object.fromEntries(keys.map(k => {
-    const a = parseFloat(lo[k]); const b = parseFloat(hi[k]);
-    const unit = String(lo[k]).replace(/[-\d.]/g, '');
-    return [k, `${a + (b - a) * t}${unit}`];
-  }));
-}
-```
-
-Apply results as a depth-multiplied transform string, exactly as `ScrollLayer` does:
-
-```ts
-const bg = interpolate(progress, slowBg);
-const style = {
-  transform: `translateY(calc(${bg.y} * ${depth})) scale(${bg.scale})`,
-  opacity: bg.opacity,
-};
-```
-
-### Critical: background layer must never start invisible
-
-The background layer (`depth < 1`) must start with `opacity ≥ 0.85` at `at: 0`. If the scroll listener fails (iframe, sandbox, wrong scroll root) the page must show *something*, not a black void.
-
-```ts
-const slowBg = [
-  { at: 0,   y: '-3%', scale: 1.06, opacity: 0.9 },  // ← never 0
-  { at: 0.5, y: '0%',  scale: 1.02, opacity: 1   },
-  { at: 1,   y: '3%',  scale: 1.08, opacity: 0.9 },
-];
-```
-
-### Known sandbox / iframe limitation
-
-Sandboxed preview iframes may not route wheel/touch scroll to sticky containers. If progress stays at `p = 0`, text layers (starting at `opacity: 0`) become invisible — the "black page" failure mode. Fixes, in order:
-
-1. **Attach scroll listener to the container element, not `window`**, and set the sticky root to that container (`<div ref={containerRef} style={{ height: '100vh', overflowY: 'scroll' }}>` + read `el.scrollTop`).
-2. **Guaranteed visible initial state** — render text at hold-position opacity until the first scroll fires (`opacity = hasScrolled ? interpolated : 1`).
-3. **Live progress HUD** — always include in sandbox demos so the math is visible:
-
-```tsx
-<div style={{ position: 'fixed', top: 12, right: 12, fontFamily: 'monospace',
-  fontSize: 11, color: '#fff', background: 'rgba(0,0,0,0.5)', padding: '4px 8px',
-  borderRadius: 4, zIndex: 999 }}>p = {progress.toFixed(3)}</div>
-```
-
-If `p` stays `0.000` while scrolling, the listener is attached to the wrong root.
-
-**Always prefer the real `choreo-3d` package for production** — it handles GSAP ScrollTrigger scrub, resize debounce, and iOS video safety automatically. Use this fallback only when the package truly cannot load.
-
-## Standard composition
-
-```tsx
-<page>
-  <ScrollBackgroundMorph activeId={...} themes={...} />   {/* fixed, fades chapter atmospheres */}
-  <TopNav />                                              {/* fixed, HTML overlay */}
-  <ChapterIndex />                                        {/* fixed, scroll-spy */}
-
-  {chapters.map(chapter => (
-    <section id={chapter.id}>
-      <ScrollChoreography pinDistance="140vh">
-        <ScrollLayer keyframes={slowBg} depth={0.35} />   {/* parallax background */}
-        <ScrollLayer keyframes={layerIn} depth={1.0} />   {/* title + panel + figure */}
-      </ScrollChoreography>
-    </section>
-  ))}
-</page>
-```
-
-### Manifest pattern — drive the page from data, not inline JSX
-
-```ts
-type Chapter = {
-  id: string;             // matches the <section id=…> AND the morph theme key
-  roman?: string;
-  eyebrow: string;
-  title: string;
-  summary: string;
-  features?: string[];
-  accent: string;         // CSS color
-  background: string;     // image URL
-  foreground?: string;    // optional figure
-  poster?: string;
-  video?: string;
-};
-```
-
-### Keyframe defaults
-
-```ts
-// Subject / UI layer: rises in, holds, drifts out
-const layerIn = [
-  { at: 0,    y: '14%',  scale: 0.94, opacity: 0 },
-  { at: 0.25, y: '0%',   scale: 1,    opacity: 1 },
-  { at: 0.78, y: '0%',   scale: 1,    opacity: 1 },
-  { at: 1,    y: '-10%', scale: 0.98, opacity: 0 },
-];
-// Background: slow inverse drift to suggest depth
-const slowBg = [
-  { at: 0,   y: '-3%', scale: 1.06, opacity: 0.9 },
-  { at: 0.5, y: '0%',  scale: 1.02, opacity: 1   },
-  { at: 1,   y: '3%',  scale: 1.08, opacity: 0.9 },
-];
-```
-
-`depth < 1` slows a layer (parallax background). `depth > 1` accelerates it (foreground UI). `depth = 1` matches scroll 1:1.
-
-### Scroll-spy for the morph
-
-```tsx
-const [activeId, setActiveId] = React.useState(chapters[0]?.id ?? null);
-React.useEffect(() => {
-  const nodes = chapters.map(c => document.getElementById(c.id)).filter(Boolean);
-  const observer = new IntersectionObserver((entries) => {
-    const visible = entries.filter(e => e.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-    if (visible?.target.id) setActiveId(visible.target.id);
-  }, { threshold: [0.25, 0.5, 0.75], rootMargin: '-10% 0px -10% 0px' });
-  nodes.forEach(n => observer.observe(n));
-  return () => observer.disconnect();
-}, []);
-```
-
-## Common mistakes (Mode A)
-
-1. **Pinning the whole page.** Pin per-chapter; long single pins fight smooth-scroll.
-2. **Animating filter / box-shadow on scroll.** Compositor-only (`transform`, `opacity`) keeps 60fps.
-3. **Hardcoding chapter IDs in the morph.** Pass a `themes` map keyed by chapter id.
-4. **Forgetting reduced motion.** Test with macOS → Accessibility → Reduce Motion ON.
-5. **Wrapping video in 3D ancestors on iOS.** Detect touch and degrade safely.
-
----
----
-
-# § MODE B — Full release site (Next.js + fal.ai)
-
-Use this when the user wants a complete release / launch / product-story website. This mode turns a product, release, campaign, or system narrative into a polished one-page site with cinematic scroll chapters, art-directed visuals, live HTML overlays, and an optional fal.ai asset pipeline.
-
-## CRITICAL — read the bundled templates
-
-This skill ships `templates/nextjs/` with tested, production-safe code. You MUST read those files and copy them into the user's workspace **verbatim** — do NOT regenerate them from memory. The templates contain tested fal.ai server-proxy logic, CORS handling, prompt-contract structures, and a **verified `package.json`** that installs cleanly.
-
-**If you regenerate API routes, fal helpers, or `package.json` from memory, the project will break** (wrong Lenis package, missing `choreo-3d`, `npm install` failures).
-
-### Copy verbatim (do not rewrite logic)
-
-- `templates/nextjs/package.json` — **exact dependency versions; never invent packages**
-- `templates/nextjs/app/api/fal/proxy/route.ts` — hardened proxy (PUT + allowedEndpoints)
-- `templates/nextjs/app/api/fal/webhook/route.ts` — webhook receiver for queue mode
-- `templates/nextjs/app/api/generate-edition-asset/route.ts` — supports `mode: 'sync' | 'queue'`
-- `templates/nextjs/lib/fal-client.ts`
-- `templates/nextjs/lib/fal-models.ts` — **per-model input adapter** (FLUX vs Gemini vs Imagen params)
-- `templates/nextjs/lib/fal-generate.ts` — uses the adapter; do NOT inline `image_size` or `negative_prompt`
-- `templates/nextjs/lib/prompt-contract.ts` — `EDITION_AVOID` is inlined into the prompt string (FLUX.2 ignores `negative_prompt`)
-- `templates/nextjs/lib/use-lenis.ts`
-- `templates/nextjs/lib/use-device.ts` — isMobile / isTouch / useReducedMotion hooks
-- `templates/nextjs/components/SmoothScrollProvider.tsx`
-- `templates/nextjs/components/ChapterScene.tsx` — **the 7-layer cinematic scene** (perspective camera + word-stagger title + mobile fallback)
-- `templates/nextjs/components/ChapterDemoVisual.tsx` — CSS-only chapter visual so the page looks stunning with zero fal.ai setup
-- `templates/nextjs/components/EditionsPage.tsx` — orchestrator (extend chapter content via manifest, not by rewriting the scene)
-- `templates/nextjs/app/layout.tsx` (viewport + metadata)
-- `templates/nextjs/app/page.tsx` (wraps in SmoothScrollProvider)
-- `templates/nextjs/app/globals.css` — fluid clamp() type scale + safe-area + reduced-motion + touch overrides
-- `templates/nextjs/scripts/generate-chapter-assets.mjs` — batch generator (downloads binaries to `public/generated/`)
-- `templates/nextjs/scripts/setup.mjs` — interactive fal.ai key wizard
-- `templates/nextjs/tsconfig.json`
-- `templates/nextjs/tailwind.config.ts` — fluid font-size tokens
-- `templates/nextjs/postcss.config.js`
-
-### Customise per project (content only)
-
-- `templates/nextjs/lib/editions-manifest.ts` — **8 chapters by default**; replace with project-specific chapters (6–12 sweet spot)
-- `templates/nextjs/tailwind.config.ts` colors — theme colors per brand
-
-### Dependency rules — hard failures if violated
-
-| Rule | Correct | Wrong (breaks install) |
-|---|---|---|
-| Smooth scroll | `lenis` (^1.3.23) **or** GSAP `ScrollSmoother` | `@studio-freight/lenis` — **deprecated; max version 1.0.42; ^1.0.45 does not exist** |
-| Motion primitives | `choreo-3d` from npm | Hand-rolled parallax only — **forbidden** |
-| Parallax layers | `ScrollLayer`, `ScrollChoreography`, `ScrollBackgroundMorph` from `choreo-3d` | Custom `ParallaxChapter.tsx` reimplementing the library |
-| GSAP | `gsap` (^3.13) — now fully free incl. all plugins; import `ScrollTrigger`/`SplitText`/`ScrollSmoother` from `gsap/*` | bundling paid-era plugin shims, or the old Club CDN URLs |
-| Title reveals (Mode B) | GSAP `SplitText` | hand-rolling per-char `<span>` splitting in the React build |
-
-**Never remove `choreo-3d` from dependencies.** The page must import motion primitives from it. GSAP plugins are a *complement* (use them for splits/smooth-scroll), not a replacement for `choreo-3d`'s pinning orchestration.
-
-### Quality bar — already implemented in templates
-
-The bundled `ChapterScene.tsx` already implements every mandatory motion + craft requirement above. **Do NOT downgrade it.** Do not collapse the 7 layers to 2, do not remove the `perspective: 1200px` wrapper, do not replace the word-stagger title with a plain opacity fade, do not drop the mobile-stacked fallback. For a *different* visual treatment, extend the manifest or add a new variant component — never rewrite `ChapterScene.tsx` from memory.
-
-### Install commands — one line at a time
-
-List **one shell command per line**. Never paste a multi-line README block with `#` comments — zsh treats `#` as a command and fails.
-
-```bash
-npm install
-cp .env.example .env.local
-npm run dev
-```
-
-## Page generation sequence
-
-1. Extract the site subject.
-2. Convert it into a release taxonomy with 6 to 12 chapters.
-3. For each chapter, write one product claim, one technical detail, one visual metaphor, one modern object, and one CTA / proof point.
-4. Build `editions-manifest.ts` from that taxonomy.
-5. Generate fal.ai prompt inputs from the manifest (if using AI assets).
-6. Scaffold the page using `EditionsPage.tsx` + `ChapterScene.tsx`.
-7. Place image / video assets through `ScrollDepthImage` and HTML overlays.
-8. Add chapter index, keyboard navigation, reduced-motion fallback, mobile-safe layout.
-9. Add QA gates.
-10. Return implementation notes plus runnable commands.
-
-## Output contract
-
-| Layer | Required output | Rule |
-|---|---|---|
-| Narrative | One clear theme, 6–12 chapters, each with a product claim | Every chapter maps to a real feature, not decorative filler |
-| Art direction | Visual system, palette, typography, image prompt system | Use original assets, never copy reference assets |
-| Asset pipeline | fal.ai prompt plan, model config, output sizes, filenames | Keep `FAL_KEY` server-side only |
-| Interface | Next.js page, responsive layout, chapter nav, progress index | UI text overlays must be HTML, not baked into images |
-| Motion | Scroll pinning, parallax layers, background morphs, hover depth | Always respect reduced motion |
-| QA | Performance, accessibility, legal, mobile Safari, failure fallbacks | No effect ships without fallback |
-
-## Design grammar (default unless the user gives a different direction)
-
-| Element | Direction |
-|---|---|
-| Visual base | Oil painting, editorial photography, 3D render, or cinematic collage |
-| Contrast layer | Modern commerce object, software UI, AI terminal, mobile device, product artifact |
-| Typography | Oversized grotesk for product claims, elegant serif or italic for editorial tension |
-| Navigation | Persistent top nav plus left/right chapter index with Roman numerals or numeric anchors |
-| Composition | Full viewport chapters, large central subject, translucent UI panels, fine grid lines, soft vignettes |
-| Motion | Slow parallax background, mid-speed subject, fast foreground UI labels, pinned chapter reveals |
-| Color | Muted old-world backgrounds plus one modern accent (acid pink, neon green, electric blue, chrome) |
-| Texture | Grain, canvas, paper, dust, bloom, shadows, glass, engraved labels |
-| Copy | Short, declarative product language. No marketing fog. Claim first, detail second |
-
-## fal.ai integration
-
-### Bring-your-own-key — this skill includes NO keys or credits
-
-This skill does NOT ship fal.ai keys, credits, or a shared account. Every user creates their own fal.ai account and pays fal directly (pay-as-you-go). The page also works **without fal.ai** — `ChapterDemoVisual` renders stunning CSS-only chapter visuals at $0, and users can drop their own static images into `public/`.
-
-When the user is new, asks about keys/costs/setup, or hasn't configured fal.ai:
-
-1. Walk them through **`examples/GETTING_STARTED.md`** step by step.
-2. State clearly: sign up at [fal.ai](https://fal.ai), create an API key, add `FAL_KEY` to `.env.local`.
-3. Remind them to **restart the dev server** after adding env vars.
-4. Never put `FAL_KEY` in client components, `'use client'` files, or committed `.env` files.
-5. Mention they can skip fal.ai entirely and use static images.
-
-### Technical rules
-
-1. Never expose `FAL_KEY` in browser code.
-2. Use `@fal-ai/server-proxy/nextjs` when the browser calls fal through `/api/fal/proxy`. Export `GET`, `POST`, **and `PUT`** — the newer client requires all three.
-3. **Always go through `lib/fal-models.ts`.** Do NOT inline `image_size`, `aspect_ratio`, `num_images`, or `negative_prompt` in calling code — each fal model accepts a different set, and inlining silently breaks Gemini ↔ FLUX swaps.
-4. Use server routes for production asset generation, moderation, logging, prompt normalization, and cost tracking.
-5. Use `fal.subscribe` for blocking generation (prototyping, ≤5 chapters). Use `fal.queue.submit` + `app/api/fal/webhook/route.ts` for batches >5 images, video, or any model with cold-start ≥10s.
-6. In production, set `allowedEndpoints` on the proxy + `allowUnauthorizedRequests: false`.
-7. Make model ids configurable via environment variables.
-
-### Per-model parameter quirks (verified from fal.ai docs, 2026)
-
-| Param | FLUX.2 Pro | Gemini 3 Pro / Flash | Imagen 3 |
-|---|---|---|---|
-| Orientation | `image_size: 'landscape_16_9'` | `aspect_ratio: '16:9'` | `aspect_ratio: '16:9'` |
-| Number of images | **not supported** (always 1) | `num_images: 1..4` | `num_images: 1..4` |
-| Negative prompt | **not supported** — inline in prompt text | not supported — inline | not supported |
-| Resolution | fixed 4MP | `resolution: '1K' \| '2K' \| '4K'` | fixed |
-| Output format | `'jpeg' \| 'png'` | `'jpeg' \| 'png' \| 'webp'` | png |
-
-This is exactly why `lib/fal-models.ts` exists — it maps a single `GenericImageRequest` to whichever shape the chosen model needs. See `MODELS.md` for the full model menu and cost table.
-
-Environment variables:
-
-```bash
-FAL_KEY="key_id:key_secret"
-# fal-ai/flux-2-pro       ← RECOMMENDED default (FLUX.2 [pro], 4MP, ~$0.06/img, ~4s)
-# fal-ai/flux-2-max       ← highest quality (~$0.08/img, ~5s) — final hero renders
-# fal-ai/flux-2/turbo     ← fast iteration (~$0.02/img, ~2s) — draft rounds
-# fal-ai/flux/dev         ← NON-COMMERCIAL LICENSE ONLY — never default in production
-FAL_IMAGE_MODEL="fal-ai/flux-2-pro"
-FAL_VIDEO_MODEL=""
-NEXT_PUBLIC_SITE_NAME="Editions Demo"
-```
-
-**Never default to `fal-ai/flux/dev` in production code** — it is licensed non-commercially by Black Forest Labs.
-
-### Server-side generation pattern — always go through the adapter
-
-```ts
-import { generateEditionImage } from '@/lib/fal-generate';
-
-const asset = await generateEditionImage({
-  chapterId: 'prologue',
-  subject: 'two figures in a renaissance studio…',
-  productTruth: 'the product turns updates into a release system',
-  historicalLayer: 'renaissance',
-  modernLayer: 'transparent software panel, AI terminal glow',
-  palette: ['aged cream', 'deep umber', 'acid pink'],
-  camera: 'wide',
-  outputRole: 'hero',
-});
-// → { chapterId, url, modelId, requestId, raw }
-```
-
-Batch all chapters with one command:
-
-```bash
-node scripts/generate-chapter-assets.mjs                            # all chapters, default model
-node scripts/generate-chapter-assets.mjs --dry-run                  # print prompts only, no cost
-node scripts/generate-chapter-assets.mjs --only prologue,studio     # subset
-node scripts/generate-chapter-assets.mjs --model fal-ai/gemini-3-pro-image-preview
-```
-
-## Prompt contract for generated assets
-
-```ts
-type EditionAssetPrompt = {
-  chapterId: string;
-  subject: string;
-  productTruth: string;
-  historicalLayer: 'renaissance' | 'baroque' | 'atelier' | 'architectural' | 'industrial';
-  modernLayer: string;
-  palette: string[];
-  camera: 'wide' | 'medium' | 'macro' | 'isometric' | 'low-angle';
-  outputRole: 'hero' | 'chapter-bg' | 'foreground-object' | 'poster' | 'motion-source';
-};
-```
-
-Negative-prompt language is **inlined into the prompt string** (NOT sent as `negative_prompt`), because FLUX.2 Pro's input schema does not include it:
-
-```txt
-brand logos, unreadable text overlays, fake UI labels baked into the image, watermarks,
-low resolution, distorted hands, extra limbs, over-saturated colour, plastic skin,
-generic AI gloss, stock photography composition
-```
-
-## Motion recipe — use the existing choreo-3d primitives
-
-| Primitive | Use |
-|---|---|
-| `ScrollBackgroundMorph` | Crossfade chapter atmospheres and color worlds |
-| `ScrollChoreography` | Pin each cinematic chapter while scroll drives the reveal |
-| `ScrollLayer` | Interpolate subject, UI panels, oversized titles, foreground props |
-| `ScrollDepthImage` | Render generated images, poster frames, video loops, ping-pong loops, 3D hover tilt |
-| `useMouseSpring` | Subtle pointer drift on decorative foreground elements |
-| `useTilt3D` | Tactile hover on hero cards and glass panels (non-touch only) |
-
-## Default deliverables (Mode B)
-
-1. `README.md` with setup instructions.
-2. `app/page.tsx`, `app/layout.tsx`, `components/EditionsPage.tsx`, `components/ChapterScene.tsx`, `components/ChapterDemoVisual.tsx`, `components/SmoothScrollProvider.tsx`.
-3. `lib/editions-manifest.ts`, `lib/use-lenis.ts`, `lib/use-device.ts`.
-4. `lib/fal-client.ts`, `lib/fal-models.ts`, `lib/fal-generate.ts`, `lib/prompt-contract.ts`.
-5. `app/api/fal/proxy/route.ts` (hardened with `PUT` + `allowedEndpoints`).
-6. `app/api/fal/webhook/route.ts` for queue-mode callbacks.
-7. `app/api/generate-edition-asset/route.ts` supporting `mode: 'sync' | 'queue'`.
-8. `scripts/generate-chapter-assets.mjs` (batch, `--dry-run`/`--only`/`--model`) + `scripts/setup.mjs` (key wizard).
-9. `app/globals.css`, `tailwind.config.ts`, `tsconfig.json`, `postcss.config.js`, `package.json`, `.env.example`.
-10. A QA checklist with exact commands.
-
-## Anti-patterns — do NOT use Mode B for
+Do NOT use this skill for:
 
 - "Build a basic hero + features + pricing landing page."
 - "Generate a WordPress theme."
-- Ordinary SaaS landing pages, CRUD dashboards, or simple brochure sites — unless the user explicitly asks for a cinematic / editorial treatment.
+- Ordinary SaaS landing pages, CRUD dashboards, or simple brochure sites
+  — unless the user explicitly asks for a cinematic / editorial treatment.
 - "Regenerate all templates from scratch without reading bundled files."
+- "Give me motion ideas only, no code." (The skill must output runnable artifacts.)
