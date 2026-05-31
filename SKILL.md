@@ -119,9 +119,30 @@ Combine with `translateY()` and `opacity` for layered impact.
 
 ### 4. Smooth scrolling — mandatory in production output
 
-Production artifacts MUST wrap the page in Lenis (`lenis` npm package — **not** `@studio-freight/lenis`, which is deprecated and capped at 1.0.42). Native browser scroll is jittery on macOS trackpads and produces visible stepping on scroll-scrubbed animations. Forward Lenis's RAF tick to GSAP ScrollTrigger if both are used.
+Production artifacts MUST wrap the page in smooth scroll. Two valid options:
+- **GSAP ScrollSmoother** (preferred when GSAP is already in the build) — now **free** (see § GSAP below), GSAP-native, no RAF-forwarding glue, and integrates with ScrollTrigger automatically.
+- **Lenis** (`lenis` npm package — **not** `@studio-freight/lenis`, which is deprecated and capped at 1.0.42) — lighter, framework-agnostic. If used alongside GSAP, forward Lenis's RAF tick to `ScrollTrigger.update`.
 
-Single-file HTML demos (sandbox previews) may skip Lenis but MUST use `requestAnimationFrame`-throttled scroll handlers (not raw `scroll` events).
+Native browser scroll is jittery on macOS trackpads and produces visible stepping on scroll-scrubbed animations.
+
+Single-file HTML demos (sandbox previews) skip both and MUST use `requestAnimationFrame`-throttled scroll handlers (not raw `scroll` events) — this keeps them dependency-free and build-free, which is the whole point of the demo tier.
+
+### 4b. GSAP is now free — use the premium plugins in Mode B
+
+As of the **Webflow acquisition (2025), GSAP is 100% free, including every former Club plugin** (SplitText, MorphSVG, DrawSVG, ScrollSmoother, ScrollTrigger, Inertia, etc.) — free for commercial use too. In the **Next.js build (Mode B)**, prefer these GSAP-native plugins over hand-rolled equivalents:
+
+| Want | Use the free plugin | Instead of |
+|---|---|---|
+| Per-word / per-line / per-char title reveals | **SplitText** (`gsap/SplitText`) — accessible, handles reflow | manually wrapping words in `<span>` |
+| Pinned chapters + scroll-scrubbed reveals | **ScrollTrigger** (`gsap/ScrollTrigger`) | custom IntersectionObserver pinning |
+| Smooth scroll | **ScrollSmoother** (`gsap/ScrollSmoother`) | Lenis + RAF forwarding |
+| Shared-element / layout transitions | **Flip** (`gsap/Flip`) | manual FLIP math |
+
+Register once: `gsap.registerPlugin(ScrollTrigger, SplitText, ScrollSmoother)`. In React use `@gsap/react`'s `useGSAP()` hook with a `scope` and let it handle cleanup. `choreo-3d` already orchestrates ScrollTrigger under the hood; when you need a primitive it doesn't expose, drop to these plugins directly rather than re-implementing them.
+
+> **Companion skill:** for low-level GSAP syntax, plugin APIs, and framework-specific patterns, install the official **[`greensock/gsap-skills`](https://github.com/greensock/gsap-skills)** (`npx skills add https://github.com/greensock/gsap-skills`). It teaches the *GSAP API*; this skill teaches the *cinematic aesthetic system* on top. They stack.
+
+The single-file HTML demos remain GSAP-free on purpose (zero-dependency, runs from `file://`). Do **not** add GSAP to them — their motion is hand-rolled rAF by design.
 
 ### 5. Mobile-responsive — mandatory
 
@@ -453,11 +474,13 @@ This skill ships `templates/nextjs/` with tested, production-safe code. You MUST
 
 | Rule | Correct | Wrong (breaks install) |
 |---|---|---|
-| Smooth scroll | `lenis` (^1.3.23) | `@studio-freight/lenis` — **deprecated; max version 1.0.42; ^1.0.45 does not exist** |
+| Smooth scroll | `lenis` (^1.3.23) **or** GSAP `ScrollSmoother` | `@studio-freight/lenis` — **deprecated; max version 1.0.42; ^1.0.45 does not exist** |
 | Motion primitives | `choreo-3d` from npm | Hand-rolled parallax only — **forbidden** |
 | Parallax layers | `ScrollLayer`, `ScrollChoreography`, `ScrollBackgroundMorph` from `choreo-3d` | Custom `ParallaxChapter.tsx` reimplementing the library |
+| GSAP | `gsap` (^3.13) — now fully free incl. all plugins; import `ScrollTrigger`/`SplitText`/`ScrollSmoother` from `gsap/*` | bundling paid-era plugin shims, or the old Club CDN URLs |
+| Title reveals (Mode B) | GSAP `SplitText` | hand-rolling per-char `<span>` splitting in the React build |
 
-**Never remove `choreo-3d` from dependencies.** The page must import motion primitives from it.
+**Never remove `choreo-3d` from dependencies.** The page must import motion primitives from it. GSAP plugins are a *complement* (use them for splits/smooth-scroll), not a replacement for `choreo-3d`'s pinning orchestration.
 
 ### Quality bar — already implemented in templates
 

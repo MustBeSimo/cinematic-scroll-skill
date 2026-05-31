@@ -175,10 +175,12 @@ cinematic-scroll-skill/
 ## Peer dependencies (in the consuming app)
 
 ```bash
-npm install choreo-3d framer-motion gsap lenis @fal-ai/client @fal-ai/server-proxy
+npm install choreo-3d framer-motion gsap @gsap/react lenis @fal-ai/client @fal-ai/server-proxy
 ```
 
 The motion primitives target the [`choreo-3d`](https://www.npmjs.com/package/choreo-3d) package, with a built-in **vanilla fallback** (sticky + IntersectionObserver + rAF) for sandboxes where npm packages can't be installed — identical math, same keyframes.
+
+**On GSAP:** as of the 2025 Webflow acquisition, [GSAP is 100% free](https://gsap.com/) — every former Club plugin included (SplitText, ScrollSmoother, ScrollTrigger, MorphSVG…), commercial use too. The Next.js build (Mode B) uses **ScrollTrigger + SplitText** for pinning and title reveals; the single-file demos stay **dependency-free** (hand-rolled rAF — runs from `file://`, no build, no CDN). For low-level GSAP help, pair this with the official [`greensock/gsap-skills`](https://github.com/greensock/gsap-skills) — that skill teaches the GSAP API; this one teaches the cinematic system on top.
 
 ---
 
