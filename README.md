@@ -2,9 +2,9 @@
 
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.png">
-    <img src="assets/banner-dark.png" alt="Cinematic Scroll — a free Agent Skill for scroll-driven websites. Two finishes: Petroleum Editorial (dark) and Swiss Museum (light)." width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark_v2.png">
+    <source media="(prefers-color-scheme: light)" srcset="assets/banner-light_v2.png">
+    <img src="assets/banner-dark_v2.png" alt="Cinematic Scroll — a free Agent Skill for scroll-driven websites. Two finishes: Petroleum Editorial (dark) and Swiss Museum (light)." width="100%">
   </picture>
 </a>
 
