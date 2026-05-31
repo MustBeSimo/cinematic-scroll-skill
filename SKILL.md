@@ -18,7 +18,13 @@ skill is invoked. It's long and technical by design.
 
 Reusable patterns + production templates for building cinematic, scroll-driven React pages: pinned chapters, multi-depth parallax, 3D mouse tilt, environment-morphing backgrounds, reduced-motion-safe degradation, and (optionally) a full Next.js release site with fal.ai-generated visuals.
 
-The reference direction is Shopify Editions Winter 2026: a release-notes page treated as a visual world. Do not copy Shopify assets, layout, logos, source code, or exact composition. Borrow the product pattern only: dramatic chaptered scrolling, classical or editorial imagery, modern UI artifacts, large type, persistent navigation, indexed structure, and a product-update taxonomy.
+## The aesthetic is the user's — the motion is yours
+
+**This skill supplies the *motion grammar*, never a fixed look.** The pinned chapters, parallax, tilt, title choreography, and morphing backgrounds are the constant; the visual world — palette, typography, imagery, mood — comes entirely from the user's brief. Before building, derive the aesthetic from what they ask for (their brand, references, palette, or vibe). If they haven't said, **ask** or offer 2–3 distinct directions — do not default to any one style.
+
+The same machinery must be able to produce, for example: a **brutalist** black-on-white editorial drop, a **quiet-luxury** earth-toned launch, a **Gen-Z neon** product page, a **sci-fi noir** game reveal, an **organic wellness** story, a **retro analogue** archive, a **minimal Linear/Swiss** release, or a **Renaissance** editorial. None of these is "the" style. The worked example in `examples/renaissance/` is *one* such world built end-to-end — treat it as a reference for the motion and structure, **not** as the aesthetic to reproduce.
+
+The reference direction for the *interaction pattern* (not the look) is Shopify Editions Winter 2026: a release-notes page treated as a visual world. Do not copy Shopify assets, layout, logos, source code, or exact composition. Borrow the product pattern only: dramatic chaptered scrolling, layered imagery, modern UI artifacts, large type, persistent navigation, indexed structure, and a product-update taxonomy — then dress it in the user's chosen aesthetic.
 
 ---
 
