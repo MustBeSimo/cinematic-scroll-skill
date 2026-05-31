@@ -234,20 +234,25 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
   const sections = [...document.querySelectorAll('section')];
   const rails = [...rail.querySelectorAll('.r')];
 
-  /* background morph + active rail via the centered chapter */
+  /* background morph + active rail via whichever section crosses screen-center.
+     NOTE: sections are 235vh — taller than the viewport — so a threshold-based
+     observer (which needs N% of the element visible) can NEVER fire. Instead we
+     collapse the observer root to a 1px band at the vertical center via
+     rootMargin: the section whose body straddles the middle of the screen is the
+     active one. Reliable regardless of section height. */
+  function applyActive(sec){
+    const idx = sections.indexOf(sec);
+    document.body.style.background = sec.dataset.morph;
+    const dark = sec.dataset.dark==='1';
+    document.body.style.setProperty('--fg', dark ? '#FFFFFF':'#111113');
+    document.body.style.setProperty('--fg-muted', dark ? '#9A9AA0':'#6B6B70');
+    rails.forEach((r,i)=> r.classList.toggle('on', i===idx));
+  }
   const spy = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if (e.isIntersecting){
-        const idx = sections.indexOf(e.target);
-        document.body.style.background = e.target.dataset.morph;
-        const dark = e.target.dataset.dark==='1';
-        document.body.style.setProperty('--fg', dark ? '#FFFFFF':'#111113');
-        document.body.style.setProperty('--fg-muted', dark ? '#9A9AA0':'#6B6B70');
-        rails.forEach((r,i)=> r.classList.toggle('on', i===idx));
-      }
-    });
-  },{ threshold:.5 });
+    entries.forEach(e=>{ if (e.isIntersecting) applyActive(e.target); });
+  },{ rootMargin: '-50% 0px -50% 0px', threshold: 0 });
   sections.forEach(s=>spy.observe(s));
+  applyActive(sections[0]); // paint initial state immediately
 
   /* mobile / reduced-motion: fade-up only */
   if (reduce || isMobile()){
