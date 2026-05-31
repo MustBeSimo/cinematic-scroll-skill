@@ -8,9 +8,9 @@
 <meta name="theme-color" content="#101417" />
 <meta property="og:title" content="Cinematic Scroll" />
 <meta property="og:description" content="Cinematic scroll-driven storytelling. Free & MIT. GSAP ScrollTrigger + SplitText in the Next.js build; a dependency-free engine in the single-file demos." />
-<meta property="og:image" content="./assets/04-scifi-noir.jpg" />
+<meta property="og:image" content="./assets/04_v2.png" />
 <meta property="og:type" content="website" />
-<link rel="preload" as="image" href="./assets/04-scifi-noir.jpg" />
+<link rel="preload" as="image" href="./assets/04_v2.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -254,8 +254,8 @@
     </div>
     <div class="fig" id="heroFig">
       <div class="pic">
-        <img class="dk" src="./assets/04-scifi-noir.jpg" alt="Petroleum-toned cinematic hero" loading="eager" />
-        <img class="lt" src="./assets/02-quiet-luxury.jpg" alt="Swiss-museum light hero" loading="eager" />
+        <img class="dk" src="./assets/04_v2.png" alt="Petroleum-toned cinematic hero" loading="eager" />
+        <img class="lt" src="./assets/02_v2.png" alt="Swiss-museum light hero" loading="eager" />
       </div>
       <div class="veil"></div>
       <div class="cue">Scroll to explore<span class="v"></span></div>
@@ -376,15 +376,15 @@ document.getElementById('features').innerHTML=FEATS.map(([t,svg])=>
 
 /* ── GALLERY (editorial numbered cards) ── */
 const CARDS=[
-  {n:'01',t:'The journey begins',d:'Pinned hero chapters that compose as you enter — never a blank frame.',img:'04-scifi-noir',cls:'full'},
-  {n:'02',t:'Built for performance',d:'Compositor-only paths, 60fps on M1 + iPhone 13. Reduced-motion safe.',img:'06-retro-archive',cls:'accent'},
-  {n:'03',t:'Smooth by design',d:'Lenis smooth scroll for a natural, elevated, film-like cadence.',img:'05-organic-wellness',cls:'split'},
-  {n:'04',t:'Pixel-perfect details',d:'Multi-depth parallax, 3D tilt, mask + stagger title reveals.',img:'01-brutalist-editorial',cls:'split'},
-  {n:'05',t:'Ready for production',d:'Tested Next.js templates, a fal.ai asset pipeline, and a build-free vanilla fallback.',img:'03-genz-pop',cls:'full wide'},
+  {n:'01',t:'The journey begins',d:'Pinned hero chapters that compose as you enter — never a blank frame.',img:'04_v2',cls:'full'},
+  {n:'02',t:'Built for performance',d:'Compositor-only paths, 60fps on M1 + iPhone 13. Reduced-motion safe.',img:'06_v2',cls:'accent'},
+  {n:'03',t:'Smooth by design',d:'Lenis smooth scroll for a natural, elevated, film-like cadence.',img:'05_v2',cls:'split'},
+  {n:'04',t:'Pixel-perfect details',d:'Multi-depth parallax, 3D tilt, mask + stagger title reveals.',img:'01_v2',cls:'split'},
+  {n:'05',t:'Ready for production',d:'Tested Next.js templates, a fal.ai asset pipeline, and a build-free vanilla fallback.',img:'03_v2',cls:'full wide'},
 ];
 document.getElementById('galleryGrid').innerHTML=CARDS.map(c=>`
   <article class="gcard ${c.cls} reveal">
-    <div class="img"><div class="pic"><img src="./assets/${c.img}.jpg" alt="${c.t}" loading="lazy" decoding="async"></div></div>
+    <div class="img"><div class="pic"><img src="./assets/${c.img}.png" alt="${c.t}" loading="lazy" decoding="async"></div></div>
     <div class="scrim"></div>
     <div class="body"><div class="num">${c.n}</div><h3>${c.t}</h3><p>${c.d}</p><div class="barline"></div></div>
   </article>`).join('');

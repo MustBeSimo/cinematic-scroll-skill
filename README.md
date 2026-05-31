@@ -31,14 +31,14 @@ The cinematic motion stays constant; the visual world is whatever you describe. 
 
 <table>
   <tr>
-    <td width="33%"><img src="assets/01-brutalist-editorial.jpg" alt="Brutalist editorial — black-on-white silhouette double-spread"><br><sub><b>Brutalist editorial</b> — stark monochrome, raw grid</sub></td>
-    <td width="33%"><img src="assets/02-quiet-luxury.jpg" alt="Quiet luxury — leather still-life in warm light"><br><sub><b>Quiet luxury</b> — earth palette, negative space</sub></td>
-    <td width="33%"><img src="assets/03-genz-pop.jpg" alt="Gen-Z pop — translucent device on neon gradient"><br><sub><b>Gen-Z pop</b> — neon gradients, floating UI</sub></td>
+    <td width="33%"><img src="assets/01_v2.png" alt="Brutalist editorial — black-on-white silhouette double-spread"><br><sub><b>Brutalist editorial</b> — stark monochrome, raw grid</sub></td>
+    <td width="33%"><img src="assets/02_v2.png" alt="Quiet luxury — leather still-life in warm light"><br><sub><b>Quiet luxury</b> — earth palette, negative space</sub></td>
+    <td width="33%"><img src="assets/03_v2.png" alt="Gen-Z pop — translucent device on neon gradient"><br><sub><b>Gen-Z pop</b> — neon gradients, floating UI</sub></td>
   </tr>
   <tr>
-    <td width="33%"><img src="assets/04-scifi-noir.jpg" alt="Sci-fi noir — chrome figure in a rain-lit city"><br><sub><b>Sci-fi noir</b> — teal + crimson, grain, edge light</sub></td>
-    <td width="33%"><img src="assets/05-organic-wellness.jpg" alt="Organic wellness — botanical vessel with watercolour washes"><br><sub><b>Organic wellness</b> — blush, sage, painterly</sub></td>
-    <td width="33%"><img src="assets/06-retro-archive.jpg" alt="Retro archive — vintage VU-meter audio machine"><br><sub><b>Retro archive</b> — amber, analogue, scan-lines</sub></td>
+    <td width="33%"><img src="assets/04_v2.png" alt="Sci-fi noir — chrome figure in a rain-lit city"><br><sub><b>Sci-fi noir</b> — teal + crimson, grain, edge light</sub></td>
+    <td width="33%"><img src="assets/05_v2.png" alt="Organic wellness — botanical vessel with watercolour washes"><br><sub><b>Organic wellness</b> — blush, sage, painterly</sub></td>
+    <td width="33%"><img src="assets/06_v2.png" alt="Retro archive — vintage VU-meter audio machine"><br><sub><b>Retro archive</b> — amber, analogue, scan-lines</sub></td>
   </tr>
 </table>
 
