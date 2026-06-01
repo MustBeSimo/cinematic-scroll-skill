@@ -106,8 +106,8 @@ the visual system, and establish the motion personality.
 
 2. Select a **visual system** from `references/film-archetypes.md`.
    Read the archetypes file (Section 1-7) and match the brief to ONE primary
-director. Document the choice in the audit with rationale. Never mix more
-than 2 directors; if hybridity is needed, choose one primary and one accent.
+   visual system. Document the choice in the audit with rationale. Never mix more
+   than 2 visual systems; if hybridity is needed, choose one primary and one accent.
 
 3. Define the **emotional arc** across the full scroll journey:
    - Opening emotion (what the user feels at scroll position 0)
@@ -121,7 +121,7 @@ than 2 directors; if hybridity is needed, choose one primary and one accent.
    - Audience analysis (device split, technical sophistication, attention span)
    - Device context (primary viewport, performance tier expectation)
    - Accessibility requirements (reduced-motion needs, WCAG target)
-   - Director grammar selection (primary + optional accent, with rationale)
+   - Visual system selection (primary + optional accent, with rationale)
    - Color temperature progression across chapters (warm → cool → neutral)
    - Typography strategy (display font + body font, from archetype)
 

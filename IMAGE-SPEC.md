@@ -84,10 +84,7 @@ Shared prefix: `UI screenshot of a cinematic scroll-driven website, full desktop
 | `05_v2.png` | Organic wellness — blush + sage, painterly watercolour washes, soft botanical texture, gentle serif, airy |
 | `06_v2.png` | Retro archive — amber monochrome, analogue scan-lines, vintage terminal/print grid, mono type, paper grain |
 
-**Also fix (no generation needed):** the grid image `alt` text in `README.md` still
-describes the old objects ("leather still-life…"). Rewrite each to describe the website
-interface it now shows, and label the grid as **"Style direction"**, not **"Output"** —
-the honest distinction the reviewer asked for.
+**Status (implemented):** Grid image `alt` text in `README.md` has been updated to describe website interface layouts, and the grid is now labeled as **"Aesthetic directions"** rather than "Output". This distinction keeps the concept stills separate from the five live scrollable examples, maintaining honesty about what's proof vs. inspiration.
 
 ---
 
