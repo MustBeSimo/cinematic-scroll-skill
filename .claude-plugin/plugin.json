@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "cinematic-scroll",
+  "description": "Build cinematic, scroll-driven websites — pinned chapter reveals, multi-depth parallax, 3D tilt, environment-morphing backgrounds, and full release/launch pages. The motion grammar is the skill; the aesthetic is always the user's. Single self-contained scroll sections (Mode A) or a full Next.js release site with GSAP/Lenis + AI-generated visuals (Mode B), via a 5-phase gated pipeline with taste guardrails, 12 scroll patterns, and a transform/opacity performance budget.",
+  "version": "2.0.0",
+  "author": {
+    "name": "Simone Leonelli",
+    "email": "simone@w230.net"
+  },
+  "homepage": "https://mustbesimo.github.io/cinematic-scroll-skill/",
+  "repository": "https://github.com/MustBeSimo/cinematic-scroll-skill",
+  "license": "MIT",
+  "keywords": [
+    "scroll",
+    "animation",
+    "gsap",
+    "parallax",
+    "3d-tilt",
+    "cinematic",
+    "nextjs",
+    "react",
+    "lenis",
+    "landing-page",
+    "release-page"
+  ]
+}

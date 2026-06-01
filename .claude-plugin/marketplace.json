@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "mustbesimo",
+  "description": "Agent Skills by Simone Leonelli (W230).",
+  "owner": {
+    "name": "Simone Leonelli",
+    "email": "simone@w230.net"
+  },
+  "plugins": [
+    {
+      "name": "cinematic-scroll",
+      "source": "./",
+      "description": "Build cinematic, scroll-driven websites — pinned chapters, multi-depth parallax, 3D tilt, environment-morphing backgrounds, and full release pages. Five live worlds prove the range; the motion is the constant, the look is yours."
+    }
+  ]
+}
