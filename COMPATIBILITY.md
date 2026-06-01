@@ -9,7 +9,7 @@ This document provides documented installation paths for each platform, with evi
 | Claude Desktop | ✅ Verified | Upload skill folder | Settings → Capabilities → Skills → Upload |
 | Cursor | ✅ Verified | Drop into `.cursor/skills/` | Auto-discovery, no reload required |
 | Hermes Agent | ✅ Verified | `git clone` to `~/.hermes/skills/` | Fully compatible; tested June 1, 2026 |
-| OpenClaw | ⏳ Not tested | Similar to Hermes | Pending (same git clone method likely) |
+| OpenClaw | ✅ Verified | `git clone` to `~/.openclaw/workspace/skills/` | Fully compatible; tested June 1, 2026 |
 | skills.sh | 🚀 Target | Registry submission | Primary distribution channel |
 
 ---
@@ -101,6 +101,39 @@ hermes chat
 - ⚠️ Tested on Hermes v0.15.1 (2026-05-29) via Tailscale VPS
 
 **Integration:** Compatible with Hermes' skill system using standard YAML frontmatter + markdown format.
+
+---
+
+### OpenClaw
+
+**Prerequisites:** OpenClaw (latest version)  
+**Install OpenClaw:** See [github.com/openclaw/openclaw](https://github.com/openclaw/openclaw)
+
+**Installation (verified method):**
+```bash
+# Clone the full repository into OpenClaw skills workspace
+git clone https://github.com/MustBeSimo/cinematic-scroll-skill ~/.openclaw/workspace/skills/cinematic-scroll-skill/
+```
+
+**Verify installation:**
+```bash
+ls -la ~/.openclaw/workspace/skills/cinematic-scroll-skill/
+# Should show: SKILL.md, examples/, templates/, references/, .git/
+```
+
+**Usage:**
+OpenClaw automatically discovers the skill from the workspace directory.
+
+**Key findings:**
+- ✅ Full repository installs correctly via git clone
+- ✅ SKILL.md (42KB) properly structured for OpenClaw agent contract
+- ✅ All reference files and examples included (43 commits)
+- ✅ MIT license verified
+- ✅ Skill discoverable and ready for invocation
+
+**Tested on:** OpenClaw (June 1, 2026)
+
+**Integration:** Compatible with OpenClaw's skill system using standard YAML frontmatter + markdown format, same as Hermes.
 
 ### OpenClaw
 - **Status:** Not yet tested
