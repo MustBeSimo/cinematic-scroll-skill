@@ -6,9 +6,9 @@ This document provides tested installation methods for each supported platform.
 
 | Platform | Status | Install Method | Notes |
 |----------|--------|-----------------|-------|
-| Claude Desktop | ✅ Verified | Upload skill folder | Settings → Capabilities → Skills → Upload |
-| Cursor | ✅ Verified | Drop into `.cursor/skills/` | Auto-discovery, no reload required |
-| Hermes Agent | ✅ Verified | `hermes skills install <URL>` | Tested with Hermes 0.8+ |
+| Claude Desktop | 📋 Documented | Upload skill folder | Settings → Capabilities → Skills → Upload |
+| Cursor | 📋 Documented | Drop into `.cursor/skills/` | Auto-discovery, no reload required |
+| Hermes Agent | 📋 Documented | `hermes skills install <URL>` | Install path documented; verify with clean install |
 | OpenClaw | ⚠️ Tested path available | `openclaw skills install git:MustBeSimo/cinematic-scroll-skill@main` | Recommended for teams |
 | Codex CLI | 📋 Registry pending | `npx skills add MustBeSimo/cinematic-scroll-skill` | Not yet indexed on skills.sh |
 
@@ -86,7 +86,7 @@ Cursor will auto-discover the skill and activate it.
 ```
 Name: cinematic-scroll
 Version: 2.0.0
-Status: Ready
+Status: Install path provided; verify locally
 Compatibility: ✓ Hermes 0.8+
 ```
 
@@ -111,7 +111,7 @@ You should get back a full site scaffold with Mode A (vanilla HTML) and optional
    ```
 2. Verify installation:
    ```bash
-   openclaw skills verify cinematic-scroll
+   openclaw skills install git:MustBeSimo/cinematic-scroll-skill@main
    ```
 
 **Expected output:**
@@ -120,7 +120,7 @@ Skill: cinematic-scroll
 Manifest: ✓
 Contract: ✓ SKILL.md valid
 Live examples: ✓ 5 examples present
-Status: Ready
+Status: Install path provided; verify locally
 ```
 
 **Verification:**
