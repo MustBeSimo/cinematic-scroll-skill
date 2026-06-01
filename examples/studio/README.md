@@ -9,6 +9,25 @@ ianaldous.com.
 
 Single self-contained `index.html` — no build step, GitHub-Pages-native.
 
+## Effects
+
+The hand-rolled rAF engine drives the chapter scroll (CSS-sticky pins, giant
+per-word type reveals, figure parallax, grey→white→ink background morph). On
+top of that, **GSAP ScrollTrigger** now powers ONE dedicated showcase beat —
+the **"Selected Work" contact sheet** (`#selected`, inserted after *The Work*):
+
+- **Montage snap** (taste-guardrails §2 *Montage* / scroll-patterns *Landing
+  Sequence*) — the only GSAP-pinned section. A brutalist row of work-cards is
+  advanced by `transform: translateX` on the scrubbed pin timeline and **snaps
+  card→card** (`snapTo: 1/(n-1)`).
+- **Velocity-reactive typography** (scroll-patterns #3) — the section's large
+  display heading **compresses** (`letter-spacing` + `scaleY`) on fast scroll,
+  driven by a lerped velocity tracker via `gsap.quickTo`.
+
+Everything degrades gracefully: with GSAP absent, reduced-motion, or on mobile,
+the contact sheet renders as a static wrapped/stacked grid — no pin, no snap, no
+velocity — and the rest of the page runs on the rAF engine alone.
+
 ## Run it
 
 ```bash

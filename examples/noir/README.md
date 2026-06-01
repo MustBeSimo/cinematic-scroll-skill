@@ -8,13 +8,21 @@ land via a **vertical clip-path mask wipe** (not a cross-fade), under an oversiz
 **Roman-numeral watermark** ghost layer. Fictional studio (**VANTASCOPE**) and a
 fictional title (**HOLLOW STAR**) — no real titles, people, or brands.
 
+Between the hero and the descent sits **"The Approach"** — a dedicated GSAP
+ScrollTrigger beat showcasing a **dolly-zoom** (Vertigo — the backdrop pushes in
+while the caption holds) and a **scrubbed signal draw** (a crimson waveform that
+draws across the frame via `stroke-dashoffset` as you scroll).
+
 Director grammar: **Denis Villeneuve** (vast negative space, atmospheric haze, slow
 revelation) with **Nolan-grade chiaroscuro** contrast.
 
-Single self-contained `index.html` — no build step, no npm, no external JS.
-Only external resource: Google Fonts. GitHub-Pages-native.
+Single self-contained `index.html` — no build step, no npm. The hand-rolled rAF
+cinematic engine has **zero JS dependencies**; the one "Approach" beat additionally
+loads **GSAP + ScrollTrigger** from a CDN (deferred, feature-detected — if it fails to
+load, that beat simply stays at its complete static state and everything else runs).
+Only other external resource: Google Fonts. GitHub-Pages-native.
 
-- **4 chapters** (Signal · Descent · Witness · Offer)
+- **4 chapters** (Signal · Descent · Witness · Offer) + a **GSAP "Approach" showcase beat**
 - **Palette:** near-black `#0A0C0F`, deep teal `#0B1A1F`/`#14343C`/`#1E5460`,
   crimson accent `#E23A4E`, off-white type `#E9ECEE`
 - **Type:** Oswald (condensed film-poster display), Archivo (UI), JetBrains Mono (labels)
