@@ -1,6 +1,6 @@
 {
   "name": "cinematic-scroll",
-  "version": "2.0.0",
+  "version": "0.1.2",
   "description": "Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, release/launch pages, and editorial microsites. Single self-contained scroll sections (Mode A) or full Shopify-Editions-style Next.js release pages with AI-generated visuals (Mode B). A cinematic web production studio in an Agent Skill: an optional 5-phase pipeline (Cinematic Audit → Motion Storyboard → Technical Spec → Build → Polish) with taste guardrails, 12 scroll patterns, 7 visual systems, a scroll-choreography.json schema, and a 4-dimension audit mode. Built with React, Next.js, GSAP, Lenis, fal.ai.",
   "author": {
     "name": "Simone Leonelli",
@@ -10,8 +10,8 @@
   "licenseFile": "LICENSE",
   "price": 0,
   "currency": "USD",
-  "maintained": false,
-  "maintenanceNote": "Provided as-is. Not actively maintained — issues and PRs welcome but may not get a timely response.",
+  "maintained": true,
+  "maintenanceNote": "Open-source, actively developed. Community contributions and feedback welcome.",
   "category": "frontend",
   "tags": [
     "react",
@@ -37,7 +37,7 @@
   "entry": "SKILL.md",
   "templates": "templates/nextjs/",
   "repository": "https://github.com/MustBeSimo/cinematic-scroll-skill",
-  "homepage": "https://w230.net",
+  "homepage": "https://mustbesimo.github.io/cinematic-scroll-skill/",
   "requires": {
     "npmPackages": [
       "choreo-3d",
