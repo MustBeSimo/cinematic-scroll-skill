@@ -109,9 +109,13 @@ hermes chat
 **Prerequisites:** OpenClaw (latest version)  
 **Install OpenClaw:** See [github.com/openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-**Installation (verified method):**
+**Installation (official Git method):**
 ```bash
-# Clone the full repository into OpenClaw skills workspace
+openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v0.1.2
+```
+
+**Or manual clone:**
+```bash
 git clone https://github.com/MustBeSimo/cinematic-scroll-skill ~/.openclaw/workspace/skills/cinematic-scroll-skill/
 ```
 
@@ -134,11 +138,6 @@ OpenClaw automatically discovers the skill from the workspace directory.
 **Tested on:** OpenClaw (June 1, 2026)
 
 **Integration:** Compatible with OpenClaw's skill system using standard YAML frontmatter + markdown format, same as Hermes.
-
-### OpenClaw
-- **Status:** Not yet tested
-- **Architecture:** Similar to Hermes; likely same multi-file requirement
-- **Next step:** Testing deferred until distribution focus complete
 
 ---
 

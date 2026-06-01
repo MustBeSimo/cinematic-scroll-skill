@@ -170,6 +170,7 @@ Full walkthrough: [`examples/GETTING_STARTED.md`](./examples/GETTING_STARTED.md)
 cinematic-scroll-skill/
 ├── SKILL.md                  # the agent contract (Mode A + Mode B). For Claude, not humans.
 ├── README.md                 # you are here
+├── COMPATIBILITY.md          # platform installation & verification (Claude, Cursor, Hermes, OpenClaw)
 ├── LICENSE                   # MIT
 ├── manifest.json             # skill metadata (free)
 ├── MODELS.md                 # fal.ai model menu, costs, when-to-use
