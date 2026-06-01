@@ -69,34 +69,34 @@ Cursor will auto-discover the skill and activate it.
 
 ### Hermes Agent
 
+**Status:** ⚠️ **Not yet fully compatible** — raw SKILL.md installation incomplete  
 **Prerequisites:** Hermes Agent CLI (v0.15.1+)  
 **Install Hermes:** See [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com)
 
-**Steps:**
-1. In your terminal, run:
-   ```bash
-   hermes skills install https://raw.githubusercontent.com/MustBeSimo/cinematic-scroll-skill/main/SKILL.md
-   ```
-   When prompted for a category, select `web-development` (default).
+**Current limitation:**
+Hermes requires the full skill directory structure (manifest.json, references/, examples/) for proper skill discovery. Installing via raw SKILL.md URL creates a partial installation that is not discoverable by `hermes chat -t`.
 
-2. Verify installation:
-   ```bash
-   hermes skills list | grep cinematic
-   ```
-
-**Expected output:**
-```
-cinematic-scroll    web-development    local    local    enabled
-```
-
-**Verification:**
+**Workaround (manual install):**
 ```bash
-hermes chat -t web-development/cinematic-scroll "Build a sci-fi noir scroll site. Studio VANTASCOPE. Teal + crimson. 4 chapters."
+# Clone the repository
+git clone https://github.com/MustBeSimo/cinematic-scroll-skill ~/.hermes/skills/web-development/cinematic-scroll
+
+# Verify installation
+hermes skills list | grep cinematic
 ```
 
-You should get back a full site scaffold with Mode A (vanilla HTML) and optional Mode B (Next.js).
+**What we tested:**
+- ✅ Raw URL installation accepted by Hermes v0.15.1
+- ✅ Security scan passed (SAFE verdict)
+- ⚠️ Skill not discoverable in `hermes chat` after installation
+- ❌ Unable to invoke via `-t web-development/cinematic-scroll` flag
 
-**Tested on:** Hermes Agent v0.15.1 (2026-05-29) on macOS via Tailscale VPS. Security scan: SAFE.
+**Next steps:**
+- Test full repository clone as workaround
+- Check with Hermes maintainers whether multi-file skill installation from GitHub is supported
+- Consider packaging as `.tar.gz` or registering with Hermes skill hub
+
+**Tested on:** Hermes Agent v0.15.1 (2026-05-29) on macOS via Tailscale VPS.
 
 ---
 
