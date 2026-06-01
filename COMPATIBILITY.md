@@ -69,33 +69,34 @@ Cursor will auto-discover the skill and activate it.
 
 ### Hermes Agent
 
-**Prerequisites:** Hermes Agent CLI (v0.8+)  
+**Prerequisites:** Hermes Agent CLI (v0.15.1+)  
 **Install Hermes:** See [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com)
 
 **Steps:**
 1. In your terminal, run:
    ```bash
-   hermes skills install https://github.com/MustBeSimo/cinematic-scroll-skill
+   hermes skills install https://raw.githubusercontent.com/MustBeSimo/cinematic-scroll-skill/main/SKILL.md
    ```
+   When prompted for a category, select `web-development` (default).
+
 2. Verify installation:
    ```bash
-   hermes skills inspect cinematic-scroll
+   hermes skills list | grep cinematic
    ```
 
 **Expected output:**
 ```
-Name: cinematic-scroll
-Version: 2.0.0
-Status: Install path provided; verify locally
-Compatibility: ✓ Hermes 0.8+
+cinematic-scroll    web-development    local    local    enabled
 ```
 
 **Verification:**
 ```bash
-hermes ask "Build a sci-fi noir scroll site. Studio VANTASCOPE. Teal + crimson. 4 chapters."
+hermes chat -t web-development/cinematic-scroll "Build a sci-fi noir scroll site. Studio VANTASCOPE. Teal + crimson. 4 chapters."
 ```
 
 You should get back a full site scaffold with Mode A (vanilla HTML) and optional Mode B (Next.js).
+
+**Tested on:** Hermes Agent v0.15.1 (2026-05-29) on macOS via Tailscale VPS. Security scan: SAFE.
 
 ---
 
