@@ -38,19 +38,40 @@ Pick how you want to build:
 
 ## Install
 
-### Via skills.sh (Recommended)
+Pick whichever channel fits your client. All four install the same skill.
+
+### Claude Code — plugin marketplace (recommended for Claude Code)
 ```bash
-npx skills add MustBeSimo/cinematic-scroll-skill
+/plugin marketplace add MustBeSimo/cinematic-scroll-skill
+/plugin install cinematic-scroll@mustbesimo
+```
+Installs as a namespaced plugin and stays updatable with `/plugin marketplace update mustbesimo`.
+
+### Any client — npx installer
+```bash
+npx cinematic-scroll-skill          # copies the skill into ~/.claude/skills/cinematic-scroll
+npx cinematic-scroll-skill --dir .cursor/skills   # or a custom skills directory
 ```
 
-### Platform-Specific
-Installation varies by platform. See [`COMPATIBILITY.md`](./COMPATIBILITY.md) for detailed step-by-step instructions:
-- **Claude Desktop** — Settings → Capabilities → Skills → Upload
-- **Cursor** — Drop into `.cursor/skills/`
-- **Hermes Agent** — `git clone` to `~/.hermes/skills/`
-- **OpenClaw** — `openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v0.1.2`
+### Any client — git clone
+```bash
+git clone https://github.com/MustBeSimo/cinematic-scroll-skill ~/.claude/skills/cinematic-scroll
+```
 
-### Quick Start
+### Registries
+```bash
+npx skills add MustBeSimo/cinematic-scroll-skill   # skills.sh
+```
+Also listed on **[agentskills.io](https://agentskills.io)** (search "cinematic-scroll").
+
+### Platform-specific
+Paths vary by client — see [`COMPATIBILITY.md`](./COMPATIBILITY.md) for step-by-step instructions:
+- **Claude Desktop** — Settings → Capabilities → Skills → Upload
+- **Cursor** — drop into `.cursor/skills/` (or `npx cinematic-scroll-skill --dir .cursor/skills`)
+- **Hermes Agent** — `git clone` to `~/.hermes/skills/`
+- **OpenClaw** — `openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v2.0.0`
+
+### Quick start
 After installing, describe what you want to build in chat — see [`examples/PROMPTS.md`](./examples/PROMPTS.md) for 20+ copy-paste examples across aesthetic worlds.
 
 ---

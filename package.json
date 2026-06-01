@@ -1,0 +1,56 @@
+{
+  "name": "cinematic-scroll-skill",
+  "version": "2.0.0",
+  "description": "Installer for the cinematic-scroll Agent Skill — copies the skill into ~/.claude/skills/ (Claude Code, Cursor, etc.). The skill builds cinematic, scroll-driven websites: pinned chapters, parallax, 3D tilt, environment-morphing backgrounds, and full release pages.",
+  "type": "module",
+  "bin": {
+    "cinematic-scroll-skill": "bin/install.mjs"
+  },
+  "files": [
+    "bin/",
+    "SKILL.md",
+    "manifest.json",
+    "manifest.md",
+    "taste-guardrails.md",
+    "audit-mode.md",
+    "troubleshooting.md",
+    "decision-log.md",
+    "scroll-choreography.json",
+    "scroll-choreography-compilation.md",
+    "compile-choreography.mjs",
+    "MODELS.md",
+    "COMPATIBILITY.md",
+    "references/",
+    "templates/",
+    "examples/*.md",
+    "examples/*/index.html",
+    "examples/*/README.md",
+    "examples/*/*.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "prepack": "rm -rf templates/nextjs/node_modules"
+  },
+  "keywords": [
+    "claude",
+    "agent-skill",
+    "cursor",
+    "scroll",
+    "animation",
+    "gsap",
+    "parallax",
+    "cinematic",
+    "nextjs"
+  ],
+  "homepage": "https://mustbesimo.github.io/cinematic-scroll-skill/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MustBeSimo/cinematic-scroll-skill.git"
+  },
+  "author": "Simone Leonelli <simone@w230.net>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}
