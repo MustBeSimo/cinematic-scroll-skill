@@ -16,28 +16,35 @@
 
 <sub>↑ The <b>motion</b> is the skill — pinned chapters, multi-depth parallax, mask/stagger title reveals, a tracking index rail. The <b>look</b> is whatever you ask for. This clip happens to be a Renaissance editorial; the same grammar drives a brutalist drop, a neon Gen-Z launch, a noir game page, or your brand. <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">Scroll it live →</a></sub>
 
-**A free, open-source Agent Skill (Claude · Cursor · Hermes · OpenClaw) for building cinematic, scroll-driven websites in any visual style.** You describe the aesthetic — palette, mood, references — and get pinned chapters, multi-depth parallax, 3D tilt, environment-morphing backgrounds, and full Shopify-Editions-style release pages, art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
+**A free, open-source Agent Skill (Claude · Cursor · Hermes · OpenClaw) for building cinematic, scroll-driven websites in any visual style.** Describe the aesthetic — palette, mood, references — and get pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
 
-> **License:** MIT — free for any use, personal or commercial.
-> **Status:** Provided as-is. Developed from applied experiments and working demos, then released as an open-source skill. Not actively maintained — issues and PRs are welcome but may sit. No warranty, no support SLA.
+> **License:** MIT — free for any use, personal or commercial.  
+> **Status:** Developed from working demos and production-informed patterns, then released as open source. Provided as-is; no active maintenance commitment. Issues and PRs welcome.
 
 Built by [Simone Leonelli](https://w230.net) · [simone@w230.net](mailto:simone@w230.net)
 
 ---
 
-## What it makes
+## Get started — two paths
 
-This one skill works at two altitudes. Ask for a section, get a section. Ask for a site, get a site.
+Pick how you want to build:
 
-### Mode A — a scroll artifact
-A single self-contained HTML (or `.tsx`) scroll section you can preview instantly — no build, no keys. Pinned chapters, 5–7 depth layers, scroll-driven 3D camera, mask/stagger title reveals, reduced-motion-safe.
+**Mode A: Single scroll section** — one runnable `.html` file, no build step, no keys. Perfect for a hero chapter or one-off section.  
+**Mode B: Full release site** — complete Next.js project, tested templates, optional AI image generation pipeline. Best for product launches and multi-chapter stories.
 
-> *"Build a pinned hero chapter for a luxury brand: muted palette, 220vh pin, title reveals via letter-spacing scrub, background drifts 3% over the full pin."*
+---
 
-### Mode B — a full release website
-A complete Next.js App Router project scaffolded from tested templates: chaptered scroll choreography, a manifest-driven page, and an optional [fal.ai](https://fal.ai) pipeline that generates art-directed chapter imagery. Looks stunning on first paint with **zero** AI setup (CSS-only chapter visuals), then upgrades to real generated art when you add a key.
+## Install
 
-> *"Build a Shopify-Editions-tier release page for my product. Demo mode first — no key required. 8 chapters."*
+**Claude (Desktop / claude.ai):** Settings → Capabilities → Skills → **Upload skill** → drag the zipped folder.
+
+**Cursor:** drop this folder into `.cursor/skills/` in any project; Cursor auto-discovers it.
+
+**Hermes:** `hermes skills install` + add this repo URL (or unzip into `~/.hermes/skills/`).
+
+**OpenClaw:** Add `cinematic-scroll` to your OpenClaw skill registry — see [openclaw/openclaw](https://github.com/openclaw/openclaw) or drop the folder into your OpenClaw skills directory.
+
+Then describe what you want to build in chat — see [`examples/PROMPTS.md`](./examples/PROMPTS.md) for 20+ copy-paste examples across aesthetic worlds.
 
 ---
 
@@ -128,22 +135,8 @@ python3 -m http.server 8099   # then open /examples/renaissance/ · /studio/ · 
 | **Cinematic depth** | 5–7 parallax layers per chapter, perspective camera, dolly-back transitions |
 | **Editorial type** | Oversized titles with word-stagger / clip-path mask / letter-spacing-scrub reveals |
 | **Atmosphere morphs** | Backgrounds crossfade between chapter color-worlds as you scroll |
-| **AI art direction** | fal.ai-generated heroes (FLUX.2, Nano Banana, Imagen) — or bring your own images |
-| **Bulletproof basics** | Reduced-motion fallback, iOS video safety, mobile-stacked layout, transform/opacity-only hot paths designed for smooth scrolling; benchmark on target devices before production deployment. |
-
----
-
-## Install
-
-**Claude (Desktop / claude.ai):** Settings → Capabilities → Skills → **Upload skill** → drag the zipped folder.
-
-**Cursor:** drop this folder into `.cursor/skills/` in any project; Cursor auto-discovers it.
-
-**Hermes:** `hermes skill add https://github.com/MustBeSimo/cinematic-scroll-skill` (or unzip into `~/.hermes/skills/`).
-
-**OpenClaw:** Add `cinematic-scroll` to your OpenClaw skill registry — see [openclaw/openclaw](https://github.com/openclaw/openclaw) or drop the folder into your OpenClaw skills directory.
-
-Then trigger it in chat — see [`examples/PROMPTS.md`](./examples/PROMPTS.md) for 20+ copy-paste prompts across aesthetic worlds (brutalist editorial, quiet luxury, Gen-Z pop, Linear-minimal, sci-fi noir, organic wellness, typographic maximalism, retro).
+| **Image pipeline** | Optional: fal.ai-generated heroes (FLUX.2, Nano Banana, Imagen); required: bring your own images or render CSS-only visuals. Generated assets remain subject to your input rights and model-provider terms — review output before commercial deployment. |
+| **Bulletproof basics** | Reduced-motion fallback, iOS video safety, mobile-stacked layout, transform/opacity-only hot paths; no GSAP, no Lenis, no WebGL in Mode A. Tested on target devices; validate performance before production. |
 
 ---
 
