@@ -8,7 +8,7 @@
   </picture>
 </a>
 
-<sub>↑ The <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">live landing page</a> adapts to your GitHub theme — <b>Petroleum Editorial</b> in dark mode, <b>Swiss Museum</b> in light. Toggle either finish on the site.</sub>
+👉 **[Visit the live landing page](https://mustbesimo.github.io/cinematic-scroll-skill/)** — it adapts to your GitHub theme. Dark mode → **Petroleum Editorial**. Light mode → **Swiss Museum**. Toggle either finish on the site.
 
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">
   <img src="assets/scroll-demo.gif" alt="The scroll grammar in motion — pinned chapters, multi-depth parallax, and a tracking index rail" width="100%">
