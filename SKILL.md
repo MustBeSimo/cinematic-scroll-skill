@@ -1,6 +1,6 @@
 ---
 name: cinematic-scroll
-description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with AI-generated visuals (Mode B). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 director grammars, and a transform/opacity performance budget as built-in craft constraints.
+description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with AI-generated visuals (Mode B). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 visual systems, and a transform/opacity performance budget as built-in craft constraints.
 version: 2.0.0
 ---
 
@@ -33,13 +33,13 @@ consistently produces production-quality output.
 chapters, parallax, tilt, title choreography, and morphing backgrounds are the
 constant; the visual world — palette, typography, imagery, mood — comes entirely
 from the user's brief. Derive the aesthetic from what they ask for (brand,
-references, palette, vibe, or a director grammar from `references/film-archetypes.md`).
+references, palette, vibe, or a visual system from `references/film-archetypes.md`).
 If they haven't said, **ask** or offer 2–3 distinct directions — never default to
 any one style. The same machinery must produce a brutalist black-on-white drop, a
 quiet-luxury launch, a neon Gen-Z page, a sci-fi noir reveal, an organic wellness
-story, or a Renaissance editorial. None is "the" style. The two worked examples
-(`examples/renaissance`, `examples/studio`) are *opposite* worlds from the same
-engine — proof the look is a variable, not a default.
+story, or a Renaissance editorial. None is "the" style. The five public examples
+(`examples/renaissance`, `examples/studio`, `examples/noir`, `examples/luxe`, `examples/pop`)
+are *different* worlds from the same engine — proof the look is a variable, not a default.
 
 ---
 
@@ -89,22 +89,22 @@ without explicit user consent.
 ## Phase 1: Cinematic Audit
 
 **Purpose:** Analyze the brand/content, define the emotional arc, select
-the director grammar, and establish the motion personality.
+the visual system, and establish the motion personality.
 
 | | |
 |---|---|
 | **Input** | User's brief, brand materials (palette, logo, copy), reference sites, target audience, device context |
 | **Output** | `cinematic-audit.md` |
-| **Decision gate** | User approves the emotional arc and director grammar before proceeding |
+| **Decision gate** | User approves the emotional arc and visual system before proceeding |
 
 ### Agent instructions
 
 1. Ask the user about their brand's motion personality if not provided:
    - "What emotion should the first 3 seconds produce?"
-   - "Is your brand closer to a Kubrick museum or a Gerwig scrapbook?"
+   - "Is your brand closer to a Symmetric Monument (meticulous, formal) or a Warm Scrapbook (intimate, playful)?"
    - "Who is scrolling this — a curious visitor or a decision-maker?"
 
-2. Select a **director grammar** from `references/film-archetypes.md`.
+2. Select a **visual system** from `references/film-archetypes.md`.
    Read the archetypes file (Section 1-7) and match the brief to ONE primary
 director. Document the choice in the audit with rationale. Never mix more
 than 2 directors; if hybridity is needed, choose one primary and one accent.
@@ -153,10 +153,10 @@ than 2 directors; if hybridity is needed, choose one primary and one accent.
 - WCAG target: [AA/AAA]
 - Reduced-motion support: [required/preferred]
 
-## Director Grammar
-- **Primary:** [e.g., David Fincher — clinical precision, data-driven]
-- **Accent (optional):** [e.g., Kubrick for the authority moment]
-- **Rationale:** [why this grammar matches the brand]
+## Visual System
+- **Primary:** [e.g., Clinical Noir — clinical precision, data-driven]
+- **Accent (optional):** [e.g., Symmetric Monument for the authority moment]
+- **Rationale:** [why this system matches the brand]
 
 ## Color Temperature Progression
 [Chapter-by-chapter temperature plan: warm → cool → neutral → warm]
@@ -852,7 +852,7 @@ These examples show how the complete gated pipeline works end-to-end.
 > **Phase 1:** We're a fintech app that needs to communicate trust and
 > precision. Our brand is clinical, data-driven, restrained. Audience:
 > decision-makers on desktop. Build a cinematic-scroll experience using
-> the David Fincher director grammar from `references/film-archetypes.md`
+> the David Fincher visual system from `references/film-archetypes.md`
 > Section 2. Output: `cinematic-audit.md`.
 >
 > **Phase 2:** Based on the audit, design a 6-chapter motion storyboard.
@@ -948,7 +948,7 @@ cinematic-scroll-skill/
 │   ├── scroll-patterns.md        # 12 proven scroll patterns (Sections 1-12),
 │   │                             #   each with use case, depth config, transition,
 │   │                             #   mobile strategy, performance budget
-│   ├── film-archetypes.md        # 7 director grammars (Sections 1-7):
+│   ├── film-archetypes.md        # 7 visual systems (Sections 1-7):
 │   │                             #   Kubrick, Fincher, Anderson, Nolan,
 │   │                             #   Villeneuve, Gerwig, Zhao — each with scroll
 │   │                             #   behavior, color, pacing, type, depth, transitions
