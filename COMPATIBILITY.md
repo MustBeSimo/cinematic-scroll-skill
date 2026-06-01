@@ -6,11 +6,11 @@ This document provides documented installation paths for each platform, with evi
 
 | Platform | Status | Install Method | Notes |
 |----------|--------|-----------------|-------|
-| Claude Desktop | 📋 Documented | Upload skill folder | Settings → Capabilities → Skills → Upload |
-| Cursor | 📋 Documented | Drop into `.cursor/skills/` | Auto-discovery, no reload required |
-| Hermes Agent | 📋 Documented | `hermes skills install <URL>` | Install path documented; verify with clean install |
-| OpenClaw | ⚠️ Tested path available | `openclaw skills install git:MustBeSimo/cinematic-scroll-skill@main` | Recommended for teams |
-| Codex CLI | 📋 Registry pending | `npx skills add MustBeSimo/cinematic-scroll-skill` | Not yet indexed on skills.sh |
+| Claude Desktop | ✅ Verified | Upload skill folder | Settings → Capabilities → Skills → Upload |
+| Cursor | ✅ Verified | Drop into `.cursor/skills/` | Auto-discovery, no reload required |
+| Hermes Agent | ⏳ Pending | Multi-file install investigation | Single-file install incomplete; awaiting platform support |
+| OpenClaw | ⏳ Not tested | TBD | Similar architecture to Hermes; pending investigation |
+| skills.sh | 🚀 Target | Registry submission | Primary distribution channel |
 
 ---
 
@@ -67,68 +67,20 @@ Cursor will auto-discover the skill and activate it.
 
 ---
 
-### Hermes Agent
-
-**Status:** ⚠️ **Not yet fully compatible** — raw SKILL.md installation incomplete  
-**Prerequisites:** Hermes Agent CLI (v0.15.1+)  
-**Install Hermes:** See [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com)
-
-**Current limitation:**
-Hermes requires the full skill directory structure (manifest.json, references/, examples/) for proper skill discovery. Installing via raw SKILL.md URL creates a partial installation that is not discoverable by `hermes chat -t`.
-
-**Workaround (manual install):**
-```bash
-# Clone the repository
-git clone https://github.com/MustBeSimo/cinematic-scroll-skill ~/.hermes/skills/web-development/cinematic-scroll
-
-# Verify installation
-hermes skills list | grep cinematic
-```
-
-**What we tested:**
-- ✅ Raw URL installation accepted by Hermes v0.15.1
-- ✅ Security scan passed (SAFE verdict)
-- ⚠️ Skill not discoverable in `hermes chat` after installation
-- ❌ Unable to invoke via `-t web-development/cinematic-scroll` flag
-
-**Next steps:**
-- Test full repository clone as workaround
-- Check with Hermes maintainers whether multi-file skill installation from GitHub is supported
-- Consider packaging as `.tar.gz` or registering with Hermes skill hub
-
-**Tested on:** Hermes Agent v0.15.1 (2026-05-29) on macOS via Tailscale VPS.
-
 ---
 
+## Platform Investigation Notes
+
+### Hermes Agent (v0.15.1)
+- **Status:** Pending multi-file skill support investigation
+- **Finding:** Raw SKILL.md URL creates file-only installation; not discoverable by `hermes chat -t`
+- **Next step:** Test full repository clone workaround; contact Hermes maintainers
+- **Tested on:** macOS via Tailscale VPS, 2026-05-29
+
 ### OpenClaw
-
-**Prerequisites:** OpenClaw (latest version)  
-**Install OpenClaw:** See [github.com/openclaw/openclaw](https://github.com/openclaw/openclaw)
-
-**Steps:**
-1. In your terminal, run:
-   ```bash
-   openclaw skills install git:MustBeSimo/cinematic-scroll-skill@main
-   ```
-2. Verify installation:
-   ```bash
-   openclaw skills install git:MustBeSimo/cinematic-scroll-skill@main
-   ```
-
-**Expected output:**
-```
-Skill: cinematic-scroll
-Manifest: ✓
-Contract: ✓ SKILL.md valid
-Live examples: ✓ 5 examples present
-Status: Install path provided; verify locally
-```
-
-**Verification:**
-```bash
-openclaw use cinematic-scroll
-openclaw prompt "Design a Gen-Z app launch site using the Storybook Geometry system..."
-```
+- **Status:** Not yet tested
+- **Architecture:** Similar to Hermes; likely same multi-file requirement
+- **Next step:** Testing deferred until distribution focus complete
 
 ---
 
