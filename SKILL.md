@@ -718,7 +718,7 @@ Register once: `gsap.registerPlugin(ScrollTrigger, SplitText, ScrollSmoother)`.
 - First paint readable within ~1.5s on simulated 4G
 - In Next.js, `<Image>` with `priority` on above-the-fold imagery
 
-## 8. Performance — 60fps on M1 + iPhone 13
+## 8. Performance — compositor-only paths, designed for 60fps (benchmark your targets)
 
 - Only `transform` and `opacity` mutate per scroll frame
 - `will-change: transform` on animated layers ONLY (never globally)

@@ -27,7 +27,7 @@ Built by [Simone Leonelli](https://w230.net) · [simone@w230.net](mailto:simone@
 
 ## One grammar, any aesthetic
 
-The cinematic motion stays constant; the visual world is whatever you describe. Each hero below is a **different aesthetic** the skill art-directs from a prompt — same parallax, same pinning, same title choreography underneath. Pick a world, or invent your own.
+The cinematic motion stays constant; the visual world is whatever you describe. Each hero below is a **concept aesthetic direction** the skill can art-direct from a prompt — same parallax, same pinning, same title choreography underneath. They illustrate the *range* of looks; for fully built, scrollable output see the [Live examples](#live-examples--five-worlds-one-grammar) below. Pick a world, or invent your own.
 
 <table>
   <tr>
@@ -42,7 +42,7 @@ The cinematic motion stays constant; the visual world is whatever you describe. 
   </tr>
 </table>
 
-<sub>Six prompts, six worlds — each art-directed by the skill's own [fal.ai](https://fal.ai) pipeline (or bring your own images / go CSS-only at $0). The Renaissance demo above is simply the **seventh**, built out end-to-end so you can scroll a finished one. None of these is "the style" — they're proof there isn't one.</sub>
+<sub>Six prompts, six aesthetic directions — each art-directed by the skill's own [fal.ai](https://fal.ai) pipeline (or bring your own images / go CSS-only at $0). These are concept stills that show the spread of looks, not finished pages; the [live examples](#live-examples--five-worlds-one-grammar) below are the ones you can actually scroll end-to-end. None of these is "the style" — they're proof there isn't one.</sub>
 
 ---
 
@@ -62,9 +62,11 @@ A complete Next.js App Router project scaffolded from tested templates: chaptere
 
 ---
 
-## Two worked examples — opposite worlds, identical grammar
+## Live examples — five worlds, one grammar
 
-Same engine, deliberately clashing aesthetics. Both are **single, build-free `index.html` files** (GitHub-Pages-native): pinned chapters, multi-depth parallax, scroll-spy rail, background morph, 3D tilt — all from the skill's vanilla grammar. Proof the look is a variable, not a default.
+Same engine, deliberately clashing aesthetics. Every one is a **single, build-free `index.html` file** (GitHub-Pages-native) running the skill's **Mode A** grammar: dependency-free vanilla JS on `requestAnimationFrame`, transform/opacity-only — **no GSAP, no Lenis, no WebGL**. Pinned chapters, multi-depth parallax, scroll-spy rail, background morph, title reveals. All five render fully with **zero image files** (CSS-only placeholders that upgrade automatically if you drop stills in). Proof the look is a variable, not a default.
+
+The first two ship with recorded scroll captures; the three below run the same engine in three further aesthetics — open any to scroll the real thing.
 
 <table>
   <tr>
@@ -78,19 +80,38 @@ Same engine, deliberately clashing aesthetics. Both are **single, build-free `in
   <tr>
     <td width="50%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/"><b>① Renaissance editorial →</b></a><br>
-      <sub>Warm, classical, ornate. Oil-painting heroes, gold↔oxblood morph, serif display. Mirrors the production edition at <a href="https://www.w230.net/reinassence">w230.net/reinassence</a>.</sub>
+      <sub>Warm, classical, ornate. Oil-painting heroes, gold↔oxblood morph, serif display. Mirrors the production edition at <a href="https://www.w230.net/reinassence">w230.net/reinassence</a>. <a href="./examples/renaissance/">Source</a>.</sub>
     </td>
     <td width="50%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/"><b>② Brutalist creative-director →</b></a><br>
-      <sub>Cold, modern, severe. Giant grotesk type, monochrome + electric-blue accent, grey↔ink morph, scroll-driven 3D camera. A fictional CD portfolio in the spirit of spare Swiss-editorial sites.</sub>
+      <sub>Cold, modern, severe. Giant grotesk type, monochrome + electric-blue accent, grey↔ink morph, scroll-driven 3D camera. A fictional CD portfolio in the spirit of spare Swiss-editorial sites. <a href="./examples/studio/">Source</a>.</sub>
     </td>
   </tr>
 </table>
 
-Two prompts, two finished worlds. Swap the palette, references, and copy and the same machinery produces any of the aesthetics above.
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/"><b>③ Sci-fi noir →</b></a><br>
+      <sub>Studio <b>VANTASCOPE</b>, title <b>HOLLOW STAR</b>. Near-black void, deep-teal fog, a single crimson edge-light, heavy grain. 4 chapters, scroll-linked 3D camera, vertical mask-wipe title reveals. <a href="./examples/noir/">Source</a>.</sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/luxe/"><b>④ Quiet luxury →</b></a><br>
+      <sub>Maison <b>SOLENNE</b>. Warm ivory + sand, one muted cognac accent, thin-serif display, vast negative space. 220vh pins, ~3% background drift, letter-spacing-scrub reveals. <a href="./examples/luxe/">Source</a>.</sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/pop/"><b>⑤ Gen-Z pop →</b></a><br>
+      <sub>App <b>BLOOM</b>. Candy-pink + electric-lime gradients, bold rounded type, fast parallax with wide depth gaps, a floating CSS phone-UI layer. <a href="./examples/pop/">Source</a>.</sub>
+    </td>
+  </tr>
+</table>
+
+<sub>The noir, luxe, and pop examples ship without recorded GIFs — open the live links above to scroll them, or run them locally below.</sub>
+
+Five prompts, five finished worlds. Swap the palette, references, and copy and the same machinery produces any of the aesthetics above.
 
 ```bash
-python3 -m http.server 8099   # then open /examples/renaissance/  or  /examples/studio/
+python3 -m http.server 8099   # then open /examples/renaissance/ · /studio/ · /noir/ · /luxe/ · /pop/
 ```
 
 **Under the motion, every chapter ships with:**
@@ -159,7 +180,12 @@ cinematic-scroll-skill/
 ├── examples/
 │   ├── PROMPTS.md            # 20+ trigger prompts across aesthetic worlds
 │   ├── GETTING_STARTED.md    # fal.ai setup, troubleshooting, queue+webhook
-│   └── KNOWN_ISSUES.md       # QA log of real failure modes + fixes
+│   ├── KNOWN_ISSUES.md       # QA log of real failure modes + fixes
+│   ├── renaissance/          # Mode A example — warm classical editorial
+│   ├── studio/               # Mode A example — brutalist creative-director portfolio
+│   ├── noir/                 # Mode A example — sci-fi noir (VANTASCOPE)
+│   ├── luxe/                 # Mode A example — quiet luxury (Maison Solenne)
+│   └── pop/                  # Mode A example — Gen-Z pop (BLOOM)
 └── templates/nextjs/         # tested, copy-verbatim Next.js App Router project
     ├── app/ (+ api/fal/*, generate-edition-asset)
     ├── components/ (ChapterScene, ChapterDemoVisual, EditionsPage, SmoothScrollProvider)
@@ -189,3 +215,5 @@ The reference direction is Shopify Editions, used **only** as an art-direction b
 MIT © 2026 Simone Leonelli — see [LICENSE](./LICENSE).
 
 Built something with it? I'd genuinely love to see it: **simone@w230.net**
+</content>
+</invoke>
