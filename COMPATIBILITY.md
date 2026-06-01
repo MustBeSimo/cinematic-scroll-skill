@@ -1,6 +1,6 @@
 # Platform Compatibility & Installation
 
-This document provides tested installation methods for each supported platform.
+This document provides documented installation paths for each platform, with evidence included where terminal transcripts have been recorded.
 
 ## Supported Platforms
 
@@ -216,9 +216,10 @@ This is normal if you haven't provided an `fal.ai` API key. The system falls bac
 |---|---|---|
 | **2.0.0 (internal)** | Ongoing | Contract version; includes 5-phase pipeline, taste constraints, visual systems |
 | **v0.1.1 (public)** | 2026-06-01 | Initial open-source release; 5 live examples, all platforms supported |
+| **v0.1.2 (current)** | 2026-06-01 | Corrected README GSAP documentation and softened platform verification claims |
 | **v2.0.0 (legacy tag)** | N/A | Historical tag; do not use |
 
-**Current recommendation:** Use v0.1.1 for all new installations.
+**Current recommendation:** Use v0.1.2 for all new installations.
 
 ---
 

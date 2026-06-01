@@ -36,21 +36,15 @@ Pick how you want to build:
 
 ## Install
 
-**Claude (Desktop / claude.ai):** Settings → Capabilities → Skills → **Upload skill** → drag the zipped folder.
+Installation varies by platform. See [`COMPATIBILITY.md`](./COMPATIBILITY.md) for detailed step-by-step instructions for Claude, Cursor, Hermes, and OpenClaw, plus troubleshooting.
 
-**Cursor:** drop this folder into `.cursor/skills/` in any project; Cursor auto-discovers it.
-
-**Hermes:** `hermes skills install` + add this repo URL (or unzip into `~/.hermes/skills/`).
-
-**OpenClaw:** Add `cinematic-scroll` to your OpenClaw skill registry — see [openclaw/openclaw](https://github.com/openclaw/openclaw) or drop the folder into your OpenClaw skills directory.
-
-Then describe what you want to build in chat — see [`examples/PROMPTS.md`](./examples/PROMPTS.md) for 20+ copy-paste examples across aesthetic worlds.
+**Quick start:** After installing, describe what you want to build in chat — see [`examples/PROMPTS.md`](./examples/PROMPTS.md) for 20+ copy-paste examples across aesthetic worlds.
 
 ---
 
 ## Live examples — five scrollable worlds, one grammar
 
-Same engine, deliberately clashing aesthetics — five **single, build-free `index.html` files** (GitHub-Pages-native) running the skill's **Mode A** grammar: dependency-free vanilla JS on `requestAnimationFrame`, transform/opacity-only, no GSAP/Lenis/WebGL. All five render fully with **zero image files** (CSS-only placeholders that upgrade when you add stills). Proof the look is a variable, not a default.
+Same engine, deliberately clashing aesthetics — five **single, build-free `index.html` files** (GitHub-Pages-native) running the skill's **Mode A** grammar: vanilla JS on `requestAnimationFrame` with optional GSAP/ScrollTrigger enhancements. All five retain a dependency-free core; Noir, Luxe, and Pop progressively enhance one showcase beat with deferred GSAP + ScrollTrigger (loaded from CDN with vanilla fallback). All five render fully with **zero image files** (CSS-only placeholders that upgrade when you add stills). Proof the look is a variable, not a default.
 
 <table>
   <tr>
@@ -136,7 +130,7 @@ python3 -m http.server 8099   # then open /examples/renaissance/ · /studio/ · 
 | **Editorial type** | Oversized titles with word-stagger / clip-path mask / letter-spacing-scrub reveals |
 | **Atmosphere morphs** | Backgrounds crossfade between chapter color-worlds as you scroll |
 | **Image pipeline** | Optional: fal.ai-generated heroes (FLUX.2, Nano Banana, Imagen); required: bring your own images or render CSS-only visuals. Generated assets remain subject to your input rights and model-provider terms — review output before commercial deployment. |
-| **Bulletproof basics** | Reduced-motion fallback, iOS video safety, mobile-stacked layout, transform/opacity-only hot paths; no GSAP, no Lenis, no WebGL in Mode A. Tested on target devices; validate performance before production. |
+| **Bulletproof basics** | Reduced-motion fallback, iOS video safety, mobile-stacked layout, transform/opacity-only core hot paths; optional GSAP showcase enhancements in selected examples; no WebGL required. Validate performance on target devices before production. |
 
 ---
 
@@ -204,7 +198,7 @@ npm install choreo-3d framer-motion gsap @gsap/react lenis @fal-ai/client @fal-a
 
 The motion primitives target the [`choreo-3d`](https://www.npmjs.com/package/choreo-3d) package, with a built-in **vanilla fallback** (sticky + IntersectionObserver + rAF) for sandboxes where npm packages can't be installed — identical math, same keyframes.
 
-**On GSAP:** as of the 2025 Webflow acquisition, [GSAP is 100% free](https://gsap.com/) — every former Club plugin included (SplitText, ScrollSmoother, ScrollTrigger, MorphSVG…), commercial use too. The Next.js build (Mode B) uses **ScrollTrigger + SplitText** for pinning and title reveals; the single-file demos stay **dependency-free** (hand-rolled rAF — runs from `file://`, no build, no CDN). For low-level GSAP help, pair this with the official [`greensock/gsap-skills`](https://github.com/greensock/gsap-skills) — that skill teaches the GSAP API; this one teaches the cinematic system on top.
+**On GSAP:** as of the 2025 Webflow acquisition, [GSAP is 100% free](https://gsap.com/) — every former Club plugin included (SplitText, ScrollSmoother, ScrollTrigger, MorphSVG…), commercial use too. The Next.js build (Mode B) uses **ScrollTrigger + SplitText** for pinning and title reveals; the standalone demos retain a **vanilla rAF core** with optional deferred GSAP enhancements in selected showcase beats (loaded from CDN with vanilla fallback). This means Mode A files run from `file://` with zero build, and gracefully fall back to CSS-only rendering if the CDN is unavailable. For low-level GSAP help, pair this with the official [`greensock/gsap-skills`](https://github.com/greensock/gsap-skills) — that skill teaches the GSAP API; this one teaches the cinematic system on top.
 
 ---
 
