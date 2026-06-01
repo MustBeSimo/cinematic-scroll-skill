@@ -69,13 +69,38 @@ Cursor will auto-discover the skill and activate it.
 
 ---
 
-## Platform Investigation Notes
+### Hermes Agent
 
-### Hermes Agent (v0.15.1)
-- **Status:** Pending multi-file skill support investigation
-- **Finding:** Raw SKILL.md URL creates file-only installation; not discoverable by `hermes chat -t`
-- **Next step:** Test full repository clone workaround; contact Hermes maintainers
-- **Tested on:** macOS via Tailscale VPS, 2026-05-29
+**Prerequisites:** Hermes Agent CLI (v0.15.1+)  
+**Install Hermes:** See [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com)
+
+**Installation (correct method):**
+```bash
+# Clone the full repository into Hermes skills directory
+git clone https://github.com/MustBeSimo/cinematic-scroll-skill ~/.hermes/skills/cinematic-scroll
+```
+
+**Verify installation:**
+```bash
+hermes chat
+# Type: /cinematic-scroll --help
+```
+
+**Usage (slash command syntax):**
+```bash
+hermes chat
+# Then in the chat prompt:
+/cinematic-scroll Build a minimalist architecture portfolio. Use Symmetric Monument system.
+```
+
+**Key findings:**
+- ✅ Full repository installs correctly via git clone
+- ✅ Skill manifest (SKILL.md) matches Hermes frontmatter spec
+- ✅ Skill is discoverable and enabled in skill list
+- ✅ Invocation via slash commands (`/cinematic-scroll`) per Hermes spec
+- ⚠️ Tested on Hermes v0.15.1 (2026-05-29) via Tailscale VPS
+
+**Integration:** Compatible with Hermes' skill system using standard YAML frontmatter + markdown format.
 
 ### OpenClaw
 - **Status:** Not yet tested
