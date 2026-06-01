@@ -1,5 +1,7 @@
 # Cinematic Scroll
 
+[![Install via skills.sh](https://img.shields.io/badge/Install%20via-skills.sh-blue?style=for-the-badge)](https://skills.sh/search?q=cinematic-scroll)
+
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark_v2.png">
@@ -36,9 +38,20 @@ Pick how you want to build:
 
 ## Install
 
-Installation varies by platform. See [`COMPATIBILITY.md`](./COMPATIBILITY.md) for detailed step-by-step instructions for Claude, Cursor, Hermes, and OpenClaw, plus troubleshooting.
+### Via skills.sh (Recommended)
+```bash
+npx skills add MustBeSimo/cinematic-scroll-skill
+```
 
-**Quick start:** After installing, describe what you want to build in chat — see [`examples/PROMPTS.md`](./examples/PROMPTS.md) for 20+ copy-paste examples across aesthetic worlds.
+### Platform-Specific
+Installation varies by platform. See [`COMPATIBILITY.md`](./COMPATIBILITY.md) for detailed step-by-step instructions:
+- **Claude Desktop** — Settings → Capabilities → Skills → Upload
+- **Cursor** — Drop into `.cursor/skills/`
+- **Hermes Agent** — `git clone` to `~/.hermes/skills/`
+- **OpenClaw** — `openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v0.1.2`
+
+### Quick Start
+After installing, describe what you want to build in chat — see [`examples/PROMPTS.md`](./examples/PROMPTS.md) for 20+ copy-paste examples across aesthetic worlds.
 
 ---
 
