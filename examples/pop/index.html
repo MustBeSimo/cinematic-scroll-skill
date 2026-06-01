@@ -16,6 +16,13 @@
 <!-- Plus Jakarta Sans (bold rounded display + UI), Space Grotesk (mono-ish labels) -->
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
 
+<!-- GSAP + ScrollTrigger (now 100% free) — powers the dedicated "THE DROP" showcase:
+     a JUMP-SCARE micro (back.out overshoot, taste-guardrails §2) + a VELOCITY-REACTIVE
+     skew (scroll-patterns #3). Deferred + feature-detected: if the CDN fails, the
+     hand-rolled rAF pop engine below still runs and the beat stays at a complete static state. -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+
 <style>
   /* ───────────────────────────────────────────────────────────────
      cinematic-scroll · Contemporary-pop / Gen-Z example  ("BLOOM")
@@ -257,6 +264,53 @@
       opacity:1!important; transform:none!important; }
     .glasscard .pulse, .cue .bar{ animation:none; }
   }
+
+  /* ── GSAP SHOWCASE — "THE DROP" ─────────────────────────────────────
+     A dedicated viewport demoing two techniques the rAF pop engine doesn't:
+       • JUMP-SCARE micro (taste-guardrails §2 "Jump scare — Gen-Z energy"):
+         the big sticker snaps scale 0.8→1.05 + rotateZ(-2→0) with back.out(2).
+       • VELOCITY-REACTIVE (scroll-patterns #3): the marquee rows skewX + scaleY
+         react to lerped scroll SPEED (transform-only, capped, desktop-only).
+     GSAP pins .drop-stage; the STATIC DEFAULTS below keep it whole when GSAP is
+     absent / reduced-motion / mobile (sticker landed at rest, rows un-skewed). */
+  section.showcase{ min-height:0; }                 /* GSAP pin owns the scroll room */
+  .drop-stage{ position:relative; height:100vh; overflow:hidden;
+    display:grid; place-items:center; padding:0 clamp(20px,6vw,96px); }
+  /* candy-pink + electric-lime backdrop wash, self-contained to the beat */
+  .drop-stage .dropwash{ position:absolute; inset:-10%; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(80% 60% at 50% 14%, rgba(198,255,61,.6), rgba(198,255,61,0) 56%),
+      radial-gradient(90% 70% at 50% 100%, rgba(124,58,237,.45), rgba(124,58,237,0) 60%),
+      linear-gradient(165deg, var(--pink) 0%, var(--violet) 100%); }
+  .drop-inner{ position:relative; z-index:2; display:flex; flex-direction:column;
+    align-items:center; gap:clamp(22px,3vw,40px); text-align:center; width:100%; }
+  .drop-eyebrow{ display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:clamp(10px,1vw,12px); font-weight:700; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink);
+    background:var(--lime); padding:7px 14px; border-radius:999px;
+    box-shadow:0 6px 18px rgba(155,224,0,.4); }
+  /* the velocity-reactive marquee rows — giant rounded type, skew on scroll speed */
+  .drop-rows{ display:flex; flex-direction:column; gap:clamp(4px,.6vw,10px); width:100%; }
+  .drop-rows .vrow{ font-family:var(--disp); font-weight:800; line-height:.92; letter-spacing:-.04em;
+    font-size:clamp(2.4rem,9vw,8rem); color:#fff; transform-origin:left center; white-space:nowrap; }
+  .drop-rows .vrow.accent{
+    background:linear-gradient(100deg, var(--lime), #fff 55%, var(--cyan));
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  /* the JUMP-SCARE sticker / CTA — lands at its resting state by default */
+  .drop-stamp{ position:relative; z-index:3;
+    font-family:var(--disp); font-weight:800; font-size:clamp(1rem,2.2vw,1.5rem);
+    color:var(--ink); background:#fff; text-decoration:none;
+    padding:16px 30px; border-radius:999px; transform:rotate(0deg) scale(1);
+    box-shadow:0 18px 44px -14px rgba(22,11,31,.6); transform-origin:center;
+    display:inline-flex; align-items:center; gap:10px; }
+  .drop-stamp .em{ width:20px; height:20px; flex:none; }
+  @media (max-width:680px){
+    /* static / stacked — no pin, no skew, sticker simply present */
+    .drop-stage{ height:auto; padding:13vh 22px; }
+    .drop-stage .dropwash{ inset:0; }
+    .drop-rows .vrow{ font-size:13vw; white-space:normal; transform:none!important; }
+    .drop-stamp{ transform:none!important; }
+  }
 </style>
 </head>
 <body>
@@ -449,6 +503,35 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
     rail.appendChild(r);
   }
 
+  /* ── INSERT THE GSAP SHOWCASE BEAT ("THE DROP") ─────────────────────
+     Inserted right after the hero so it reads: hero → the drop → focus.
+     Built BEFORE `sections`/`rails` are collected (and the center-spy uses
+     `sections.indexOf` against the parallel `rails` array), so a matching
+     lightweight rail entry is inserted at the SAME index to keep them aligned.
+     Pure markup here; motion is wired at the end (desktop-only, only if GSAP loaded). */
+  const drop = document.createElement('section');
+  drop.className = 'showcase'; drop.id = 'drop';
+  drop.dataset.morph = '#C6FF3D';
+  drop.innerHTML = `
+    <div class="drop-stage">
+      <div class="dropwash" aria-hidden="true"></div>
+      <div class="drop-inner">
+        <span class="drop-eyebrow">${SPARK}the drop</span>
+        <div class="drop-rows" aria-hidden="true">
+          <div class="vrow">make it</div>
+          <div class="vrow accent">loud.</div>
+          <div class="vrow">make it yours.</div>
+        </div>
+        <a class="drop-stamp" href="#start">${SPARK}get the app</a>
+      </div>
+    </div>`;
+  app.insertBefore(drop, app.children[1] || null);   // after hero (index 0)
+  const dr = document.createElement('button');
+  dr.type='button'; dr.className='r'; dr.dataset.goto='drop';
+  dr.setAttribute('aria-label', 'Go to the drop');
+  dr.innerHTML = `<span>✦</span><span class="dot"></span>`;
+  rail.insertBefore(dr, rail.children[1] || null);
+
   /* nav clicks (rail + masthead anchors handled natively) */
   document.querySelectorAll('[data-goto]').forEach(el=>{
     el.addEventListener('click',()=>{ document.getElementById(el.dataset.goto)?.scrollIntoView({ behavior: reduce ? 'auto':'smooth' }); });
@@ -557,6 +640,71 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
       phone.parentElement.addEventListener('pointerleave',()=>{ phone.style.transform='perspective(900px) rotateY(0) rotateX(0)'; });
     });
   }
+
+  /* ── GSAP SHOWCASE WIRING — "THE DROP" (desktop & non-reduced) ───────
+     Guarded by the early return above (skips on reduce/mobile), then a
+     matchMedia gate so it auto-kills on resize into a small/reduced context.
+     Two techniques, kept ≤3 simultaneous motions in this single viewport:
+       • JUMP-SCARE micro (taste-guardrails §2): the stamp snaps in once at a
+         scroll threshold — scale 0.8→1.05 + rotateZ(-2→0), ease back.out(2),
+         NO scrub (a one-shot toggleActions tween). The signature moment.
+       • VELOCITY-REACTIVE (scroll-patterns #3): the marquee rows skewX +
+         scaleY off lerped scroll SPEED (deltaY/dt, lerp .15, capped), pushed
+         via gsap.quickTo — transform-only, disabled on touch.
+     If GSAP never loads, #drop simply stays at its complete static state. */
+  (function wireShowcase(tries){
+    if(!window.gsap || !window.ScrollTrigger){
+      if(tries>0) requestAnimationFrame(()=>wireShowcase(tries-1));
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.defaults({ scrub:0.5, fastScrollEnd:true, invalidateOnRefresh:true });
+    const mm = gsap.matchMedia();
+    mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
+      const stage = document.querySelector('#drop .drop-stage');
+      if(!stage) return;
+      const stamp = stage.querySelector('.drop-stamp');
+      const rows  = [...stage.querySelectorAll('.vrow')];
+
+      /* JUMP-SCARE micro — one-shot, NOT scrubbed; fires when the beat lands.
+         scale 0.8→1.05 + rotateZ(-2→0), back.out(2) overshoot, then settles. */
+      stamp.style.willChange = 'transform';
+      const jump = gsap.fromTo(stamp,
+        { scale:0.8, rotationZ:-2, opacity:0 },
+        { scale:1.05, rotationZ:0, opacity:1, duration:0.5, ease:'back.out(2)', paused:true });
+      const jumpST = ScrollTrigger.create({
+        trigger:'#drop', start:'top 60%',
+        toggleActions:'play none none reverse',
+        onEnter:()=>jump.play(), onLeaveBack:()=>jump.reverse()
+      });
+
+      /* VELOCITY-REACTIVE — lerped scroll-speed → skewX + scaleY on the rows.
+         deltaY/dt tracked in a rAF loop (lerp .15, magnitude capped), applied
+         via gsap.quickTo. Transform-only; never touches width/gap. Desktop here
+         already excludes touch via the (min-width:769px) gate, but guard anyway. */
+      let velRAF=0, lastY=window.scrollY, lastT=performance.now(), v=0;
+      const skewTo  = rows.map(r=>gsap.quickTo(r,'skewX',{duration:0.32, ease:'power3'}));
+      const scaleTo = rows.map(r=>gsap.quickTo(r,'scaleY',{duration:0.32, ease:'power3'}));
+      function trackVel(){
+        const now=performance.now(); const dt=Math.max(now-lastT,1);
+        const dy=window.scrollY-lastY;
+        v += (dy/dt - v)*0.15;                      // lerp toward instantaneous velocity
+        lastY=window.scrollY; lastT=now;
+        const cap=Math.max(-3,Math.min(3,v));       // cap magnitude (px/ms)
+        const skew = -cap*2.2;                       // skewX deg, direction-aware
+        const sY   = 1 - Math.abs(cap)*0.02;        // subtle vertical squash on fast scroll
+        rows.forEach((_,i)=>{ skewTo[i](skew); scaleTo[i](sY); });
+        velRAF=requestAnimationFrame(trackVel);
+      }
+      if(!isTouch) velRAF=requestAnimationFrame(trackVel);
+
+      return () => {
+        cancelAnimationFrame(velRAF);
+        jumpST.kill();
+        gsap.set([stamp, ...rows], { clearProps:'all' });
+      };
+    });
+  })(120);
 })();
 </script>
 </body>

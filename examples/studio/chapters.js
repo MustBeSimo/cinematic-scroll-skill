@@ -91,3 +91,15 @@ export const CHAPTERS = [
     prompt: 'Minimalist black-and-white photograph of a single blank sheet of heavy paper on a vast empty desk, one shaft of hard window light, long shadow, immense negative space, fine grain, high contrast, no text, no logos, no writing, monochrome editorial, quiet and confident'
   },
 ];
+
+/* MONTAGE — a brutalist "contact sheet" of selected work, shown as a single
+   GSAP-pinned + snap section (cinematic "Montage", taste-guardrails §2;
+   scroll-patterns.md "Landing Sequence" snap config). CSS-only numbered tiles,
+   no image assets. Index = filing number; year + discipline as mono metadata. */
+export const MONTAGE = [
+  { idx: '01', year: '2014', label: 'Wearable launch film', meta: 'FILM · GLOBAL' },
+  { idx: '02', year: '2017', label: 'Audio platform identity', meta: 'BRAND · 28 MKTS' },
+  { idx: '03', year: '2020', label: 'Pocket-device campaign', meta: 'OOH · PLATFORM' },
+  { idx: '04', year: '2023', label: 'Grand Prix anthem', meta: 'FILM · CRAFT' },
+  { idx: '05', year: '2026', label: 'The next blank page', meta: 'OPEN · TBD' },
+];

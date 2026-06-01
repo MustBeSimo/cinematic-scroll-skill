@@ -17,6 +17,12 @@
 <!-- Oswald (condensed film-poster display) + Archivo (UI) + JetBrains Mono (labels) -->
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;600;700&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+<!-- GSAP + ScrollTrigger (now 100% free) — powers the dedicated "Approach" showcase:
+     a DOLLY-ZOOM (Vertigo) + a SCRUBBED SIGNAL DRAW. Deferred + feature-detected:
+     if the CDN fails, the hand-rolled rAF cinematic engine below still runs. -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+
 <style>
   /* ───────────────────────────────────────────────────────────────
      cinematic-scroll · CINEMATIC SCI-FI NOIR example  (archetype A5)
@@ -248,6 +254,36 @@
     .cuewrap{ position:static; transform:none!important; margin-top:30px; opacity:1!important; }
     .reveal{ opacity:1!important; transform:none!important; }
   }
+
+  /* ── GSAP SHOWCASE — "THE APPROACH" ─────────────────────────────────
+     A dedicated viewport that demonstrates two techniques the hand-rolled
+     engine doesn't: a DOLLY-ZOOM (Vertigo — taste-guardrails §2) on the
+     backdrop and a SCRUBBED SIGNAL DRAW (stroke-dashoffset, pattern #2).
+     GSAP pins .show-stage; static defaults below keep it whole when GSAP is
+     absent / reduced-motion / mobile (dolly at rest, waveform fully drawn). */
+  section.showcase{ min-height:0; }                 /* GSAP pin owns the scroll room */
+  .show-stage{ position:relative; height:100vh; overflow:hidden; display:grid; place-items:center; }
+  .show-stage .dolly{
+    position:absolute; inset:-12%; z-index:0; transform-origin:60% 46%; will-change:transform;
+    background:
+      radial-gradient(56% 88% at 50% 60%, rgba(8,10,13,0) 0%, rgba(8,10,13,.55) 72%),
+      radial-gradient(72% 60% at 50% 28%, rgba(30,84,96,.50), rgba(11,26,31,0) 70%),
+      radial-gradient(40% 78% at 50% 54%, rgba(226,58,78,.16), rgba(226,58,78,0) 60%),
+      linear-gradient(180deg, var(--black) 0%, var(--teal-deep) 60%, var(--black) 100%);
+  }
+  .show-stage .waveform{ position:relative; z-index:2; width:min(80vw,1120px); height:140px; overflow:visible; }
+  .show-stage .waveform path{ fill:none; stroke:var(--crimson); stroke-width:2; stroke-linecap:round;
+    filter:drop-shadow(0 0 6px rgba(226,58,78,.5)); }   /* static (non-animated) glow — allowed */
+  .show-cap{ position:absolute; z-index:3; bottom:14vh; left:0; right:0; text-align:center;
+    font-family:var(--mono); color:var(--muted); }
+  .show-cap b{ display:block; font-family:var(--display); font-weight:700; letter-spacing:.28em;
+    color:var(--ink); font-size:clamp(1.4rem,4vw,2.4rem); margin-bottom:10px; }
+  .show-cap span{ font-size:11px; letter-spacing:.22em; text-transform:uppercase; }
+  @media (max-width:680px){
+    .show-stage{ height:auto; padding:16vh 22px; }
+    .show-stage .dolly{ inset:0; }
+    .show-cap{ position:static; margin-top:30px; }
+  }
 </style>
 </head>
 <body>
@@ -399,6 +435,31 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     rail.appendChild(r);
   }
 
+  /* ── APPEND THE GSAP SHOWCASE BEAT ("THE APPROACH") ──────────────────
+     Inserted right after the hero so it reads: signal → the approach →
+     descent. Built BEFORE sections/rails are collected so the centre-spy
+     and index rail stay aligned. Pure markup here; motion is wired at the
+     end (desktop-only, only if GSAP loaded). */
+  const show = document.createElement('section');
+  show.className = 'showcase'; show.id = 'approach';
+  show.dataset.morph = 'radial-gradient(120% 100% at 50% 0%, rgba(30,84,96,.42), rgba(11,26,31,0) 60%), linear-gradient(180deg, #0A0C0F 0%, #0B1A1F 60%, #08090C 100%)';
+  show.innerHTML = `
+    <div class="show-stage">
+      <div class="dolly" aria-hidden="true"></div>
+      <svg class="waveform" viewBox="0 0 1120 140" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path d="M0,70 L150,70 L180,70 L196,30 L212,110 L228,52 L244,88 L260,70 L440,70 L470,70 L486,18 L502,122 L518,44 L534,96 L550,70 L760,70 L790,70 L806,40 L822,100 L838,70 L1120,70"/>
+      </svg>
+      <div class="show-cap">
+        <b>THE APPROACH</b>
+        <span>A single coherent pulse climbs out of the noise floor</span>
+      </div>
+    </div>`;
+  reel.insertBefore(show, reel.children[1] || null);   // after hero (index 0)
+  const sr = document.createElement('div');
+  sr.className = 'r'; sr.dataset.id = 'approach';
+  sr.innerHTML = `<span class="num">&#8767;</span><span class="ln"></span>`;
+  rail.insertBefore(sr, rail.children[1] || null);
+
   const sections = [...document.querySelectorAll('section')];
   const rails = [...rail.querySelectorAll('.r')];
 
@@ -536,6 +597,37 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
       frame.addEventListener('pointerleave',()=>{ pic.style.transform='translateZ(0) rotateY(0) rotateX(0)'; });
     });
   }
+
+  /* ── GSAP SHOWCASE WIRING — desktop & non-reduced (guarded by the early
+     return above, then matchMedia again so it auto-kills on resize into a
+     small/reduced context). Two cinematic techniques (taste-guardrails §2):
+       • DOLLY-ZOOM (Vertigo) — the backdrop pushes in while the caption holds
+       • SCRUBBED SIGNAL DRAW — the waveform draws via stroke-dashoffset (pattern #2)
+     If GSAP never loads, #approach simply stays at its complete static state. */
+  (function wireShowcase(tries){
+    if(!window.gsap || !window.ScrollTrigger){
+      if(tries>0) requestAnimationFrame(()=>wireShowcase(tries-1));
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.defaults({ scrub:0.5, fastScrollEnd:true, invalidateOnRefresh:true });
+    const mm = gsap.matchMedia();
+    mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
+      const stage = document.querySelector('#approach .show-stage');
+      if(!stage) return;
+      const dolly = stage.querySelector('.dolly');
+      const path  = stage.querySelector('.waveform path');
+      const cap   = stage.querySelector('.show-cap');
+      const len   = path.getTotalLength();
+      gsap.set(path, { strokeDasharray:len, strokeDashoffset:len, willChange:'stroke-dashoffset' });
+      const tl = gsap.timeline({ scrollTrigger:{
+        trigger:'#approach', start:'top top', end:'+=130%', pin:stage, anticipatePin:1 } });
+      tl.fromTo(dolly, { scale:1 },         { scale:1.26, ease:'none' }, 0)                              // dolly-zoom
+        .to(path,      { strokeDashoffset:0, ease:'none' }, 0)                                           // signal draw
+        .fromTo(cap,   { opacity:0, y:22 }, { opacity:1, y:0, ease:'power2.out', duration:0.4 }, 0.08);
+      return () => gsap.set([dolly, path, cap], { clearProps:'all' });
+    });
+  })(120);
 })();
 </script>
 </body>

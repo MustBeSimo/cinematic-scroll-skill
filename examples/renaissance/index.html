@@ -16,6 +16,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=EB+Garamond:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
+<!-- GSAP + ScrollTrigger (now 100% free) — powers the dedicated "The Unveiling" showcase:
+     a GOD-SHOT / OVERHEAD pull-back (taste-guardrails §2) + a SCRUBBED SVG FLOURISH
+     (an illuminated gold rule drawn via stroke-dashoffset, pattern #2). Deferred +
+     feature-detected: if the CDN fails, the hand-rolled rAF engine below still runs and
+     the beat stays at its complete static state. -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+
 <style>
   /* ───────────────────────────────────────────────────────────────
      cinematic-scroll · Renaissance example
@@ -246,6 +254,56 @@
     .copy h2 .w { opacity: 1 !important; transform: none !important; }
     .cue .bar, .aicard .dot { animation: none; }
   }
+
+  /* ── GSAP SHOWCASE — "THE UNVEILING" ────────────────────────────────
+     A dedicated viewport demonstrating two techniques the hand-rolled
+     engine doesn't: a GOD-SHOT / OVERHEAD pull-back (taste-guardrails §2 —
+     starts tight on a detail then pulls back, scale 1.5→1 + translateY 20%→0)
+     and a SCRUBBED SVG FLOURISH (an illuminated-manuscript gold rule that
+     draws via stroke-dashoffset, pattern #2). GSAP pins .unveil-stage; the
+     STATIC DEFAULTS below keep the beat whole when GSAP is absent / reduced-
+     motion / mobile (plate at scale 1, flourish fully drawn — no dasharray). */
+  .chapter.showcase { height: auto; }                 /* GSAP pin owns the scroll room */
+  .unveil-stage { position: relative; height: 100vh; overflow: hidden;
+    display: grid; place-items: center;
+    background: radial-gradient(120% 90% at 50% 12%, rgba(184,137,58,0.12), rgba(184,137,58,0) 60%),
+                radial-gradient(90% 70% at 50% 100%, rgba(107,44,44,0.08), rgba(107,44,44,0) 64%); }
+  /* the "plate" the god-shot pulls back from — illuminated initial + leaf border */
+  .unveil-plate { position: relative; z-index: 2; width: min(78vw, 560px);
+    transform-origin: 50% 30%; will-change: transform;     /* god-shot pivot */
+    text-align: center; padding: clamp(28px, 5vw, 56px) clamp(20px, 4vw, 44px); }
+  .unveil-plate .initial {
+    font-family: var(--display); font-weight: 600; font-style: italic;
+    font-size: clamp(7rem, 22vw, 14rem); line-height: 0.8; color: var(--oxblood);
+    letter-spacing: -0.02em; }
+  .unveil-plate .gloss {
+    font-family: var(--display); font-style: italic; font-weight: 500;
+    font-size: clamp(1.5rem, 4vw, 2.8rem); line-height: 1.04; color: var(--ink);
+    margin-top: clamp(10px, 1.6vw, 18px); }
+  .unveil-plate .gloss em { color: var(--oxblood); font-style: italic; }
+  /* the scrubbed flourish — fully drawn by default (no dasharray set in CSS) */
+  .unveil-flourish { display: block; width: min(72vw, 520px); height: 64px;
+    margin: clamp(14px, 2.2vw, 26px) auto 0; overflow: visible; }
+  .unveil-flourish path { fill: none; stroke: var(--gold); stroke-width: 1.6;
+    stroke-linecap: round; stroke-linejoin: round; }
+  .unveil-cap { position: absolute; z-index: 3; bottom: clamp(28px, 8vh, 80px);
+    left: 0; right: 0; text-align: center; }
+  .unveil-cap .eyebrow {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.34em;
+    text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 8px; }
+  .unveil-cap span:last-child {
+    font-family: var(--serif); font-style: italic; font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+    color: var(--body); }
+  @media (max-width: 860px) {
+    .unveil-stage { height: auto; padding: clamp(70px,12vh,110px) 22px; }
+    .unveil-plate { transform: none !important; width: 100%; }
+    .unveil-cap { position: relative; bottom: auto; margin-top: 30px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .unveil-stage { height: auto; padding: 100px 22px; }
+    .unveil-plate { transform: none !important; }
+    .unveil-cap { position: relative; bottom: auto; margin-top: 30px; }
+  }
 </style>
 </head>
 <body>
@@ -403,6 +461,49 @@ CHAPTERS.forEach((ch, i) => {
   rail.appendChild(b);
 });
 
+/* ── INSERT THE GSAP SHOWCASE BEAT ("THE UNVEILING") ────────────────
+   Placed right after the prologue (DOM/rail/CHAPTERS index 1) so it reads:
+   prologue → the unveiling → manifesto. The scroll-spy keys off
+   `+target.dataset.index` and then reads CHAPTERS[idx].accent / railBtns[idx],
+   so we splice a matching CHAPTERS entry AND a rail button at the same index,
+   then re-stamp every section's data-index — all BEFORE `sections`/`railBtns`
+   are collected, keeping the three arrays perfectly aligned. Pure markup here;
+   the god-shot + flourish motion is wired at the end (desktop-only, GSAP-gated). */
+const showAccentC = ACCENTS.oxblood.c;
+CHAPTERS.splice(1, 0, { id:'unveiling', roman:'·', it:'Lo Svelamento', en:'The Unveiling', accent:'oxblood' });
+
+const show = document.createElement('section');
+show.className = 'chapter showcase';
+show.id = 'unveiling';
+show.style.setProperty('--accent', showAccentC);
+show.innerHTML = `
+  <div class="unveil-stage">
+    <div class="unveil-plate" aria-hidden="false">
+      <div class="initial">Q</div>
+      <div class="gloss">Every house rule begins as a <em>single illuminated letter.</em></div>
+      <!-- SCRUBBED SVG FLOURISH (pattern #2): an elegant gold rule drawn via
+           stroke-dashoffset; getTotalLength() read once on init, not per-frame. -->
+      <svg class="unveil-flourish" viewBox="0 0 520 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path d="M10,32 C70,8 110,8 170,32 C210,50 230,50 260,18 C290,50 310,50 350,32 C410,8 450,8 510,32 M260,18 C260,10 254,6 246,6 M260,18 C260,10 266,6 274,6"/>
+      </svg>
+    </div>
+    <div class="unveil-cap">
+      <span class="eyebrow">Interludio · The Unveiling</span>
+      <span>From a tight detail, the whole page draws back into view.</span>
+    </div>
+  </div>`;
+book.insertBefore(show, book.children[1] || null);   // after prologue (DOM index 0)
+
+const showBtn = document.createElement('button');
+showBtn.type = 'button';
+showBtn.dataset.goto = 'unveiling';
+showBtn.style.setProperty('--accent', showAccentC);
+showBtn.innerHTML = `<span class="nm">Lo Svelamento</span><span style="font-family:var(--mono)">&#183;</span><span class="tick"></span>`;
+rail.insertBefore(showBtn, rail.children[1] || null);
+
+/* re-stamp data-index across all chapters so the spy's idx stays aligned */
+[...document.querySelectorAll('.chapter')].forEach((s, i) => { s.dataset.index = i; });
+
 /* ── Navigation clicks ──────────────────────────────────────── */
 document.querySelectorAll('[data-goto]').forEach(el => {
   el.addEventListener('click', () => {
@@ -509,6 +610,39 @@ if (!isTouch && !reduce) {
     frame.addEventListener('pointerleave', () => { pic.style.transform = 'rotateY(0) rotateX(0)'; });
   });
 }
+
+/* ── GSAP SHOWCASE WIRING — "THE UNVEILING" ─────────────────────────
+   Polls for GSAP (~120 rAF tries); if the CDN never loads, #unveiling stays
+   at its complete static state. matchMedia re-guards desktop + no-reduced-motion
+   so it auto-kills on resize into a small/reduced context. Two cinematic
+   techniques (taste-guardrails §2), each commented at its tween:
+     • GOD-SHOT / OVERHEAD pull-back — plate scale 1.5→1 + translateY 20%→0
+     • SCRUBBED SVG FLOURISH — the gold rule draws via stroke-dashoffset (pattern #2)
+   Only transform + opacity (+ stroke-dashoffset) are animated. */
+(function wireShowcase(tries){
+  if (!window.gsap || !window.ScrollTrigger) {
+    if (tries > 0) requestAnimationFrame(() => wireShowcase(tries - 1));
+    return;
+  }
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.defaults({ scrub: 0.5, fastScrollEnd: true, invalidateOnRefresh: true });
+  const mm = gsap.matchMedia();
+  mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
+    const stage = document.querySelector('#unveiling .unveil-stage');
+    if (!stage) return;
+    const plate    = stage.querySelector('.unveil-plate');
+    const flourish = stage.querySelector('.unveil-flourish path');
+    const cap      = stage.querySelector('.unveil-cap');
+    const len      = flourish.getTotalLength();              // read length once, on init
+    gsap.set(flourish, { strokeDasharray: len, strokeDashoffset: len, willChange: 'stroke-dashoffset' });
+    const tl = gsap.timeline({ scrollTrigger: {
+      trigger: '#unveiling', start: 'top top', end: '+=140%', pin: stage, anticipatePin: 1 } });
+    tl.fromTo(plate,    { scale: 1.5, yPercent: 20 }, { scale: 1, yPercent: 0, ease: 'none' }, 0)  // GOD-SHOT pull-back
+      .to(flourish,     { strokeDashoffset: 0, ease: 'none' }, 0)                                  // SCRUBBED SVG FLOURISH
+      .fromTo(cap,      { opacity: 0, y: 18 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.4 }, 0.1);
+    return () => gsap.set([plate, flourish, cap], { clearProps: 'all' });
+  });
+})(120);
 </script>
 </body>
 </html>

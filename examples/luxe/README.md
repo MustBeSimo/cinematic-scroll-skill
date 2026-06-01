@@ -33,6 +33,19 @@ them up automatically.
 - **Letter-spacing title reveal** — the refined/luxury treatment from
   `taste-guardrails.md`: the first title fragment scrubs `0.45em → 0em` over
   the first ~30% of each pin.
+- **GSAP ScrollTrigger showcase beat** — one dedicated, whisper-quiet section
+  ("The Object, Held", inserted after Chapter III) powered by GSAP
+  ScrollTrigger (deferred from CDN, feature-detected). It demonstrates two
+  restrained techniques from `taste-guardrails.md` §2:
+  - **Push-in** — the framed object scales `1 → 1.08` over the pin (a slow zoom
+    toward the subject), with no other foreground motion.
+  - **Match-cut** — two captions share the exact same position; the words swap
+    by `opacity` crossfade while the composition holds perfectly still.
+
+  No 3D tilt, no snap, no velocity effects (museum restraint). If GSAP fails to
+  load — or under reduced-motion / mobile — the beat degrades to a complete
+  static state (object at rest, both captions shown), and the hand-rolled rAF
+  engine is unaffected.
 - **Compositor-only scroll** — only `transform` and `opacity` mutate per frame,
   in one rAF batch, behind a passive scroll listener; off-screen sections are
   skipped.

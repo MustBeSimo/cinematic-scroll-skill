@@ -10,6 +10,24 @@ doesn't feel like homework). No real brands.
 Director grammar: **Greta Gerwig** (Gen-Z warmth + heart) crossed with
 **Wes Anderson** snap pacing — energetic but art-directed, not a meme.
 
+A dedicated **"THE DROP"** showcase beat (section `#drop`, inserted right after
+the hero) is now powered by **GSAP ScrollTrigger** and layers in two extra
+techniques the vanilla rAF engine doesn't:
+
+- **Jump-scare micro** (taste-guardrails §2 "Jump scare — Gen-Z energy"): the
+  "get the app" stamp snaps in once at a scroll threshold — `scale 0.8 → 1.05`
+  + `rotateZ(-2° → 0°)` on a `back.out(2)` overshoot. One-shot (not scrubbed),
+  reversible. The signature moment.
+- **Velocity-reactive** (scroll-patterns #3): the giant marquee rows react to
+  scroll *speed* — a lerped `deltaY/dt` velocity tracker (lerp 0.15, capped)
+  drives `skewX` + `scaleY` via `gsap.quickTo`. Transform-only, disabled on
+  touch.
+
+GSAP is loaded `defer` + feature-detected: if the CDN fails to load, the page
+still runs on the hand-rolled engine and **THE DROP stays at a complete static
+state**. The wiring uses `gsap.matchMedia()` so it auto-disables under
+`prefers-reduced-motion` and at ≤768px.
+
 Single self-contained `index.html` — no build step, no npm, no JS libraries.
 Only external resource is Google Fonts. GitHub-Pages-native.
 
@@ -52,7 +70,9 @@ nothing important is clipped by the phone's rounded corners.
   mock renders the app on first paint.
 - **Reduced-motion & mobile (≤680px):** the rAF engine is skipped entirely and
   the page renders a clean static mid-state (full opacity, words settled,
-  stacked layout, no scrolljack).
+  stacked layout, no scrolljack). THE DROP beat builds its markup in this path
+  too — it just isn't GSAP-animated, and its CSS static defaults (sticker
+  landed, rows un-skewed) keep it whole. Velocity effects are off on touch.
 - **Accessibility:** semantic landmarks (`header`/`main`/`footer`/`nav`), body
   copy sits on solid white panels for contrast over the bright gradients, and
   `prefers-reduced-motion` is respected.

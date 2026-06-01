@@ -16,6 +16,14 @@
 <!-- Archivo (grotesk display + UI), JetBrains Mono (labels) -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+<!-- GSAP + ScrollTrigger (now 100% free) — powers ONE dedicated showcase beat:
+     a MONTAGE SNAP contact-sheet (taste-guardrails §2 "Montage") + a
+     VELOCITY-REACTIVE heading (scroll-patterns.md #3). Deferred + feature-
+     detected: if the CDN fails, the hand-rolled rAF engine below still runs and
+     the montage stays at its complete static state. -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+
 <style>
   :root{
     --ink:#111113; --grey:#E6E6E6; --grey2:#D4D4D6; --white:#FFFFFF;
@@ -151,6 +159,52 @@
   footer .big a{ color:var(--accent); text-decoration:none; }
   footer .meta{ margin-top:28px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:var(--fg-muted); text-transform:uppercase; }
   footer .meta a{ color:inherit; }
+
+  /* ── GSAP SHOWCASE — "SELECTED WORK" CONTACT SHEET ────────────────────
+     The ONE GSAP-pinned beat (studio's normal chapters use CSS sticky, NOT
+     ScrollTrigger pins — so this is the only pin and never stacks >3 deep).
+     Technique 1 · MONTAGE SNAP (taste-guardrails §2 "Montage" / scroll-
+       patterns.md "Landing Sequence"): a horizontal track of N work-cards
+       advanced by transform:translate on the scrubbed pin timeline, snapping
+       card→card.
+     Technique 2 · VELOCITY-REACTIVE typography (pattern #3): the big display
+       heading compresses letter-spacing + scaleY on fast scroll.
+     STATIC DEFAULTS below keep it whole when GSAP is absent / reduced-motion /
+     mobile: the section is normal flow, the track wraps, all cards visible. */
+  section.showcase{ min-height:0; }              /* GSAP pin owns the scroll room when active */
+  .montage{ position:relative; padding:16vh clamp(18px,5vw,72px) 14vh; overflow:hidden; }
+  .montage .head{ margin-bottom:clamp(28px,5vh,56px); }
+  .montage .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:clamp(10px,1vw,12px);
+    letter-spacing:.34em; text-transform:uppercase; color:var(--accent); margin-bottom:clamp(12px,1.6vw,20px); }
+  /* large display heading — the velocity-reactive target (≥48px, never body) */
+  .montage h2.mtitle{ font-weight:900; line-height:.86; letter-spacing:-.02em; text-transform:uppercase;
+    font-size:clamp(3rem,9vw,8rem); transform-origin:left center; }
+  .montage h2.mtitle .accent{ color:var(--accent); }
+  /* contact-sheet track — STATIC DEFAULT: flex-wrap grid (all cards on screen) */
+  .montage .track{ display:flex; flex-wrap:wrap; gap:clamp(14px,2vw,28px); }
+  .mcard{ position:relative; flex:1 1 clamp(200px,18vw,260px); aspect-ratio:4/5;
+    background:var(--white); border:1px solid var(--line); padding:16px 18px;
+    display:flex; flex-direction:column; justify-content:space-between; }
+  .mcard .mi{ font-weight:900; font-size:clamp(2.6rem,5vw,4.4rem); line-height:.9; letter-spacing:-.04em; color:var(--ink); }
+  .mcard .ml{ font-weight:700; font-size:clamp(1rem,1.5vw,1.3rem); line-height:1.12; color:var(--ink); }
+  .mcard .mm{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--fg-muted); }
+  .mcard .mb{ position:absolute; top:0; left:0; height:3px; width:100%; background:var(--accent); transform-origin:left; }
+  /* accent on the last "open" card */
+  .mcard:last-child{ background:var(--ink); }
+  .mcard:last-child .mi,.mcard:last-child .ml{ color:var(--white); }
+  .mcard:last-child .mm{ color:#9A9AA0; }
+
+  @media (max-width:680px){
+    /* static stacked contact sheet — no pin, no snap, no velocity */
+    .montage{ padding:13vh 22px 11vh; }
+    .montage h2.mtitle{ font-size:14vw; transform:none!important; letter-spacing:-.02em!important; }
+    .montage .track{ flex-direction:column; flex-wrap:nowrap; gap:16px; }
+    .mcard{ flex:1 1 auto; aspect-ratio:16/9; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .montage h2.mtitle{ transform:none!important; letter-spacing:-.02em!important; }
+  }
 </style>
 </head>
 <body>
@@ -174,7 +228,7 @@
 </footer>
 
 <script type="module">
-import { CHAPTERS, PALETTE } from './chapters.js';
+import { CHAPTERS, PALETTE, MONTAGE } from './chapters.js';
 
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const smooth=(e0,e1,x)=>{ if(x<=e0)return 0; if(x>=e1)return 1; const t=(x-e0)/(e1-e0); return t*t*(3-2*t); };
@@ -234,6 +288,43 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
     r.innerHTML = `<span>${ch.id.split('-')[0].padStart(2,'0')}</span><span class="ln"></span>`;
     rail.appendChild(r);
   }
+
+  /* ── APPEND THE GSAP SHOWCASE BEAT ("SELECTED WORK" contact sheet) ────
+     Inserted right after THE WORK chapter (2-work) so it reads: work →
+     contact-sheet montage → craft. Built BEFORE sections/rails are collected
+     so the centre-spy and index rail stay index-aligned (the spy uses
+     sections.indexOf against the parallel rails[] array). The montage is the
+     ONE GSAP-pinned section; studio's chapters are CSS-sticky (not pins), so
+     this never creates >3 consecutive ScrollTrigger pins (§1.3) and the
+     chapters on either side give >80vh of free-scroll release. Pure markup
+     here; motion is wired at the end (desktop-only, only if GSAP loaded). */
+  const cardsHTML = MONTAGE.map(c => `
+    <article class="mcard">
+      <span class="mb"></span>
+      <div class="mi">${c.idx}</div>
+      <div>
+        <div class="ml">${c.label}</div>
+        <div class="mm">${c.year} · ${c.meta}</div>
+      </div>
+    </article>`).join('');
+  const show = document.createElement('section');
+  show.className = 'showcase'; show.id = 'selected';
+  show.dataset.morph = '#E6E6E6'; show.dataset.dark = '0';
+  show.innerHTML = `
+    <div class="montage">
+      <div class="head">
+        <div class="eyebrow">SELECTED WORK · CONTACT SHEET</div>
+        <h2 class="mtitle">Twelve years<span class="accent">, on file.</span></h2>
+      </div>
+      <div class="track">${cardsHTML}</div>
+    </div>`;
+  const workSec = [...app.children].find(s => s.id === 'work');
+  app.insertBefore(show, workSec ? workSec.nextSibling : null);   // after 2-work
+  const sr = document.createElement('div');
+  sr.className = 'r'; sr.dataset.id = 'selected';
+  sr.innerHTML = `<span>W</span><span class="ln"></span>`;
+  const workRail = [...rail.children].find(r => r.dataset.id === '2-work');
+  rail.insertBefore(sr, workRail ? workRail.nextSibling : null);
 
   const sections = [...document.querySelectorAll('section')];
   const rails = [...rail.querySelectorAll('.r')];
@@ -353,6 +444,76 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
       frame.addEventListener('pointerleave',()=>{pic.style.transform='translateZ(0) rotateY(0) rotateX(0)';});
     });
   }
+
+  /* ── GSAP SHOWCASE WIRING — desktop & non-reduced only (matchMedia-gated so
+     it auto-kills on resize into a small/reduced context). Two cinematic
+     techniques on the #selected contact sheet:
+       • MONTAGE SNAP (taste-guardrails §2 "Montage" / "Landing Sequence") —
+         the card track advances via transform:translateX on the scrubbed pin
+         timeline; ScrollTrigger.snap snaps card→card. NEVER touches left/width.
+       • VELOCITY-REACTIVE typography (scroll-patterns.md #3) — the big display
+         heading compresses letter-spacing + scaleY from a lerped velocity
+         tracker, driven by gsap.quickTo. Large display type only; off on touch.
+     If GSAP never loads, #selected stays at its complete static (wrapped) state. */
+  (function wireShowcase(tries){
+    if(!window.gsap || !window.ScrollTrigger){
+      if(tries>0) requestAnimationFrame(()=>wireShowcase(tries-1));
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.defaults({ scrub:0.5, fastScrollEnd:true, invalidateOnRefresh:true });
+    const mm = gsap.matchMedia();
+    mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
+      const sec   = document.querySelector('#selected');
+      const wrap  = sec && sec.querySelector('.montage');
+      const track = sec && sec.querySelector('.track');
+      const title = sec && sec.querySelector('.mtitle');
+      if(!sec || !track || !title) return;
+      const cards = [...track.children];
+      const n = cards.length;
+
+      /* MONTAGE SNAP — horizontal track laid out in one row for the pinned beat,
+         advanced by translateX across the scrub timeline; snaps card→card.
+         These layout writes are one-time setup (not per-frame), transform-only
+         drives the motion. */
+      gsap.set(track, { display:'flex', flexWrap:'nowrap', willChange:'transform' });
+      gsap.set(cards, { flex:'0 0 clamp(220px,24vw,340px)' });
+
+      const shift = () => -(track.scrollWidth - wrap.clientWidth);   // cached on refresh
+      const tl = gsap.timeline({ scrollTrigger:{
+        trigger:'#selected', start:'top top', end:'+=' + (n*60) + '%',
+        pin:wrap, anticipatePin:1,
+        snap:{ snapTo: 1/(n-1), duration:{min:.2,max:.5}, ease:'power2.out' } } });
+      tl.fromTo(track, { x:0 }, { x:shift, ease:'none' }, 0);
+
+      /* VELOCITY-REACTIVE typography — lerped velocity tracker (deltaY/dt, lerp
+         0.15, capped) → gsap.quickTo on the heading's letter-spacing + scaleY.
+         Disabled on touch. Transform-based scaleY + letter-spacing (allowed on
+         ≥48px display type only, §1.4). Lives in this section's lifecycle only. */
+      let velRAF = null;
+      if(!isTouch){
+        const setLS = gsap.quickTo(title, 'letterSpacing', { duration:.3, ease:'power2.out' });
+        const setSY = gsap.quickTo(title, 'scaleY',        { duration:.3, ease:'power2.out' });
+        let lastY = scrollY, lastT = performance.now(), vel = 0;
+        const tick = (now) => {
+          const dt = Math.max(now - lastT, 1);
+          const dy = scrollY - lastY;
+          vel += (dy/dt - vel) * 0.15;            // lerp toward instantaneous velocity
+          lastY = scrollY; lastT = now;
+          const v = Math.min(Math.abs(vel), 3);   // cap px/ms
+          setLS((-0.02 - v*0.02) + 'em');         // -0.02em (calm) → ~-0.08em (fast)
+          setSY(1 - v*0.04);                       // scaleY 1 → ~0.88 on fast scroll
+          velRAF = requestAnimationFrame(tick);
+        };
+        velRAF = requestAnimationFrame(tick);
+      }
+
+      return () => {
+        if(velRAF) cancelAnimationFrame(velRAF);
+        gsap.set([track, ...cards, title], { clearProps:'all' });
+      };
+    });
+  })(120);
 })();
 </script>
 </body>

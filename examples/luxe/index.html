@@ -16,6 +16,14 @@
 <!-- Cormorant Garamond (thin serif display), EB Garamond (body serif), Jost (mono-ish UI labels) -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:wght@400;500&family=Jost:wght@300;400&display=swap" rel="stylesheet" />
 
+<!-- GSAP + ScrollTrigger (now 100% free) — powers the one dedicated "The Object"
+     showcase beat: a PUSH-IN (slow scale 1 → 1.08) + a MATCH-CUT (two captions
+     crossfade by opacity over a perfectly-still composition). Deferred + feature-
+     detected: if the CDN fails, the beat simply stays at its complete static state
+     and the hand-rolled rAF quiet-luxury engine below still runs untouched. -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+
 <style>
   /* ───────────────────────────────────────────────────────────────
      cinematic-scroll · Quiet-Luxury example  (MAISON SOLENNE)
@@ -253,6 +261,79 @@
     .copy h2 .scrub{ letter-spacing:0 !important; }
     .cue .bar{ animation:none; }
   }
+
+  /* ── GSAP SHOWCASE — "THE OBJECT, HELD" ──────────────────────────
+     One dedicated beat demonstrating two restrained techniques the
+     hand-rolled engine doesn't (taste-guardrails §2):
+       • PUSH-IN  — a very slow scale(1 → 1.08) on the framed object over
+                    the pin (intensifying focus; no other foreground motion).
+       • MATCH-CUT — two captions occupy the SAME position; content swaps by
+                    opacity crossfade while the layout holds perfectly still.
+     No 3D tilt, no snap, no velocity, no glow (museum restraint, §1.9).
+     STATIC DEFAULTS below keep the beat whole when GSAP is absent / reduced-
+     motion / mobile: object at rest scale 1, first caption visible, second
+     hidden, all content present. GSAP owns the pin scroll-room at runtime. */
+  .chapter.showcase{ height:auto; }                  /* GSAP pin grants the scroll-room */
+  .show-stage{
+    position:relative; height:100vh; overflow:hidden;
+    display:grid; place-items:center; padding:0 clamp(20px,5vw,64px);
+  }
+  .show-inner{ width:min(720px,90vw); text-align:center; }
+  .show-eyebrow{
+    font-family:var(--ui); font-weight:300; font-size:10px; letter-spacing:.40em;
+    text-transform:uppercase; color:var(--cognac); display:block;
+    margin-bottom:clamp(26px,4vw,44px);
+  }
+  /* the still the PUSH-IN scales (own layer; not driven by the rAF engine) */
+  .show-object{
+    position:relative; width:min(360px,64vw); aspect-ratio:4/5; margin:0 auto;
+    border-radius:18px; overflow:hidden; transform-origin:50% 46%;
+    box-shadow:0 40px 90px -50px rgba(54,48,42,.55);
+    will-change:transform;                           /* one element only */
+    background-image:
+      radial-gradient(120% 90% at 38% 22%, rgba(255,252,246,.92) 0%, rgba(228,216,196,.6) 48%, rgba(154,106,60,.32) 100%),
+      linear-gradient(155deg, #F3ECDF 0%, #E7DAC6 52%, #C9A878 100%);
+    background-color:var(--ecru);
+  }
+  .show-object::before{
+    content:""; position:absolute; left:50%; top:14%; width:34%; height:72%;
+    transform:translateX(-50%); border-radius:120px;
+    background:linear-gradient(180deg, rgba(255,253,248,.55), rgba(154,106,60,.10) 70%, rgba(126,85,48,.18));
+  }
+  .show-object::after{   /* static grain locked to the still */
+    content:""; position:absolute; inset:0; opacity:.32; mix-blend-mode:multiply; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='go'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23go)' opacity='0.4'/%3E%3C/svg%3E");
+  }
+  /* MATCH-CUT: both captions share ONE grid cell → identical position; only
+     opacity differs. Static default: first shown, second hidden. */
+  .show-caps{ display:grid; margin-top:clamp(30px,4vw,48px); }
+  .show-cap{
+    grid-area:1 / 1; align-self:start;
+    font-family:var(--display); font-weight:300; font-style:italic;
+    font-size:clamp(1.4rem,3.4vw,2.4rem); line-height:1.2; color:var(--bark);
+  }
+  .show-cap small{
+    display:block; margin-top:14px; font-family:var(--ui); font-weight:300; font-style:normal;
+    font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--muted);
+  }
+  .show-cap.b{ opacity:0; }                          /* second state hidden at rest */
+  .show-cap em{ color:var(--cognac-2); }
+
+  @media (max-width:680px){
+    /* static + stacked: no pin, show both captions, object at rest */
+    .chapter.showcase .show-stage{ height:auto; padding:clamp(72px,13vh,120px) 22px; }
+    .show-object{ transform:none !important; width:min(320px,74vw); }
+    .show-caps{ display:block; }
+    .show-cap{ display:block; opacity:1 !important; }
+    .show-cap.b{ margin-top:24px; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .show-stage{ height:auto; padding:96px 22px; }
+    .show-object{ transform:none !important; }
+    .show-caps{ display:block; }
+    .show-cap{ opacity:1 !important; }
+    .show-cap.b{ margin-top:24px; }
+  }
 </style>
 </head>
 <body>
@@ -405,6 +486,41 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     rail.appendChild(b);
   }
 
+  /* ── INSERT THE GSAP SHOWCASE BEAT ("THE OBJECT, HELD") ──────────────
+     Placed right after Chapter III · The Object, so the object is first
+     introduced, then held and considered, before the closing enquiry —
+     and BEFORE sections/railBtns/CHAPTERS are read by the scroll-spy, so the
+     parallel arrays (sections ↔ railBtns ↔ CHAPTERS) stay index-aligned.
+     Pure markup here; motion is wired at the end (desktop + non-reduced only,
+     and only if GSAP actually loaded). Stays static otherwise. */
+  const SHOW_AFTER = 'object';                 // chapter whose index we insert after
+  const anchorSec  = document.getElementById(SHOW_AFTER);
+  const anchorIdx  = CHAPTERS.findIndex(c=>c.id===SHOW_AFTER);   // 2 → insert at 3
+  const showMorph  = 'radial-gradient(130% 90% at 28% 14%, rgba(154,106,60,.12), rgba(154,106,60,0) 56%), radial-gradient(100% 80% at 84% 88%, rgba(126,85,48,.07), rgba(126,85,48,0) 60%), #E8DCC8';
+
+  const show = document.createElement('section');
+  show.className = 'chapter showcase';
+  show.id = 'held';
+  show.innerHTML = `
+    <div class="show-stage">
+      <div class="show-inner">
+        <span class="show-eyebrow">Chapter III · ½ — The Object, Held</span>
+        <div class="show-object" role="img" aria-label="The object, considered in soft light"></div>
+        <div class="show-caps">
+          <p class="show-cap a">One object, considered <em>completely</em>.<small>The form, before it is named</small></p>
+          <p class="show-cap b">Nothing left <em>to remove</em>.<small>The same form, now resolved</small></p>
+        </div>
+      </div>
+    </div>`;
+  anchorSec.after(show);                         // DOM: directly after Chapter III
+
+  const showBtn = document.createElement('button');
+  showBtn.type = 'button'; showBtn.dataset.goto = 'held';
+  showBtn.innerHTML = `<span style="font-family:var(--display);font-size:12px">·</span><span class="nm">Held</span><span class="tick"></span>`;
+  rail.children[anchorIdx].after(showBtn);       // rail: matching entry, same offset
+  // keep the CHAPTERS lookup aligned with the new section list (spy reads CHAPTERS[idx].morph)
+  CHAPTERS.splice(anchorIdx + 1, 0, { id:'held', nm:'Held', morph:showMorph });
+
   const sections = [...document.querySelectorAll('.chapter')];
   const railBtns = [...rail.children];
 
@@ -507,6 +623,39 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
   window.addEventListener('scroll', onScroll, { passive:true });
   window.addEventListener('resize', ()=>{ ticking = true; requestAnimationFrame(parallax); }, { passive:true });
   parallax(); // initial paint so nothing starts invisible if scroll never fires
+
+  /* ── GSAP SHOWCASE WIRING — "The Object, Held" ─────────────────────
+     Polls for GSAP (the CDN is deferred); guarded again by matchMedia so it
+     only arms on desktop + no-reduced-motion and auto-reverts on resize into a
+     small / reduced context. Two restrained techniques (taste-guardrails §2):
+       • PUSH-IN   — the framed object scales 1 → 1.08 over the pin (slow zoom
+                     toward the subject; nothing else moves in the foreground).
+       • MATCH-CUT — caption A → caption B by opacity over a perfectly-still
+                     composition (identical position; only the words change).
+     Only transform + opacity mutate. If GSAP never loads, #held stays static. */
+  (function wireShowcase(tries){
+    if (!window.gsap || !window.ScrollTrigger){
+      if (tries > 0) requestAnimationFrame(()=> wireShowcase(tries-1));
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.defaults({ scrub:0.5, fastScrollEnd:true, invalidateOnRefresh:true });
+    const mm = gsap.matchMedia();
+    mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
+      const stage = document.querySelector('#held .show-stage');
+      if (!stage) return;
+      const obj  = stage.querySelector('.show-object');
+      const capA = stage.querySelector('.show-cap.a');
+      const capB = stage.querySelector('.show-cap.b');
+      const els  = [obj, capA, capB];
+      const tl = gsap.timeline({ scrollTrigger:{
+        trigger:'#held', start:'top top', end:'+=220%', pin:stage, anticipatePin:1 } });
+      tl.fromTo(obj,  { scale:1 },  { scale:1.08, ease:'none' }, 0)                       // PUSH-IN (§2)
+        .to(capA,     { opacity:0, ease:'none', duration:0.4 }, 0.45)                     // MATCH-CUT: A out
+        .fromTo(capB, { opacity:0 }, { opacity:1, ease:'none', duration:0.4 }, 0.45);     // MATCH-CUT: B in (same cell)
+      return () => gsap.set(els, { clearProps:'all' });   // revert to static defaults
+    });
+  })(120);
 })();
 </script>
 </body>
