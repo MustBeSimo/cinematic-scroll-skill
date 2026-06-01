@@ -16,33 +16,12 @@
 
 <sub>↑ The <b>motion</b> is the skill — pinned chapters, multi-depth parallax, mask/stagger title reveals, a tracking index rail. The <b>look</b> is whatever you ask for. This clip happens to be a Renaissance editorial; the same grammar drives a brutalist drop, a neon Gen-Z launch, a noir game page, or your brand. <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">Scroll it live →</a></sub>
 
-**A free, open-source Agent Skill (Claude · Cursor · Hermes) for building cinematic, scroll-driven websites in any visual style.** You describe the aesthetic — palette, mood, references — and get pinned chapters, multi-depth parallax, 3D tilt, environment-morphing backgrounds, and full Shopify-Editions-style release pages, art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
+**A free, open-source Agent Skill (Claude · Cursor · Hermes · OpenClaw) for building cinematic, scroll-driven websites in any visual style.** You describe the aesthetic — palette, mood, references — and get pinned chapters, multi-depth parallax, 3D tilt, environment-morphing backgrounds, and full Shopify-Editions-style release pages, art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
 
 > **License:** MIT — free for any use, personal or commercial.
 > **Status:** Provided as-is. Developed from applied experiments and working demos, then released as an open-source skill. Not actively maintained — issues and PRs are welcome but may sit. No warranty, no support SLA.
 
 Built by [Simone Leonelli](https://w230.net) · [simone@w230.net](mailto:simone@w230.net)
-
----
-
-## One grammar, any aesthetic
-
-The cinematic motion stays constant; the visual world is whatever you describe. Each hero below is a **concept aesthetic direction** the skill can art-direct from a prompt — same parallax, same pinning, same title choreography underneath. They illustrate the *range* of looks; for fully built, scrollable output see the [Live examples](#live-examples--five-worlds-one-grammar) below. Pick a world, or invent your own.
-
-<table>
-  <tr>
-    <td width="33%"><img src="assets/01_v2.png" alt="Brutalist editorial website concept — 'BUILD. BREAK. BIND.' oversized headline over exposed grid lines and raw concrete architecture"><br><sub><b>Brutalist editorial</b> — stark monochrome, raw grid</sub></td>
-    <td width="33%"><img src="assets/02_v2.png" alt="Quiet luxury website concept — 'MOMENTS OF CALM' serif hero over warm dunes with restrained gold accents"><br><sub><b>Quiet luxury</b> — earth palette, negative space</sub></td>
-    <td width="33%"><img src="assets/03_v2.png" alt="Gen-Z pop website concept — 'POP WORLD ENERGY' headline on a neon gradient with glassy floating cards and sticker accents"><br><sub><b>Gen-Z pop</b> — neon gradients, floating UI</sub></td>
-  </tr>
-  <tr>
-    <td width="33%"><img src="assets/04_v2.png" alt="Sci-fi noir website concept — 'NEON PROTOCOL' headline with a lone figure in a neon, rain-lit city"><br><sub><b>Sci-fi noir</b> — teal + crimson, grain, edge light</sub></td>
-    <td width="33%"><img src="assets/05_v2.png" alt="Organic wellness website concept — 'NATURALLY ROOTED' serif hero over soft watercolour botanical washes"><br><sub><b>Organic wellness</b> — blush, sage, painterly</sub></td>
-    <td width="33%"><img src="assets/06_v2.png" alt="Retro archive website concept — 'DIGITAL ARCHIVE' headline over amber, scan-lined vintage computer terminals"><br><sub><b>Retro archive</b> — amber, analogue, scan-lines</sub></td>
-  </tr>
-</table>
-
-<sub>Six prompts, six aesthetic directions — each art-directed by the skill's own [fal.ai](https://fal.ai) pipeline (or bring your own images / go CSS-only at $0). These are concept stills that show the spread of looks, not finished pages; the [live examples](#live-examples--five-worlds-one-grammar) below are the ones you can actually scroll end-to-end. None of these is "the style" — they're proof there isn't one.</sub>
 
 ---
 
@@ -62,19 +41,17 @@ A complete Next.js App Router project scaffolded from tested templates: chaptere
 
 ---
 
-## Live examples — five worlds, one grammar
+## Live examples — five scrollable worlds, one grammar
 
-Same engine, deliberately clashing aesthetics. Every one is a **single, build-free `index.html` file** (GitHub-Pages-native) running the skill's **Mode A** grammar: dependency-free vanilla JS on `requestAnimationFrame`, transform/opacity-only — **no GSAP, no Lenis, no WebGL**. Pinned chapters, multi-depth parallax, scroll-spy rail, background morph, title reveals. All five render fully with **zero image files** (CSS-only placeholders that upgrade automatically if you drop stills in). Proof the look is a variable, not a default.
-
-The first two ship with recorded scroll captures; the three below run the same engine in three further aesthetics — open any to scroll the real thing.
+Same engine, deliberately clashing aesthetics — five **single, build-free `index.html` files** (GitHub-Pages-native) running the skill's **Mode A** grammar: dependency-free vanilla JS on `requestAnimationFrame`, transform/opacity-only, no GSAP/Lenis/WebGL. All five render fully with **zero image files** (CSS-only placeholders that upgrade when you add stills). Proof the look is a variable, not a default.
 
 <table>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/"><img src="assets/scroll-demo.gif" alt="Renaissance editorial example — warm classical scroll demo" width="100%"></a>
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/"><img src="assets/scroll-demo.gif" alt="Renaissance editorial example — warm classical scroll loop" width="100%"></a>
     </td>
     <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/"><img src="assets/studio-scroll-demo.gif" alt="Brutalist creative-director example — monochrome scroll demo with 3D motion" width="100%"></a>
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/"><img src="assets/studio-scroll-demo_v2.gif" alt="Brutalist creative-director example — monochrome scroll loop with 3D motion" width="100%"></a>
     </td>
   </tr>
   <tr>
@@ -92,23 +69,53 @@ The first two ship with recorded scroll captures; the three below run the same e
 <table>
   <tr>
     <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/"><img src="assets/noir-scroll-demo.gif" alt="Sci-fi noir example — teal fog and crimson edge-light loop" width="100%"></a>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/luxe/"><img src="assets/luxe-scroll-demo.gif" alt="Quiet luxury example — ivory and sand still-life loop" width="100%"></a>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/pop/"><img src="assets/pop-scroll-demo.gif" alt="Gen-Z pop example — neon gradient and glassy UI loop" width="100%"></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/"><b>③ Sci-fi noir →</b></a><br>
-      <sub>Studio <b>VANTASCOPE</b>, title <b>HOLLOW STAR</b>. Near-black void, deep-teal fog, a single crimson edge-light, heavy grain. 4 chapters, scroll-linked 3D camera, vertical mask-wipe title reveals. <a href="./examples/noir/">Source</a>.</sub>
+      <sub>Studio <b>VANTASCOPE</b>, title <b>HOLLOW STAR</b>. Near-black void, deep-teal fog, crimson edge-light, film grain. 4 chapters, scroll-linked 3D camera, vertical mask-wipe title reveals. <a href="./examples/noir/">Source</a>.</sub>
     </td>
     <td width="33%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/luxe/"><b>④ Quiet luxury →</b></a><br>
-      <sub>Maison <b>SOLENNE</b>. Warm ivory + sand, one muted cognac accent, thin-serif display, vast negative space. 220vh pins, ~3% background drift, letter-spacing-scrub reveals. <a href="./examples/luxe/">Source</a>.</sub>
+      <sub>Maison <b>SOLENNE</b>. Warm ivory + sand, muted cognac accent, thin-serif display, vast negative space. 220vh pins, ~3% background drift, letter-spacing-scrub reveals. <a href="./examples/luxe/">Source</a>.</sub>
     </td>
     <td width="33%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/pop/"><b>⑤ Gen-Z pop →</b></a><br>
-      <sub>App <b>BLOOM</b>. Candy-pink + electric-lime gradients, bold rounded type, fast parallax with wide depth gaps, a floating CSS phone-UI layer. <a href="./examples/pop/">Source</a>.</sub>
+      <sub>App <b>BLOOM</b>. Candy-pink + electric-lime gradients, bold rounded type, fast parallax, floating CSS phone-UI. <a href="./examples/pop/">Source</a>.</sub>
     </td>
   </tr>
 </table>
 
-<sub>The noir, luxe, and pop examples ship without recorded GIFs — open the live links above to scroll them, or run them locally below.</sub>
+**Same motion grammar; any aesthetic.** These five show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for.
 
-Five prompts, five finished worlds. Swap the palette, references, and copy and the same machinery produces any of the aesthetics above.
+### Aesthetic directions
+
+Beyond these five live examples, the skill can art-direct itself into any visual world. Below are six concept *style directions* to illustrate the range:
+
+<table>
+  <tr>
+    <td width="33%"><img src="assets/01_v2.png" alt="Brutalist editorial website interface — 'BUILD. BREAK. BIND.' oversized headline over exposed grid lines and raw concrete"><br><sub><b>Brutalist</b> — stark, grid-driven</sub></td>
+    <td width="33%"><img src="assets/02_v2.png" alt="Quiet luxury website interface — 'MOMENTS OF CALM' serif hero over warm dunes with restrained gold"><br><sub><b>Quiet luxury</b> — earth palette, space</sub></td>
+    <td width="33%"><img src="assets/03_v2.png" alt="Gen-Z pop website interface — 'POP WORLD ENERGY' headline on neon gradient with glassy cards"><br><sub><b>Pop</b> — neon, playful</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="assets/04_v2.png" alt="Sci-fi noir website interface — 'NEON PROTOCOL' headline with lone figure in neon rain-lit city"><br><sub><b>Sci-fi noir</b> — teal, edge-lit</sub></td>
+    <td width="33%"><img src="assets/05_v2.png" alt="Organic wellness website interface — 'NATURALLY ROOTED' serif hero over soft watercolour botanical"><br><sub><b>Wellness</b> — blush, painterly</sub></td>
+    <td width="33%"><img src="assets/06_v2.png" alt="Retro archive website interface — 'DIGITAL ARCHIVE' headline over amber scan-lines and terminals"><br><sub><b>Retro archive</b> — amber, analogue</sub></td>
+  </tr>
+</table>
+
+<sub>Six style directions generated by the skill's own [fal.ai](https://fal.ai) pipeline (or bring your own images / go CSS-only at $0). These are concept stills that show possible aesthetic ranges — the five live examples above are the scrollable proofs.</sub>
+
+### Running locally
 
 ```bash
 python3 -m http.server 8099   # then open /examples/renaissance/ · /studio/ · /noir/ · /luxe/ · /pop/
@@ -133,6 +140,8 @@ python3 -m http.server 8099   # then open /examples/renaissance/ · /studio/ · 
 **Cursor:** drop this folder into `.cursor/skills/` in any project; Cursor auto-discovers it.
 
 **Hermes:** `hermes skill add https://github.com/MustBeSimo/cinematic-scroll-skill` (or unzip into `~/.hermes/skills/`).
+
+**OpenClaw:** Add `cinematic-scroll` to your OpenClaw skill registry — see [openclaw/openclaw](https://github.com/openclaw/openclaw) or drop the folder into your OpenClaw skills directory.
 
 Then trigger it in chat — see [`examples/PROMPTS.md`](./examples/PROMPTS.md) for 20+ copy-paste prompts across aesthetic worlds (brutalist editorial, quiet luxury, Gen-Z pop, Linear-minimal, sci-fi noir, organic wellness, typographic maximalism, retro).
 
