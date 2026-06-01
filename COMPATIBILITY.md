@@ -8,8 +8,8 @@ This document provides documented installation paths for each platform, with evi
 |----------|--------|-----------------|-------|
 | Claude Desktop | ✅ Verified | Upload skill folder | Settings → Capabilities → Skills → Upload |
 | Cursor | ✅ Verified | Drop into `.cursor/skills/` | Auto-discovery, no reload required |
-| Hermes Agent | ⏳ Pending | Multi-file install investigation | Single-file install incomplete; awaiting platform support |
-| OpenClaw | ⏳ Not tested | TBD | Similar architecture to Hermes; pending investigation |
+| Hermes Agent | ✅ Verified | `git clone` to `~/.hermes/skills/` | Fully compatible; tested June 1, 2026 |
+| OpenClaw | ⏳ Not tested | Similar to Hermes | Pending (same git clone method likely) |
 | skills.sh | 🚀 Target | Registry submission | Primary distribution channel |
 
 ---
