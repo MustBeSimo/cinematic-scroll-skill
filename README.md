@@ -16,7 +16,7 @@
 
 <sub>↑ The <b>motion</b> is the skill — pinned chapters, multi-depth parallax, mask/stagger title reveals, a tracking index rail. The <b>look</b> is whatever you ask for. This clip happens to be a Renaissance editorial; the same grammar drives a brutalist drop, a neon Gen-Z launch, a noir game page, or your brand. <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">Scroll it live →</a></sub>
 
-**A free, open-source Agent Skill (Claude · Cursor · Hermes · OpenClaw) for building cinematic, scroll-driven websites in any visual style.** Describe the aesthetic — palette, mood, references — and get pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
+**A free, open-source Agent Skill (Claude · Cursor · Hermes · OpenClaw) for building cinematic, scroll-driven websites from a brief to deployment.** Describe the aesthetic — palette, mood, references — and get a visual system, motion storyboard, pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
 
 > **License:** MIT — free for any use, personal or commercial.  
 > **Status:** Developed from working demos and production-informed patterns, then released as open source. Provided as-is; no active maintenance commitment. Issues and PRs welcome.
