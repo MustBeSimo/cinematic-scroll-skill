@@ -1,6 +1,12 @@
 # Cinematic Scroll
 
-[![Install via skills.sh](https://img.shields.io/badge/Install%20via-skills.sh-blue?style=for-the-badge)](https://skills.sh/search?q=cinematic-scroll)
+### One sentence in. A cinematic, scroll-driven website out.
+
+[![npm version](https://img.shields.io/npm/v/cinematic-scroll-skill?style=flat-square&logo=npm&label=npm&color=cb3837)](https://www.npmjs.com/package/cinematic-scroll-skill)
+[![Install via skills.sh](https://img.shields.io/badge/install-skills.sh-2563eb?style=flat-square)](https://skills.sh/search?q=cinematic-scroll)
+[![Works with Claude · Cursor · Hermes](https://img.shields.io/badge/works%20with-Claude%20%C2%B7%20Cursor%20%C2%B7%20Hermes-7c5cff?style=flat-square)](#install)
+[![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](./LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/MustBeSimo/cinematic-scroll-skill?style=flat-square&color=f5b301&label=stars)](https://github.com/MustBeSimo/cinematic-scroll-skill/stargazers)
 
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">
   <picture>
@@ -18,10 +24,9 @@
 
 <sub>↑ The <b>motion</b> is the skill — pinned chapters, multi-depth parallax, mask/stagger title reveals, a tracking index rail. The <b>look</b> is whatever you ask for. This clip happens to be a Renaissance editorial; the same grammar drives a brutalist drop, a neon Gen-Z launch, a noir game page, or your brand. <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">Scroll it live →</a></sub>
 
-**A free, open-source Agent Skill (Claude · Cursor · Hermes · OpenClaw) for building cinematic, scroll-driven websites from a brief to deployment.** Describe the aesthetic — palette, mood, references — and get a visual system, motion storyboard, pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
+**A free, MIT-licensed Agent Skill for Claude, Cursor, Hermes & OpenClaw.** Describe the aesthetic — palette, mood, references — and get a visual system, motion storyboard, pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
 
-> **License:** MIT — free for any use, personal or commercial.  
-> **Status:** Developed from working demos and production-informed patterns, then released as open source. Provided as-is; no active maintenance commitment. Issues and PRs welcome.
+> **Free for any use, personal or commercial (MIT).** Actively developed — built from production work and shipped open source. [Issues](https://github.com/MustBeSimo/cinematic-scroll-skill/issues), PRs, and [showcase submissions](https://github.com/MustBeSimo/cinematic-scroll-skill/issues/new?title=Showcase:%20) welcome — I collect what people build.
 
 Built by [Simone Leonelli](https://w230.net) · [simone@w230.net](mailto:simone@w230.net)
 
