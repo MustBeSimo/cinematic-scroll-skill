@@ -229,19 +229,31 @@
   .colophon .src { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 22px; }
   .colophon .src a { color: var(--oxblood); text-decoration: none; border-bottom: 1px solid rgba(107,44,44,0.3); }
 
-  /* ── Mobile: no pin, stacked, fade-up ───────────────────────── */
+  /* ── Mobile (<=860px): static stacked layout. When the touch-safe motion
+     engine is active (html.m-motion) the figure parallaxes and the title
+     words + reveals scrub in on native scroll — compositor-only, NO pin,
+     NO 3D tilt, NO filter. Everything is visible by default so a JS failure
+     never hides content; the reduced-motion block below overrides motion off.
+     Breakpoint MATCHES isMobile() = matchMedia('(max-width:860px)'). ── */
   @media (max-width: 860px) {
     .chapter { height: auto; }
-    .chapter .stage { position: relative; height: auto; min-height: 92vh; padding: clamp(70px,12vh,110px) 0; }
+    .chapter .stage { position: relative; height: auto; min-height: 92vh; padding: clamp(70px,12vh,110px) 0; perspective: none; }
     .stage .inner { grid-template-columns: 1fr; gap: 30px; width: 90vw; }
     .chapter[data-side="left"] .copy,
     .chapter[data-side="left"] .figure { order: initial; }
     .figure { order: 2 !important; } .copy { order: 1 !important; }
-    .layer { transform: none !important; }
-    .aicard { position: relative; left: 0 !important; right: auto !important; top: 0; margin: 18px auto 0; }
+    .aicard { position: relative; left: 0; right: auto; top: 0; margin: 18px auto 0; }
+    .chapter[data-side="left"] .aicard { left: 0; right: auto; }
     .frame { perspective: none; }
-    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16,1,0.3,1); }
-    .reveal.in { opacity: 1; transform: none; }
+    /* visible fail-safe (no JS / engine off): everything composed, no transform */
+    .layer { transform: none; opacity: 1; }
+    .copy h2 .w { opacity: 1; transform: none; }
+    .reveal { opacity: 1; transform: none; }
+
+    /* motion engine on: GPU-promote ONLY the figure; hide start-states the loop scrubs in */
+    html.m-motion .figwrap { will-change: transform; }
+    html.m-motion .copy h2 .w,
+    html.m-motion .copytext .reveal { opacity: 0; }
   }
 
   /* ── Reduced motion: snap to readable mid-state ─────────────── */
@@ -252,6 +264,7 @@
     .stage .inner { grid-template-columns: 1fr; }
     .layer { transform: none !important; opacity: 1 !important; }
     .copy h2 .w { opacity: 1 !important; transform: none !important; }
+    .reveal { opacity: 1 !important; transform: none !important; }
     .cue .bar, .aicard .dot { animation: none; }
   }
 
@@ -530,12 +543,50 @@ const spy = new IntersectionObserver((entries) => {
 }, { threshold: 0.01, rootMargin: '-45% 0px -45% 0px' });
 sections.forEach(s => spy.observe(s));
 
-/* ── Mobile / reduced-motion: simple fade-up, no parallax ───── */
-if (reduce || isMobile()) {
-  const up = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); up.unobserve(e.target);} });
-  }, { threshold: 0.18 });
-  document.querySelectorAll('.reveal').forEach(el => up.observe(el));
+/* ── Reduced motion: fully static. CSS forces every layer/word/reveal
+   visible (!important), so there is nothing to drive. The scroll-spy +
+   morph above still run (cheap, no scroll-driven transforms). ── */
+if (reduce) {
+  /* intentionally nothing — static composition, content already visible */
+}
+
+/* ── MOBILE — touch-safe cinematic motion (no pin, no 3D, no filter) ───────
+   Native scroll. The figure parallax-drifts + breathes (translate3d + scale),
+   the title words and copy reveals scrub in (translate3d + opacity) as each
+   chapter travels up the viewport. Compositor-only — respects taste-guardrails
+   §1.9 (no 3D on touch) and the mobile performance tier. Medium classical
+   intensity: gentle drift, soft per-word stagger. */
+else if (isMobile()) {
+  document.documentElement.classList.add('m-motion');
+  let mTick = false;
+  function mobileMotion(){
+    const vh = window.innerHeight;
+    for (const sec of sections){
+      const rect = sec.getBoundingClientRect();
+      if (rect.bottom < -60 || rect.top > vh + 60) continue;          // skip offscreen
+      const T = clamp((vh - rect.top) / (vh + rect.height), 0, 1);    // 0 entering → 1 leaving
+      const enter = smooth(0.02, 0.40, T);
+      const drift = 0.5 - T;                                          // signed, ~0 mid-pass
+
+      const fig = sec.querySelector('.figwrap');
+      if (fig) fig.style.transform =
+        `translate3d(0, ${(drift * 56).toFixed(1)}px, 0) scale(${(1.05 - 0.05 * enter).toFixed(3)})`;
+
+      const words = sec.querySelectorAll('.copy h2 .w'); const n = words.length;
+      words.forEach((w, k) => { const t0 = 0.06 + (k / Math.max(n,1)) * 0.20; const wp = smooth(t0, t0 + 0.28, T);
+        w.style.transform = `translate3d(0, ${((1 - wp) * 24).toFixed(1)}px, 0)`;
+        w.style.opacity = (0.08 + 0.92 * wp).toFixed(3); });
+
+      const revs = sec.querySelectorAll('.copytext .reveal');
+      revs.forEach((el, k) => { const wp = smooth(0.18 + k * 0.05, 0.56 + k * 0.05, T);
+        el.style.transform = `translate3d(0, ${((1 - wp) * 22).toFixed(1)}px, 0)`;
+        el.style.opacity = wp.toFixed(3); });
+    }
+    mTick = false;
+  }
+  window.addEventListener('scroll', () => { if (!mTick){ mTick = true; requestAnimationFrame(mobileMotion); } }, { passive: true });
+  window.addEventListener('resize', () => { mTick = true; requestAnimationFrame(mobileMotion); }, { passive: true });
+  mobileMotion();   // initial paint at current scroll position
 }
 
 /* ── Desktop parallax engine — rAF-throttled, transform/opacity only ──
