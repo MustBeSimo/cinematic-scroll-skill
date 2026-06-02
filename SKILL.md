@@ -464,10 +464,10 @@ the schema's CSS property names to GSAP shorthand (`translateX`→`x`,
 `rotateZ`→`rotation`, …) — a mapping that is easy to get wrong by hand and
 silently no-ops in GSAP if you do. See `scroll-choreography-compilation.md`.
 
-7. **Follow the `technical-spec.md` exactly.** Do not improvise animation
+8. **Follow the `technical-spec.md` exactly.** Do not improvise animation
    configs that differ from the approved spec.
 
-8. **If using fal.ai assets**, follow the server-side generation pattern,
+9. **If using fal.ai assets**, follow the server-side generation pattern,
    never expose `FAL_KEY` in client code. Reference `MODELS.md` for model
 selection and cost.
 
@@ -825,7 +825,7 @@ in one shot. Use these prompts as templates.
 ## Quick-Start A: Single scroll section (Mode A)
 
 > Build a cinematic-scroll pinned hero chapter for my [brand/product].
-> Director grammar: [Kubrick/Fincher/Anderson/Nolan/Villeneuve/Gerwig/Zhao].
+> Visual system: [Symmetric Monument / Clinical Noir / Storybook Geometry / Temporal Monument / Atmospheric Sublime / Warm Scrapbook / Naturalistic Drift].
 > [N] chapters, [color palette], [typography feel].
 > Pin duration [X]vh. Output: single self-contained HTML file.
 
@@ -836,7 +836,7 @@ lightweight).
 ## Quick-Start B: Full release site (Mode B)
 
 > Scaffold a complete Shopify-Editions-tier cinematic release page for
-> [product]. Director: [name]. [N] chapters. Demo mode first — no fal.ai
+> [product]. Visual system: [name]. [N] chapters. Demo mode first — no fal.ai
 > key required. Copy templates verbatim from `templates/nextjs/`.
 
 The agent runs the full pipeline internally: cinematic audit (assumed),
@@ -857,12 +857,12 @@ The agent runs Phase 2-4 only, integrating with the existing codebase.
 
 These examples show how the complete gated pipeline works end-to-end.
 
-## Example 1: Fintech Trust Page (Fincher Grammar)
+## Example 1: Fintech Trust Page (Clinical Noir system)
 
 > **Phase 1:** We're a fintech app that needs to communicate trust and
 > precision. Our brand is clinical, data-driven, restrained. Audience:
 > decision-makers on desktop. Build a cinematic-scroll experience using
-> the David Fincher visual system from `references/film-archetypes.md`
+> the Clinical Noir visual system from `references/film-archetypes.md`
 > Section 2. Output: `cinematic-audit.md`.
 >
 > **Phase 2:** Based on the audit, design a 6-chapter motion storyboard.
@@ -876,18 +876,18 @@ These examples show how the complete gated pipeline works end-to-end.
 > Sections 1, 2, and 7 for all constraints. Output: `technical-spec.md`.
 >
 > **Phase 4:** Build Mode B — Next.js project from templates. 6 chapters,
-> Fincher palette (ash grey, steel blue, sickly yellow-green, black).
+> Clinical Noir palette (ash grey, steel blue, sickly yellow-green, black).
 > CSS-only demo mode for first run. Output: project directory.
 >
 > **Phase 5:** Run the full polish checklist. Verify all 11 pre-launch
 > checks from `performance-budget.md` Section 6. Confirm no banned patterns
 > from `taste-guardrails.md` Section 1 survived. Output: `polish-report.md`.
 
-## Example 2: Wellness Brand (Gerwig + Zhao Hybrid)
+## Example 2: Wellness Brand (Warm Scrapbook + Naturalistic Drift)
 
 > **Phase 1:** We're a longevity science company. We want warmth,
-> approachability, and land-connection. Primary grammar: Greta Gerwig
-> (`references/film-archetypes.md` Section 6). Accent grammar: Chloé Zhao
+> approachability, and land-connection. Primary system: Warm Scrapbook
+> (`references/film-archetypes.md` Section 6). Accent system: Naturalistic Drift
 > (Section 7) for the landscape chapters. Output: `cinematic-audit.md`.
 >
 > **Phase 2:** Design a 5-chapter storyboard. Chapters: Welcome, Science,
@@ -897,9 +897,10 @@ These examples show how the complete gated pipeline works end-to-end.
 > 8, 6, 5, and 10. Output: `motion-storyboard.md`.
 >
 > **Phase 3:** Technical spec with warm palette progression (rose → peach →
-> amber → sage → cream). GSAP + Lenis. Mobile: disable parallax below 768px,
-> convert to stacked IntersectionObserver fades. Reference `performance-budget.md`
-> Section 3 (Mobile Degradation Matrix). Output: `technical-spec.md`.
+> amber → sage → cream). GSAP + Lenis. Mobile (≤768px): keep touch-safe
+> scroll-coupled motion — lerped image parallax + scroll-linked entrance reveals
+> (no pinning, no 3D tilt); see references/mobile-motion.md. Reference
+> `performance-budget.md` Section 3 (Mobile Degradation Matrix). Output: `technical-spec.md`.
 >
 > **Phase 4:** Build Mode B. 5 chapters, organic editorial aesthetic.
 > fal.ai for chapter images: `historicalLayer: 'atelier'`, painterly botanical
@@ -909,10 +910,10 @@ These examples show how the complete gated pipeline works end-to-end.
 > → science (curiosity) → nature (awe) → product (trust) → community
 > (belonging). Run 11-point checklist. Output: `polish-report.md`.
 
-## Example 3: Sci-Fi Game Reveal (Nolan Grammar, Mode A)
+## Example 3: Sci-Fi Game Reveal (Temporal Monument, Mode A)
 
 > **Phase 1:** We're launching a sci-fi game expansion. We want cosmic scale,
-> event-level drama, layered realities. Director: Christopher Nolan
+> event-level drama, layered realities. Visual system: Temporal Monument
 > (`references/film-archetypes.md` Section 4). Audience: gamers, 70% desktop.
 > Output: `cinematic-audit.md`.
 >
@@ -950,7 +951,7 @@ cinematic-scroll-skill/
 ├── taste-guardrails.md           # Quality enforcement system (11 banned patterns,
 │                                 #   cinematic vocabulary, pacing rules,
 │                                 #   anti-convergence principles)
-├── manifest.json                 # Skill manifest (v2.0.0)
+├── manifest.json                 # Skill manifest (v2.1.0)
 ├── MODELS.md                     # fal.ai model menu and cost table
 ├── README.md                     # Human-facing overview
 ├── LICENSE                       # MIT
@@ -959,8 +960,10 @@ cinematic-scroll-skill/
 │   │                             #   each with use case, depth config, transition,
 │   │                             #   mobile strategy, performance budget
 │   ├── film-archetypes.md        # 7 visual systems (Sections 1-7):
-│   │                             #   Kubrick, Fincher, Anderson, Nolan,
-│   │                             #   Villeneuve, Gerwig, Zhao — each with scroll
+│   │                             #   Symmetric Monument, Clinical Noir,
+│   │                             #   Storybook Geometry, Temporal Monument,
+│   │                             #   Atmospheric Sublime, Warm Scrapbook,
+│   │                             #   Naturalistic Drift — each with scroll
 │   │                             #   behavior, color, pacing, type, depth, transitions
 │   ├── performance-budget.md     # 60fps production contract:
 │   │                             #   frame budget, permitted/forbidden properties,

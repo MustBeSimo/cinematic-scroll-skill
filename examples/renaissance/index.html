@@ -543,11 +543,15 @@ const spy = new IntersectionObserver((entries) => {
 }, { threshold: 0.01, rootMargin: '-45% 0px -45% 0px' });
 sections.forEach(s => spy.observe(s));
 
+/* Everything below wires the scroll engines. Wrapped in an IIFE so the
+   reduced-motion branch can cleanly early-RETURN (matching the other examples)
+   before any rAF engine, pointer tilt, or GSAP wiring is set up. The scroll-spy
+   + morph above already ran (cheap, no scroll-driven transforms). */
+(function(){
 /* ── Reduced motion: fully static. CSS forces every layer/word/reveal
-   visible (!important), so there is nothing to drive. The scroll-spy +
-   morph above still run (cheap, no scroll-driven transforms). ── */
+   visible (!important), so there is nothing to drive. ── */
 if (reduce) {
-  /* intentionally nothing — static composition, content already visible */
+  return; // static composition, content already visible — skip every engine
 }
 
 /* ── MOBILE — cinematic scroll (JS, works on every engine incl. Safari) ────
@@ -601,13 +605,23 @@ else if (isMobile()) {
    T = unified progress over a section's WHOLE pass (approach → pin → exit),
    so content is fully composed when the chapter is centered — including the
    first chapter at load (T ≈ 0.31). Never starts invisible. */
+/* cache each section's document-relative top + height (read once at init and on
+   debounced resize) so the per-frame loop never touches layout (perf-budget §1).
+   rect.top+scrollY is the safe absolute top regardless of offsetParent. */
+let tops = [], heights = [];
+function measure(){ const y = scrollY; tops = sections.map(s=>s.getBoundingClientRect().top + y); heights = sections.map(s=>s.offsetHeight); }
+measure();
+let rTO = 0; window.addEventListener('resize', ()=>{ clearTimeout(rTO); rTO = setTimeout(measure, 150); }, { passive:true });
+
 function parallax() {
   if (reduce || isMobile()) return;
   const vh = window.innerHeight;
-  for (const sec of sections) {
-    const rect = sec.getBoundingClientRect();
-    const total = sec.offsetHeight + vh;
-    const T = clamp((vh - rect.top) / total, 0, 1); // 0 just below → 1 fully past
+  sections.forEach((sec, i) => {
+    const top = tops[i] - scrollY;
+    // perf: skip sections well off-screen
+    if (top > vh*1.2 || top + heights[i] < -vh*0.2) return;
+    const total = heights[i] + vh;
+    const T = clamp((vh - top) / total, 0, 1); // 0 just below → 1 fully past
     const enter = smooth(0.08, 0.30, T);            // composed by the time it pins
     const exit  = 1 - smooth(0.66, 0.84, T);        // fades as it scrolls away
     const live  = enter * exit;                      // 0 → 1 → 0
@@ -646,7 +660,7 @@ function parallax() {
       card.style.transform = `translateY(${(drift * 120 * (depth - 1) * 2.6).toFixed(1)}px)`;
       card.style.opacity = (0.95 * smooth(0.16, 0.36, T) * (1 - smooth(0.62, 0.82, T))).toFixed(3);
     }
-  }
+  });
   ticking = false;
 }
 
@@ -702,6 +716,7 @@ if (!isTouch && !reduce) {
     return () => gsap.set([plate, flourish, cap], { clearProps: 'all' });
   });
 })(120);
+})();
 </script>
 </body>
 </html>

@@ -13,8 +13,8 @@ ScrollTrigger beat showcasing a **dolly-zoom** (Vertigo — the backdrop pushes 
 while the caption holds) and a **scrubbed signal draw** (a crimson waveform that
 draws across the frame via `stroke-dashoffset` as you scroll).
 
-Director grammar: **Denis Villeneuve** (vast negative space, atmospheric haze, slow
-revelation) with **Nolan-grade chiaroscuro** contrast.
+Visual system: **Atmospheric Sublime** (vast negative space, atmospheric haze, slow
+revelation), with **high-contrast chiaroscuro**.
 
 Single self-contained `index.html` — no build step, no npm. The hand-rolled rAF
 cinematic engine has **zero JS dependencies**; the one "Approach" beat additionally
@@ -22,7 +22,7 @@ loads **GSAP + ScrollTrigger** from a CDN (deferred, feature-detected — if it 
 load, that beat simply stays at its complete static state and everything else runs).
 Only other external resource: Google Fonts. GitHub-Pages-native.
 
-- **4 chapters** (Signal · Descent · Witness · Offer) + a **GSAP "Approach" showcase beat**
+- **4 chapters** (Signal · Descent · Witness · Access/Offer) + a **GSAP "Approach" showcase beat**
 - **Palette:** near-black `#0A0C0F`, deep teal `#0B1A1F`/`#14343C`/`#1E5460`,
   crimson accent `#E23A4E`, off-white type `#E9ECEE`
 - **Type:** Oswald (condensed film-poster display), Archivo (UI), JetBrains Mono (labels)
@@ -68,5 +68,7 @@ near-black shadows. **No baked-in text or logos** (the page supplies all type).
 - **Compositor-only** scroll: the rAF-batched loop mutates only `transform` /
   `opacity` (plus the title `clip-path` mask wipe); passive scroll listener; 3D only
   for in-view sections.
-- **Reduced-motion** (`prefers-reduced-motion: reduce`) **and mobile (≤680px)** both
-  drop the pin and render a clean **static mid-state** — full opacity, no scrolljack.
+- **Mobile (≤680px)** drops the pin and 3D camera but keeps touch-safe scroll-coupled
+  motion — a lerped image parallax plus scroll-linked entrance reveals (no scrolljack).
+- **Reduced-motion** (`prefers-reduced-motion: reduce`) renders a clean **static
+  mid-state** — full opacity, no motion.

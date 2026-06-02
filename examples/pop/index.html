@@ -626,15 +626,23 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
      Wide depth gaps (0.15 → 1.40) so layers separate hard and move at very
      different speeds — the "app" (1.40) drifts UP faster than the title.
      Compositor-only: per frame we touch ONLY transform + opacity. */
+  /* cache each section's document-relative top + height (read once at init and
+     on debounced resize) so the per-frame loop never touches layout (perf-budget
+     §1). rect.top+scrollY is the safe absolute top regardless of offsetParent. */
+  let tops=[], heights=[];
+  function measure(){ const y=scrollY; tops=sections.map(s=>s.getBoundingClientRect().top+y); heights=sections.map(s=>s.offsetHeight); }
+  measure();
+  let rTO=0; addEventListener('resize',()=>{ clearTimeout(rTO); rTO=setTimeout(measure,150); },{passive:true});
+
   let ticking=false;
   function parallax(){
     const vh=innerHeight;
-    for(const sec of sections){
-      const rect=sec.getBoundingClientRect();
+    sections.forEach((sec,i)=>{
+      const top=tops[i]-scrollY;
       // perf: skip sections fully off-screen
-      if(rect.bottom < -vh*0.2 || rect.top > vh*1.2) continue;
-      const total=sec.offsetHeight+vh;
-      const T=clamp((vh-rect.top)/total,0,1);
+      if(top+heights[i] < -vh*0.2 || top > vh*1.2) return;
+      const total=heights[i]+vh;
+      const T=clamp((vh-top)/total,0,1);
       const enter=smooth(0.06,0.30,T);
       const exit=1-smooth(0.70,0.90,T);
       const live=enter*exit;
@@ -685,7 +693,7 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
         card.style.transform=`translateY(${(drift*150*(d-1)*3.2).toFixed(1)}px) rotate(${(drift*-3).toFixed(2)}deg)`;
         card.style.opacity=(smooth(0.20,0.42,T)*(1-smooth(0.66,0.86,T))).toFixed(3);
       }
-    }
+    });
     ticking=false;
   }
   function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(parallax); } }

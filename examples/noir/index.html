@@ -193,7 +193,7 @@
   }
   /* each line wears a vertical clip-path MASK WIPE (top→bottom reveal) */
   h2.title .ln{ display:block; overflow:hidden; }
-  h2.title .ln .t{ display:inline-block; will-change:transform,clip-path; }
+  h2.title .ln .t{ display:inline-block; will-change:transform; }
   h2.title .accent{ color:var(--crimson); }
   .lede{ margin-top:clamp(22px,2.8vw,36px); max-width:48ch; font-size:clamp(1rem,1.5vw,1.28rem);
     line-height:1.62; color:var(--fg-muted); font-weight:400; }
@@ -570,13 +570,23 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); },{passive:true});
   }
 
+  /* cache each section's document-relative top + height (read once at init and
+     on debounced resize) so the per-frame loop never touches layout (perf-budget
+     §1). rect.top+scrollY is the safe absolute top regardless of offsetParent. */
+  let tops=[], heights=[];
+  function measure(){ const y=scrollY; tops=sections.map(s=>s.getBoundingClientRect().top+y); heights=sections.map(s=>s.offsetHeight); }
+  measure();
+  let rTO=0; addEventListener('resize',()=>{ clearTimeout(rTO); rTO=setTimeout(measure,150); },{passive:true});
+
   let ticking=false;
   function parallax(){
     const vh=innerHeight;
-    for(const sec of sections){
-      const rect=sec.getBoundingClientRect();
-      const total=sec.offsetHeight+vh;
-      const T=clamp((vh-rect.top)/total,0,1);
+    sections.forEach((sec,i)=>{
+      const top=tops[i]-scrollY;
+      // perf: skip sections well off-screen
+      if(top>vh*1.2 || top+heights[i]<-vh*0.2) return;
+      const total=heights[i]+vh;
+      const T=clamp((vh-top)/total,0,1);
       const enter=smooth(0.06,0.32,T);
       const exit=1-smooth(0.66,0.90,T);
       const live=enter*exit;
@@ -612,9 +622,10 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
         const lines=copy.querySelectorAll('h2 .ln .t'); const n=lines.length;
         lines.forEach((t,k)=>{
           const t0=0.06+(k/n)*0.20; const wp=smooth(t0,t0+0.18,T);
-          // vertical mask wipe: clip-path inset shrinks from bottom 100% → 0
-          t.style.clipPath=`inset(0 0 ${((1-wp)*100).toFixed(1)}% 0)`;
-          t.style.transform=`translateY(${((1-wp)*16).toFixed(1)}px)`;
+          // compositor-only mask wipe: .ln has overflow:hidden, the line is pushed
+          // 100% down (masked) at wp=0 and rises to 0 at wp=1 — same "rises behind
+          // a mask" read as the old clip-path inset, now transform-only.
+          t.style.transform=`translate3d(0, ${((1-wp)*100).toFixed(1)}%, 0)`;
           t.style.opacity=(0.15+0.85*wp).toFixed(3);
         });
         const rev=copy.querySelectorAll('.reveal');
@@ -627,7 +638,7 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
         cue.style.transform=`translate(-50%, ${(drift*120*d).toFixed(1)}px) translateZ(60px)`;
         cue.style.opacity=(1-smooth(0.10,0.34,T)).toFixed(3);
       }
-    }
+    });
     if(!pTick){ progress(); }
     ticking=false;
   }

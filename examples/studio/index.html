@@ -369,10 +369,9 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
   applyActive(sections[0]); // paint initial state immediately
 
   /* reduced motion: fully static, no scroll-driven motion (content already
-     visible via the !important CSS block). Just a one-shot fade-up reveal. */
+     visible via the !important CSS block). The scroll-spy above keeps the rail
+     + background morph live; nothing else to drive. */
   if (reduce){
-    const up=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');up.unobserve(e.target);}});},{threshold:.15});
-    document.querySelectorAll('.reveal').forEach(el=>up.observe(el));
     return; // skip every rAF engine
   }
 
@@ -438,13 +437,23 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
   if(!isTouch && !reduce){
     addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); },{passive:true});
   }
+  /* cache each section's document-relative top + height (read once at init and
+     on debounced resize) so the per-frame loop never touches layout (perf-budget
+     §1). rect.top+scrollY is the safe absolute top regardless of offsetParent. */
+  let tops=[], heights=[];
+  function measure(){ const y=scrollY; tops=sections.map(s=>s.getBoundingClientRect().top+y); heights=sections.map(s=>s.offsetHeight); }
+  measure();
+  let rTO=0; addEventListener('resize',()=>{ clearTimeout(rTO); rTO=setTimeout(measure,150); },{passive:true});
+
   let ticking=false;
   function parallax(){
     const vh=innerHeight;
-    for(const sec of sections){
-      const rect=sec.getBoundingClientRect();
-      const total=sec.offsetHeight+vh;
-      const T=clamp((vh-rect.top)/total,0,1);
+    sections.forEach((sec,i)=>{
+      const top=tops[i]-scrollY;
+      // perf: skip sections well off-screen
+      if(top>vh*1.2 || top+heights[i]<-vh*0.2) return;
+      const total=heights[i]+vh;
+      const T=clamp((vh-top)/total,0,1);
       const enter=smooth(0.06,0.32,T);
       const exit=1-smooth(0.66,0.88,T);
       const live=enter*exit;
@@ -492,7 +501,7 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
         card.style.transform=`translateY(${(drift*150*(d-1)*2.6).toFixed(1)}px) translateZ(40px) rotateY(${(drift*-10).toFixed(2)}deg)`;
         card.style.opacity=(0.95*smooth(0.18,0.40,T)*(1-smooth(0.62,0.84,T))).toFixed(3);
       }
-    }
+    });
     ticking=false;
   }
   function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(parallax); } }

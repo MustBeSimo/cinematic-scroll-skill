@@ -28,7 +28,7 @@ Every mandatory requirement from `SKILL.md`, proven in one file:
   - **Scrubbed SVG flourish** — an illuminated-manuscript gold rule that *draws itself* via `stroke-dashoffset` as you scroll (path length read once via `getTotalLength()`).
   GSAP is loaded from a deferred CDN and feature-detected: if it never loads (or under reduced-motion / mobile), the beat falls back to a complete, static composition.
 - **Manifest-driven** — the whole page is generated from the `CHAPTERS` array at the bottom of the file. Edit that array to retheme; the DOM and motion follow.
-- **Graceful degradation** — `prefers-reduced-motion` and mobile (`≤860px`) drop the pin entirely for a stacked, IntersectionObserver fade-up.
+- **Graceful degradation** — mobile (`≤860px`) drops the pin and 3D tilt but keeps touch-safe scroll-coupled motion: a lerped image parallax plus scroll-linked entrance reveals (no scrolljack). Only `prefers-reduced-motion` goes fully static — a clean stacked mid-state.
 
 ## Editing
 

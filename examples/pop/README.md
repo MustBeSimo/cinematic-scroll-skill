@@ -7,8 +7,8 @@ quick word-stagger, and a floating app-UI layer (a phone) that drifts upward
 faster than the title. Fictional product (**BLOOM**, a productivity app that
 doesn't feel like homework). No real brands.
 
-Director grammar: **Greta Gerwig** (Gen-Z warmth + heart) crossed with
-**Wes Anderson** snap pacing — energetic but art-directed, not a meme.
+Visual system: **Warm Scrapbook** (Gen-Z warmth + heart) crossed with
+**Storybook Geometry** snap pacing — energetic but art-directed, not a meme.
 
 A dedicated **"THE DROP"** showcase beat (section `#drop`, inserted right after
 the hero) is now powered by **GSAP ScrollTrigger** and layers in two extra
@@ -68,11 +68,13 @@ nothing important is clipped by the phone's rounded corners.
   listener; off-screen sections are skipped.
 - **Zero-image safe:** no `assets/` folder is required to ship — the CSS phone
   mock renders the app on first paint.
-- **Reduced-motion & mobile (≤680px):** the rAF engine is skipped entirely and
-  the page renders a clean static mid-state (full opacity, words settled,
-  stacked layout, no scrolljack). THE DROP beat builds its markup in this path
-  too — it just isn't GSAP-animated, and its CSS static defaults (sticker
-  landed, rows un-skewed) keep it whole. Velocity effects are off on touch.
+- **Mobile (≤680px):** the page stacks and unpins but keeps touch-safe
+  scroll-coupled motion — a lerped image parallax plus scroll-linked entrance
+  reveals (no scrolljack, no 3D, velocity effects off on touch). THE DROP beat
+  builds its markup here too — it just isn't GSAP-animated, and its CSS static
+  defaults (sticker landed, rows un-skewed) keep it whole.
+- **Reduced-motion:** the rAF engine is skipped entirely and the page renders a
+  clean static mid-state (full opacity, words settled, stacked layout).
 - **Accessibility:** semantic landmarks (`header`/`main`/`footer`/`nav`), body
   copy sits on solid white panels for contrast over the bright gradients, and
   `prefers-reduced-motion` is respected.

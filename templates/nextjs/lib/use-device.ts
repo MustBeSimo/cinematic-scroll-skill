@@ -14,29 +14,3 @@ export function useIsMobile(breakpoint = 768) {
   }, [breakpoint]);
   return isMobile;
 }
-
-/** True on coarse-pointer / no-hover devices (touch). */
-export function useIsTouch() {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(hover: none) and (pointer: coarse)');
-    const handler = () => setIsTouch(mq.matches);
-    handler();
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-  return isTouch;
-}
-
-/** True when user requests reduced motion. */
-export function useReducedMotion() {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const handler = () => setReduced(mq.matches);
-    handler();
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-  return reduced;
-}

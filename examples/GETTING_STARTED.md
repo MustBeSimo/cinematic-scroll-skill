@@ -87,7 +87,7 @@ Change `FAL_IMAGE_MODEL` to switch — no code change needed.
 | `fal-ai/flux-2/turbo` | ~$0.02 | ~2s | Draft rounds, fast iteration |
 | `fal-ai/flux-pro/v1.1/ultra` | ~$0.06 | ~10s | Prev-gen 4MP alternative |
 | `fal-ai/flux-pro/v1.1` | ~$0.05 | ~4.5s | High-volume cost-sensitive batches |
-| `fal-ai/flux/dev` | Free | Slow | **NON-COMMERCIAL ONLY — local prototyping, never production** |
+| `fal-ai/flux/dev` | Avoid | Slow | **NON-COMMERCIAL LICENSE — avoid; not for production** |
 
 **Google "Nano Banana" family — best for text-in-image, conversational editing, complex scene direction**
 

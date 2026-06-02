@@ -153,11 +153,14 @@ function generateChapterTimeline(chapter: Chapter): gsap.core.Timeline {
       trigger: `[data-chapter="${chapter.id}"]`,
       start: chapter.scrollRange.start + "vh top",
       end: chapter.scrollRange.end + "vh top",
-      scrub: chapter.layers[0]?.animation?.trigger?.scrub ?? globals.scrollSmoothing,
+      // scrub is the chapter's first-layer trigger scrub (NOT the Lenis lerp,
+      // which lives in globals.scrollSmoothing). Default 0.5 per performance-budget.
+      scrub: chapter.layers[0]?.animation?.trigger?.scrub ?? 0.5,
       pin: chapter.pin?.enabled ?? false,
       pinSpacing: chapter.pin?.pinSpacing ?? true,
-      anticipatePin: chapter.pin?.anticipatorySettle ?? 0.05,
-      fastScrollEnd: true,
+      // anticipatePin reads pin.anticipatorySettle; defaults to 1 when unspecified.
+      anticipatePin: chapter.pin?.anticipatorySettle ?? 1,
+      fastScrollEnd: chapter.layers[0]?.animation?.trigger?.fastScrollEnd ?? true,
       invalidateOnRefresh: true,
       markers: false,  // NEVER in production
     }

@@ -129,7 +129,7 @@
   .rail button[aria-current="true"]{ color:var(--bark); }
   .rail button[aria-current="true"] .tick{ width:40px; opacity:1; background:var(--cognac); }
   .rail button[aria-current="true"] .nm{ opacity:1; transform:translateX(0); max-width:160px; }
-  @media (max-width:880px){ .rail{ display:none; } }
+  @media (max-width:680px){ .rail{ display:none; } }
 
   /* ── Chapter / pin ───────────────────────────────────────────── */
   .chapter{ position:relative; height:220vh; }     /* long, slow pin room */
@@ -627,16 +627,24 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
        • copy   : gentle counter-drift, full block.
        • title  : LETTER-SPACING SCRUB 0.45em → 0em over the first ~30%.
        • reveals: eyebrow / rule / lede / caption ease in and hold.            */
+  /* cache each section's document-relative top + height (read once at init and
+     on debounced resize) so the per-frame loop never touches layout (perf-budget
+     §1). rect.top+scrollY is the safe absolute top regardless of offsetParent. */
+  let tops = [], heights = [];
+  function measure(){ const y = scrollY; tops = sections.map(s=>s.getBoundingClientRect().top + y); heights = sections.map(s=>s.offsetHeight); }
+  measure();
+  let rTO = 0; window.addEventListener('resize', ()=>{ clearTimeout(rTO); rTO = setTimeout(measure, 150); }, { passive:true });
+
   let ticking = false;
   function parallax(){
     const vh = window.innerHeight;
-    for (const sec of sections){
-      const rect  = sec.getBoundingClientRect();
+    sections.forEach((sec, i)=>{
+      const top = tops[i] - scrollY;
       // only drive sections that are actually on/near screen (perf)
-      if (rect.bottom < -vh*0.2 || rect.top > vh*1.2) continue;
+      if (top + heights[i] < -vh*0.2 || top > vh*1.2) return;
 
-      const total = sec.offsetHeight + vh;
-      const T     = clamp((vh - rect.top) / total, 0, 1);   // 0 below → 1 past
+      const total = heights[i] + vh;
+      const T     = clamp((vh - top) / total, 0, 1);   // 0 below → 1 past
       const enter = smooth(0.10, 0.34, T);                  // composed by pin
       const exit  = 1 - smooth(0.70, 0.90, T);              // fades away late
       const live  = enter * exit;
@@ -670,7 +678,7 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
       // caption — rides with the figure, a touch later
       const cap = sec.querySelector('.figcap');
       if (cap){ cap.style.opacity = (smooth(0.22, 0.46, T) * exit).toFixed(3); }
-    }
+    });
     ticking = false;
   }
   function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(parallax); } }

@@ -228,6 +228,22 @@
 
 ---
 
+## Renamed film archetypes to anonymized visual systems
+
+**Decision:** The 7 film archetypes were renamed from filmmaker labels to neutral "visual system" names.
+
+**Date:** 2026-06-02
+
+**Context:** Naming the reference styles after living filmmakers (Kubrick, Fincher, Wes Anderson, Nolan, Villeneuve, Gerwig, Zhao) read as imitation of specific artists and tied originality to named people. `references/film-archetypes.md` was rewritten as "Visual Systems for Scroll Design," which explicitly states none of the systems imitates any single living artist or filmmaker. The section numbers are unchanged; only the labels moved to: §1 Symmetric Monument, §2 Clinical Noir, §3 Storybook Geometry, §4 Temporal Monument, §5 Atmospheric Sublime, §6 Warm Scrapbook, §7 Naturalistic Drift. Companion docs (SKILL.md, manifest.md, example READMEs) were updated to match.
+
+**Alternatives considered:**
+- Keep filmmaker names — rejected: invites the appearance of imitating named artists and conflates the system with specific people.
+- Drop the archetype library entirely — rejected: the art-direction grammar is load-bearing for consistent output; only the naming was the problem.
+
+**Trade-off accepted:** The anonymized names are less instantly evocative than a famous director's name, so each system now relies on its written description to convey intent. Earlier log entries above retain the original archetype names as historical record (this log is append-only).
+
+---
+
 ## How to Add a New Decision
 
 When a significant technical choice is made that affects architecture, dependencies, user experience, or maintenance burden, document it here. Each entry must include:

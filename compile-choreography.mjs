@@ -49,20 +49,11 @@ function validate(doc) {
     errs.push('`chapters` must be a non-empty array');
   (doc.chapters || []).forEach((c, i) => {
     if (!c.id) errs.push(`chapters[${i}] missing id`);
-    if (c.layers && !Array.isArray(c.layers)) errs.push(`chapters[${i}].layers must be an array`);
+    if (!Array.isArray(c.layers) || !c.layers.length)
+      errs.push(`chapters[${i}].layers must be a non-empty array`);
   });
   if (errs.length) throw new Error('Invalid choreography:\n  - ' + errs.join('\n  - '));
   return doc;
-}
-
-/* ---- emit a single property tween fragment -------------------------------- */
-function propTween(p) {
-  // p: { property, from, to, easing, unit }
-  const g = gprop(p.property);
-  const to = withUnit(p.to, p.unit);
-  const frag = { [g]: to };
-  if (p.easing) frag.ease = mapEase(p.easing);
-  return frag;
 }
 
 /* GSAP accepts cubic-bezier via CustomEase, but named eases are safer in raw
@@ -84,6 +75,13 @@ function compileChapter(ch, globals) {
   const sel = `[data-chapter='${ch.id}']`;
   const pin = ch.pin || {};
   const pinDur = pin.pinDuration ?? 200;
+  // scrub comes from the chapter's first-layer trigger, NOT the Lenis lerp
+  // (globals.scrollSmoothing). Default 0.5 per performance-budget ScrollTrigger.defaults.
+  const firstTrigger = ch.layers?.[0]?.animation?.trigger || {};
+  const scrub = firstTrigger.scrub ?? 0.5;
+  // anticipatePin: GSAP wants a small numeric hint. Map from pin.anticipatorySettle
+  // (0.0–0.15 fraction); default 1 when unspecified.
+  const anticipatePin = pin.anticipatorySettle ?? 1;
   const lines = [];
   lines.push(`  /* ── Chapter: ${ch.id}  (pattern: ${ch.pattern || 'custom'}) ── */`);
   lines.push(`  {`);
@@ -91,11 +89,12 @@ function compileChapter(ch, globals) {
   lines.push(`      scrollTrigger: {`);
   lines.push(`        trigger: "${sel}",`);
   lines.push(`        start: "top top",`);
-  lines.push(`        end: "+=${pinDur}%",`);
-  lines.push(`        scrub: ${globals.scrollSmoothing ?? true},`);
+  lines.push(`        end: "+=${pinDur}vh",`);
+  lines.push(`        scrub: ${scrub},`);
   lines.push(`        pin: ${pin.enabled !== false},`);
   lines.push(`        pinSpacing: ${pin.pinSpacing !== false},`);
-  lines.push(`        anticipatePin: 1,`);
+  lines.push(`        anticipatePin: ${anticipatePin},`);
+  lines.push(`        fastScrollEnd: ${firstTrigger.fastScrollEnd ?? true},`);
   lines.push(`        invalidateOnRefresh: true,`);
   lines.push(`      },`);
   lines.push(`    });`);

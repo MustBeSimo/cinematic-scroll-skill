@@ -111,7 +111,7 @@ hermes chat
 
 **Installation (official Git method):**
 ```bash
-openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v0.1.2
+openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v2.1.0
 ```
 
 **Or manual clone:**
@@ -224,12 +224,12 @@ This is normal if you haven't provided an `fal.ai` API key. The system falls bac
 
 | Skill version | Release | Notes |
 |---|---|---|
-| **2.0.0 (internal)** | Ongoing | Contract version; includes 5-phase pipeline, taste constraints, visual systems |
-| **v0.1.1 (public)** | 2026-06-01 | Initial open-source release; 5 live examples, all platforms supported |
-| **v0.1.2 (current)** | 2026-06-01 | Corrected README GSAP documentation and softened platform verification claims |
-| **v2.0.0 (legacy tag)** | N/A | Historical tag; do not use |
+| **v2.1.0 (current)** | 2026-06-02 | Current release: mobile-ready touch-safe scroll-coupled motion, deferred-GSAP showcase beats in the examples, and reconciled distribution packaging |
+| **v2.0.0** | Prior | Contract baseline; 5-phase pipeline, taste constraints, 7 visual systems — superseded by v2.1.0 |
+| **v0.1.2** | 2026-06-01 | Prior public release; corrected README GSAP documentation and softened platform verification claims |
+| **v0.1.1** | 2026-06-01 | Initial open-source release; 5 live examples, all platforms supported |
 
-**Current recommendation:** Use v0.1.2 for all new installations.
+**Current recommendation:** Use v2.1.0 for all new installations.
 
 ---
 

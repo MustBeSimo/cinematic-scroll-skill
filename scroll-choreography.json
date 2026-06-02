@@ -224,9 +224,11 @@
             "rotateX",
             "rotateY",
             "rotateZ",
-            "opacity"
+            "opacity",
+            "letterSpacing",
+            "backgroundColor"
           ],
-          "description": "Only transform and opacity allowed per performance-budget.md"
+          "description": "Transform + opacity preferred per performance-budget.md; letterSpacing/backgroundColor are accepted compositor-safe text/color properties (mapped via GSAP_PROP passthrough)."
         },
         "from": {
           "type": [

@@ -58,7 +58,7 @@ Each must output a complete, runnable HTML or TSX artifact.
 
 ### A11) Mobile-first responsive
 
-> Use cinematic-scroll to build a fully responsive scroll chapter. Desktop: pinned 7-layer parallax, 3D perspective camera. Mobile (<768px): IntersectionObserver fade-up, no pinning, stacked layout, clamp() typography, safe-area-inset padding, 44px tap targets. Touch: backdrop-blur removed, 3D disabled.
+> Use cinematic-scroll to build a fully responsive scroll chapter. Desktop: pinned 7-layer parallax, 3D perspective camera. Mobile (<768px): touch-safe scroll-coupled motion — a lerped image parallax plus scroll-linked entrance reveals — no pinning, stacked layout, clamp() typography, safe-area-inset padding, 44px tap targets. Touch: backdrop-blur removed, 3D disabled.
 
 ### A12) Performance proof
 
@@ -136,7 +136,7 @@ Replace `[YOUR PRODUCT IN ONE LINE]`. Everything else has sensible defaults.
 
 ### B12) Mobile-first stress test
 
-> Use cinematic-scroll to build the release page mobile-first (375px). Show how `ChapterScene` switches to the mobile fallback below 768px: IntersectionObserver fade-up, no pinning, stacked layout, safe-area padding, 44px tap targets. Then confirm the desktop 7-layer scene is intact at 1280px.
+> Use cinematic-scroll to build the release page mobile-first (375px). Show how `ChapterScene` switches to the mobile path below 768px: touch-safe scroll-coupled motion — a lerped image parallax plus scroll-linked entrance reveals — no pinning, stacked layout, safe-area padding, 44px tap targets. Then confirm the desktop 7-layer scene is intact at 1280px.
 
 ### B13) Performance + Lighthouse gate
 

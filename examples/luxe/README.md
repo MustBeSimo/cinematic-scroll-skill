@@ -3,7 +3,7 @@
 A worked example for **cinematic-scroll** in a deliberately restrained world:
 **quiet luxury** — warm ivory and sand grounds, a single muted cognac accent,
 refined thin-serif display type, vast negative space, and *barely-there*
-parallax. The motion is Villeneuve-by-way-of-Kubrick: long 220vh pins, a
+parallax. The motion is Atmospheric Sublime by way of Symmetric Monument: long 220vh pins, a
 background that drifts only ~3% across the whole pin, and titles that reveal
 through a **letter-spacing scrub** (0.45em → 0em) rather than anything flashy.
 Fictional maison (**Maison Solenne**) — no real people or brands.
@@ -52,9 +52,11 @@ them up automatically.
 - **Background morph + quiet rail** — a fixed warm atmosphere crossfades
   between four ground tones via an IntersectionObserver scroll-spy; the
   left-hand progress rail marks the active chapter.
-- **Graceful degradation** — `prefers-reduced-motion` and mobile (≤680px) drop
-  the pin entirely for a clean, stacked, full-opacity static mid-state
-  (letter-spacing settled to 0), with a gentle IntersectionObserver fade-up.
+- **Graceful degradation** — mobile (≤680px) drops the pin and stacks the
+  layout, but keeps the maison's deliberately gentle touch-safe motion — a
+  barely-there lerped parallax plus scroll-linked entrance reveals (no 3D, no
+  scrolljack). Only `prefers-reduced-motion` goes fully static — a clean,
+  stacked, full-opacity mid-state (letter-spacing settled to 0).
 
 ## Image slots
 

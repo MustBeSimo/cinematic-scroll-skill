@@ -43,7 +43,7 @@ import { ChapterDemoVisual } from './ChapterDemoVisual';
  * is JS-driven via framer-motion (useScroll/useTransform/useSpring on rAF),
  * which runs reliably on Safari.
  */
-export function ChapterScene({ chapter, eager = false }: { chapter: EditionChapter; eager?: boolean }) {
+function ChapterSceneImpl({ chapter, eager = false }: { chapter: EditionChapter; eager?: boolean }) {
   const isMobile = useIsMobile();
   const reduced = useFMReducedMotion() ?? false;
 
@@ -52,6 +52,14 @@ export function ChapterScene({ chapter, eager = false }: { chapter: EditionChapt
   }
   return <DesktopChapter chapter={chapter} eager={eager} />;
 }
+
+/**
+ * Memoized so the chapter list is not re-rendered when an ancestor's
+ * `activeId` state changes (the IntersectionObserver in EditionsPage updates
+ * it on every section crossing). `chapter` comes from a static manifest and
+ * `eager` is a stable boolean, so the props are referentially stable.
+ */
+export const ChapterScene = React.memo(ChapterSceneImpl);
 
 // ─── DESKTOP — 7 layers, perspective camera, word-stagger title ────────────
 
@@ -328,12 +336,10 @@ function Word({
 // ─── Glass panel (UI side card) ────────────────────────────────────────────
 
 function GlassPanel({ accent, chapter }: { accent: string; chapter: EditionChapter }) {
-  const isMobile = useIsMobile();
-  // backdrop-blur destroys frame rate on low-end mobile — fall back to solid alpha
-  const blurClass = isMobile ? 'bg-black/55' : 'bg-black/30 backdrop-blur-xl';
+  // GlassPanel is only rendered in DesktopChapter, so use the desktop blur directly.
   return (
     <motion.div
-      className={`relative mx-auto w-full max-w-[560px] overflow-hidden border border-white/20 p-6 shadow-2xl md:p-8 ${blurClass}`}
+      className="relative mx-auto w-full max-w-[560px] overflow-hidden border border-white/20 bg-black/30 p-6 shadow-2xl backdrop-blur-xl md:p-8"
       whileHover={{ y: -4 }}
       transition={{ type: 'spring', stiffness: 180, damping: 22 }}
     >
