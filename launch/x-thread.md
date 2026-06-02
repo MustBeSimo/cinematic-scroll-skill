@@ -10,13 +10,12 @@ Pin the hook tweet to your profile for launch week.
 
 ## Hook (tweet 1) — pick ONE
 
-**A — the demo-led hook (recommended)**
-> I gave Claude one sentence:
-> *"a cinematic scroll page for a sci-fi game, teal fog, crimson edge-light."*
+**A — the narrative hook (recommended)**
+> Every AI builds the same generic landing page — because agents can *code*, they can't *art-direct*.
 >
-> This is what came back. 👇
+> So I packaged taste into a skill any agent can install. One sentence in 👇
 >
-> It's a free skill. Anyone can install it. 🧵
+> Free, MIT. Runs in Claude, Cursor, Hermes, OpenClaw — it's a skill, not a plugin. 🧵
 > [attach 15s video]
 
 **B — the contrast hook**

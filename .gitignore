@@ -130,3 +130,9 @@ coverage/
 *.temp
 *.bak
 .history/
+
+# transient launch/preview artifacts
+assets/_frame_*.jpg
+video/install.log
+video/node_modules/
+video/out/

@@ -16,7 +16,8 @@
   </picture>
 </a>
 
-👉 **[Visit the live landing page](https://mustbesimo.github.io/cinematic-scroll-skill/)** — it adapts to your GitHub theme. Dark mode → **Petroleum Editorial**. Light mode → **Swiss Museum**. Toggle either finish on the site.
+👉 **[Visit the live landing page](https://mustbesimo.github.io/cinematic-scroll-skill/)** — built *with the skill itself*. It adapts to your GitHub theme: dark → **Petroleum Editorial**, light → **Swiss Museum**.
+▶ **[Watch the 30-second demo →](https://mustbesimo.github.io/cinematic-scroll-skill/#how)** — one sentence in, a cinematic scroll site out.
 
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">
   <img src="assets/scroll-demo.gif" alt="The scroll grammar in motion — pinned chapters, multi-depth parallax, and a tracking index rail" width="100%">
@@ -24,7 +25,7 @@
 
 <sub>↑ The <b>motion</b> is the skill — pinned chapters, multi-depth parallax, mask/stagger title reveals, a tracking index rail. The <b>look</b> is whatever you ask for. This clip happens to be a Renaissance editorial; the same grammar drives a brutalist drop, a neon Gen-Z launch, a noir game page, or your brand. <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">Scroll it live →</a></sub>
 
-**A free, MIT-licensed Agent Skill for Claude, Cursor, Hermes & OpenClaw.** Describe the aesthetic — palette, mood, references — and get a visual system, motion storyboard, pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. The cinematic *motion* is the constant; the *look* is yours.
+**A free, MIT-licensed *craft skill* that gives any coding agent — Claude, Cursor, Hermes, OpenClaw — the taste to build cinematic, scroll-driven websites.** Describe the aesthetic — palette, mood, references — and get a visual system, motion storyboard, pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. **The motion is the constant · the look is yours · the agent is your choice.** It's a skill, not a plugin — the craft travels with you across every agent.
 
 > **Free for any use, personal or commercial (MIT).** Actively developed — built from production work and shipped open source. [Issues](https://github.com/MustBeSimo/cinematic-scroll-skill/issues), PRs, and [showcase submissions](https://github.com/MustBeSimo/cinematic-scroll-skill/issues/new?title=Showcase:%20) welcome — I collect what people build.
 

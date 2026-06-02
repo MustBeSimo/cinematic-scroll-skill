@@ -6,7 +6,7 @@ and it drives thousands of devs + a star spike in a day.
 
 ## Title (no emoji, factual, ≤80 chars)
 
-> **Show HN: Cinematic Scroll – a free skill that makes Claude build scroll-driven sites**
+> **Show HN: Cinematic Scroll – give any coding agent the taste to build scroll sites**
 
 Alternates:
 - `Show HN: A free Agent Skill that makes Claude/Cursor art-direct cinematic scroll sites`

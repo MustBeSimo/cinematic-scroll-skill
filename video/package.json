@@ -1,0 +1,27 @@
+{
+  "name": "cinematic-scroll-promo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion project that renders the Cinematic Scroll promo video (prompt → site → worlds → end card).",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts Promo ../assets/demo-loop.mp4 --codec=h264 --crf=16 --pixel-format=yuv420p --scale=2",
+    "render:1080": "remotion render src/index.ts Promo ../assets/demo-loop-1080.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
+    "render:webm": "remotion render src/index.ts Promo ../assets/demo-loop.webm --codec=vp9 --scale=1.5",
+    "poster": "remotion still src/index.ts Promo ../assets/demo-poster.jpg --frame=430 --scale=2",
+    "gif": "remotion render src/index.ts Promo ../assets/demo-loop.gif --codec=gif --every-nth-frame=2 --scale=0.6",
+    "build:all": "npm run render && npm run render:webm && npm run poster",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "typescript": "^5.4.0"
+  }
+}
