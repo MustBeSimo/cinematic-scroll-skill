@@ -252,6 +252,8 @@
     .reveal { opacity: 1; transform: none; }
     /* Entrance start-states are applied INLINE by JS (immune to specificity) —
        see the mobile branch in the script. No CSS reveal rules needed here. */
+    /* lerped-parallax mover hint (mobile JS engine, all browsers incl. Safari) */
+    html.m-on .figwrap { will-change: transform; }
   }
 
   /* ── Reduced motion: snap to readable mid-state ─────────────── */
@@ -548,32 +550,51 @@ if (reduce) {
   /* intentionally nothing — static composition, content already visible */
 }
 
-/* ── MOBILE — entrance choreography (smooth; NOT scroll-bound) ─────────────
-   Each element reveals ONCE as it scrolls into view via IntersectionObserver
-   + a compositor-only CSS transition (translate3d + opacity), staggered by a
-   per-element delay for a cinematic cascade. No per-frame work and no layout
-   reads in a scroll handler, so native momentum scroll stays buttery. The
-   scroll-spy IO above (rail + background morph) is the only other scroll-
-   reactive mechanism — also cheap, no transforms. Medium-classical tuning:
-   28px rise / 800ms. No pin / no 3D tilt / no filter (taste-guardrails §1.9). */
+/* ── MOBILE — cinematic scroll (JS, works on every engine incl. Safari) ────
+   Safari reports CSS.supports('animation-timeline','view()') = true but does
+   NOT drive scroll-driven animations, so we don't use them at all. Instead a
+   single rAF loop (only while scrolling) drives a compositor-only transform:
+     • figure (.figwrap) PARALLAX, lerped toward a scroll-derived target (eased
+       so it reads as smooth cinematic drift, not scroll-lag)
+     • title words + copy reveals + AI card reveal once on enter (IO)
+   Offsets cached (no per-frame getBoundingClientRect). No pin / 3D / filter.
+   No watermark/numeral exists on mobile (the Roman numeral lives in the rail,
+   which is display:none ≤860px), so this is figure-only. The scroll-spy IO
+   above (rail + background morph) keeps running — cheap, no transforms. */
 else if (isMobile()) {
+  document.documentElement.classList.add('m-on');
+
+  /* one-shot entrance reveals for text + card */
   const EASE='cubic-bezier(.16,1,.3,1)', DUR=800;
-  const hide=(el,fig,delay)=>{
-    el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
-    el.style.opacity='0';
-    el.style.transform=fig ? 'translate3d(0,24px,0) scale(1.06)' : 'translate3d(0,28px,0)';
-    io.observe(el);
-  };
   const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
     e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
   } }); },{ rootMargin:'0px 0px -12% 0px', threshold:0 });
-  sections.forEach(sec=>{
-    let i=0;
-    const fig=sec.querySelector('.figwrap'); if(fig) hide(fig,true,(i++)*80);
-    sec.querySelectorAll('h2 .w').forEach(w=> hide(w,false,(i++)*80));
-    sec.querySelectorAll('.copytext .reveal').forEach(el=> hide(el,false,(i++)*80));
-    const card=sec.querySelector('.aicard'); if(card) hide(card,false,(i++)*80);
+  const reveal=(el,delay)=>{
+    el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
+    el.style.opacity='0'; el.style.transform='translate3d(0,28px,0)'; io.observe(el);
+  };
+  sections.forEach(sec=>{ let i=0;
+    sec.querySelectorAll('h2 .w').forEach(t=> reveal(t,(i++)*80));
+    sec.querySelectorAll('.copytext .reveal').forEach(el=> reveal(el,(i++)*80));
+    const card=sec.querySelector('.aicard'); if(card) reveal(card,(i++)*80);
   });
+
+  /* lerped parallax — figure only (vertical) */
+  const movers=[];
+  document.querySelectorAll('.chapter').forEach(sec=>{
+    const fig=sec.querySelector('.figwrap'); if(fig) movers.push({el:fig, axis:'y', amp:44});
+  });
+  let centers=[]; const measure=()=>{ centers=movers.map(m=>{ const r=m.el.getBoundingClientRect(); return r.top+scrollY+r.height/2; }); };
+  measure(); addEventListener('resize', measure, {passive:true});
+  const cur=movers.map(()=>0); let raf=0, until=0;
+  const loop=()=>{ const vh=innerHeight, mid=scrollY+vh/2; let moving=false;
+    movers.forEach((m,i)=>{ const target=clamp(-(mid-centers[i])/vh*m.amp, -m.amp, m.amp);
+      cur[i]+=(target-cur[i])*0.12;
+      m.el.style.transform = `translate3d(0, ${cur[i].toFixed(2)}px, 0)`;
+      if(Math.abs(target-cur[i])>0.2) moving=true; });
+    raf = (performance.now()<until || moving) ? requestAnimationFrame(loop) : 0; };
+  addEventListener('scroll',()=>{ until=performance.now()+700; if(!raf) raf=requestAnimationFrame(loop); },{passive:true});
+  loop();
 }
 
 /* ── Desktop parallax engine — rAF-throttled, transform/opacity only ──

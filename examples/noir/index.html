@@ -244,32 +244,7 @@
     h2.title .ln .t{ transform:none; clip-path:none; opacity:1; }
     .cuewrap{ position:static; transform:none; margin:30px auto 0; opacity:1; }
     .reveal{ opacity:1; transform:none; }   /* visible fail-safe (no JS) */
-  }
-
-  /* ── MOBILE CINEMATIC SCROLL — native scroll-driven animations ────────────
-     Motion COUPLED to scroll position, run by the browser on the compositor
-     (animation-timeline:view()) — continuous AND smooth, zero JS per frame,
-     no scroll-jacking. The figure parallax-drifts + breathes through its whole
-     pass; the Roman watermark tracks the opposite way; title lines and copy
-     reveal as they enter. @supports-gated (modern engines); older browsers get
-     the JS entrance fallback in the script. prefers-reduced-motion opts out. */
-  @keyframes m-fig   { from{ transform:translate3d(0,34px,0) scale(1.07); }
-                       to  { transform:translate3d(0,-34px,0) scale(1.0); } }
-  @keyframes m-roman { from{ transform:translate3d(-34px,0,0); }
-                       to  { transform:translate3d(34px,0,0); } }
-  @keyframes m-rise  { from{ opacity:0; transform:translate3d(0,32px,0); }
-                       to  { opacity:1; transform:none; } }
-  @supports (animation-timeline: view()){
-    @media (max-width:680px) and (prefers-reduced-motion: no-preference){
-      .figwrap{ animation:m-fig linear both; animation-timeline:view();
-        animation-range:entry 0% exit 100%; will-change:transform; }
-      .roman{ animation:m-roman linear both; animation-timeline:view();
-        animation-range:entry 0% exit 100%; }
-      h2.title .ln .t{ animation:m-rise linear both; animation-timeline:view();
-        animation-range:entry 8% cover 38%; }
-      .copytext .reveal{ animation:m-rise linear both; animation-timeline:view();
-        animation-range:entry 14% cover 42%; }
-    }
+    html.m-on .figwrap, html.m-on .roman{ will-change:transform; }
   }
 
   /* ── reduced motion: snap to a readable mid-state, no scroll-driven motion ── */
@@ -533,45 +508,51 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     return;
   }
 
-  /* ── MOBILE — cinematic scroll ────────────────────────────────────────────
-     Preferred path: native scroll-driven animations (the @supports block in the
-     CSS) couple motion to scroll on the compositor — continuous + smooth, no JS.
-     This branch only adds the cheap progress bar there. FALLBACK (engines without
-     animation-timeline): a one-shot IntersectionObserver entrance reveal so the
-     page still feels alive without per-frame scroll work. No pin / 3D / filter. */
+  /* ── MOBILE — cinematic scroll (JS, works on every engine incl. Safari) ────
+     Safari reports CSS.supports('animation-timeline') = true but does NOT drive
+     scroll-driven animations, so we don't use them at all. Instead, a single
+     rAF loop (only while scrolling) drives compositor-only transforms:
+       • figure + Roman watermark PARALLAX, lerped toward a scroll-derived target
+         (eased so it reads as smooth cinematic drift, not scroll-lag)
+       • title lines + copy reveal once on enter (IntersectionObserver)
+     Offsets are cached (no per-frame getBoundingClientRect). No pin / 3D / filter. */
   if (isMobile()){
-    const hasSDA = window.CSS && CSS.supports && CSS.supports('animation-timeline','view()');
-    if (!hasSDA){
-      /* Fallback for engines without animation-timeline (e.g. iOS < 26):
-         text reveals once on enter, and the figure gets a LERPED parallax drift
-         — one transform-only element per section, offset cached (no per-frame
-         layout reads), eased toward target so it reads as smooth intentional
-         motion, not scroll-lag. rAF runs only while scrolling. */
-      const EASE='cubic-bezier(.16,1,.3,1)', DUR=800;
-      const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
-        e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
-      } }); },{ rootMargin:'0px 0px -12% 0px', threshold:0 });
-      const reveal=(el,delay)=>{
-        el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
-        el.style.opacity='0'; el.style.transform='translate3d(0,28px,0)'; io.observe(el);
-      };
-      sections.forEach(sec=>{ let i=0;
-        sec.querySelectorAll('h2 .ln .t').forEach(t=> reveal(t,(i++)*80));
-        sec.querySelectorAll('.copytext .reveal').forEach(el=> reveal(el,(i++)*80));
-      });
-      const figs=[...document.querySelectorAll('.figwrap')];
-      let centers=[]; const measure=()=>{ centers=figs.map(f=>{ const r=f.getBoundingClientRect(); return r.top+scrollY+r.height/2; }); };
-      measure(); addEventListener('resize', measure, {passive:true});
-      const cur=figs.map(()=>0); let raf=0, until=0;
-      const loop=()=>{ const vh=innerHeight, mid=scrollY+vh/2; let moving=false;
-        figs.forEach((f,i)=>{ const target=clamp(-(mid-centers[i])/vh*42,-42,42); cur[i]+=(target-cur[i])*0.12;
-          f.style.transform=`translate3d(0, ${cur[i].toFixed(2)}px, 0)`; if(Math.abs(target-cur[i])>0.2) moving=true; });
-        raf = (performance.now()<until || moving) ? requestAnimationFrame(loop) : 0; };
-      addEventListener('scroll',()=>{ until=performance.now()+700; if(!raf) raf=requestAnimationFrame(loop); },{passive:true});
-      loop();
-    }
-    addEventListener('scroll',()=>{ if(!pTick){pTick=true;requestAnimationFrame(progress);} },{passive:true});
-    progress();
+    document.documentElement.classList.add('m-on');
+
+    /* one-shot entrance reveals for text */
+    const EASE='cubic-bezier(.16,1,.3,1)', DUR=800;
+    const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
+      e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
+    } }); },{ rootMargin:'0px 0px -12% 0px', threshold:0 });
+    const reveal=(el,delay)=>{
+      el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
+      el.style.opacity='0'; el.style.transform='translate3d(0,28px,0)'; io.observe(el);
+    };
+    sections.forEach(sec=>{ let i=0;
+      sec.querySelectorAll('h2 .ln .t').forEach(t=> reveal(t,(i++)*80));
+      sec.querySelectorAll('.copytext .reveal').forEach(el=> reveal(el,(i++)*80));
+    });
+
+    /* lerped parallax — figure (vertical) + Roman watermark (horizontal counter-drift) */
+    const movers=[];
+    document.querySelectorAll('section').forEach(sec=>{
+      const fig=sec.querySelector('.figwrap'); if(fig) movers.push({el:fig, axis:'y', amp:46});
+      const rom=sec.querySelector('.roman');   if(rom) movers.push({el:rom, axis:'x', amp:60});
+    });
+    let centers=[]; const measure=()=>{ centers=movers.map(m=>{ const r=m.el.getBoundingClientRect(); return r.top+scrollY+r.height/2; }); };
+    measure(); addEventListener('resize', measure, {passive:true});
+    const cur=movers.map(()=>0); let raf=0, until=0;
+    const loop=()=>{ const vh=innerHeight, mid=scrollY+vh/2; let moving=false;
+      movers.forEach((m,i)=>{ const target=clamp(-(mid-centers[i])/vh*m.amp, -m.amp, m.amp);
+        cur[i]+=(target-cur[i])*0.12;
+        m.el.style.transform = m.axis==='y'
+          ? `translate3d(0, ${cur[i].toFixed(2)}px, 0)`
+          : `translate3d(${cur[i].toFixed(2)}px, 0, 0)`;
+        if(Math.abs(target-cur[i])>0.2) moving=true; });
+      raf = (performance.now()<until || moving) ? requestAnimationFrame(loop) : 0; };
+    addEventListener('scroll',()=>{ until=performance.now()+700; if(!raf) raf=requestAnimationFrame(loop);
+      if(!pTick){pTick=true;requestAnimationFrame(progress);} },{passive:true});
+    loop(); progress();
     return;
   }
 
