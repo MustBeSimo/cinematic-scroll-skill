@@ -26,8 +26,12 @@ const allowUnauthenticated = process.env.FAL_PROXY_ALLOW_UNAUTH === 'true';
 export const { GET, POST, PUT } = createRouteHandler({
   allowedEndpoints: ALLOWED_FAL_ENDPOINTS.map((id) => `${id}/**`),
   allowUnauthorizedRequests: allowUnauthenticated,
-  async isAuthenticated(behavior: { getHeader: (name: string) => string | null }) {
+  // `behavior` is inferred from @fal-ai/server-proxy (its getHeader returns a
+  // HeaderValue that may be string | string[] | undefined) — don't hand-annotate
+  // it as `string | null`, which is narrower and fails the typecheck.
+  async isAuthenticated(behavior) {
     if (allowUnauthenticated) return true;
-    return isBearerValid(behavior.getHeader('authorization'));
+    const auth = behavior.getHeader('authorization');
+    return isBearerValid(Array.isArray(auth) ? auth[0] : auth);
   },
 });
