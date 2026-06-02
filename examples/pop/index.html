@@ -242,32 +242,34 @@
     letter-spacing:.06em; color:var(--ink); opacity:.78; max-width:60ch; }
   footer .meta a{ color:var(--violet); text-decoration:underline; text-underline-offset:2px; }
 
-  /* ── mobile (<=680px): static stacked layout. When the touch-safe motion
-     engine is active (html.m-motion) the floating phone parallaxes + breathes,
-     the ghost word + blob drift on counter-axes, the sticker scroll-rotates and
-     the title WORDS + reveals scrub in on native scroll — compositor-only, NO
-     pin, NO 3D tilt, NO filter. Everything is visible by default so a JS failure
-     never hides content; the reduced-motion block below overrides motion off. ── */
+  /* ── mobile (<=680px): static stacked layout. With JS, every element does a
+     ONE-TIME entrance reveal as it scrolls into view — IntersectionObserver + a
+     compositor-only CSS transition (translate3d + opacity), staggered inline by
+     JS. NOT scroll-bound, so native momentum scroll stays smooth (no per-frame
+     JS, no layout reads). The continuous drifters (ghost / blob / sticker) are
+     STATIC here — tasteful, not animated per frame. NO pin, NO 3D tilt, NO
+     filter. Everything is visible by default so a JS failure never hides
+     content; the reduced-motion block below forces it static. ── */
   @media (max-width:680px){
-    section{ min-height:auto; padding:13vh 0; position:relative; overflow:hidden; }
+    section{ min-height:auto; padding:8vh 0; }
     .stage{ position:static; height:auto; display:block; padding:0 22px; }
-    .ghost{ position:static; display:block; transform:none; opacity:.10;
+    /* ghost: faint static watermark, no per-frame sweep */
+    .ghost{ position:static; display:block; transform:none; opacity:.08;
       font-size:30vw; line-height:.8; margin:0 0 -4vh -2vw; }
     .appwrap{ position:static; width:min(64vw,260px); transform:none; opacity:1;
-      margin:30px 0 8px; }
+      margin:24px 0 6px; }
     .figcap{ position:static; margin-top:30px; }
+    /* sticker: a static tag, no scroll-linked rotate */
     .sticker{ position:static; display:inline-flex; transform:rotate(-7deg); margin:14px 0 0; }
-    .blob{ position:absolute; display:block; transform:none; }   /* sits behind, drifts when motion on */
-    .glasscard{ position:static; margin-top:20px; width:100%; transform:none; opacity:1; }
+    /* blob: dropped on small screens — it muddies a 390px composition */
+    .blob{ display:none; }
+    .glasscard{ position:static; margin-top:18px; width:100%; transform:none; opacity:1; }
     h2.giant{ font-size:15vw; }
     .copytext .w{ opacity:1; transform:none; }   /* visible fail-safe (no JS) */
     .lede{ display:block; }
     .cue{ display:none; }
-
-    /* motion engine on: GPU-promote the main mover; hide start-states the loop scrubs in */
-    html.m-motion .appwrap{ will-change:transform; }
-    html.m-motion .copytext .w,
-    html.m-motion .glasscard{ opacity:0; }
+    /* Entrance states are applied INLINE by JS (immune to specificity) — see
+       the mobile branch in the script. No CSS reveal rules needed here. */
   }
   /* ── reduced motion: settled mid-state, no scroll-driven motion ── */
   @media (prefers-reduced-motion:reduce){
@@ -569,57 +571,31 @@ const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(
   /* reduced-motion: fully static (content already visible via CSS), no motion. */
   if (reduce) return;
 
-  /* ── MOBILE — touch-safe cinematic motion (no pin, no 3D, no filter) ───────
-     Native scroll. The floating phone parallax-drifts + breathes (translate3d +
-     scale, a touch livelier than desktop), the ghost word + blob drift on
-     opposite axes, the sticker gets a small scroll-linked 2D rotate for play,
-     and the title WORDS + the glass card scrub in (translate3d + opacity) with a
-     TIGHT fast stagger as each section travels up the viewport. Compositor-only,
-     ≤3 simultaneous motion types per viewport — respects taste-guardrails §1.9
-     (no 3D rotate on touch) and the mobile performance tier. */
+  /* ── MOBILE — entrance choreography (smooth; NOT scroll-bound) ─────────────
+     Each element reveals ONCE as it scrolls into view via IntersectionObserver
+     + a compositor-only CSS transition (translate3d + opacity), staggered by a
+     per-element delay for a playful cascade. No per-frame work and no layout
+     reads in a scroll handler, so native momentum scroll stays buttery. The
+     continuous drifters (ghost / blob / sticker) are NOT animated — they are
+     static via CSS. Reveal order per section: phone → title words → glass card.
+     No pin / no 3D tilt / no filter (taste-guardrails §1.9). */
   if (isMobile()){
-    document.documentElement.classList.add('m-motion');
-    let mTick=false;
-    function mobileMotion(){
-      const vh=innerHeight;
-      for(const sec of sections){
-        const rect=sec.getBoundingClientRect();
-        if(rect.bottom < -60 || rect.top > vh+60) continue;        // skip offscreen
-        const T=clamp((vh - rect.top)/(vh + rect.height), 0, 1);   // 0 entering → 1 leaving
-        const enter=smooth(0.02,0.40,T);
-        const drift=0.5 - T;                                        // signed, ~0 mid-pass
-
-        // floating phone — livelier parallax + breathe (more travel than noir)
-        const appw=sec.querySelector('.appwrap');
-        if(appw) appw.style.transform=`translate3d(0, ${(drift*70).toFixed(1)}px, 0) scale(${(1.06-0.06*enter).toFixed(3)})`;
-
-        // ghost word + blob — drift on opposite axes for depth
-        const ghost=sec.querySelector('.ghost');
-        if(ghost) ghost.style.transform=`translate3d(${(drift*80).toFixed(0)}px, 0, 0)`;
-        const blob=sec.querySelector('.blob');
-        if(blob) blob.style.transform=`translate3d(${(drift*-46).toFixed(0)}px, ${(drift*60).toFixed(0)}px, 0)`;
-
-        // sticker — small scroll-linked 2D rotate (playful, transform-only)
-        const stick=sec.querySelector('.sticker');
-        if(stick) stick.style.transform=`rotate(${(-7+drift*14).toFixed(2)}deg)`;
-
-        // title words — TIGHT, fast pop stagger (translate3d + opacity)
-        const words=sec.querySelectorAll('h2 .w'); const n=words.length;
-        words.forEach((w,k)=>{ const t0=0.05+(k/Math.max(n,1))*0.14; const wp=smooth(t0,t0+0.18,T);
-          w.style.transform=`translate3d(0, ${((1-wp)*34).toFixed(1)}px, 0)`;
-          w.style.opacity=wp.toFixed(3); });
-
-        // glass stat card — scrubs in slightly later
-        const card=sec.querySelector('.glasscard');
-        if(card){ const wp=smooth(0.16,0.50,T);
-          card.style.transform=`translate3d(0, ${((1-wp)*30).toFixed(1)}px, 0)`;
-          card.style.opacity=wp.toFixed(3); }
-      }
-      mTick=false;
-    }
-    addEventListener('scroll',()=>{ if(!mTick){mTick=true;requestAnimationFrame(mobileMotion);} },{passive:true});
-    addEventListener('resize',()=>{ mTick=true; requestAnimationFrame(mobileMotion); },{passive:true});
-    mobileMotion();   // initial paint at current scroll position
+    const EASE='cubic-bezier(.16,1,.3,1)', DUR=800;
+    const hide=(el,fig,delay)=>{
+      el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
+      el.style.opacity='0';
+      el.style.transform=fig ? 'translate3d(0,24px,0) scale(1.06)' : 'translate3d(0,28px,0)';
+      io.observe(el);
+    };
+    const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
+      e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
+    } }); },{ rootMargin:'0px 0px -12% 0px', threshold:0 });
+    sections.forEach(sec=>{
+      let i=0;
+      const fig=sec.querySelector('.appwrap'); if(fig) hide(fig,true,(i++)*80);
+      sec.querySelectorAll('h2 .w').forEach(w=> hide(w,false,(i++)*80));
+      const card=sec.querySelector('.glasscard'); if(card) hide(card,false,(i++)*80);
+    });
     return;
   }
 

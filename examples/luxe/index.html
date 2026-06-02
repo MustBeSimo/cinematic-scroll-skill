@@ -236,16 +236,20 @@
   .colophon .src{ font-family:var(--ui); font-weight:300; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); margin-top:24px; }
   .colophon .src a{ color:var(--cognac-2); text-decoration:none; border-bottom:1px solid rgba(126,85,48,.3); }
 
-  /* ── Mobile (≤680px): no pin, stacked layout. When the touch-safe motion
-     engine is active (html.m-motion) the figure drifts a whisper and the title
-     + reveals ease in on native scroll — compositor-only, NO pin, NO 3D tilt,
-     NO filter, NO letter-spacing scrub. Everything is visible by default so a
-     JS failure never hides content; the reduced-motion block below forces it
-     fully static. Deliberately gentler than the other examples (museum restraint). ── */
+  /* ── Mobile (≤680px): no pin, static stacked layout. With JS, each element
+     does a ONE-TIME entrance reveal as it scrolls into view — an Intersection-
+     Observer plus a compositor-only CSS transition (translate3d + opacity),
+     staggered by a small per-element delay for a slow, elegant cascade. NOT
+     scroll-bound, so native momentum scroll stays perfectly smooth (no per-frame
+     JS, no layout reads). NO pin, NO 3D tilt, NO filter, NO letter-spacing scrub.
+     Entrance start-states are applied INLINE by JS (immune to CSS specificity),
+     so everything is VISIBLE by default — a JS failure never hides content; the
+     reduced-motion block below forces it fully static. Deliberately gentler than
+     the other examples (museum restraint). ── */
   @media (max-width:680px){
     .chapter{ height:auto; }
-    .chapter .stage{ position:relative; height:auto; min-height:auto; padding:clamp(72px,13vh,120px) 0; perspective:none; }
-    .stage .inner{ grid-template-columns:1fr; gap:32px; width:88vw; }
+    .chapter .stage{ position:relative; height:auto; min-height:auto; padding:clamp(64px,11vh,104px) 0; perspective:none; }
+    .stage .inner{ grid-template-columns:1fr; gap:30px; width:88vw; }
     .chapter[data-side="left"] .copy,
     .chapter[data-side="left"] .figure{ order:initial; }
     .figure{ order:2 !important; } .copy{ order:1 !important; }
@@ -253,12 +257,8 @@
     .frame{ max-width:100%; aspect-ratio:5/4; }
     .layer{ transform:none; opacity:1; will-change:auto; }   /* visible fail-safe + drop promotion */
     .reveal{ opacity:1; transform:none; }    /* visible fail-safe (no JS) */
-
-    /* motion engine on: GPU-promote the single mover; hide the start-states the loop eases in */
-    html.m-motion .figwrap{ will-change:transform; }
-    html.m-motion .copy h2 .scrub,
-    html.m-motion .copy .reveal,
-    html.m-motion .figcap.reveal{ opacity:0; }
+    /* Entrance states are applied INLINE by JS (immune to specificity) — see
+       the mobile branch in the script. No CSS reveal/start-state rules here. */
   }
 
   /* ── Reduced motion: snap to a readable static mid-state ─────── */
@@ -569,53 +569,32 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     return;
   }
 
-  /* ── MOBILE — touch-safe cinematic motion (no pin, no 3D, no filter) ───────
-     Native scroll. Museum restraint: the figure drifts a whisper and breathes
-     (translate3d + a hair of scale), the title scrub-span and the copy reveals
-     ease in slowly (translate3d ≤16px + opacity, wide easing windows) as each
-     chapter travels up the viewport. Compositor-only — respects taste-guardrails
-     §1.9 (no 3D on touch) and keeps luxe's barely-there identity. Deliberately
-     quieter than the bolder examples. */
+  /* ── MOBILE — entrance choreography (smooth; NOT scroll-bound) ─────────────
+     Each element reveals ONCE as it scrolls into view via IntersectionObserver
+     + a compositor-only CSS transition (translate3d + opacity), staggered by a
+     per-element delay for a slow, elegant cascade. No per-frame work and no
+     layout reads in a scroll handler, so native momentum scroll stays buttery.
+     No pin / no 3D tilt / no filter (taste-guardrails §1.9). Tuned GENTLER than
+     the bolder examples — small rise, longer duration, wider stagger — to hold
+     luxe's museum restraint. Start-states are inline, so a JS failure leaves
+     everything visible; reduced-motion returns above and never reaches here. */
   if (isMobile()){
-    document.documentElement.classList.add('m-motion');
-    let mTick = false;
-    function mobileMotion(){
-      const vh = window.innerHeight;
-      for (const sec of sections){
-        const rect = sec.getBoundingClientRect();
-        if (rect.bottom < -60 || rect.top > vh + 60) continue;        // skip offscreen
-        const T = clamp((vh - rect.top) / (vh + rect.height), 0, 1);  // 0 entering → 1 leaving
-        const enter = smooth(0.04, 0.42, T);                          // wide, slow ease-in
-        const drift = 0.5 - T;                                        // signed, ~0 mid-pass
-
-        // figure — whisper-quiet parallax + breath (≤32px drift, scale 1.03 → 1.0)
-        const fig = sec.querySelector('.figwrap');
-        if (fig) fig.style.transform =
-          `translate3d(0, ${(drift * 32).toFixed(1)}px, 0) scale(${(1.03 - 0.03 * enter).toFixed(3)})`;
-
-        // title — the scrub span(s) drift up & fade in slowly (opacity-led, ≤16px)
-        const scrubs = sec.querySelectorAll('.copy h2 .scrub'); const ns = scrubs.length;
-        scrubs.forEach((s, k)=>{
-          const t0 = 0.08 + (k / Math.max(ns, 1)) * 0.18;
-          const wp = smooth(t0, t0 + 0.40, T);
-          s.style.transform = `translate3d(0, ${((1 - wp) * 16).toFixed(1)}px, 0)`;
-          s.style.opacity   = (0.06 + 0.94 * wp).toFixed(3);
-        });
-
-        // supporting reveals (eyebrow / rule / lede / meta·cta / figcap) — slow opacity-led drift
-        const revs = sec.querySelectorAll('.copy .reveal, .figcap.reveal');
-        revs.forEach((el, k)=>{
-          const t0 = 0.16 + k * 0.05;
-          const wp = smooth(t0, t0 + 0.44, T);
-          el.style.transform = `translate3d(0, ${((1 - wp) * 14).toFixed(1)}px, 0)`;
-          el.style.opacity   = wp.toFixed(3);
-        });
-      }
-      mTick = false;
-    }
-    window.addEventListener('scroll', ()=>{ if (!mTick){ mTick = true; requestAnimationFrame(mobileMotion); } }, { passive:true });
-    window.addEventListener('resize', ()=>{ mTick = true; requestAnimationFrame(mobileMotion); }, { passive:true });
-    mobileMotion();   // initial paint at current scroll position
+    const EASE='cubic-bezier(.16,1,.3,1)', DUR=1000;
+    const hide=(el,fig,delay)=>{
+      el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
+      el.style.opacity='0';
+      el.style.transform=fig ? 'translate3d(0,16px,0) scale(1.03)' : 'translate3d(0,18px,0)';
+      io.observe(el);
+    };
+    const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
+      e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
+    } }); },{ rootMargin:'0px 0px -12% 0px', threshold:0 });
+    sections.forEach(sec=>{
+      let i=0;
+      const fig=sec.querySelector('.figwrap'); if(fig) hide(fig,true,(i++)*100);
+      sec.querySelectorAll('.copy h2 .scrub').forEach(s=> hide(s,false,(i++)*100));
+      sec.querySelectorAll('.copy .reveal, .figcap.reveal').forEach(el=> hide(el,false,(i++)*100));
+    });
     return;
   }
 
