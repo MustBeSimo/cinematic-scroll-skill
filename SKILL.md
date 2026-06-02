@@ -433,9 +433,16 @@ style choice.
 parallax, show static compositions, set all transitions to instant.
 Reference `performance-budget.md` Section 3, Tier 4.
 
-3. **Verify mobile degradation is implemented.** Every pinned section must
-   have a mobile fallback below 768px. Use IntersectionObserver fade-up,
-no pinning, stacked layout. Reference `performance-budget.md` Section 3.
+3. **Give mobile a touch-safe cinematic experience — not a dead page.** Below
+   768px, unpin every chapter and stack the layout, BUT keep motion
+*scroll-coupled*: a lerped/damped image parallax (one transform-only mover per
+section) plus scroll-linked entrance reveals (transform + opacity). A flat,
+motionless mobile page is a failure mode for this skill. Drive it with JS
+(rAF reading `scrollY` in Mode A, framer `useScroll`/`useSpring` in Mode B) —
+never CSS `animation-timeline`, which iOS Safari reports as supported but does
+not actually run. No pinning/scroll-jacking on touch, no 3D tilt on touch.
+Reference `references/mobile-motion.md` for the recipe and
+`performance-budget.md` Section 3 (Mobile Degradation Matrix).
 
 4. **Name the cinematic technique in code comments.** Every scroll-driven
    animation must have a comment naming the film technique it implements
@@ -706,7 +713,10 @@ Register once: `gsap.registerPlugin(ScrollTrigger, SplitText, ScrollSmoother)`.
 
 - `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`
 - Typography in `clamp(min, fluid, max)` — never fixed `px` for `font-size`
-- Disable pinned scroll below 768px — IntersectionObserver fade-up
+- Disable pinning below 768px, but keep motion scroll-coupled and touch-safe:
+  lerped image parallax (one transform-only mover per section) + scroll-linked
+  entrance reveals (transform + opacity). JS-driven, NOT CSS `animation-timeline`
+  (iOS Safari reports support but doesn't run it). See `references/mobile-motion.md`.
 - `env(safe-area-inset-*)` padding on fixed nav / overlays
 - Tap targets ≥ 44px square
 - Mobile-first: design at 375px viewport FIRST, then scale up
@@ -952,12 +962,17 @@ cinematic-scroll-skill/
 │   │                             #   Kubrick, Fincher, Anderson, Nolan,
 │   │                             #   Villeneuve, Gerwig, Zhao — each with scroll
 │   │                             #   behavior, color, pacing, type, depth, transitions
-│   └── performance-budget.md     # 60fps production contract:
-│                                 #   frame budget, permitted/forbidden properties,
-│                                 #   will-change strategy, mobile degradation matrix
-│                                 #   (4 tiers), benchmark targets, asset budgets,
-│                                 #   11-point pre-launch monitoring checklist,
-│                                 #   GSAP-specific rules, failure modes
+│   ├── performance-budget.md     # 60fps production contract:
+│   │                             #   frame budget, permitted/forbidden properties,
+│   │                             #   will-change strategy, mobile degradation matrix
+│   │                             #   (4 tiers), benchmark targets, asset budgets,
+│   │                             #   11-point pre-launch monitoring checklist,
+│   │                             #   GSAP-specific rules, failure modes
+│   └── mobile-motion.md          # Touch-safe mobile motion recipe:
+│                                 #   scroll-coupled lerped parallax + entrance
+│                                 #   reveals, the iOS Safari animation-timeline
+│                                 #   gotcha, vanilla (Mode A) + framer (Mode B)
+│                                 #   sketches, reduced-motion gating
 ├── examples/
 │   ├── PROMPTS.md               # 20+ trigger prompts (Mode A and B)
 │   ├── GETTING_STARTED.md       # fal.ai setup walkthrough

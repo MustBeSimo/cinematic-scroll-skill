@@ -2,7 +2,14 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { motion, useScroll, useTransform, useReducedMotion as useFMReducedMotion } from 'framer-motion';
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useReducedMotion as useFMReducedMotion,
+  type Variants,
+} from 'framer-motion';
 import { ScrollChoreography, ScrollLayer } from 'choreo-3d';
 import type { EditionChapter } from '@/lib/editions-manifest';
 import { useIsMobile } from '@/lib/use-device';
@@ -25,8 +32,16 @@ import { ChapterDemoVisual } from './ChapterDemoVisual';
  *
  * Title reveal: word stagger via Framer Motion (no plain opacity fade).
  *
- * Mobile (<768px): pinning is disabled. Layers stack vertically with
- * IntersectionObserver fade-up to respect iOS Safari momentum scroll.
+ * Mobile (<768px): pinning is disabled, but the chapter is NOT static.
+ * Layers stack vertically with (a) a lerped vertical image parallax driven
+ * by the section's scroll progress and (b) a declarative `whileInView`
+ * entrance reveal that cascades the text column. All motion is transform
+ * (`y`) + opacity only — compositor-friendly, no scroll-jacking.
+ *
+ * NOTE: iOS Safari reports `animation-timeline: view()` as supported but
+ * does NOT actually drive native scroll-driven animations, so mobile motion
+ * is JS-driven via framer-motion (useScroll/useTransform/useSpring on rAF),
+ * which runs reliably on Safari.
  */
 export function ChapterScene({ chapter, eager = false }: { chapter: EditionChapter; eager?: boolean }) {
   const isMobile = useIsMobile();
@@ -159,22 +174,31 @@ function DesktopChapter({ chapter, eager }: { chapter: EditionChapter; eager: bo
   );
 }
 
-// ─── MOBILE — stacked card with IntersectionObserver fade-up ───────────────
+// ─── MOBILE — stacked card with lerped parallax + whileInView reveal ───────
+// iOS Safari reports `animation-timeline` support but doesn't drive native
+// scroll-driven animations, so all motion here is JS-driven via framer-motion.
 
 function MobileChapter({ chapter, eager }: { chapter: EditionChapter; eager: boolean }) {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = React.useState(false);
+  const ref = React.useRef<HTMLElement>(null);
+  const reduced = useFMReducedMotion() ?? false;
 
-  React.useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => entry.isIntersecting && setVisible(true),
-      { threshold: 0.18 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  // Lerped vertical image parallax — drifts as the section crosses the viewport.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const yRaw = useTransform(scrollYProgress, [0, 1], reduced ? ['0px', '0px'] : ['-22px', '22px']);
+  const imgY = useSpring(yRaw, { stiffness: 120, damping: 30, mass: 0.4 }); // damped = smooth on iOS
+
+  // Declarative entrance reveal — parent fades in + cascades children.
+  const container: Variants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+  };
+  const item: Variants = {
+    hidden: { opacity: 0, y: 26 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+  };
+  // Reduced motion / static path: drop variants entirely so content renders
+  // in its natural (fully visible) DOM state with zero animation.
+  const itemVariants = reduced ? undefined : item;
 
   return (
     <section
@@ -184,20 +208,23 @@ function MobileChapter({ chapter, eager }: { chapter: EditionChapter; eager: boo
       style={{ background: chapter.atmosphere.background }}
     >
       <div className="relative h-[55vh] w-full overflow-hidden">
-        {chapter.background ? (
-          <Image
-            src={chapter.background}
-            alt=""
-            fill
-            sizes="100vw"
-            priority={eager}
-            placeholder={chapter.backgroundBlur ? 'blur' : 'empty'}
-            blurDataURL={chapter.backgroundBlur}
-            className="object-cover opacity-90 saturate-[0.85]"
-          />
-        ) : (
-          <ChapterDemoVisual chapter={chapter} eager={eager} />
-        )}
+        {/* Oversized wrapper so the parallax drift never exposes edges. */}
+        <motion.div className="absolute inset-[-7%_0]" style={{ y: imgY }}>
+          {chapter.background ? (
+            <Image
+              src={chapter.background}
+              alt=""
+              fill
+              sizes="100vw"
+              priority={eager}
+              placeholder={chapter.backgroundBlur ? 'blur' : 'empty'}
+              blurDataURL={chapter.backgroundBlur}
+              className="object-cover opacity-90 saturate-[0.85]"
+            />
+          ) : (
+            <ChapterDemoVisual chapter={chapter} eager={eager} />
+          )}
+        </motion.div>
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black" />
         <div
           aria-hidden
@@ -207,22 +234,31 @@ function MobileChapter({ chapter, eager }: { chapter: EditionChapter; eager: boo
         </div>
       </div>
 
-      <div
-        className="relative -mt-12 px-[max(env(safe-area-inset-left),1.25rem)] pr-[max(env(safe-area-inset-right),1.25rem)] pb-12 transition-all duration-700"
-        style={{
-          opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0)' : 'translateY(24px)',
-        }}
+      <motion.div
+        className="relative -mt-12 px-[max(env(safe-area-inset-left),1.25rem)] pr-[max(env(safe-area-inset-right),1.25rem)] pb-12"
+        variants={reduced ? undefined : container}
+        initial={reduced ? false : 'hidden'}
+        whileInView={reduced ? undefined : 'show'}
+        viewport={{ once: true, margin: '0px 0px -12% 0px' }}
       >
-        <p className="mb-3 font-mono text-[0.65rem] uppercase tracking-[0.3em] text-white/70">
+        <motion.p
+          variants={itemVariants}
+          className="mb-3 font-mono text-[0.65rem] uppercase tracking-[0.3em] text-white/70"
+        >
           {chapter.roman} · {chapter.eyebrow}
-        </p>
-        <h2 className="text-balance text-fluid-display font-black leading-[0.92] tracking-[-0.04em]">
+        </motion.p>
+        <motion.h2
+          variants={itemVariants}
+          className="text-balance text-fluid-display font-black leading-[0.92] tracking-[-0.04em]"
+        >
           {chapter.title}
-        </h2>
-        <p className="mt-4 text-fluid-body leading-relaxed text-white/80">{chapter.summary}</p>
+        </motion.h2>
+        <motion.p variants={itemVariants} className="mt-4 text-fluid-body leading-relaxed text-white/80">
+          {chapter.summary}
+        </motion.p>
 
-        <div
+        <motion.div
+          variants={itemVariants}
           className="mt-6 rounded-md border border-white/15 bg-black/35 p-5"
           style={{ boxShadow: `inset 0 1px 0 ${chapter.accent}33` }}
         >
@@ -239,8 +275,8 @@ function MobileChapter({ chapter, eager }: { chapter: EditionChapter; eager: boo
               </li>
             ))}
           </ul>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

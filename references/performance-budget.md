@@ -114,13 +114,25 @@ Each of the following counts as one compositor layer:
 
 ## 3. Mobile Degradation Matrix
 
+> **Mobile is not a dead page.** The goal of this skill is cinematic motion on
+> *every* device. Mobile tiers degrade *how* motion runs — never *whether* it
+> runs. Flagship and mid-range phones get genuine scroll-coupled motion (image
+> parallax that moves *while* scrolling + scroll-linked entrance reveals),
+> implemented compositor-only and touch-safe. What mobile drops is the
+> *expensive* stuff: 3D tilt (motion sickness on touch — see Section 1.9 of
+> `taste-guardrails.md`), filter animations, pinning/scroll-jacking, and excess
+> layers. See `references/mobile-motion.md` for the recipe.
+
 ### Tier 1: Flagship (iPhone 15 Pro, Pixel 8 Pro, Samsung S24)
 
 | Capability | Status |
 |-----------|--------|
-| Full parallax depth layers | All layers active |
-| 3D transforms | Enabled |
-| Filter animations (non-scroll) | Allowed |
+| Full parallax depth layers | All layers active (within the 4-layer mobile cap) |
+| Scroll-coupled image parallax | Enabled — lerped/damped, transform-only, JS-driven (NOT CSS `animation-timeline`) |
+| Scroll-linked entrance reveals | Enabled — transform + opacity (IntersectionObserver one-shot or framer `whileInView`) |
+| 3D transforms (tilt) | **Disabled on touch** — motion sickness risk; never `rotateX/Y` tilt on touch |
+| Filter animations | Disabled entirely (GPU killer on mobile) |
+| Pinning / scroll-jacking | Disabled on touch — chapters stack, motion stays scroll-coupled |
 | Video backgrounds | Allowed |
 | Particle effects | Max 200 particles |
 | Target frame rate | 60fps |
@@ -130,9 +142,12 @@ Each of the following counts as one compositor layer:
 
 | Capability | Status |
 |-----------|--------|
-| Depth layers | Reduce to 70% of desktop count (round down) |
-| 3D transforms | rotateY/Z allowed; perspective: 800px min |
+| Depth layers | Reduce to 70% of desktop count (round down), within the 4-layer mobile cap |
+| Scroll-coupled image parallax | Enabled — one transform-only mover per section, lerped, JS-driven |
+| Scroll-linked entrance reveals | Enabled — transform + opacity, staggered |
+| 3D transforms (tilt) | **Disabled on touch** — motion sickness risk |
 | Filter animations | Disabled entirely |
+| Pinning / scroll-jacking | Disabled on touch — stacked layout, motion stays scroll-coupled |
 | Video backgrounds | Poster image only, no autoplay |
 | Particle effects | Max 50 particles |
 | Target frame rate | 55fps |
@@ -144,8 +159,9 @@ Each of the following counts as one compositor layer:
 |-----------|--------|
 | Depth layers | Max 2 layers (background + foreground) |
 | 3D transforms | Disabled; fall back to 2D transforms |
-| Parallax | Disabled; static backgrounds |
-| Animations | Opacity transitions only |
+| Scroll-coupled parallax | Minimal — disable parallax movers; static backgrounds OK |
+| Scroll-linked entrance reveals | Enabled — opacity + small `translateY` only (one-shot) |
+| Animations | Entrance reveals + opacity transitions only |
 | Particle effects | Disabled |
 | Target frame rate | 30fps |
 | Minimum acceptable | 24fps |
@@ -183,6 +199,30 @@ if (prefersReducedMotion) {
   // Show all content immediately
 }
 ```
+
+### Mobile scroll-coupled motion
+
+Cinematic on mobile means motion that is *coupled to the scroll* — things move
+**while** the finger drags — done touch-safe and smooth. Rules:
+
+- **Use JS, never CSS scroll-timelines.** On iOS Safari,
+  `CSS.supports('animation-timeline: view()')` returns `true` but the timeline
+  **does not actually drive** — animations sit frozen at their start frame.
+  Drive scroll-coupled motion from JS instead: a `requestAnimationFrame` loop
+  reading `scrollY` (Mode A), or framer-motion's `useScroll`/`useSpring`
+  (Mode B). Never rely on `animation-timeline` for mobile scroll coupling.
+- **Cache offsets — no per-frame layout reads.** Read each mover's position
+  once on init and on resize. Never call `getBoundingClientRect` inside the
+  rAF loop or scroll handler (see Section 1, Scroll Handler Rules).
+- **Lerp for smoothness.** Ease the applied value toward the scroll-derived
+  target each frame (`cur += (target - cur) * 0.12`) so motion stays buttery
+  during flick-scroll and momentum, instead of snapping frame-to-frame.
+- **rAF only while scrolling.** Start the loop on scroll, stop it once the
+  value has settled (within an epsilon of target). Don't burn a permanent rAF.
+- **Compositor-only.** `transform` (`translate3d`) + `opacity` exclusively.
+  No filters, no layout properties, no 3D tilt on touch.
+
+Recipe with code sketches (vanilla + framer): `references/mobile-motion.md`.
 
 ### Tier Detection
 

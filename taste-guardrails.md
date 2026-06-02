@@ -5,6 +5,8 @@
 
 These rules are non-negotiable. They exist because every broken scroll site violates at least three of them. An agent skill that does not enforce taste produces tasteless output — regardless of how good the prompt is.
 
+> **A flat, motionless mobile page is itself a failure mode.** The whole point of this skill is cinematic motion on *every* device, not just desktop. Mobile gets touch-safe, compositor-only, JS-driven motion — scroll-coupled image parallax + scroll-linked entrance reveals (`references/mobile-motion.md`). The banned items below (3D tilt on touch, filter animation, scroll-jacking) constrain *which* motion mobile uses; they never license a dead page. The single exception is `prefers-reduced-motion: reduce` (§1.9), where everything goes static.
+
 ---
 
 ## 1. Banned Patterns
@@ -45,7 +47,7 @@ The following patterns are prohibited in all generated output. No exceptions, no
 
 ### 1.9 Never apply 3D rotation (`rotateX`, `rotateY`, `perspective` tilt) on touch devices or when `prefers-reduced-motion` is active
 **Why:** 3D tilt on touch devices causes motion sickness for a non-trivial percentage of users (vestibular disorders). It also conflicts with native touch gestures — the browser may interpret rotateY as a swipe intent.
-**Replacement:** On touch devices, replace 3D tilt with subtle scale + opacity fades. Respect `prefers-reduced-motion: reduce` by disabling all scroll-driven motion and showing static compositions instead. See the reduced-motion fallback spec in `SKILL.md`.
+**Replacement:** On touch devices, drop the 3D tilt — but keep the chapter alive with touch-safe, scroll-coupled motion: a lerped image parallax plus scroll-linked entrance reveals (transform + opacity only), JS-driven. A flat, motionless mobile page is a failure mode for this skill — see `references/mobile-motion.md`. This is distinct from `prefers-reduced-motion: reduce`, which is the *only* state where all scroll-driven motion is disabled and static compositions are shown. See the reduced-motion fallback spec in `SKILL.md`.
 
 ### 1.10 Never auto-play scroll-driven motion without user interaction
 **Why:** Auto-scrolling or auto-playing pinned sections (via `setInterval`, `ScrollTrigger.to`, or similar) violates user agency. It also breaks screen readers and keyboard navigation.
