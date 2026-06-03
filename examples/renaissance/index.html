@@ -179,6 +179,19 @@
     position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
     transition: transform 0.18s ease-out;
   }
+  /* graceful fallback when a chapter image is missing/404s — a designed
+     parchment-and-gilt placeholder so the frame is never empty/broken. */
+  .frame .pic.ph {
+    border-radius: 2px; box-shadow: 0 30px 60px -28px rgba(44,42,38,0.55);
+    background:
+      radial-gradient(120% 90% at 30% 18%, rgba(184,137,58,0.32), rgba(184,137,58,0) 60%),
+      radial-gradient(90% 80% at 82% 96%, rgba(107,44,44,0.30), rgba(107,44,44,0) 62%),
+      linear-gradient(150deg, var(--paper-2) 0%, var(--paper) 48%, #E7DCC6 100%);
+  }
+  .frame .pic.ph::after {
+    content: "✦"; position: absolute; inset: 0; display: grid; place-items: center;
+    font-size: clamp(2rem,6vw,3.5rem); color: rgba(184,137,58,0.45);
+  }
   .frame img {
     width: 100%; height: 100%; object-fit: cover; object-position: center;
     border-radius: 2px; box-shadow: 0 30px 60px -28px rgba(44,42,38,0.55);
@@ -448,7 +461,8 @@ CHAPTERS.forEach((ch, i) => {
               <div class="gild"></div>
               <div class="pic">
                 <img src="./assets/${ch.img}" alt="${ch.en} — Renaissance scene with halftone pop-art artifacts"
-                     loading="${i===0?'eager':'lazy'}" decoding="async" />
+                     loading="${i===0?'eager':'lazy'}" decoding="async"
+                     onerror="this.closest('.pic').classList.add('ph');this.remove()" />
               </div>
             </div>
             <div class="layer aicard" data-depth="1.32">
