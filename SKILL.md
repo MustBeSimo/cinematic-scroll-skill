@@ -468,9 +468,11 @@ silently no-ops in GSAP if you do. See `scroll-choreography-compilation.md`.
    fixed-time video timeline for HTML-to-video renderers (HyperFrames,
 Remotion): `node compile-choreography.mjs my-scene.json --target video`.
 Scroll progress maps to seconds via FRAME.md §5 pacing; the DOM contract is
-identical, so one skeleton serves the page and its launch film. If the user
-wants a promo/launch video of the site they just built, this is the path —
-see `video/PIPELINE.md` and `FRAME.md`.
+identical, so one skeleton serves the page and its launch film. For a complete
+render-ready composition in one step, use `--target hyperframes` (emits the
+full HTML with real Layer.content rendered; `npx hyperframes render` → MP4).
+If the user wants a promo/launch video of the site they just built, this is
+the path — see `video/PIPELINE.md` and `FRAME.md`.
 
 8. **Follow the `technical-spec.md` exactly.** Do not improvise animation
    configs that differ from the approved spec.

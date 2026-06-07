@@ -184,6 +184,7 @@ site, and the video rebrands itself.
 node compile-choreography.mjs scene.json --target web     # → GSAP ScrollTrigger page
 node compile-choreography.mjs scene.json --target video   # → paused timeline for HyperFrames / Remotion
 node compile-choreography.mjs scene.json --harness --out preview.html   # → watch it move, zero install
+node compile-choreography.mjs scene.json --target hyperframes           # → render-ready composition → MP4
 ```
 
 The web target is scroll-driven and responsive; the video target is a

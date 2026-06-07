@@ -21,7 +21,17 @@ node compile-choreography.mjs my-scene.json --target video --pace 1.6 --out film
 # WATCH IT — emit a self-contained preview (skeleton DOM + play/scrub controls)
 node compile-choreography.mjs my-scene.json --harness --out preview.html
 open preview.html   # any browser, no install
+
+# RENDER IT — emit a complete, render-ready HyperFrames composition
+node compile-choreography.mjs my-scene.json --target hyperframes --out index.html
+npx hyperframes render   # in a HyperFrames project → deterministic MP4
 ```
+
+> The hyperframes target renders the choreography's real `Layer.content`
+> (images, text, inline svg) in a default collage layout — reposition the
+> `[data-cs-layer]` elements freely; the timeline animates transform/opacity
+> only, so any layout works. (`data-cs-layer`, not `data-layer`: HyperFrames
+> reserves the latter for its own track runtime.)
 
 The compiler's most important job: it maps the schema's CSS-style property names
 (`translateX`, `translateY`, `rotateZ`…) to **GSAP's shorthand** (`x`, `y`,
