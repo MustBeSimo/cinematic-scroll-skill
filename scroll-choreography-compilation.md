@@ -13,6 +13,14 @@ node compile-choreography.mjs --example
 
 # compile your own choreography to a file
 node compile-choreography.mjs my-scene.json --out scene.js
+
+# NEW — compile the SAME document to a fixed-time video timeline
+node compile-choreography.mjs my-scene.json --target video --out film.js
+node compile-choreography.mjs my-scene.json --target video --pace 1.6 --out film.js
+
+# WATCH IT — emit a self-contained preview (skeleton DOM + play/scrub controls)
+node compile-choreography.mjs my-scene.json --harness --out preview.html
+open preview.html   # any browser, no install
 ```
 
 The compiler's most important job: it maps the schema's CSS-style property names
@@ -24,6 +32,54 @@ layer parallax, title reveal, colour morph, velocity nodes), Lenis forwarded to
 `ScrollTrigger.update`, and a `prefers-reduced-motion` guard that skips all motion.
 
 The sections below document the conceptual pipeline the compiler implements.
+
+## One choreography, two media (`--target video`)
+
+The same `scroll-choreography.json` that drives a scroll page compiles to a
+**fixed-time, paused GSAP timeline** for video renderers. One declarative
+document → the website *and* its launch film, with the same beats, easings and
+depth choreography. This is the bridge between the scroll grammar and
+HTML-to-video runtimes ([HyperFrames](https://github.com/heygen-com/hyperframes),
+[Remotion](https://remotion.dev)) — see `video/PIPELINE.md` for the full
+mixing strategy.
+
+### Scroll → time mapping (FRAME.md §5 pacing)
+
+| Scroll concept | Video translation |
+|---|---|
+| `pin.pinDuration` (vh) | scene seconds = `vh/100 × pace` (default pace **1.2s/100vh**, taste-guardrails §3.1), clamped to **4–14s** dwell (FRAME.md §5) |
+| chapter sequence | sequential scenes; enter `autoAlpha` 0.6s, exit 0.5s before cut |
+| layer scroll parallax (`from`→`to`) | timed drift across 90% of the scene |
+| `titleReveal.scrollRange` (0–1 fractions) | same fractions × scene duration |
+| `atmosphere.colorMorph` | timed `backgroundColor` tween on stage + scene |
+| `velocityNodes` | **dropped** — scroll velocity doesn't exist in fixed time (annotated in output) |
+| Lenis / ScrollTrigger / reduced-motion guard | **dropped** — a render is a film, not an interactive page |
+
+The DOM contract is unchanged — `[data-chapter]` scenes with `[data-layer]`
+and `[data-title]` children — so **one HTML skeleton serves both targets**.
+
+### Using the video output
+
+**HyperFrames** — load as a module; it registers `window.__timelines[id]`
+automatically. Set the exported `CHOREOGRAPHY_DURATION` as the composition
+root's `data-duration`.
+
+**Remotion** — drive the paused timeline by frame:
+
+```tsx
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { gsap } from "gsap";
+import { buildChoreographyTimeline, CHOREOGRAPHY_DURATION } from "./film.js";
+
+export const Choreography: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const tl = useMemo(() => buildChoreographyTimeline(gsap), []);
+  useEffect(() => { tl.seek(frame / fps, false); }, [tl, frame, fps]);
+  return <div id="stage">{/* the same [data-chapter] skeleton */}</div>;
+};
+// durationInFrames = CHOREOGRAPHY_DURATION * fps
+```
 
 ## Overview
 

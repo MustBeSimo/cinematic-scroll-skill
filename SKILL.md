@@ -464,6 +464,14 @@ the schema's CSS property names to GSAP shorthand (`translateX`→`x`,
 `rotateZ`→`rotation`, …) — a mapping that is easy to get wrong by hand and
 silently no-ops in GSAP if you do. See `scroll-choreography-compilation.md`.
 
+8. **One choreography, two media.** The same document also compiles to a
+   fixed-time video timeline for HTML-to-video renderers (HyperFrames,
+Remotion): `node compile-choreography.mjs my-scene.json --target video`.
+Scroll progress maps to seconds via FRAME.md §5 pacing; the DOM contract is
+identical, so one skeleton serves the page and its launch film. If the user
+wants a promo/launch video of the site they just built, this is the path —
+see `video/PIPELINE.md` and `FRAME.md`.
+
 8. **Follow the `technical-spec.md` exactly.** Do not improvise animation
    configs that differ from the approved spec.
 

@@ -55,3 +55,10 @@ npm run studio         # opens the Remotion Studio in your browser
 Add a second composition in `src/Root.tsx` with `width={1080} height={1920}` and a new id,
 then `remotion render src/index.ts PromoVertical ../assets/demo-vertical.mp4`. The scenes
 use relative layout, but re-check framing in the Studio first.
+
+## Mixing with HyperFrames
+
+This Remotion project has a sibling: `ship-in-5/` (HyperFrames, HTML + paused
+GSAP) — and the skill's compiler can feed **both** from one choreography
+document (`compile-choreography.mjs --target video`). See **[`PIPELINE.md`](./PIPELINE.md)**
+for the three mixing patterns and when to use which.

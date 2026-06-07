@@ -53,6 +53,12 @@ fonts. To make it fully deterministic:
 
 Everything is produced by the skill itself — no stock.
 
+## Mixing with Remotion
+
+A sibling Remotion project lives at `../` — and the skill's compiler feeds both
+stacks from one choreography document (`compile-choreography.mjs --target video`).
+See **[`../PIPELINE.md`](../PIPELINE.md)** for the full mixing strategy.
+
 ## Recut it
 
 This composition is also the **reference implementation of FRAME.md**. To make

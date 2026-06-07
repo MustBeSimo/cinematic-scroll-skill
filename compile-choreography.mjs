@@ -269,6 +269,248 @@ function compile(doc) {
   return out.join('\n');
 }
 
+/* ============================================================================
+   VIDEO TARGET — one choreography, two media.
+   The same document that compiles to a scroll-driven page (above) compiles to a
+   fixed-time paused GSAP timeline for video renderers (HyperFrames, Remotion).
+
+   Time mapping (FRAME.md §5 pacing rules):
+     • scroll pace: PACE seconds per 100vh of pinDuration (default 1.2 —
+       taste-guardrails §3.1), then clamped to [4s, 14s] scene dwell.
+     • in-chapter scroll fractions (titleReveal.scrollRange etc.) multiply the
+       scene's duration and offset from the scene start.
+   Dropped on purpose: Lenis/ScrollTrigger (no scroll), velocity nodes (no
+   scroll velocity in fixed time), reduced-motion guard (a render is a film).
+   The DOM contract is unchanged: [data-chapter='id'] scenes containing
+   [data-layer='id'] and [data-title] — one HTML skeleton serves both targets.
+   ========================================================================== */
+
+const clampN = (v, a, b) => Math.min(b, Math.max(a, v));
+
+function sceneSeconds(ch, pace) {
+  const vh = ch.pin?.pinDuration ?? 200;
+  return clampN((vh / 100) * pace, 4, 14);
+}
+
+function videoChapter(ch, globals, t0, dur) {
+  const sel = `[data-chapter='${ch.id}']`;
+  const L = [];
+  L.push(`  /* ── Scene: ${ch.id} — ${t0.toFixed(1)}s → ${(t0 + dur).toFixed(1)}s (pattern: ${ch.pattern || 'custom'}) ── */`);
+  // scene enter / exit (the "cut")
+  L.push(`  tl.fromTo("${sel}", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6, ease: "power3.out" }, ${t0.toFixed(2)});`);
+  L.push(`  tl.to("${sel}", { autoAlpha: 0, duration: 0.5, ease: "power3.in" }, ${(t0 + dur - 0.5).toFixed(2)});`);
+
+  // layers: scroll parallax becomes a timed drift across the scene
+  (ch.layers || []).forEach((layer) => {
+    const lsel = `${sel} [data-layer='${layer.id}']`;
+    const props = layer.animation?.properties || [];
+    if (!props.length) return;
+    const tween = {}; const fromTween = {}; let hasFrom = false;
+    props.forEach((p) => {
+      const gp = gprop(p.property);
+      tween[gp] = withUnit(p.to, p.unit);
+      if (p.from !== undefined) { fromTween[gp] = withUnit(p.from, p.unit); hasFrom = true; }
+    });
+    const ease = mapEase(props[0]?.easing || globals.defaultEasing) || 'none';
+    const at = (t0 + dur * 0.05).toFixed(2);
+    const d = (dur * 0.9).toFixed(2);
+    if (hasFrom) L.push(`  tl.fromTo("${lsel}", ${json(fromTween)}, { ${spread(tween)}, ease: ${q(ease)}, duration: ${d} }, ${at});`);
+    else L.push(`  tl.to("${lsel}", { ${spread(tween)}, ease: ${q(ease)}, duration: ${d} }, ${at});`);
+  });
+
+  // title reveal: scroll fractions → seconds within the scene
+  if (ch.titleReveal) {
+    const t = ch.titleReveal;
+    const r = t.scrollRange || { start: 0.08, end: 0.45 };
+    const at = (t0 + dur * (r.start ?? 0.08)).toFixed(2);
+    const d = Math.max(0.4, dur * ((r.end ?? 0.45) - (r.start ?? 0.08))).toFixed(2);
+    const ease = q(mapEase(t.easing || globals.defaultEasing) || 'power3.out');
+    const tsel = `${sel} [data-title]`;
+    switch (t.type) {
+      case 'wordStagger': case 'splitLineRise':
+        L.push(`  tl.fromTo("${tsel} .w", { yPercent: 110, autoAlpha: 0 }, { yPercent: 0, autoAlpha: 1, stagger: ${t.stagger?.offset ?? 0.08}, ease: ${ease}, duration: ${d} }, ${at});`);
+        break;
+      case 'letterSpacingScrub':
+        L.push(`  tl.fromTo("${tsel}", { letterSpacing: "0.4em", autoAlpha: 0.4 }, { letterSpacing: "0em", autoAlpha: 1, ease: ${ease}, duration: ${d} }, ${at});`);
+        break;
+      case 'maskReveal': case 'clipPathWipe':
+        L.push(`  tl.fromTo("${tsel}", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", ease: ${ease}, duration: ${d} }, ${at});`);
+        break;
+      case 'verticalMask':
+        L.push(`  tl.fromTo("${tsel}", { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", ease: ${ease}, duration: ${d} }, ${at});`);
+        break;
+      case 'scaleDownEntrance':
+        L.push(`  tl.fromTo("${tsel}", { scale: 1.3, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, ease: ${ease}, duration: ${d} }, ${at});`);
+        break;
+      default:
+        L.push(`  tl.fromTo("${tsel}", { y: 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, ease: ${ease}, duration: ${d} }, ${at});`);
+    }
+  }
+
+  // atmosphere: colour morph becomes a timed background tween on the stage
+  if (ch.atmosphere?.colorMorph) {
+    const m = ch.atmosphere.colorMorph;
+    L.push(`  tl.to("#stage, ${sel}", { backgroundColor: ${q(m.to)}, ease: "none", duration: ${(dur * 0.5).toFixed(2)} }, ${(t0 + dur * (m.scrollStart ?? 0.2)).toFixed(2)});`);
+  } else if (ch.atmosphere?.backgroundColor) {
+    L.push(`  tl.set("${sel}", { backgroundColor: ${q(ch.atmosphere.backgroundColor)} }, ${t0.toFixed(2)});`);
+  }
+
+  if (Array.isArray(ch.velocityNodes) && ch.velocityNodes.length) {
+    L.push(`  /* velocityNodes skipped — scroll velocity does not exist in fixed-time video */`);
+  }
+  return L.join('\n');
+}
+
+function compileVideo(doc, { pace = 1.2 } = {}) {
+  validate(doc);
+  const g = doc.globals || {};
+  const id = doc.metadata?.id || 'main';
+  const chapters = doc.chapters || [];
+  // scene schedule: sequential, durations from pacing rules
+  let t = 0;
+  const schedule = chapters.map((ch) => {
+    const dur = sceneSeconds(ch, pace);
+    const entry = { ch, t0: t, dur };
+    t += dur;
+    return entry;
+  });
+  const total = Math.ceil(t * 10) / 10;
+
+  const out = [];
+  out.push(`/* AUTO-GENERATED by compile-choreography.mjs --target video — do not edit by hand. */`);
+  out.push(`/* Source choreography: ${doc.metadata?.name || 'unnamed'} · ${chapters.length} scenes · ${total}s total */`);
+  out.push(`/* Dual-use output:`);
+  out.push(`   • HyperFrames: load via <script type="module">; registers window.__timelines["${id}"].`);
+  out.push(`     Set data-duration="${total}" on the composition root.`);
+  out.push(`   • Remotion: import { buildChoreographyTimeline } and seek per frame:`);
+  out.push(`       const tl = useMemo(() => buildChoreographyTimeline(gsap), []);`);
+  out.push(`       useEffect(() => { tl.seek(frame / fps); }, [frame]);  */`);
+  out.push(``);
+  out.push(`export const CHOREOGRAPHY_DURATION = ${total}; // seconds`);
+  out.push(``);
+  out.push(`export function buildChoreographyTimeline(gsap) {`);
+  out.push(`  const tl = gsap.timeline({ paused: true });`);
+  out.push(``);
+  schedule.forEach(({ ch, t0, dur }) => out.push(videoChapter(ch, g, t0, dur)));
+  out.push(``);
+  out.push(`  tl.set({}, {}, ${total}); /* pin composition duration */`);
+  out.push(`  return tl;`);
+  out.push(`}`);
+  out.push(``);
+  out.push(`/* HyperFrames auto-registration (no-op outside the browser) */`);
+  out.push(`if (typeof window !== "undefined" && window.gsap) {`);
+  out.push(`  window.__timelines = window.__timelines || {};`);
+  out.push(`  window.__timelines[${q(id)}] = buildChoreographyTimeline(window.gsap);`);
+  out.push(`}`);
+  return out.join('\n');
+}
+
+/* ============================================================================
+   PREVIEW HARNESS (--harness) — "watch it move" in one command, no install.
+   Emits a self-contained HTML file: a skeleton DOM generated from the
+   choreography document (placeholder layers, real title text), GSAP from CDN,
+   the compiled video timeline inlined, and play / scrub controls.
+   The same [data-chapter]/[data-layer]/[data-title] contract as production —
+   so what you preview is what the real targets will animate.
+   ========================================================================== */
+
+const PLACEHOLDER_COLORS = ['#1E3A3E', '#5A2328', '#8F6A38', '#31475A', '#202A31', '#6B2C2C', '#2E4057'];
+
+function harnessSkeleton(doc, pace) {
+  const chapters = doc.chapters || [];
+  return chapters.map((ch, ci) => {
+    const dark = !!(ch.atmosphere?.backgroundColor && parseInt((ch.atmosphere.backgroundColor || '#888').slice(1, 3), 16) < 0x60);
+    const ink = dark ? '#E9E1D4' : '#1E2326';
+    const layers = (ch.layers || []).map((l, li) => {
+      const col = PLACEHOLDER_COLORS[li % PLACEHOLDER_COLORS.length];
+      const d = l.depth ?? 0.5;
+      const size = 18 + Math.round(d * 30); // deeper layers read bigger
+      return `      <div data-layer="${l.id}" class="ph" style="background:${col};width:${size}%;height:${size + 8}%;left:${8 + li * 13}%;top:${14 + li * 11}%">
+        <span>${l.id} · d${d}</span>
+      </div>`;
+    }).join('\n');
+    const titleText = ch.titleReveal?.text || ch.title || ch.id;
+    const words = String(titleText).split(/\s+/).map((w) => `<span class="w">${w}</span>`).join(' ');
+    return `    <section data-chapter="${ch.id}" style="background:${ch.atmosphere?.backgroundColor || '#101417'};color:${ink}">
+${layers}
+      <h1 data-title>${words}</h1>
+      <div class="meta">${ch.id} · ${ch.pattern || 'custom'} · scene ${ci + 1}/${chapters.length}</div>
+    </section>`;
+  }).join('\n');
+}
+
+function compileHarness(doc, { pace = 1.2 } = {}) {
+  const timelineCode = compileVideo(doc, { pace })
+    .replace(/^export const CHOREOGRAPHY_DURATION/m, 'const CHOREOGRAPHY_DURATION')
+    .replace(/^export function buildChoreographyTimeline/m, 'function buildChoreographyTimeline');
+  const name = doc.metadata?.name || 'choreography';
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>${name} — choreography preview</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0c0e; font-family:ui-monospace,Menlo,monospace; overflow:hidden; }
+  /* bulletproof scaling: stage is fixed-centered, then translate+scale in one
+     transform — works at any window size, never overflows oddly */
+  #stage { position:fixed; left:50%; top:calc((100vh - 64px) / 2);
+           width:1920px; height:1080px; overflow:hidden;
+           background:#101417; transform-origin:center;
+           transform:translate(-50%,-50%) scale(.5);
+           box-shadow:0 20px 80px rgba(0,0,0,.6); }
+  #stage section { position:absolute; inset:0; visibility:hidden; opacity:0; padding:90px; }
+  .ph { position:absolute; border-radius:6px; opacity:.85; display:grid; place-items:end start; }
+  .ph span { font-size:15px; color:#fffc; padding:8px 10px; }
+  [data-title] { position:absolute; left:90px; bottom:140px; font-size:104px; line-height:1.02;
+                 font-family:Georgia,serif; text-transform:uppercase; letter-spacing:.01em; max-width:70%; }
+  [data-title] .w { display:inline-block; margin-right:.22em; }
+  .meta { position:absolute; right:90px; bottom:60px; font-size:16px; opacity:.55; letter-spacing:.18em; text-transform:uppercase; }
+  #bar { position:fixed; left:0; right:0; bottom:0; height:64px; display:flex; gap:14px;
+         align-items:center; padding:0 18px; background:#14181c; border-top:1px solid #232a30; }
+  #play { width:84px; height:36px; background:#8F6A38; color:#101417; border:0; border-radius:4px;
+          font:700 13px/1 ui-monospace,monospace; letter-spacing:.1em; cursor:pointer; }
+  #scrub { flex:1; accent-color:#8F6A38; }
+  #clock { color:#E9E1D4; font-size:13px; min-width:110px; text-align:right; }
+</style>
+</head>
+<body>
+<div id="stage">
+${harnessSkeleton(doc, pace)}
+</div>
+<div id="bar">
+  <button id="play">PLAY</button>
+  <input id="scrub" type="range" min="0" max="1000" value="0" />
+  <div id="clock">0.0s / 0.0s</div>
+</div>
+<script>
+${timelineCode}
+const tl = buildChoreographyTimeline(gsap);
+const total = CHOREOGRAPHY_DURATION;
+/* fit 1920x1080 stage into the window — translate-center + scale, any size */
+function fit(){ const s = Math.min((innerWidth-32)/1920, (innerHeight-96)/1080);
+  document.getElementById('stage').style.transform =
+    'translate(-50%,-50%) scale(' + Math.max(s, 0.05) + ')'; }
+addEventListener('resize', fit); fit();
+/* controls */
+const play = document.getElementById('play'), scrub = document.getElementById('scrub'), clock = document.getElementById('clock');
+let playing = false;
+function sync(){ scrub.value = Math.round(tl.progress()*1000);
+  clock.textContent = tl.time().toFixed(1) + 's / ' + total + 's'; }
+gsap.ticker.add(sync);
+play.addEventListener('click', () => {
+  playing = !playing; play.textContent = playing ? 'PAUSE' : 'PLAY';
+  if (playing) { if (tl.progress() >= 1) tl.progress(0); tl.play(); } else tl.pause();
+});
+tl.eventCallback('onComplete', () => { playing = false; play.textContent = 'PLAY'; });
+scrub.addEventListener('input', () => { tl.pause(); playing = false; play.textContent = 'PLAY';
+  tl.progress(scrub.value/1000); });
+</script>
+</body>
+</html>`;
+}
+
 /* ---- CLI ------------------------------------------------------------------ */
 function main() {
   const args = process.argv.slice(2);
@@ -285,10 +527,21 @@ function main() {
     doc = doc.examples[0];
   }
 
-  const code = compile(doc);
+  const tArg = args.indexOf('--target');
+  const target = tArg >= 0 ? args[tArg + 1] : 'web';
+  const pArg = args.indexOf('--pace');
+  const pace = pArg >= 0 ? parseFloat(args[pArg + 1]) : 1.2;
+
+  let code;
+  if (args.includes('--harness')) code = compileHarness(doc, { pace });
+  else if (target === 'video') code = compileVideo(doc, { pace });
+  else if (target === 'web') code = compile(doc);
+  else { console.error(`✗ unknown --target "${target}" (use: web | video, or --harness for a preview HTML)`); process.exit(1); }
+
+  const label = args.includes('--harness') ? 'harness' : target;
   const outArg = args.indexOf('--out');
   const outPath = outArg >= 0 ? args[outArg + 1] : null;
-  if (outPath) { writeFileSync(outPath, code); console.error(`✓ wrote ${outPath} (${code.split('\n').length} lines)`); }
+  if (outPath) { writeFileSync(outPath, code); console.error(`✓ [${label}] wrote ${outPath} (${code.split('\n').length} lines)`); }
   else { process.stdout.write(code + '\n'); }
 }
 
