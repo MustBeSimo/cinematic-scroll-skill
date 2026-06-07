@@ -174,6 +174,32 @@ python3 -m http.server 8099   # then open /examples/renaissance/ · /studio/ · 
 
 ---
 
+## ✦ New: one choreography, two media
+
+A single **`scroll-choreography.json`** now compiles to **the website *and* its
+launch film** — same beats, same easings, same depth choreography. Rebrand your
+site, and the video rebrands itself.
+
+```bash
+node compile-choreography.mjs scene.json --target web     # → GSAP ScrollTrigger page
+node compile-choreography.mjs scene.json --target video   # → paused timeline for HyperFrames / Remotion
+node compile-choreography.mjs scene.json --harness --out preview.html   # → watch it move, zero install
+```
+
+The web target is scroll-driven and responsive; the video target is a
+deterministic 16:9 timeline for HTML-to-video renderers — directed by
+**[`FRAME.md`](./FRAME.md)**, the brand spec that translates this design system
+for the frame. The `--harness` flag emits a self-contained preview HTML with
+play/scrub controls so you can watch any choreography in a plain browser.
+
+Same DOM contract (`[data-chapter]` / `[data-layer]` / `[data-title]`) serves
+both targets. Full mapping table + Remotion adapter:
+[`scroll-choreography-compilation.md`](./scroll-choreography-compilation.md) ·
+mixing strategy (HyperFrames × Remotion): [`video/PIPELINE.md`](./video/PIPELINE.md) ·
+reference film project: [`video/ship-in-5/`](./video/ship-in-5/)
+
+---
+
 ## Quickstart
 
 ### Mode A — instant scroll section
@@ -214,6 +240,12 @@ cinematic-scroll-skill/
 ├── LICENSE                   # MIT
 ├── manifest.json             # skill metadata (free)
 ├── MODELS.md                 # fal.ai model menu, costs, when-to-use
+├── compile-choreography.mjs  # ✦ scroll-choreography.json → page / film / preview
+├── scroll-choreography.json  # the declarative choreography schema + example
+├── FRAME.md                  # brand spec for video agents (the frame translation)
+├── taste-guardrails.md       # banned patterns, cinematic vocabulary, pacing rules
+├── references/               # scroll patterns · film archetypes · performance budget
+├── video/                    # PIPELINE.md (HyperFrames × Remotion) + film projects
 ├── examples/
 │   ├── PROMPTS.md            # 20+ trigger prompts across aesthetic worlds
 │   ├── GETTING_STARTED.md    # fal.ai setup, troubleshooting, queue+webhook
