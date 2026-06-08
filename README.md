@@ -9,11 +9,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/MustBeSimo/cinematic-scroll-skill?style=flat-square&color=f5b301&label=stars)](https://github.com/MustBeSimo/cinematic-scroll-skill/stargazers)
 
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark_v2.png">
-    <source media="(prefers-color-scheme: light)" srcset="assets/banner-light_v2.png">
-    <img src="assets/banner-dark_v2.png" alt="Cinematic Scroll — a free Agent Skill for scroll-driven websites. Two finishes: Petroleum Editorial (dark) and Swiss Museum (light)." width="100%">
-  </picture>
+  <img src="assets/hero-demo.gif" alt="Cinematic Scroll in motion — pinned chapters, multi-depth parallax, and scroll-driven 3D across five aesthetic worlds from one engine." width="100%">
 </a>
 
 👉 **[Visit the live landing page](https://mustbesimo.github.io/cinematic-scroll-skill/)** — built *with the skill itself*. It adapts to your GitHub theme: dark → **Petroleum Editorial**, light → **Swiss Museum**.
