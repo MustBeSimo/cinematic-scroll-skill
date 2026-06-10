@@ -26,6 +26,11 @@ Open `/flagship` after `npm run dev`.
 | `components/flagship/FlagshipOverlay.tsx` | HTML copy + feature-gated Enter-VR/AR buttons + a reachable Exit affordance. |
 | `components/flagship/ModelViewer.tsx` | `<model-viewer>` AR quick-look (phones); lazy-registers the pinned web component. |
 | `components/flagship/chapters/*` | One file per movement. Each `useGLTF`s a real model when present, else renders procedural geometry — the swap is **data, not code**. |
+| `components/flagship/fx/RailDust.tsx` | One velocity-reactive GPU dust field spanning the whole rail (single draw call) — motes swell + stream in transit, settle at dwells. |
+| `components/flagship/fx/Aurora.tsx` | Flowing fbm light curtains high above the rail (additive blending, desktop only). |
+| `components/flagship/fx/LightShaft.tsx` | Fake-volumetric beam cone (fresnel rim fade + organic flicker) — the colonnade lights and the dancer's spotlight. |
+| `lib/flagship-velocity.ts` | Scroll-velocity bus: the camera rig writes damped travel speed each frame, the FX layer reads it (no React state in the hot path). |
+| `lib/normalize-model.ts` | Auto-normalizes any loaded GLB to chapter height, base on floor — **pose-aware for skinned/rigged meshes** (bind-pose bboxes lie). |
 | `lib/flagship-manifest.ts` | Chapter copy + the 3D asset manifest (same schema as `ASSETS-3D.md` §6). |
 | `lib/flagship-xr.ts` | The shared `createXRStore()` + `useEnterXR()` (v6) — imported by both the Canvas and the overlay (no circular dep). |
 | `lib/use-xr-support.ts` | `navigator.xr` feature-detection — gates every Enter-XR button (`references/webxr.md` §1). |
@@ -56,15 +61,53 @@ npm run generate:flagship             # object + world + figure → .glb + conce
 npm run generate:flagship -- --apply  # …and patch the manifest runtime paths
 ```
 
-Two stages per chapter: a concept image (default `fal-ai/flux-2-pro` — single
-centered subject on a dark ground, the framing image-to-3D reconstructs best),
-then image→3D via fal's **queue API** (default `fal-ai/trellis`; switch with
-`--mesh-model fal-ai/hunyuan3d/v2` or a Hyper3D/Rodin id). Field is skipped —
+Two stages per chapter: a concept image (default `fal-ai/nano-banana-2` —
+reasoning-guided, strong at accurate single-object renders; switch with
+`--image-model fal-ai/flux-2-pro`), then image→3D via fal's **queue API**
+(default `fal-ai/trellis`; for high-detail hero objects prefer
+`--mesh-model fal-ai/hyper3d/rodin`, or `--mesh-model fal-ai/hunyuan3d/v2`).
+Each saved mesh is then **auto-compressed in place** (Draco geometry + WebP
+textures via `@gltf-transform/cli`), taking a 10–13 MB raw mesh down to ~1–3 MB
+with no visible quality loss — drei's `useGLTF` decodes Draco by default and
+WebP textures load natively, so it's zero code change. Pass `--no-optimize` to
+keep the raw output. Field is skipped —
 its shader is the asset. Loaded models **auto-normalize** to chapter height
 with their base on the floor (`lib/normalize-model.ts`), so arbitrary generated
-scales/offsets are safe. Generated meshes are **unrigged**: the Figure chapter
-shows one as a still sculpture — for a breathing/gesturing avatar, rig via
-Mixamo (`ASSETS-3D.md` §4).
+scales/offsets are safe.
+
+**The Figure dances out of the box.** Image-to-3D models output *unrigged*
+meshes, so the template ships a rigged, animated character at
+`public/flagship/figure/dancer.glb` (Mixamo-rigged, `SambaDance` clip, Draco'd
+to ~0.8 MB) and the manifest points at it — no Blender, no Mixamo account, no
+manual step. The generated android sculpture stays at `figure.glb`; to use it
+instead, flip `figure.runtime` in `lib/flagship-manifest.ts`. To make *your own*
+mesh dance, rig it via Mixamo (`ASSETS-3D.md` §4) and overwrite `dancer.glb` —
+the chapter plays whatever clips the file carries.
+
+## The immersive FX layer
+
+The journey's air is never empty. All of it answers `prefers-reduced-motion`
+with a composed still frame and respects the mobile budget:
+
+- **Rail dust** — one GPU point cloud spanning the full camera rail (1700 motes
+  desktop / 550 mobile, one draw call). It is *scroll-velocity reactive*: the
+  camera rig publishes damped travel speed on `lib/flagship-velocity.ts`, and
+  in transit the motes swell, brighten and stream while the lens FOV kicks
+  +7° — travel feels like travel; every dwell settles back to stillness.
+- **Aurora curtains** — three domain-warped fbm light ribbons flowing high
+  above the rail (desktop only), tinted to the chapters they hang over.
+- **Volumetric light shafts** — open cones with fresnel rim fade + organic
+  flicker: staggered ceiling lights down the World colonnade, and a warm
+  concert spotlight over the Figure.
+- **Dynamic chapter dressing** — the hero artifact levitates (`Float`) with an
+  orbiting comet glint (`Trail`) and a breathing HDR stage ring; the dancer's
+  ring pulses on a samba-ish beat; gold/cyan/ember motes per chapter.
+- **Living atmosphere** — background, fog color **and fog density** morph per
+  chapter (clean air for the Object, thick for the hall, near-vacuum for the
+  Field, smoky for the Figure); the camera adds a barely-there hand-held
+  breathing at dwell.
+- **The finish** — blurred mirror floor, bloom over HDR emissives, chromatic
+  aberration + film grain (desktop only, suspended in XR).
 
 ## Runs today with ZERO 3D assets
 

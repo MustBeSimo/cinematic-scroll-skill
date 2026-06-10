@@ -118,16 +118,16 @@ export const flagshipChapters: FlagshipChapter[] = [
 export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
   object: {
     label: 'Object',
-    runtime: 'procedural', // e.g. '/flagship/object/object.glb'
+    runtime: '/flagship/object/object.glb', // e.g. '/flagship/object/object.glb'
     iosAr: null, // e.g. '/flagship/object/object.usdz'
     fallbackPoster: '/flagship/object/poster.svg',
-    scale: 1.0,
+    scale: 2.5, // hero framing — the watch fills the frame instead of sitting small on the floor
     pivot: 'base-center',
     cameraNodes: [],
   },
   world: {
     label: 'World',
-    runtime: 'procedural',
+    runtime: '/flagship/world/world.glb',
     iosAr: null,
     fallbackPoster: '/flagship/world/poster.svg',
     scale: 1.0,
@@ -143,11 +143,15 @@ export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
   },
   figure: {
     label: 'Figure',
-    runtime: 'procedural',
+    // dancer.glb = rigged + animated (Mixamo-rigged character, SambaDance clip)
+    // — works end-to-end with zero manual rigging. The generated android
+    // sculpture is still at /flagship/figure/figure.glb: swap `runtime` back
+    // for a still figure, or rig it (ASSETS-3D.md §4) and overwrite dancer.glb.
+    runtime: '/flagship/figure/dancer.glb',
     iosAr: null,
     fallbackPoster: '/flagship/figure/poster.svg',
     scale: 1.0,
-    animations: ['Idle', 'Gesture'],
+    animations: ['SambaDance'],
     cameraNodes: [],
   },
 };

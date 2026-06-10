@@ -3,6 +3,12 @@
 A programmatic, version-controlled promo video for the skill. Edit code → re-render.
 No screen recording, no timeline scrubbing — the video *is* React.
 
+Three compositions live here: **`Promo`** (the product promo, below),
+**`TwoMedia`** (the "one choreography, two media" feature film), and
+**`Flagship3D`** (the 30s launch film for the 3D/WebXR flagship route — four
+movements, the `generate:flagship` pipeline, the out-of-the-box dancer; render
+with `npm run render:flagship`, pure motion graphics, zero asset files).
+
 ## What it renders
 A ~26-second piece @ 30fps. The composition is authored at 1920×1080 and rendered at
 `--scale=2` → a true **3840×2160 (4K)** file with razor-sharp text and vectors.

@@ -20,8 +20,8 @@
 
 import { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, MeshReflectorMaterial, Preload, Scroll, ScrollControls, Stars, useScroll } from '@react-three/drei';
-import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
+import { Environment, MeshReflectorMaterial, Preload, Scroll, ScrollControls, Stars, useGLTF, useScroll } from '@react-three/drei';
+import { Bloom, ChromaticAberration, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
 import { useXR, XR, XROrigin } from '@react-three/xr';
 import * as THREE from 'three';
 
@@ -32,11 +32,24 @@ import {
   type FlagshipChapterId,
 } from '@/lib/flagship-manifest';
 import { flagshipXRStore } from '@/lib/flagship-xr';
+import { railVelocity } from '@/lib/flagship-velocity';
+import { RailDust } from './fx/RailDust';
+import { Aurora } from './fx/Aurora';
 import { ObjectChapter } from './chapters/ObjectChapter';
 import { WorldChapter } from './chapters/WorldChapter';
 import { FieldChapter } from './chapters/FieldChapter';
 import { FigureChapter } from './chapters/FigureChapter';
 import { FlagshipOverlay } from './FlagshipOverlay';
+
+// Start GLB network requests at module-eval time — before the Canvas or any
+// chapter component mounts. This is the single biggest perceived-load win:
+// by the time the WebGL context is ready the meshes are already in cache.
+(function preloadModels() {
+  const urls = Object.values(assetManifest)
+    .map((e) => e.runtime)
+    .filter((r) => r !== 'procedural');
+  urls.forEach((url) => useGLTF.preload(url));
+})();
 
 /** World-space anchor for each chapter — spaced along -Z; the camera dollies
  *  between them. Index matches `flagshipChapters` order. */
@@ -80,7 +93,17 @@ const CHAPTER_TINTS: Record<FlagshipChapterId, THREE.Color> = {
   figure: new THREE.Color('#170f0a'),
 };
 
-/** Lerps scene background + fog color toward the active chapter's tint. */
+/** Per-chapter fog DENSITY — each chapter gets its own air weight: clean
+ *  around the hero object, thick in the hall, near-vacuum for the field's
+ *  far-plane shader, smoky for the dancer. */
+const CHAPTER_FOG: Record<FlagshipChapterId, number> = {
+  object: 0.012,
+  world: 0.022,
+  field: 0.008,
+  figure: 0.018,
+};
+
+/** Lerps scene background + fog color/density toward the active chapter's air. */
 function AtmosphereMorph({ animate }: { animate: boolean }) {
   const scroll = useScroll();
   const scratch = useMemo(() => new THREE.Color(), []);
@@ -90,11 +113,23 @@ function AtmosphereMorph({ animate }: { animate: boolean }) {
     const t = animate ? scroll.offset : 0;
     const seg = THREE.MathUtils.clamp(t, 0, 1) * segs;
     const i = Math.min(Math.floor(seg), segs - 1);
+    const k = smootherstep(seg - i);
     const from = CHAPTER_TINTS[flagshipChapters[i].id];
     const to = CHAPTER_TINTS[flagshipChapters[i + 1].id];
-    scratch.copy(from).lerp(to, smootherstep(seg - i));
+    scratch.copy(from).lerp(to, k);
     if (scene.background instanceof THREE.Color) scene.background.lerp(scratch, 0.08);
-    if (scene.fog) scene.fog.color.lerp(scratch, 0.08);
+    if (scene.fog) {
+      scene.fog.color.lerp(scratch, 0.08);
+      const fog = scene.fog as THREE.FogExp2;
+      if ('density' in fog) {
+        const target = lerp(
+          CHAPTER_FOG[flagshipChapters[i].id],
+          CHAPTER_FOG[flagshipChapters[i + 1].id],
+          k,
+        );
+        fog.density = lerp(fog.density, target, 0.06);
+      }
+    }
   });
 
   return null;
@@ -135,8 +170,10 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
         {/* Image-based lighting — "city" preset for rich speculars on the glass
             core / brushed metal (the background stays the scene color above).
             Falls back to the analytic lights below if the HDR fetch fails. */}
+        {/* resolution={128} — specular sheen only, not visible background.
+            Half the default fetch size, no perceptible quality difference. */}
         <Suspense fallback={null}>
-          <Environment preset="city" />
+          <Environment preset="city" resolution={128} />
         </Suspense>
 
         {/* Key + rim lights (stable, level — no roll, `webxr.md` §5). */}
@@ -161,8 +198,15 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
           speed={animate ? 0.5 : 0}
         />
 
+        {/* Atmospheric connective tissue — one dust field spans the whole rail
+            (velocity-reactive: travel makes it swell and stream), and aurora
+            curtains flow high above it. Desktop gets the full count; mobile a
+            third; aurora is desktop-only (performance-budget §2). */}
+        <RailDust animate={animate} count={mobile ? 550 : 1700} />
+        {!mobile ? <Aurora animate={animate} /> : null}
+
         <ScrollControls pages={FLAGSHIP_PAGES} damping={0.3}>
-          <ScrollCameraRig animate={animate} />
+          <ScrollCameraRig animate={animate} mobile={mobile} />
           <AtmosphereMorph animate={animate} />
           <ChapterRig animate={animate} mobile={mobile} />
           {/* HTML rail — portaled into the same scroll container so the copy and
@@ -194,6 +238,10 @@ function PostFX() {
   return (
     <EffectComposer multisampling={4}>
       <Bloom mipmapBlur intensity={0.8} luminanceThreshold={0.9} luminanceSmoothing={0.3} />
+      {/* Lens fringe + film grain — both barely-there by design: at these
+          values they read as "shot on glass", not as an Instagram filter. */}
+      <ChromaticAberration offset={[0.0006, 0.001]} />
+      <Noise premultiply opacity={0.07} />
       <Vignette offset={0.25} darkness={0.62} />
     </EffectComposer>
   );
@@ -205,9 +253,10 @@ function PostFX() {
  * while an XR session is presenting — in a headset the user's head is the
  * camera; driving it from scroll induces nausea (`webxr.md` §5).
  */
-function ScrollCameraRig({ animate }: { animate: boolean }) {
+function ScrollCameraRig({ animate, mobile }: { animate: boolean; mobile: boolean }) {
   const scroll = useScroll();
   const current = useRef(0);
+  const parallax = useRef({ x: 0, y: 0 });
   const presenting = useXR((s) => s.session != null);
 
   const path = useMemo(() => {
@@ -221,16 +270,44 @@ function ScrollCameraRig({ animate }: { animate: boolean }) {
   const lookTarget = useMemo(() => new THREE.Vector3(), []);
   const camPos = useMemo(() => new THREE.Vector3(), []);
 
-  useFrame(({ camera }) => {
+  useFrame(({ camera, pointer, clock }, delta) => {
     if (presenting) return; // XR owns the camera — do not drive it.
 
     const target = animate ? scroll.offset : 0.5 / FLAGSHIP_PAGES; // still: frame ch.1
+    const prev = current.current;
     current.current = lerp(current.current, target, animate ? 0.08 : 1);
     // Dwell-and-travel: settle at each chapter, ease through the transit.
     const t = dwellEase(current.current);
 
+    // Publish damped travel speed (0 at a dwell, →1 in fast transit) for the
+    // FX layer: rail dust swells, the FOV kicks, travel FEELS like travel.
+    const rawVel = THREE.MathUtils.clamp(
+      (Math.abs(current.current - prev) / Math.max(delta, 1e-4)) * 14,
+      0,
+      1,
+    );
+    railVelocity.current = lerp(railVelocity.current, animate ? rawVel : 0, 0.06);
+
     path.getPointAt(t, camPos);
     camera.position.copy(camPos);
+
+    // Hand-held breathing — a barely-there idle drift so a dwell is alive,
+    // never frozen. Two incommensurate sines: no visible loop.
+    if (animate) {
+      const bt = clock.elapsedTime;
+      camera.position.y += Math.sin(bt * 0.55) * 0.035;
+      camera.position.x += Math.sin(bt * 0.37 + 1.7) * 0.025;
+    }
+
+    // Pointer parallax (desktop only) — a heavily damped hand-held drift that
+    // lets the viewer peek around the chapter. lookAt() below re-aims at the
+    // anchor, so the subject stays framed; only the viewpoint slides.
+    if (!mobile && animate) {
+      parallax.current.x = lerp(parallax.current.x, pointer.x, 0.04);
+      parallax.current.y = lerp(parallax.current.y, pointer.y, 0.04);
+      camera.position.x += parallax.current.x * 0.35;
+      camera.position.y += parallax.current.y * 0.18;
+    }
 
     // Look slightly ahead down the rail (toward the chapter the camera nears).
     const ahead = THREE.MathUtils.clamp(t + 0.04, 0, 1);
@@ -238,9 +315,68 @@ function ScrollCameraRig({ animate }: { animate: boolean }) {
     lookTarget.y = 1.2; // stable, level horizon — no roll
     lookTarget.z -= 6; // look into the chapter, not at the rail point itself
     camera.lookAt(lookTarget);
+
+    // Travel FOV kick — the lens widens a touch at speed (dolly-zoom energy)
+    // and settles back to 45° at every dwell.
+    const cam = camera as THREE.PerspectiveCamera;
+    const fovTarget = 45 + railVelocity.current * 7;
+    if (Math.abs(cam.fov - fovTarget) > 0.01) {
+      cam.fov = lerp(cam.fov, fovTarget, 0.08);
+      cam.updateProjectionMatrix();
+    }
   });
 
   return null;
+}
+
+/**
+ * Presence gate — stages a chapter's entrance. Without it all four chapters
+ * are visible at once (fog alone can't hide the nearer ones) and the scene
+ * reads as overlapping clutter from frame one. Each chapter scales up from
+ * its own anchor and rises into place as the camera nears, holds at full
+ * presence while the camera dwells, and recedes as it departs.
+ */
+function ChapterGate({
+  index,
+  anchor,
+  animate,
+  children,
+}: {
+  index: number;
+  anchor: THREE.Vector3;
+  animate: boolean;
+  children: React.ReactNode;
+}) {
+  const scroll = useScroll();
+  const group = useRef<THREE.Group>(null);
+  // Damped presence — chapter 1 opens already on stage.
+  const presence = useRef(index === 0 ? 1 : 0);
+
+  useFrame((_, delta) => {
+    const g = group.current;
+    if (!g) return;
+    const segs = flagshipChapters.length - 1;
+    const offset = animate ? scroll.offset : 0; // reduced motion: hold ch. 1
+    const seg = dwellEase(THREE.MathUtils.clamp(offset, 0, 1)) * segs;
+    const d = Math.abs(seg - index);
+    // LATE entrance: nothing until the camera is most of the way there
+    // (d < 0.5), full presence as it settles (d < 0.15). Mid-transit the rail
+    // is empty — the next chapter materializes on arrival, not during travel.
+    const target = smootherstep(THREE.MathUtils.clamp((0.5 - d) / 0.35, 0, 1));
+    // Time-damped approach (~0.4s settle) — frame-rate independent, so an
+    // entrance can never pop, even under a fast scroll flick.
+    const k = animate ? 1 - Math.exp(-delta * 2.4) : 1;
+    presence.current += (target - presence.current) * k;
+    const s = presence.current;
+    g.visible = s > 0.002;
+    g.scale.setScalar(Math.max(s, 1e-4));
+    // Scale around the chapter's OWN anchor (not the world origin): it grows
+    // up from its floor point. No vertical sink — a partially-risen body
+    // half-clipped through the floor reads as a glitch, not an entrance.
+    g.position.copy(anchor).multiplyScalar(1 - s);
+  });
+
+  return <group ref={group}>{children}</group>;
 }
 
 /**
@@ -271,27 +407,37 @@ function ChapterRig({ animate, mobile }: { animate: boolean; mobile: boolean }) 
   const a = assetManifest;
   return (
     <>
-      <ObjectChapter
-        anchor={CHAPTER_ANCHORS.object}
-        progress={progressRefs.current.object}
-        animate={animate}
-        modelUrl={a.object.runtime === 'procedural' ? null : a.object.runtime}
-        scale={a.object.scale}
-        mobile={mobile}
-      />
-      <WorldChapter
-        anchor={CHAPTER_ANCHORS.world}
-        modelUrl={a.world.runtime === 'procedural' ? null : a.world.runtime}
-        scale={a.world.scale}
-      />
-      <FieldChapter anchor={CHAPTER_ANCHORS.field} progress={progressRefs.current.field} animate={animate} />
-      <FigureChapter
-        anchor={CHAPTER_ANCHORS.figure}
-        animate={animate}
-        modelUrl={a.figure.runtime === 'procedural' ? null : a.figure.runtime}
-        scale={a.figure.scale}
-        clips={a.figure.animations ?? []}
-      />
+      <ChapterGate index={0} anchor={CHAPTER_ANCHORS.object} animate={animate}>
+        <ObjectChapter
+          anchor={CHAPTER_ANCHORS.object}
+          progress={progressRefs.current.object}
+          animate={animate}
+          modelUrl={a.object.runtime === 'procedural' ? null : a.object.runtime}
+          scale={a.object.scale}
+          mobile={mobile}
+        />
+      </ChapterGate>
+      <ChapterGate index={1} anchor={CHAPTER_ANCHORS.world} animate={animate}>
+        <WorldChapter
+          anchor={CHAPTER_ANCHORS.world}
+          modelUrl={a.world.runtime === 'procedural' ? null : a.world.runtime}
+          scale={a.world.scale}
+          animate={animate}
+          mobile={mobile}
+        />
+      </ChapterGate>
+      <ChapterGate index={2} anchor={CHAPTER_ANCHORS.field} animate={animate}>
+        <FieldChapter anchor={CHAPTER_ANCHORS.field} progress={progressRefs.current.field} animate={animate} />
+      </ChapterGate>
+      <ChapterGate index={3} anchor={CHAPTER_ANCHORS.figure} animate={animate}>
+        <FigureChapter
+          anchor={CHAPTER_ANCHORS.figure}
+          animate={animate}
+          modelUrl={a.figure.runtime === 'procedural' ? null : a.figure.runtime}
+          scale={a.figure.scale}
+          clips={a.figure.animations ?? []}
+        />
+      </ChapterGate>
       {/* Ground. Desktop: blurred mirror floor — the chapters, light strips and
           halo reflect softly in it (the single biggest "premium" cue in the
           scene). Mobile: a plain dark floor — grounded, but no reflection pass. */}

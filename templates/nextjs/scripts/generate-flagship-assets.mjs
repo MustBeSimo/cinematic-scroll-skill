@@ -2,9 +2,9 @@
 /**
  * Flagship 3D asset generator — fal.ai, two stages per chapter:
  *
- *   1. IMAGE   text → concept image (default fal-ai/flux-2-pro, synchronous)
- *              Single centered subject on a plain dark ground — the framing
- *              image-to-3D models reconstruct best.
+ *   1. IMAGE   text → concept image (default fal-ai/nano-banana-2, synchronous;
+ *              --image-model for flux/gemini). Single centered subject on a
+ *              plain dark ground — the framing image-to-3D models reconstruct best.
  *   2. MESH    image → 3D GLB (default fal-ai/trellis, via fal's QUEUE API —
  *              mesh jobs run minutes, so we submit + poll, never block on
  *              a single HTTP call).
@@ -30,10 +30,14 @@
  *     so arbitrary generated scales/offsets are safe.
  */
 
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { argv, env, exit } from 'node:process';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
+const execFileAsync = promisify(execFile);
 
 // ─── art direction per chapter (single subject, dark ground, no text) ──────
 
@@ -79,6 +83,10 @@ const readFlag = (name) => {
 const flags = {
   dryRun: args.includes('--dry-run'),
   apply: args.includes('--apply'),
+  // Web meshes must be light: Draco geometry + WebP textures (loads with zero
+  // code change — drei's useGLTF defaults Draco on, WebP decodes natively).
+  // On by default; --no-optimize keeps the raw generator output.
+  optimize: !args.includes('--no-optimize'),
   only: (readFlag('only') ?? '').split(',').filter(Boolean),
   imageModel: readFlag('image-model'),
   meshModel: readFlag('mesh-model'),
@@ -98,7 +106,7 @@ try {
 }
 
 const FAL_KEY = env.FAL_KEY;
-const IMAGE_MODEL = flags.imageModel ?? env.FAL_IMAGE_MODEL ?? 'fal-ai/flux-2-pro';
+const IMAGE_MODEL = flags.imageModel ?? env.FAL_IMAGE_MODEL ?? 'fal-ai/nano-banana-2';
 const MESH_MODEL = flags.meshModel ?? env.FAL_MESH_MODEL ?? 'fal-ai/trellis';
 
 if (!FAL_KEY && !flags.dryRun) {
@@ -111,11 +119,13 @@ const AUTH = { Authorization: `Key ${FAL_KEY}`, 'Content-Type': 'application/jso
 // ─── stage 1: concept image (synchronous fal.run, like the chapter script) ──
 
 function buildImageInput(modelId, prompt) {
+  // nano-banana-* = Google's Gemini image family on fal (reasoning-guided —
+  // strong at accurate single-object renders, ideal input for image-to-3D).
+  if (modelId.includes('nano-banana') || modelId.startsWith('fal-ai/gemini')) {
+    return { prompt, num_images: 1, aspect_ratio: '1:1', resolution: '1K', output_format: 'png' };
+  }
   if (modelId.startsWith('fal-ai/flux')) {
     return { prompt, image_size: 'square_hd', output_format: 'jpeg', enable_safety_checker: true, safety_tolerance: '2' };
-  }
-  if (modelId.startsWith('fal-ai/gemini')) {
-    return { prompt, aspect_ratio: '1:1', output_format: 'png', resolution: '1K', num_images: 1 };
   }
   return { prompt, aspect_ratio: '1:1', num_images: 1 };
 }
@@ -193,6 +203,24 @@ async function generateMesh(imageUrl, { timeoutMs = 12 * 60 * 1000, pollMs = 400
   return glbUrl;
 }
 
+// ─── compress: in-place Draco geometry + WebP textures (web-ready meshes) ──
+
+async function optimizeGlb(path) {
+  const before = (await stat(path)).size;
+  try {
+    await execFileAsync('npx', [
+      '--yes', '@gltf-transform/cli', 'optimize', path, path,
+      '--compress', 'draco', '--texture-compress', 'webp',
+    ]);
+  } catch (err) {
+    // Non-fatal: ship the raw mesh, just warn it's heavy.
+    console.warn(`  optimize skipped (${err.code === 'ENOENT' ? 'npx not found' : err.message.split('\n')[0]}) — raw mesh kept`);
+    return;
+  }
+  const after = (await stat(path)).size;
+  console.log(`  optimized → ${(before / 1e6).toFixed(1)} MB → ${(after / 1e6).toFixed(1)} MB (Draco + WebP)`);
+}
+
 // ─── optional: patch lib/flagship-manifest.ts runtime strings ──────────────
 
 async function applyToManifest(ids) {
@@ -242,7 +270,9 @@ async function main() {
       const imageUrl = await generateConceptImage(ch.prompt);
       console.log(`  concept image ok (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
       const img = await fetch(imageUrl).then((r) => r.arrayBuffer());
-      await writeFile(resolve(dir, 'concept.jpg'), Buffer.from(img));
+      const ext = imageUrl.split('.').pop()?.split('?')[0]?.toLowerCase() ?? 'png';
+      const safeExt = ['jpg', 'jpeg', 'png', 'webp'].includes(ext) ? ext : 'png';
+      await writeFile(resolve(dir, `concept.${safeExt}`), Buffer.from(img));
 
       const t1 = Date.now();
       const glbUrl = await generateMesh(imageUrl);
@@ -251,6 +281,7 @@ async function main() {
       const out = resolve(dir, `${ch.id}.glb`);
       await writeFile(out, Buffer.from(glb));
       console.log(`  saved → public/flagship/${ch.id}/${ch.id}.glb (${(glb.byteLength / 1e6).toFixed(1)} MB)`);
+      if (flags.optimize) await optimizeGlb(out);
       done.push(ch.id);
     } catch (err) {
       console.error(`  ERROR  ${err.message}`);

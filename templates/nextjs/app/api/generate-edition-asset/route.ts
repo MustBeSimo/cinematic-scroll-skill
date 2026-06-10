@@ -25,10 +25,8 @@ export async function POST(req: NextRequest) {
   if (unauthorized) return unauthorized;
 
   if (!process.env.FAL_KEY) {
-    return NextResponse.json(
-      { error: 'FAL_KEY missing. Add it to .env.local (see .env.example).' },
-      { status: 500 },
-    );
+    console.error('[generate-edition-asset] FAL_KEY not set — add it to .env.local');
+    return NextResponse.json({ error: 'Image generation not configured.' }, { status: 503 });
   }
 
   let body: RequestBody;

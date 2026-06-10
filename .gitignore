@@ -136,6 +136,8 @@ assets/_frame_*.jpg
 video/install.log
 video/node_modules/
 video/out/
+# HyperFrames preview caches (any film project)
+.thumbnails/
 
 # cinematic-doctor generated report (re-created on every run)
 tools/cinematic-doctor/cinematic-report.json

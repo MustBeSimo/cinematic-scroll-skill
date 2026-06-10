@@ -11,11 +11,15 @@
     "poster": "remotion still src/index.ts Promo ../assets/demo-poster.jpg --frame=430 --scale=2",
     "gif": "remotion render src/index.ts Promo ../assets/demo-loop.gif --codec=gif --every-nth-frame=2 --scale=0.6",
     "build:all": "npm run render && npm run render:webm && npm run poster",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "render:flagship": "remotion render src/index.ts Flagship3D ../assets/flagship-3d.mp4 --codec=h264 --crf=16 --pixel-format=yuv420p --scale=2",
+    "render:flagship:1080": "remotion render src/index.ts Flagship3D ../assets/flagship-3d-1080.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
+    "poster:flagship": "remotion still src/index.ts Flagship3D ../assets/flagship-3d-poster.jpg --frame=700 --scale=2"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.0",
     "@remotion/google-fonts": "^4.0.0",
+    "gsap": "^3.15.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "remotion": "^4.0.0"
