@@ -89,6 +89,18 @@ function ProceduralFigure({ anchor, animate, scale }: FigureChapterProps) {
 
   return (
     <group position={anchor}>
+      {/* Halo ring + rim-light behind the figure — HDR emissive (blooms on
+          desktop), silhouettes the avatar instead of leaving it in the dark. */}
+      <mesh position={[0, 1.1, -0.9]}>
+        <torusGeometry args={[0.85, 0.018, 16, 72]} />
+        <meshStandardMaterial
+          color="#3de0ff"
+          emissive="#3de0ff"
+          emissiveIntensity={2.6}
+          toneMapped={false}
+        />
+      </mesh>
+      <pointLight position={[0, 1.3, -0.7]} intensity={7} color="#3de0ff" distance={6} />
       {/* Pivot between the feet on the floor (0,0,0), facing -Z. */}
       <group ref={root} scale={scale}>
         {/* Head */}

@@ -22,7 +22,7 @@ Open `/flagship` after `npm run dev`.
 |---|---|
 | `app/flagship/page.tsx` | Route (Server Component) → renders the client root. |
 | `components/flagship/FlagshipRoot.tsx` | `'use client'` boundary + degradation gate (no-WebGL → poster, reduced-motion → still frame, mobile → lighter). Lazy-loads the Canvas (`ssr:false`). |
-| `components/flagship/FlagshipScene.tsx` | The Canvas: `<ScrollControls>`/`useScroll` scroll-camera rig, `<XR store>` + `<XROrigin>`, `<Environment>`, the four chapters, and the HTML rail via `<Scroll html>`. |
+| `components/flagship/FlagshipScene.tsx` | The Canvas: `<ScrollControls>`/`useScroll` scroll-camera rig, `<XR store>` + `<XROrigin>`, `<Environment>`, the four chapters, the HTML rail via `<Scroll html>`, and the cinematic finish (bloom + vignette — desktop only, suspended while an XR session presents). |
 | `components/flagship/FlagshipOverlay.tsx` | HTML copy + feature-gated Enter-VR/AR buttons + a reachable Exit affordance. |
 | `components/flagship/ModelViewer.tsx` | `<model-viewer>` AR quick-look (phones); lazy-registers the pinned web component. |
 | `components/flagship/chapters/*` | One file per movement. Each `useGLTF`s a real model when present, else renders procedural geometry — the swap is **data, not code**. |
@@ -36,10 +36,11 @@ Already added to `package.json`. **Do not float the renderer.**
 
 ```jsonc
 "three": "0.160.0",            // EXACT — the whole stack pivots on this
-"@react-three/fiber": "^8.15.0",
-"@react-three/drei": "^9.99.0",
-"@react-three/xr": "^6.0.0",  // v6 API: createXRStore + <XR store> + <XROrigin>
-"@google/model-viewer": "^3.5.0",
+"@react-three/fiber": "^9.0.0",          // v9 = the React 19 line (v8 is React 18)
+"@react-three/drei": "^10.0.0",          // v10 pairs with fiber v9
+"@react-three/xr": "^6.6.0",  // v6 API: createXRStore + <XR store> + <XROrigin>
+"@react-three/postprocessing": "^3.0.0", // bloom/vignette finish (desktop only)
+"@google/model-viewer": "3.4.0",         // EXACT — 3.5 demands three ^0.163
 // dev: "@types/three": "0.160.0"  // pinned to match three
 ```
 

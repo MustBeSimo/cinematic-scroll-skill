@@ -18,7 +18,7 @@
 
 import { useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { shaderMaterial } from '@react-three/drei';
+import { shaderMaterial, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -155,6 +155,19 @@ export function FieldChapter({ anchor, progress, animate }: FieldChapterProps) {
       <mesh geometry={geometry} position={[0, 1.2, 2]}>
         <primitive object={material} attach="material" />
       </mesh>
+      {/* Drifting motes give the flat field plane real depth as the camera
+          passes through. Motion → gated off under reduced motion. */}
+      {animate ? (
+        <Sparkles
+          count={110}
+          scale={[22, 11, 6]}
+          position={[0, 1.2, 3.5]}
+          size={2.4}
+          speed={0.35}
+          color="#7fe9ff"
+          opacity={0.55}
+        />
+      ) : null}
     </group>
   );
 }

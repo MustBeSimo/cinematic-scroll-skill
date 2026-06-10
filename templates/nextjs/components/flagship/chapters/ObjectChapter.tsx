@@ -15,7 +15,7 @@
 
 import { Suspense, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
+import { ContactShadows, MeshTransmissionMaterial, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -28,6 +28,8 @@ export type ObjectChapterProps = {
   modelUrl: string | null;
   /** Uniform scale multiplier from the manifest. */
   scale: number;
+  /** Lean path: drops the contact-shadow pass (performance-budget §2). */
+  mobile?: boolean;
 };
 
 export function ObjectChapter(props: ObjectChapterProps) {
@@ -70,7 +72,7 @@ function LoadedObject({
 
 /** Procedural faceted prism — the Tier-C stand-in. PBR metal/rough, base-center
  *  pivot, front facing -Z (matches the AR/quick-look pivot in `ASSETS-3D.md`). */
-function ProceduralObject({ anchor, progress, animate, scale }: ObjectChapterProps) {
+function ProceduralObject({ anchor, progress, animate, scale, mobile }: ObjectChapterProps) {
   const groupRef = useRef<THREE.Group>(null);
   const shardRefs = useRef<(THREE.Mesh | null)[]>([]);
 
@@ -110,12 +112,23 @@ function ProceduralObject({ anchor, progress, animate, scale }: ObjectChapterPro
   return (
     <group position={anchor}>
       <group ref={groupRef} scale={scale}>
-        {/* Core */}
+        {/* Core — refractive jewel. Transmission is the Mode-B flex: real
+            refraction + chromatic fringe that the no-build Mode A can't match. */}
         <mesh position={[0, 0.5, 0]} castShadow>
           <icosahedronGeometry args={[0.18, 0]} />
-          <meshStandardMaterial color="#cfd6e6" metalness={0.9} roughness={0.18} />
+          <MeshTransmissionMaterial
+            samples={6}
+            transmission={1}
+            thickness={0.45}
+            ior={1.5}
+            roughness={0.08}
+            chromaticAberration={0.05}
+            anisotropicBlur={0.2}
+            distortion={0.12}
+            color="#dfe8ff"
+          />
         </mesh>
-        {/* Faceted shards */}
+        {/* Faceted shards — brushed metal, tight roughness for IBL speculars */}
         {shards.map((shard, i) => (
           <mesh
             key={i}
@@ -127,7 +140,7 @@ function ProceduralObject({ anchor, progress, animate, scale }: ObjectChapterPro
             castShadow
           >
             <octahedronGeometry args={[0.12, 0]} />
-            <meshStandardMaterial color="#9fb0d0" metalness={0.85} roughness={0.25} />
+            <meshStandardMaterial color="#9fb0d0" metalness={0.9} roughness={0.16} />
           </mesh>
         ))}
         {/* Plinth (base on the floor plane) */}
@@ -136,6 +149,19 @@ function ProceduralObject({ anchor, progress, animate, scale }: ObjectChapterPro
           <meshStandardMaterial color="#11151f" metalness={0.4} roughness={0.6} />
         </mesh>
       </group>
+      {/* Soft grounding shadow — sells "object on a surface" instantly. Static
+          scenes bake one frame; mobile skips the extra pass entirely. */}
+      {!mobile ? (
+        <ContactShadows
+          position={[0, 0.001, 0]}
+          opacity={0.55}
+          scale={4}
+          blur={2.4}
+          far={2}
+          resolution={256}
+          frames={animate ? Infinity : 1}
+        />
+      ) : null}
     </group>
   );
 }

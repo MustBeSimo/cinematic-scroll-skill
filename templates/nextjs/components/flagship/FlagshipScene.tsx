@@ -21,6 +21,7 @@
 import { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, Preload, Scroll, ScrollControls, useScroll } from '@react-three/drei';
+import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
 import { useXR, XR, XROrigin } from '@react-three/xr';
 import * as THREE from 'three';
 
@@ -80,9 +81,11 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
         <color attach="background" args={['#05060b']} />
         <fogExp2 attach="fog" args={['#05060b', mobile ? 0.018 : 0.014]} />
 
-        {/* Image-based lighting — procedural preset, zero external assets. */}
+        {/* Image-based lighting — "city" preset for rich speculars on the glass
+            core / brushed metal (the background stays the scene color above).
+            Falls back to the analytic lights below if the HDR fetch fails. */}
         <Suspense fallback={null}>
-          <Environment preset="night" />
+          <Environment preset="city" />
         </Suspense>
 
         {/* Key + rim lights (stable, level — no roll, `webxr.md` §5). */}
@@ -105,9 +108,30 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
           </Scroll>
         </ScrollControls>
 
+        {/* Cinematic finish — desktop only (mobile keeps the lean pipeline,
+            performance-budget §2) and never while an XR session presents. */}
+        {!mobile ? <PostFX /> : null}
+
         <Preload all />
       </XR>
     </Canvas>
+  );
+}
+
+/**
+ * Bloom + vignette finishing pass. The bloom threshold sits above tone-mapped
+ * white, so only HDR emissives (`toneMapped={false}` strips, visor, glow ring)
+ * and the field's filaments bloom — body copy and surfaces stay crisp. Skipped
+ * while presenting: the composer fights the XR framebuffer (`webxr.md` §5).
+ */
+function PostFX() {
+  const presenting = useXR((s) => s.session != null);
+  if (presenting) return null;
+  return (
+    <EffectComposer multisampling={4}>
+      <Bloom mipmapBlur intensity={0.8} luminanceThreshold={0.9} luminanceSmoothing={0.3} />
+      <Vignette offset={0.25} darkness={0.62} />
+    </EffectComposer>
   );
 }
 
@@ -186,6 +210,7 @@ function ChapterRig({ animate, mobile }: { animate: boolean; mobile: boolean }) 
         animate={animate}
         modelUrl={a.object.runtime === 'procedural' ? null : a.object.runtime}
         scale={a.object.scale}
+        mobile={mobile}
       />
       <WorldChapter
         anchor={CHAPTER_ANCHORS.world}

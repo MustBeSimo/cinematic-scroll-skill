@@ -46,12 +46,14 @@ const PAIRS = 10; // colonnade depth — 2 columns + 1 beam per pair
 function ProceduralWorld({ anchor, scale }: WorldChapterProps) {
   const columnsRef = useRef<THREE.InstancedMesh>(null);
   const beamsRef = useRef<THREE.InstancedMesh>(null);
+  const stripsRef = useRef<THREE.InstancedMesh>(null);
 
   // Place instances once (the hall is static; the camera moves, not the world).
   useLayoutEffect(() => {
     const m = new THREE.Matrix4();
     const cols = columnsRef.current;
     const beams = beamsRef.current;
+    const strips = stripsRef.current;
     if (cols) {
       let i = 0;
       for (let p = 0; p < PAIRS; p++) {
@@ -69,6 +71,17 @@ function ProceduralWorld({ anchor, scale }: WorldChapterProps) {
         beams.setMatrixAt(p, m);
       }
       beams.instanceMatrix.needsUpdate = true;
+    }
+    if (strips) {
+      let i = 0;
+      for (let p = 0; p < PAIRS; p++) {
+        const z = -p * 3 - 1.5;
+        for (const x of [-2.0, 2.0]) {
+          m.makeTranslation(x, 0.03, z);
+          strips.setMatrixAt(i++, m);
+        }
+      }
+      strips.instanceMatrix.needsUpdate = true;
     }
   }, []);
 
@@ -90,6 +103,19 @@ function ProceduralWorld({ anchor, scale }: WorldChapterProps) {
       <instancedMesh ref={beamsRef} args={[undefined, undefined, PAIRS]}>
         <boxGeometry args={[5.6, 0.3, 0.6]} />
         <meshStandardMaterial color="#222c3c" metalness={0.25} roughness={0.65} />
+      </instancedMesh>
+
+      {/* Guide-light strips along both floor edges — HDR emissive
+          (toneMapped=false pushes them past the bloom threshold), so the
+          fly-through reads as a lit cinematic corridor, not gray geometry. */}
+      <instancedMesh ref={stripsRef} args={[undefined, undefined, PAIRS * 2]}>
+        <boxGeometry args={[0.08, 0.04, 2.4]} />
+        <meshStandardMaterial
+          color="#3de0ff"
+          emissive="#3de0ff"
+          emissiveIntensity={2.4}
+          toneMapped={false}
+        />
       </instancedMesh>
     </group>
   );
