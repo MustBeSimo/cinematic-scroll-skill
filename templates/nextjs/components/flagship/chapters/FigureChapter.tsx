@@ -15,7 +15,7 @@
 
 import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useAnimations, useGLTF } from '@react-three/drei';
+import { Sparkles, useAnimations, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 
@@ -32,9 +32,47 @@ export type FigureChapterProps = {
 
 export function FigureChapter(props: FigureChapterProps) {
   return (
-    <Suspense fallback={<ProceduralFigure {...props} />}>
-      {props.modelUrl ? <LoadedFigure {...props} modelUrl={props.modelUrl} /> : <ProceduralFigure {...props} />}
-    </Suspense>
+    <group>
+      <FigureStage anchor={props.anchor} animate={props.animate} />
+      <Suspense fallback={<ProceduralFigure {...props} />}>
+        {props.modelUrl ? <LoadedFigure {...props} modelUrl={props.modelUrl} /> : <ProceduralFigure {...props} />}
+      </Suspense>
+    </group>
+  );
+}
+
+/**
+ * The figure's stage dressing — shared by the loaded model and the procedural
+ * stand-in. Ember motes drift around the dancer, a warm key light pools from
+ * above, and an HDR-emissive ring marks the stage on the mirror floor (it
+ * blooms on desktop). All of it rides the chapter's presence gate.
+ */
+function FigureStage({ anchor, animate }: { anchor: THREE.Vector3; animate: boolean }) {
+  return (
+    <group position={anchor}>
+      <Sparkles
+        count={90}
+        scale={[5, 3.2, 5]}
+        position={[0, 1.5, 0]}
+        size={2.2}
+        speed={animate ? 0.35 : 0}
+        color="#ffb270"
+        opacity={0.55}
+      />
+      <pointLight position={[0, 3.2, 1.4]} intensity={6} color="#ffb270" distance={9} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0]}>
+        <ringGeometry args={[1.15, 1.3, 64]} />
+        <meshStandardMaterial
+          color="#ffb270"
+          emissive="#ffb270"
+          emissiveIntensity={1.6}
+          toneMapped={false}
+          transparent
+          opacity={0.85}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+    </group>
   );
 }
 

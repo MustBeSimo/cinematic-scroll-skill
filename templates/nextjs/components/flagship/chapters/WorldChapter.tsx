@@ -14,7 +14,7 @@
  */
 
 import { Suspense, useLayoutEffect, useMemo, useRef } from 'react';
-import { useGLTF } from '@react-three/drei';
+import { Sparkles, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { normalizeToHeight } from '@/lib/normalize-model';
@@ -27,9 +27,24 @@ export type WorldChapterProps = {
 
 export function WorldChapter(props: WorldChapterProps) {
   return (
-    <Suspense fallback={<ProceduralWorld {...props} />}>
-      {props.modelUrl ? <LoadedWorld {...props} modelUrl={props.modelUrl} /> : <ProceduralWorld {...props} />}
-    </Suspense>
+    <group>
+      {/* Dust drifting in the hall's air — catches the cyan strip light and
+          gives the fly-through depth cues fog alone can't. */}
+      <group position={props.anchor}>
+        <Sparkles
+          count={70}
+          scale={[9, 4.5, 26]}
+          position={[0, 2.2, -12]}
+          size={1.6}
+          speed={0.25}
+          color="#7fd6ff"
+          opacity={0.4}
+        />
+      </group>
+      <Suspense fallback={<ProceduralWorld {...props} />}>
+        {props.modelUrl ? <LoadedWorld {...props} modelUrl={props.modelUrl} /> : <ProceduralWorld {...props} />}
+      </Suspense>
+    </group>
   );
 }
 

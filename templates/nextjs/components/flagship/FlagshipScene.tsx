@@ -21,7 +21,7 @@
 import { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Environment, MeshReflectorMaterial, Preload, Scroll, ScrollControls, Stars, useGLTF, useScroll } from '@react-three/drei';
-import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
+import { Bloom, ChromaticAberration, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
 import { useXR, XR, XROrigin } from '@react-three/xr';
 import * as THREE from 'three';
 
@@ -174,7 +174,7 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
         />
 
         <ScrollControls pages={FLAGSHIP_PAGES} damping={0.3}>
-          <ScrollCameraRig animate={animate} />
+          <ScrollCameraRig animate={animate} mobile={mobile} />
           <AtmosphereMorph animate={animate} />
           <ChapterRig animate={animate} mobile={mobile} />
           {/* HTML rail — portaled into the same scroll container so the copy and
@@ -206,6 +206,10 @@ function PostFX() {
   return (
     <EffectComposer multisampling={4}>
       <Bloom mipmapBlur intensity={0.8} luminanceThreshold={0.9} luminanceSmoothing={0.3} />
+      {/* Lens fringe + film grain — both barely-there by design: at these
+          values they read as "shot on glass", not as an Instagram filter. */}
+      <ChromaticAberration offset={[0.0006, 0.001]} />
+      <Noise premultiply opacity={0.07} />
       <Vignette offset={0.25} darkness={0.62} />
     </EffectComposer>
   );
@@ -217,9 +221,10 @@ function PostFX() {
  * while an XR session is presenting — in a headset the user's head is the
  * camera; driving it from scroll induces nausea (`webxr.md` §5).
  */
-function ScrollCameraRig({ animate }: { animate: boolean }) {
+function ScrollCameraRig({ animate, mobile }: { animate: boolean; mobile: boolean }) {
   const scroll = useScroll();
   const current = useRef(0);
+  const parallax = useRef({ x: 0, y: 0 });
   const presenting = useXR((s) => s.session != null);
 
   const path = useMemo(() => {
@@ -233,7 +238,7 @@ function ScrollCameraRig({ animate }: { animate: boolean }) {
   const lookTarget = useMemo(() => new THREE.Vector3(), []);
   const camPos = useMemo(() => new THREE.Vector3(), []);
 
-  useFrame(({ camera }) => {
+  useFrame(({ camera, pointer }) => {
     if (presenting) return; // XR owns the camera — do not drive it.
 
     const target = animate ? scroll.offset : 0.5 / FLAGSHIP_PAGES; // still: frame ch.1
@@ -243,6 +248,16 @@ function ScrollCameraRig({ animate }: { animate: boolean }) {
 
     path.getPointAt(t, camPos);
     camera.position.copy(camPos);
+
+    // Pointer parallax (desktop only) — a heavily damped hand-held drift that
+    // lets the viewer peek around the chapter. lookAt() below re-aims at the
+    // anchor, so the subject stays framed; only the viewpoint slides.
+    if (!mobile && animate) {
+      parallax.current.x = lerp(parallax.current.x, pointer.x, 0.04);
+      parallax.current.y = lerp(parallax.current.y, pointer.y, 0.04);
+      camera.position.x += parallax.current.x * 0.35;
+      camera.position.y += parallax.current.y * 0.18;
+    }
 
     // Look slightly ahead down the rail (toward the chapter the camera nears).
     const ahead = THREE.MathUtils.clamp(t + 0.04, 0, 1);
@@ -275,17 +290,23 @@ function ChapterGate({
 }) {
   const scroll = useScroll();
   const group = useRef<THREE.Group>(null);
+  // Damped presence — chapter 1 opens already on stage.
+  const presence = useRef(index === 0 ? 1 : 0);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     const g = group.current;
     if (!g) return;
     const segs = flagshipChapters.length - 1;
     const offset = animate ? scroll.offset : 0; // reduced motion: hold ch. 1
     const seg = dwellEase(THREE.MathUtils.clamp(offset, 0, 1)) * segs;
     const d = Math.abs(seg - index);
-    // Full presence while dwelling (d < ~0.35), gone by one chapter away.
-    const p = THREE.MathUtils.clamp((1.1 - d) / 0.75, 0, 1);
-    const s = smootherstep(p);
+    // Full presence while dwelling (d < ~0.3), gone by one chapter away.
+    const target = smootherstep(THREE.MathUtils.clamp((1.25 - d) / 0.95, 0, 1));
+    // Time-damped approach (~0.4s settle) — frame-rate independent, so an
+    // entrance can never pop, even under a fast scroll flick.
+    const k = animate ? 1 - Math.exp(-delta * 2.4) : 1;
+    presence.current += (target - presence.current) * k;
+    const s = presence.current;
     g.visible = s > 0.002;
     g.scale.setScalar(Math.max(s, 1e-4));
     // Scale around the chapter's OWN anchor (not the world origin), and let
