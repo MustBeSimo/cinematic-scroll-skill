@@ -18,6 +18,8 @@ import { useFrame } from '@react-three/fiber';
 import { useAnimations, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
+import { normalizeToHeight } from '@/lib/normalize-model';
+
 export type FigureChapterProps = {
   anchor: THREE.Vector3;
   animate: boolean;
@@ -44,7 +46,11 @@ function LoadedFigure({
 }: FigureChapterProps & { modelUrl: string }) {
   const group = useRef<THREE.Group>(null);
   const { scene, animations } = useGLTF(modelUrl);
-  const cloned = useMemo(() => scene.clone(true), [scene]);
+  const cloned = useMemo(() => {
+    const c = scene.clone(true);
+    normalizeToHeight(c, 1.7); // human height, base at the floor
+    return c;
+  }, [scene]);
   const { actions } = useAnimations(animations, group);
 
   useEffect(() => {

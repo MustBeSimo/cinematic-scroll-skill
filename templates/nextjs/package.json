@@ -6,6 +6,8 @@
     "setup": "node scripts/setup.mjs",
     "generate": "node scripts/generate-chapter-assets.mjs",
     "generate:dry": "node scripts/generate-chapter-assets.mjs --dry-run",
+    "generate:flagship": "node scripts/generate-flagship-assets.mjs",
+    "generate:flagship:dry": "node scripts/generate-flagship-assets.mjs --dry-run",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

@@ -17,6 +17,8 @@ import { Suspense, useLayoutEffect, useMemo, useRef } from 'react';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
+import { normalizeToHeight } from '@/lib/normalize-model';
+
 export type WorldChapterProps = {
   anchor: THREE.Vector3;
   modelUrl: string | null;
@@ -33,7 +35,11 @@ export function WorldChapter(props: WorldChapterProps) {
 
 function LoadedWorld({ anchor, modelUrl, scale }: WorldChapterProps & { modelUrl: string }) {
   const { scene } = useGLTF(modelUrl);
-  const cloned = useMemo(() => scene.clone(true), [scene]);
+  const cloned = useMemo(() => {
+    const c = scene.clone(true);
+    normalizeToHeight(c, 4.2); // hall height the camera rail passes through
+    return c;
+  }, [scene]);
   return (
     <group position={anchor} scale={scale}>
       <primitive object={cloned} />

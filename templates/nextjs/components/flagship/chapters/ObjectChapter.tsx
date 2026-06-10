@@ -18,6 +18,8 @@ import { useFrame } from '@react-three/fiber';
 import { ContactShadows, MeshTransmissionMaterial, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
+import { normalizeToHeight } from '@/lib/normalize-model';
+
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export type ObjectChapterProps = {
@@ -51,7 +53,11 @@ function LoadedObject({
   scale,
 }: ObjectChapterProps & { modelUrl: string }) {
   const { scene } = useGLTF(modelUrl);
-  const cloned = useMemo(() => scene.clone(true), [scene]);
+  const cloned = useMemo(() => {
+    const c = scene.clone(true);
+    normalizeToHeight(c, 1.1); // hero-artifact height above the plinth
+    return c;
+  }, [scene]);
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame((_state, dt) => {

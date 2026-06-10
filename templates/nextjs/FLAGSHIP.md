@@ -46,6 +46,26 @@ Already added to `package.json`. **Do not float the renderer.**
 
 Then `npm install` (this template does not vendor `node_modules`).
 
+## Generate real 3D assets with fal.ai (one command)
+
+With `FAL_KEY` in `.env.local` (same key the image pipeline uses):
+
+```bash
+npm run generate:flagship:dry         # print the art-directed prompts, no API calls
+npm run generate:flagship             # object + world + figure → .glb + concept.jpg
+npm run generate:flagship -- --apply  # …and patch the manifest runtime paths
+```
+
+Two stages per chapter: a concept image (default `fal-ai/flux-2-pro` — single
+centered subject on a dark ground, the framing image-to-3D reconstructs best),
+then image→3D via fal's **queue API** (default `fal-ai/trellis`; switch with
+`--mesh-model fal-ai/hunyuan3d/v2` or a Hyper3D/Rodin id). Field is skipped —
+its shader is the asset. Loaded models **auto-normalize** to chapter height
+with their base on the floor (`lib/normalize-model.ts`), so arbitrary generated
+scales/offsets are safe. Generated meshes are **unrigged**: the Figure chapter
+shows one as a still sculpture — for a breathing/gesturing avatar, rig via
+Mixamo (`ASSETS-3D.md` §4).
+
 ## Runs today with ZERO 3D assets
 
 Every chapter renders procedural geometry. The manifest in `lib/flagship-manifest.ts`
