@@ -1,7 +1,7 @@
 ---
 name: cinematic-scroll
 description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with AI-generated visuals (Mode B). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 visual systems, and a transform/opacity performance budget as built-in craft constraints.
-version: 2.1.0
+version: 2.2.0
 permissions:
   - filesystem:read     # read project files to audit and build cinematic layouts
   - filesystem:write    # create and modify HTML, CSS, TypeScript, and asset files
