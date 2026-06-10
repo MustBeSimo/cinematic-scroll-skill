@@ -68,9 +68,16 @@ WebP textures load natively, so it's zero code change. Pass `--no-optimize` to
 keep the raw output. Field is skipped —
 its shader is the asset. Loaded models **auto-normalize** to chapter height
 with their base on the floor (`lib/normalize-model.ts`), so arbitrary generated
-scales/offsets are safe. Generated meshes are **unrigged**: the Figure chapter
-shows one as a still sculpture — for a breathing/gesturing avatar, rig via
-Mixamo (`ASSETS-3D.md` §4).
+scales/offsets are safe.
+
+**The Figure dances out of the box.** Image-to-3D models output *unrigged*
+meshes, so the template ships a rigged, animated character at
+`public/flagship/figure/dancer.glb` (Mixamo-rigged, `SambaDance` clip, Draco'd
+to ~0.8 MB) and the manifest points at it — no Blender, no Mixamo account, no
+manual step. The generated android sculpture stays at `figure.glb`; to use it
+instead, flip `figure.runtime` in `lib/flagship-manifest.ts`. To make *your own*
+mesh dance, rig it via Mixamo (`ASSETS-3D.md` §4) and overwrite `dancer.glb` —
+the chapter plays whatever clips the file carries.
 
 ## Runs today with ZERO 3D assets
 

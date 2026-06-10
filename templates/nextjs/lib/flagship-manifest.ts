@@ -143,11 +143,15 @@ export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
   },
   figure: {
     label: 'Figure',
-    runtime: '/flagship/figure/figure.glb',
+    // dancer.glb = rigged + animated (Mixamo-rigged character, SambaDance clip)
+    // — works end-to-end with zero manual rigging. The generated android
+    // sculpture is still at /flagship/figure/figure.glb: swap `runtime` back
+    // for a still figure, or rig it (ASSETS-3D.md §4) and overwrite dancer.glb.
+    runtime: '/flagship/figure/dancer.glb',
     iosAr: null,
     fallbackPoster: '/flagship/figure/poster.svg',
     scale: 1.0,
-    animations: ['Idle', 'Gesture'],
+    animations: ['SambaDance'],
     cameraNodes: [],
   },
 };
