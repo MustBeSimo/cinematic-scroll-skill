@@ -15,7 +15,7 @@
 
 import { Suspense, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { ContactShadows, MeshTransmissionMaterial, useGLTF } from '@react-three/drei';
+import { ContactShadows, Float, MeshTransmissionMaterial, Sparkles, Trail, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { normalizeToHeight } from '@/lib/normalize-model';
@@ -37,9 +37,82 @@ export type ObjectChapterProps = {
 export function ObjectChapter(props: ObjectChapterProps) {
   // A real model only when a path is present; otherwise never touch the loader.
   return (
-    <Suspense fallback={<ProceduralObject {...props} />}>
-      {props.modelUrl ? <LoadedObject {...props} modelUrl={props.modelUrl} /> : <ProceduralObject {...props} />}
-    </Suspense>
+    <group>
+      <ObjectStage {...props} />
+      <Suspense fallback={<ProceduralObject {...props} />}>
+        {props.modelUrl ? <LoadedObject {...props} modelUrl={props.modelUrl} /> : <ProceduralObject {...props} />}
+      </Suspense>
+    </group>
+  );
+}
+
+/**
+ * Stage dressing shared by the loaded model and the procedural stand-in: a
+ * comet glint orbiting the artifact (a moving highlight with a ribbon trail —
+ * the eye follows motion before it reads form), a breathing HDR stage ring,
+ * and a drift of gold motes. Every element answers `animate=false` with a
+ * still pose, never a blank.
+ */
+function ObjectStage({ anchor, animate, scale, mobile }: ObjectChapterProps) {
+  const glint = useRef<THREE.Mesh>(null);
+  const ring = useRef<THREE.Mesh>(null);
+
+  useFrame(({ clock }) => {
+    const t = animate ? clock.elapsedTime : 0;
+    const g = glint.current;
+    if (g) {
+      // A tilted, eccentric orbit — reads as inspection, not a turntable.
+      const a = t * 0.85;
+      g.position.set(
+        Math.cos(a) * 0.78 * scale,
+        (0.52 + Math.sin(a * 2.0) * 0.16) * scale,
+        Math.sin(a) * 0.66 * scale,
+      );
+    }
+    const r = ring.current;
+    if (r) {
+      const pulse = 1 + Math.sin(t * 1.3) * 0.025;
+      r.scale.setScalar(pulse);
+      const m = r.material as THREE.MeshStandardMaterial;
+      m.emissiveIntensity = 1.2 + Math.sin(t * 1.3) * 0.5;
+    }
+  });
+
+  return (
+    <group position={anchor}>
+      {/* Breathing stage ring under the artifact — HDR emissive, blooms. */}
+      <mesh ref={ring} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.014, 0]}>
+        <ringGeometry args={[0.52 * scale, 0.56 * scale, 64]} />
+        <meshStandardMaterial
+          color="#3de0ff"
+          emissive="#3de0ff"
+          emissiveIntensity={1.2}
+          toneMapped={false}
+          transparent
+          opacity={0.8}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+      {/* Gold motes drifting around the artifact. */}
+      <Sparkles
+        count={mobile ? 24 : 55}
+        scale={[2.2 * scale, 1.4 * scale, 2.2 * scale]}
+        position={[0, 0.55 * scale, 0]}
+        size={1.8}
+        speed={animate ? 0.3 : 0}
+        color="#ffd9a0"
+        opacity={0.5}
+      />
+      {/* Orbiting comet glint — desktop only (Trail is an extra pass). */}
+      {!mobile && animate ? (
+        <Trail width={0.5} length={5.5} color={new THREE.Color('#ffd9a0')} attenuation={(w) => w * w}>
+          <mesh ref={glint}>
+            <sphereGeometry args={[0.022 * scale, 12, 12]} />
+            <meshBasicMaterial color="#ffeed4" toneMapped={false} />
+          </mesh>
+        </Trail>
+      ) : null}
+    </group>
   );
 }
 
@@ -69,9 +142,19 @@ function LoadedObject({
 
   return (
     <group position={anchor}>
-      <group ref={groupRef} scale={scale}>
-        <primitive object={cloned} />
-      </group>
+      {/* Float gives the artifact a slow levitation drift on top of the
+          auto-rotate — a museum piece held by light, not bolted down.
+          speed/intensity 0 under reduced motion = a clean static pose. */}
+      <Float
+        speed={animate ? 1.3 : 0}
+        rotationIntensity={animate ? 0.18 : 0}
+        floatIntensity={animate ? 0.45 : 0}
+        floatingRange={[-0.04, 0.12]}
+      >
+        <group ref={groupRef} scale={scale}>
+          <primitive object={cloned} />
+        </group>
+      </Float>
     </group>
   );
 }

@@ -20,6 +20,7 @@ import * as THREE from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 
 import { normalizeToHeight } from '@/lib/normalize-model';
+import { LightShaft } from '../fx/LightShaft';
 
 export type FigureChapterProps = {
   anchor: THREE.Vector3;
@@ -48,6 +49,19 @@ export function FigureChapter(props: FigureChapterProps) {
  * blooms on desktop). All of it rides the chapter's presence gate.
  */
 function FigureStage({ anchor, animate }: { anchor: THREE.Vector3; animate: boolean }) {
+  const ring = useRef<THREE.Mesh>(null);
+
+  useFrame(({ clock }) => {
+    const r = ring.current;
+    if (!r) return;
+    const t = animate ? clock.elapsedTime : 0;
+    // The ring breathes on a samba-ish pulse — the stage answers the dance.
+    const pulse = 1 + Math.sin(t * 2.1) * 0.03;
+    r.scale.setScalar(pulse);
+    (r.material as THREE.MeshStandardMaterial).emissiveIntensity =
+      1.5 + Math.sin(t * 2.1) * 0.6;
+  });
+
   return (
     <group position={anchor}>
       <Sparkles
@@ -59,6 +73,9 @@ function FigureStage({ anchor, animate }: { anchor: THREE.Vector3; animate: bool
         color="#ffb270"
         opacity={0.55}
       />
+      {/* Concert spotlight — a fake-volumetric cone from above; the dancer
+          performs inside a body of light, not in open darkness. */}
+      <LightShaft position={[0, 4.4, 0]} height={4.6} radius={1.45} color="#ffb270" intensity={0.4} animate={animate} />
       {/* Warm key from the camera side + above — the light the viewer reads the
           dance by. Sits between camera and figure so it lights the front, not
           the back. */}
@@ -66,7 +83,7 @@ function FigureStage({ anchor, animate }: { anchor: THREE.Vector3; animate: bool
       {/* Cool back rim — pops the silhouette off the dark stage so the figure
           never sinks into the background. */}
       <pointLight position={[-1.2, 2.4, -2.2]} intensity={6} color="#7fd6ff" distance={9} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0]}>
+      <mesh ref={ring} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0]}>
         <ringGeometry args={[1.15, 1.3, 64]} />
         <meshStandardMaterial
           color="#ffb270"

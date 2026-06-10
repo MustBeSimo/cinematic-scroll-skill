@@ -18,28 +18,52 @@ import { Sparkles, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { normalizeToHeight } from '@/lib/normalize-model';
+import { LightShaft } from '../fx/LightShaft';
 
 export type WorldChapterProps = {
   anchor: THREE.Vector3;
   modelUrl: string | null;
   scale: number;
+  animate: boolean;
+  mobile?: boolean;
 };
 
+/** Ceiling-light apexes staggered down the hall (anchor-local). */
+const SHAFTS: [number, number, number][] = [
+  [-2.1, 4.8, -3.5],
+  [2.1, 4.8, -8.5],
+  [-2.1, 4.8, -13.5],
+  [2.1, 4.8, -18.5],
+];
+
 export function WorldChapter(props: WorldChapterProps) {
+  const shafts = props.mobile ? SHAFTS.slice(0, 2) : SHAFTS;
   return (
     <group>
-      {/* Dust drifting in the hall's air — catches the cyan strip light and
-          gives the fly-through depth cues fog alone can't. */}
+      {/* The hall's air: drifting dust + staggered volumetric shafts raking
+          down between the columns — light with a body, not gray geometry
+          dimmed by fog. */}
       <group position={props.anchor}>
         <Sparkles
           count={70}
           scale={[9, 4.5, 26]}
           position={[0, 2.2, -12]}
           size={1.6}
-          speed={0.25}
+          speed={props.animate ? 0.25 : 0}
           color="#7fd6ff"
           opacity={0.4}
         />
+        {shafts.map((p, i) => (
+          <LightShaft
+            key={i}
+            position={p}
+            height={5.2}
+            radius={1.5}
+            color="#3de0ff"
+            intensity={0.34}
+            animate={props.animate}
+          />
+        ))}
       </group>
       <Suspense fallback={<ProceduralWorld {...props} />}>
         {props.modelUrl ? <LoadedWorld {...props} modelUrl={props.modelUrl} /> : <ProceduralWorld {...props} />}

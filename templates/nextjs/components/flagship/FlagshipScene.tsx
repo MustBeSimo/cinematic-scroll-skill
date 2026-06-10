@@ -32,6 +32,9 @@ import {
   type FlagshipChapterId,
 } from '@/lib/flagship-manifest';
 import { flagshipXRStore } from '@/lib/flagship-xr';
+import { railVelocity } from '@/lib/flagship-velocity';
+import { RailDust } from './fx/RailDust';
+import { Aurora } from './fx/Aurora';
 import { ObjectChapter } from './chapters/ObjectChapter';
 import { WorldChapter } from './chapters/WorldChapter';
 import { FieldChapter } from './chapters/FieldChapter';
@@ -90,7 +93,17 @@ const CHAPTER_TINTS: Record<FlagshipChapterId, THREE.Color> = {
   figure: new THREE.Color('#170f0a'),
 };
 
-/** Lerps scene background + fog color toward the active chapter's tint. */
+/** Per-chapter fog DENSITY — each chapter gets its own air weight: clean
+ *  around the hero object, thick in the hall, near-vacuum for the field's
+ *  far-plane shader, smoky for the dancer. */
+const CHAPTER_FOG: Record<FlagshipChapterId, number> = {
+  object: 0.012,
+  world: 0.022,
+  field: 0.008,
+  figure: 0.018,
+};
+
+/** Lerps scene background + fog color/density toward the active chapter's air. */
 function AtmosphereMorph({ animate }: { animate: boolean }) {
   const scroll = useScroll();
   const scratch = useMemo(() => new THREE.Color(), []);
@@ -100,11 +113,23 @@ function AtmosphereMorph({ animate }: { animate: boolean }) {
     const t = animate ? scroll.offset : 0;
     const seg = THREE.MathUtils.clamp(t, 0, 1) * segs;
     const i = Math.min(Math.floor(seg), segs - 1);
+    const k = smootherstep(seg - i);
     const from = CHAPTER_TINTS[flagshipChapters[i].id];
     const to = CHAPTER_TINTS[flagshipChapters[i + 1].id];
-    scratch.copy(from).lerp(to, smootherstep(seg - i));
+    scratch.copy(from).lerp(to, k);
     if (scene.background instanceof THREE.Color) scene.background.lerp(scratch, 0.08);
-    if (scene.fog) scene.fog.color.lerp(scratch, 0.08);
+    if (scene.fog) {
+      scene.fog.color.lerp(scratch, 0.08);
+      const fog = scene.fog as THREE.FogExp2;
+      if ('density' in fog) {
+        const target = lerp(
+          CHAPTER_FOG[flagshipChapters[i].id],
+          CHAPTER_FOG[flagshipChapters[i + 1].id],
+          k,
+        );
+        fog.density = lerp(fog.density, target, 0.06);
+      }
+    }
   });
 
   return null;
@@ -173,6 +198,13 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
           speed={animate ? 0.5 : 0}
         />
 
+        {/* Atmospheric connective tissue — one dust field spans the whole rail
+            (velocity-reactive: travel makes it swell and stream), and aurora
+            curtains flow high above it. Desktop gets the full count; mobile a
+            third; aurora is desktop-only (performance-budget §2). */}
+        <RailDust animate={animate} count={mobile ? 550 : 1700} />
+        {!mobile ? <Aurora animate={animate} /> : null}
+
         <ScrollControls pages={FLAGSHIP_PAGES} damping={0.3}>
           <ScrollCameraRig animate={animate} mobile={mobile} />
           <AtmosphereMorph animate={animate} />
@@ -238,16 +270,34 @@ function ScrollCameraRig({ animate, mobile }: { animate: boolean; mobile: boolea
   const lookTarget = useMemo(() => new THREE.Vector3(), []);
   const camPos = useMemo(() => new THREE.Vector3(), []);
 
-  useFrame(({ camera, pointer }) => {
+  useFrame(({ camera, pointer, clock }, delta) => {
     if (presenting) return; // XR owns the camera — do not drive it.
 
     const target = animate ? scroll.offset : 0.5 / FLAGSHIP_PAGES; // still: frame ch.1
+    const prev = current.current;
     current.current = lerp(current.current, target, animate ? 0.08 : 1);
     // Dwell-and-travel: settle at each chapter, ease through the transit.
     const t = dwellEase(current.current);
 
+    // Publish damped travel speed (0 at a dwell, →1 in fast transit) for the
+    // FX layer: rail dust swells, the FOV kicks, travel FEELS like travel.
+    const rawVel = THREE.MathUtils.clamp(
+      (Math.abs(current.current - prev) / Math.max(delta, 1e-4)) * 14,
+      0,
+      1,
+    );
+    railVelocity.current = lerp(railVelocity.current, animate ? rawVel : 0, 0.06);
+
     path.getPointAt(t, camPos);
     camera.position.copy(camPos);
+
+    // Hand-held breathing — a barely-there idle drift so a dwell is alive,
+    // never frozen. Two incommensurate sines: no visible loop.
+    if (animate) {
+      const bt = clock.elapsedTime;
+      camera.position.y += Math.sin(bt * 0.55) * 0.035;
+      camera.position.x += Math.sin(bt * 0.37 + 1.7) * 0.025;
+    }
 
     // Pointer parallax (desktop only) — a heavily damped hand-held drift that
     // lets the viewer peek around the chapter. lookAt() below re-aims at the
@@ -265,6 +315,15 @@ function ScrollCameraRig({ animate, mobile }: { animate: boolean; mobile: boolea
     lookTarget.y = 1.2; // stable, level horizon — no roll
     lookTarget.z -= 6; // look into the chapter, not at the rail point itself
     camera.lookAt(lookTarget);
+
+    // Travel FOV kick — the lens widens a touch at speed (dolly-zoom energy)
+    // and settles back to 45° at every dwell.
+    const cam = camera as THREE.PerspectiveCamera;
+    const fovTarget = 45 + railVelocity.current * 7;
+    if (Math.abs(cam.fov - fovTarget) > 0.01) {
+      cam.fov = lerp(cam.fov, fovTarget, 0.08);
+      cam.updateProjectionMatrix();
+    }
   });
 
   return null;
@@ -363,6 +422,8 @@ function ChapterRig({ animate, mobile }: { animate: boolean; mobile: boolean }) 
           anchor={CHAPTER_ANCHORS.world}
           modelUrl={a.world.runtime === 'procedural' ? null : a.world.runtime}
           scale={a.world.scale}
+          animate={animate}
+          mobile={mobile}
         />
       </ChapterGate>
       <ChapterGate index={2} anchor={CHAPTER_ANCHORS.field} animate={animate}>
