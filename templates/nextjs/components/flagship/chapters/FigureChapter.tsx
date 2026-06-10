@@ -17,6 +17,7 @@ import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useAnimations, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import { SkeletonUtils } from 'three-stdlib';
 
 import { normalizeToHeight } from '@/lib/normalize-model';
 
@@ -47,7 +48,10 @@ function LoadedFigure({
   const group = useRef<THREE.Group>(null);
   const { scene, animations } = useGLTF(modelUrl);
   const cloned = useMemo(() => {
-    const c = scene.clone(true);
+    // SkeletonUtils.clone, NOT scene.clone: a plain clone of a skinned mesh
+    // keeps referencing the ORIGINAL skeleton, so the figure renders at the
+    // world origin at raw size, ignoring this group's position and scale.
+    const c = SkeletonUtils.clone(scene);
     normalizeToHeight(c, 1.7); // human height, base at the floor
     return c;
   }, [scene]);

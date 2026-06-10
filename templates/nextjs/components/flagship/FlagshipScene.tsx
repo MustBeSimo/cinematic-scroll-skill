@@ -256,6 +256,48 @@ function ScrollCameraRig({ animate }: { animate: boolean }) {
 }
 
 /**
+ * Presence gate — stages a chapter's entrance. Without it all four chapters
+ * are visible at once (fog alone can't hide the nearer ones) and the scene
+ * reads as overlapping clutter from frame one. Each chapter scales up from
+ * its own anchor and rises into place as the camera nears, holds at full
+ * presence while the camera dwells, and recedes as it departs.
+ */
+function ChapterGate({
+  index,
+  anchor,
+  animate,
+  children,
+}: {
+  index: number;
+  anchor: THREE.Vector3;
+  animate: boolean;
+  children: React.ReactNode;
+}) {
+  const scroll = useScroll();
+  const group = useRef<THREE.Group>(null);
+
+  useFrame(() => {
+    const g = group.current;
+    if (!g) return;
+    const segs = flagshipChapters.length - 1;
+    const offset = animate ? scroll.offset : 0; // reduced motion: hold ch. 1
+    const seg = dwellEase(THREE.MathUtils.clamp(offset, 0, 1)) * segs;
+    const d = Math.abs(seg - index);
+    // Full presence while dwelling (d < ~0.35), gone by one chapter away.
+    const p = THREE.MathUtils.clamp((1.1 - d) / 0.75, 0, 1);
+    const s = smootherstep(p);
+    g.visible = s > 0.002;
+    g.scale.setScalar(Math.max(s, 1e-4));
+    // Scale around the chapter's OWN anchor (not the world origin), and let
+    // it rise the last stretch into place: world p' = s·p + (1−s)·anchor.
+    g.position.copy(anchor).multiplyScalar(1 - s);
+    g.position.y += (s - 1) * 1.2;
+  });
+
+  return <group ref={group}>{children}</group>;
+}
+
+/**
  * Mounts the four chapters and feeds each a per-chapter scroll progress ref
  * (0→1 within its own band), updated imperatively each frame so chapters don't
  * re-render on scroll.
@@ -283,27 +325,35 @@ function ChapterRig({ animate, mobile }: { animate: boolean; mobile: boolean }) 
   const a = assetManifest;
   return (
     <>
-      <ObjectChapter
-        anchor={CHAPTER_ANCHORS.object}
-        progress={progressRefs.current.object}
-        animate={animate}
-        modelUrl={a.object.runtime === 'procedural' ? null : a.object.runtime}
-        scale={a.object.scale}
-        mobile={mobile}
-      />
-      <WorldChapter
-        anchor={CHAPTER_ANCHORS.world}
-        modelUrl={a.world.runtime === 'procedural' ? null : a.world.runtime}
-        scale={a.world.scale}
-      />
-      <FieldChapter anchor={CHAPTER_ANCHORS.field} progress={progressRefs.current.field} animate={animate} />
-      <FigureChapter
-        anchor={CHAPTER_ANCHORS.figure}
-        animate={animate}
-        modelUrl={a.figure.runtime === 'procedural' ? null : a.figure.runtime}
-        scale={a.figure.scale}
-        clips={a.figure.animations ?? []}
-      />
+      <ChapterGate index={0} anchor={CHAPTER_ANCHORS.object} animate={animate}>
+        <ObjectChapter
+          anchor={CHAPTER_ANCHORS.object}
+          progress={progressRefs.current.object}
+          animate={animate}
+          modelUrl={a.object.runtime === 'procedural' ? null : a.object.runtime}
+          scale={a.object.scale}
+          mobile={mobile}
+        />
+      </ChapterGate>
+      <ChapterGate index={1} anchor={CHAPTER_ANCHORS.world} animate={animate}>
+        <WorldChapter
+          anchor={CHAPTER_ANCHORS.world}
+          modelUrl={a.world.runtime === 'procedural' ? null : a.world.runtime}
+          scale={a.world.scale}
+        />
+      </ChapterGate>
+      <ChapterGate index={2} anchor={CHAPTER_ANCHORS.field} animate={animate}>
+        <FieldChapter anchor={CHAPTER_ANCHORS.field} progress={progressRefs.current.field} animate={animate} />
+      </ChapterGate>
+      <ChapterGate index={3} anchor={CHAPTER_ANCHORS.figure} animate={animate}>
+        <FigureChapter
+          anchor={CHAPTER_ANCHORS.figure}
+          animate={animate}
+          modelUrl={a.figure.runtime === 'procedural' ? null : a.figure.runtime}
+          scale={a.figure.scale}
+          clips={a.figure.animations ?? []}
+        />
+      </ChapterGate>
       {/* Ground. Desktop: blurred mirror floor — the chapters, light strips and
           halo reflect softly in it (the single biggest "premium" cue in the
           scene). Mobile: a plain dark floor — grounded, but no reflection pass. */}
