@@ -60,6 +60,7 @@ The Mode-B twin ships in the Next.js template as a route (`/flagship` — [`temp
 - **An immersive FX layer.** A scroll-velocity-reactive GPU dust field spans the whole camera rail (travel *feels* like travel — motes swell and stream, the lens FOV kicks, then everything settles at each dwell), aurora light curtains flow overhead, fake-volumetric shafts rake the colonnade and spotlight the dancer, the hero artifact levitates with an orbiting comet glint, and chapters materialize on arrival through damped presence gates. Atmosphere morphs **both** fog color and density per chapter; a blurred mirror floor, bloom, chromatic aberration, and film grain finish the frame.
 - **The engineering contract holds.** Every effect answers `prefers-reduced-motion` with a composed still frame, the mobile path cuts particle counts and skips heavy passes, the scroll-camera freezes while a WebXR session presents, and the swap from procedural placeholder to generated `.glb` is **data, not code** (one manifest line).
 
+
 ---
 
 ## Get started — two paths
