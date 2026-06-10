@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>AURELIA — a correct cinematic-scroll fixture</title>
+  <meta name="description" content="A small, correct cinematic page: custom cubic-beziers, transform/opacity only, reduced-motion, alt text, focus-visible, a landmark. Used by cinematic-doctor --selftest." />
+
+  <!-- Deferred, non-blocking. The hand-rolled rAF engine below runs regardless. -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+
+  <style>
+    :root{
+      /* role-specific custom curves — NEVER a default ease (taste §4.1) */
+      --reveal: cubic-bezier(0.16, 1, 0.3, 1);   /* hero entrance */
+      --handoff: cubic-bezier(0.7, 0, 0.84, 0);  /* chapter exit */
+      --overshoot: cubic-bezier(0.34, 1.56, 0.64, 1); /* micro-interaction */
+      --cut: cubic-bezier(0.87, 0, 0.13, 1);     /* chapter cut */
+      --ink:#0d0f12; --paper:#f4f1ea; --accent:#c2502e;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{ background:var(--ink); color:var(--paper); font-family:system-ui,sans-serif; overflow-x:hidden; }
+
+    /* compositor-only background — gradient, not animated filter */
+    .atmos{ position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:radial-gradient(120% 90% at 20% 10%, #1b2733, #0d0f12 60%); }
+
+    /* visible focus indicator for keyboard users */
+    :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+    a{ color:var(--accent); }
+
+    section{ min-height:100vh; display:flex; align-items:center; padding:8vw; }
+
+    /* ── Each chapter uses a DISTINCT entrance treatment (anti-convergence) ── */
+
+    /* Ch.1 — mask/clip-path reveal */
+    .ch-mask h1{ font-size:clamp(40px,9vw,120px); line-height:1.05;
+      clip-path:inset(0 100% 0 0); opacity:0;
+      transition:clip-path .9s var(--reveal), opacity .6s var(--reveal); }
+    .ch-mask.in h1{ clip-path:inset(0 0 0 0); opacity:1; }
+
+    /* Ch.2 — word stagger (transform + opacity only) */
+    .ch-stagger .word{ display:inline-block; opacity:0; transform:translateY(40px);
+      transition:transform .7s var(--cut), opacity .7s var(--cut); }
+    .ch-stagger.in .word{ opacity:1; transform:translateY(0); }
+    .ch-stagger.in .word:nth-child(2){ transition-delay:.07s }
+    .ch-stagger.in .word:nth-child(3){ transition-delay:.14s }
+
+    /* Ch.3 — scale-down entrance */
+    .ch-scale h2{ transform:scale(1.3); opacity:0;
+      transition:transform 1s var(--overshoot), opacity .8s var(--reveal); }
+    .ch-scale.in h2{ transform:scale(1); opacity:1; }
+
+    /* depth layers — capped well under 7, transform-driven */
+    .layer{ will-change:transform; }
+    .card{ transition:transform .4s var(--overshoot); }
+    @media (hover:hover){ .card:hover{ transform:translateY(-6px) scale(1.02); } }
+
+    /* responsive / touch path — fewer layers, no tilt on touch */
+    @media (max-width:768px){
+      section{ padding:12vw 6vw; }
+      .layer{ will-change:auto; }
+    }
+
+    /* mandatory reduced-motion fallback (budget §3 Tier 4) */
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+      .ch-mask h1{ clip-path:inset(0 0 0 0); opacity:1; }
+      .ch-stagger .word,.ch-scale h2{ opacity:1; transform:none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="atmos" aria-hidden="true"></div>
+
+  <header>
+    <nav aria-label="primary">
+      <a href="#one">Index</a>
+      <a href="#two">Story</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="one" class="ch-mask" data-chapter data-reveal>
+      <h1>Hollow Star</h1>
+    </section>
+
+    <section id="two" class="ch-stagger" data-chapter data-reveal>
+      <h2><span class="word">Light</span> <span class="word">finds</span> <span class="word">form.</span></h2>
+    </section>
+
+    <section id="three" class="ch-scale" data-chapter data-reveal>
+      <div class="layer" data-depth="0.3"></div>
+      <div class="layer" data-depth="0.6"></div>
+      <h2>The descent</h2>
+      <figure>
+        <img src="placeholder.webp" alt="A lone figure silhouetted against teal fog" width="640" height="360" loading="lazy" decode="async" />
+      </figure>
+      <div class="card" tabindex="0">tilt me</div>
+    </section>
+  </main>
+
+  <footer>
+    <small>cinematic-doctor fixture · good</small>
+  </footer>
+
+  <script>
+    // JS reduced-motion detection in addition to the CSS query (budget §3).
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouch = matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+    // scroll-linked entrance reveals — one-shot, transform/opacity only.
+    if (!reduce) {
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      }, { threshold: 0.25 });
+      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+      // scroll-coupled parallax — cached offsets, lerped, rAF only while moving.
+      const layers = [...document.querySelectorAll('.layer')].map((el) => ({
+        el, depth: parseFloat(el.dataset.depth) || 0.3, base: el.offsetTop, cur: 0,
+      }));
+      let raf = 0, target = window.scrollY;
+      function frame(){
+        let settled = true;
+        for (const l of layers){
+          const want = (target - l.base) * l.depth;
+          l.cur += (want - l.cur) * 0.12;
+          l.el.style.transform = `translate3d(0, ${l.cur.toFixed(2)}px, 0)`;
+          if (Math.abs(want - l.cur) > 0.1) settled = false;
+        }
+        if (!settled) raf = requestAnimationFrame(frame); else raf = 0;
+      }
+      addEventListener('scroll', () => { target = window.scrollY; if (!raf) raf = requestAnimationFrame(frame); }, { passive:true });
+    } else {
+      document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('in'));
+    }
+
+    // touch fallback for the tilt card — pointer events, never hover-only.
+    if (!isTouch){
+      document.querySelectorAll('.card').forEach((card) => {
+        card.addEventListener('pointermove', (ev) => {
+          const r = card.getBoundingClientRect();
+          const rx = ((ev.clientY - r.top) / r.height - 0.5) * -6;
+          const ry = ((ev.clientX - r.left) / r.width - 0.5) * 6;
+          card.style.transform = `translate3d(0,0,0) rotateX(${rx}deg) rotateY(${ry}deg)`;
+        });
+        card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+      });
+    }
+  </script>
+</body>
+</html>
