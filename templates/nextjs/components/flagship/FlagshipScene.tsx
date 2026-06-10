@@ -49,6 +49,24 @@ const CHAPTER_ANCHORS: Record<FlagshipChapterId, THREE.Vector3> = {
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+/** Smootherstep — zero 1st AND 2nd derivative at the ends, so each chapter is
+ *  a true dwell point: the camera settles, holds, then eases out. */
+const smootherstep = (f: number) => f * f * f * (f * (f * 6 - 15) + 10);
+
+/**
+ * Remap linear scroll progress into dwell-and-travel pacing. Raw scroll maps
+ * the camera linearly along the rail, which spends most of the scroll in
+ * fast transit and makes chapters POP into view like hard cuts. This shapes
+ * each anchor-to-anchor segment with smootherstep, so velocity hits zero at
+ * every chapter (arrive → hold → depart — the skill's pacing grammar).
+ */
+function dwellEase(t: number): number {
+  const segs = flagshipChapters.length - 1;
+  const seg = THREE.MathUtils.clamp(t, 0, 1) * segs;
+  const i = Math.min(Math.floor(seg), segs - 1);
+  return (i + smootherstep(seg - i)) / segs;
+}
+
 export type FlagshipSceneProps = {
   /** When false (reduced motion / static), the scene holds one composed frame. */
   animate: boolean;
@@ -98,7 +116,7 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
         />
         <pointLight position={[-6, 3, -20]} intensity={30} color="#3de0ff" distance={40} />
 
-        <ScrollControls pages={FLAGSHIP_PAGES} damping={0.25}>
+        <ScrollControls pages={FLAGSHIP_PAGES} damping={0.3}>
           <ScrollCameraRig animate={animate} />
           <ChapterRig animate={animate} mobile={mobile} />
           {/* HTML rail — portaled into the same scroll container so the copy and
@@ -161,8 +179,9 @@ function ScrollCameraRig({ animate }: { animate: boolean }) {
     if (presenting) return; // XR owns the camera — do not drive it.
 
     const target = animate ? scroll.offset : 0.5 / FLAGSHIP_PAGES; // still: frame ch.1
-    current.current = lerp(current.current, target, animate ? 0.1 : 1);
-    const t = THREE.MathUtils.clamp(current.current, 0, 1);
+    current.current = lerp(current.current, target, animate ? 0.08 : 1);
+    // Dwell-and-travel: settle at each chapter, ease through the transit.
+    const t = dwellEase(current.current);
 
     path.getPointAt(t, camPos);
     camera.position.copy(camPos);
@@ -195,9 +214,11 @@ function ChapterRig({ animate, mobile }: { animate: boolean; mobile: boolean }) 
   });
 
   useFrame(() => {
+    const n = flagshipChapters.length;
     flagshipChapters.forEach((c, i) => {
-      // Each chapter owns a 1/N band of the scroll; map global offset → local 0→1.
-      progressRefs.current[c.id].current = scroll.range(i / FLAGSHIP_PAGES, 1 / FLAGSHIP_PAGES);
+      // Each chapter owns a 1/N band of the scroll (N = chapters, NOT pages —
+      // each chapter spans PAGES_PER_CHAPTER pages); map global offset → 0→1.
+      progressRefs.current[c.id].current = scroll.range(i / n, 1 / n);
     });
   });
 

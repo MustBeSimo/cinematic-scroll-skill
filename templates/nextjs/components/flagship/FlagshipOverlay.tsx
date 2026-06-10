@@ -83,7 +83,7 @@ function ChapterPanel({
   return (
     <section
       id={`flagship-${chapter.id}`}
-      className="relative flex min-h-screen items-center"
+      className="relative flex min-h-[200vh] items-center"
       style={{ background: chapter.morph }}
       aria-label={`${chapter.eyebrow}: ${chapter.title.map((t) => t.line).join(' ')}`}
     >

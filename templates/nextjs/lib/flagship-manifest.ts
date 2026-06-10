@@ -152,5 +152,14 @@ export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
   },
 };
 
+/**
+ * Scroll runway per chapter, in viewport-heights. One page per chapter makes
+ * the 48-unit camera journey feel like hard cuts — chapters need DWELL
+ * (taste-guardrails pacing: arrive, hold, depart). Two pages each gives the
+ * camera room to settle at an anchor before easing into transit.
+ * `FlagshipOverlay` sizes each chapter panel to match (`min-h-[200vh]`).
+ */
+export const PAGES_PER_CHAPTER = 2;
+
 /** Number of scroll "pages" the chapter rail spans (drei ScrollControls). */
-export const FLAGSHIP_PAGES = flagshipChapters.length;
+export const FLAGSHIP_PAGES = flagshipChapters.length * PAGES_PER_CHAPTER;

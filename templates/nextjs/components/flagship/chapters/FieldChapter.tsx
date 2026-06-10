@@ -146,8 +146,9 @@ export function FieldChapter({ anchor, progress, animate }: FieldChapterProps) {
       material.uTime = 0;
       material.uScroll = 0.5;
     }
-    // Fade the field with proximity to the chapter anchor.
-    material.uNear = THREE.MathUtils.clamp(1 - Math.abs(cp - 0.5) * 1.4, 0, 1);
+    // Fade the field with proximity to the chapter anchor — a wide window so
+    // it breathes in/out over the dwell instead of snapping (pacing grammar).
+    material.uNear = THREE.MathUtils.clamp(1 - Math.abs(cp - 0.5) * 1.1, 0, 1);
   });
 
   return (
