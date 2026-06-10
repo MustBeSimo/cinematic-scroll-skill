@@ -234,7 +234,11 @@ Reference film projects — both stacks, ready to render:
 |---|---|---|---|
 | [`video/ship-in-5/`](./video/ship-in-5/) | HyperFrames | 60s | the launch guide: install → prompt → compose → ship |
 | [`video/flagship-3d/`](./video/flagship-3d/) | HyperFrames | 60s | the 3D/WebXR flagship: four movements, the generate pipeline, the dancer — zero asset files, fully deterministic |
-| `Promo` + `TwoMedia` + `Flagship3D` in [`video/`](./video/) | Remotion | 26–30s each | the product promo, the "one choreography, two media" feature film, and the flagship launch film (`npm run render:flagship`) |
+| [`video/doctor/`](./video/doctor/) | HyperFrames | 45s | **"Scored"** — the cinematic-doctor film: the scan, the 0–100 score landing, the CI gate blocking a 64 and stamping an 87 PASS |
+| `Promo` + `TwoMedia` + `Flagship3D` + `Doctor` in [`video/`](./video/) | Remotion | 24–30s each | the product promo, the "one choreography, two media" feature film, the flagship launch film (`npm run render:flagship`), and the doctor quality-gate film (`npm run render:doctor`) |
+
+Every HyperFrames film has a Remotion twin (and vice versa) — two renderers,
+one art direction, so you can A/B the stacks or pick per platform.
 
 ---
 
@@ -278,12 +282,18 @@ cinematic-scroll-skill/
 ├── LICENSE                   # MIT
 ├── manifest.json             # skill metadata (free)
 ├── MODELS.md                 # fal.ai model menu, costs, when-to-use
+├── ASSETS-3D.md              # 3D asset hand-off: generate → compress → normalize → manifest
 ├── compile-choreography.mjs  # ✦ scroll-choreography.json → page / film / preview
 ├── scroll-choreography.json  # the declarative choreography schema + example
 ├── FRAME.md                  # brand spec for video agents (the frame translation)
 ├── taste-guardrails.md       # banned patterns, cinematic vocabulary, pacing rules
-├── references/               # scroll patterns · film archetypes · performance budget
-├── video/                    # PIPELINE.md (HyperFrames × Remotion) + film projects
+├── references/               # scroll patterns · film archetypes · perf budget · 3d-stack · webxr
+├── tools/cinematic-doctor/   # ✦ the 0–100 quality gate (taste·perf·a11y·mobile·3D, CI-blockable)
+├── video/                    # PIPELINE.md (HyperFrames × Remotion) + the film projects
+│   ├── src/                  # Remotion: Promo · TwoMedia · Flagship3D · Doctor
+│   ├── ship-in-5/            # HyperFrames: the 60s launch guide
+│   ├── flagship-3d/          # HyperFrames: "Four Movements" (the 3D flagship film)
+│   └── doctor/               # HyperFrames: "Scored" (the quality-gate film)
 ├── examples/
 │   ├── PROMPTS.md            # 20+ trigger prompts across aesthetic worlds
 │   ├── GETTING_STARTED.md    # fal.ai setup, troubleshooting, queue+webhook
@@ -292,13 +302,14 @@ cinematic-scroll-skill/
 │   ├── studio/               # Mode A example — brutalist creative-director portfolio
 │   ├── noir/                 # Mode A example — sci-fi noir (VANTASCOPE)
 │   ├── luxe/                 # Mode A example — quiet luxury (Maison Solenne)
-│   └── pop/                  # Mode A example — Gen-Z pop (BLOOM)
+│   ├── pop/                  # Mode A example — Gen-Z pop (BLOOM)
+│   └── flagship/             # the 3D/WebXR flagship — four chapters, four 3D modalities
 └── templates/nextjs/         # tested, copy-verbatim Next.js App Router project
-    ├── app/ (+ api/fal/*, generate-edition-asset)
-    ├── components/ (ChapterScene, ChapterDemoVisual, EditionsPage, SmoothScrollProvider)
-    ├── lib/ (editions-manifest, fal-*, prompt-contract, use-lenis, use-device)
-    ├── scripts/ (setup.mjs, generate-chapter-assets.mjs)
-    └── package.json, tailwind.config.ts, tsconfig.json, …
+    ├── app/ (+ /flagship route, api/fal/*, generate-edition-asset)
+    ├── components/ (ChapterScene, EditionsPage, flagship/ — chapters + fx layer)
+    ├── lib/ (editions-manifest, flagship-manifest, normalize-model, fal-*, use-lenis)
+    ├── scripts/ (setup.mjs, generate-chapter-assets.mjs, generate-flagship-assets.mjs)
+    └── package.json, tailwind.config.ts, tsconfig.json, FLAGSHIP.md, …
 ```
 
 ## Peer dependencies (in the consuming app)
