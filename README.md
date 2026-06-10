@@ -6,6 +6,7 @@
 [![Install via skills.sh](https://img.shields.io/badge/install-skills.sh-2563eb?style=flat-square)](https://skills.sh/search?q=cinematic-scroll)
 [![Works with Claude · Cursor · Hermes](https://img.shields.io/badge/works%20with-Claude%20%C2%B7%20Cursor%20%C2%B7%20Hermes-7c5cff?style=flat-square)](#install)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](./LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/MustBeSimo/cinematic-scroll-skill/ci.yml?style=flat-square&label=quality%20gate&logo=github)](https://github.com/MustBeSimo/cinematic-scroll-skill/actions/workflows/ci.yml)
 [![GitHub stars](https://img.shields.io/github/stars/MustBeSimo/cinematic-scroll-skill?style=flat-square&color=f5b301&label=stars)](https://github.com/MustBeSimo/cinematic-scroll-skill/stargazers)
 
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">
@@ -26,6 +27,31 @@
 > **Free for any use, personal or commercial (MIT).** Actively developed — built from production work and shipped open source. [Issues](https://github.com/MustBeSimo/cinematic-scroll-skill/issues), PRs, and [showcase submissions](https://github.com/MustBeSimo/cinematic-scroll-skill/issues/new?title=Showcase:%20) welcome — I collect what people build.
 
 Built by [Simone Leonelli](https://w230.net) · [simone@w230.net](mailto:simone@w230.net)
+
+---
+
+## ✦ Cinematic taste is now a number you can gate on
+
+Cinematic Scroll isn't a prompt pack — it's a **craft contract**: plan the motion, build the scene, compile it to **web *and* video**, then run a **doctor** that catches cinematic slop before it ships. **`cinematic-doctor`** scores any build **0–100** across taste, performance, a11y, mobile, and 3D — and exits non-zero below threshold, so quality is **CI-blockable**, not a vibe.
+
+```bash
+npm run doctor -- examples/noir/index.html
+```
+
+It already scores the bundled examples (noir **87**, luxe **88**) and the 3D/WebXR flagship (**100**). The same `scroll-choreography.json` compiles to the website *and* its launch film — one choreography, two media.
+
+### Quality gate
+
+```bash
+node tools/cinematic-doctor/cli.mjs examples/luxe/index.html   # → score + per-category breakdown
+npm run doctor -- examples/flagship/index.html                 # → 100
+```
+
+The doctor **exits non-zero below 80**, so you can wire it into CI and block builds that score under the bar.
+
+### 3D / WebXR flagship
+
+[`examples/flagship/`](./examples/flagship/) is one cinematic scroll site, four chapters, four 3D modalities (Object · World · Field · Figure) — vanilla Three.js (Mode A) plus React Three Fiber + WebXR (Mode B). The 3D stack decision tree lives in [`references/3d-stack.md`](./references/3d-stack.md) (with [`references/webxr.md`](./references/webxr.md) and asset hand-off in [`ASSETS-3D.md`](./ASSETS-3D.md)).
 
 ---
 

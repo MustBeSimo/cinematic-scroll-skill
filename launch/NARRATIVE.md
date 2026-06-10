@@ -25,6 +25,20 @@ That's the 10×: not "a better scroll library," but **the first skill that trans
 
 ---
 
+## The wedge (the sharpened line)
+
+> **Cinematic Scroll is not a prompt pack. It is a craft contract: plan the motion, build the scene, compile it to web *and* video, then run a doctor that catches cinematic slop before it ships.**
+
+Most cinematic-web skills stop at prompting. This one makes craft **measurable, portable, and multi-media**:
+
+- **Measurable** — `cinematic-doctor` is an executable quality gate that scores any build 0–100 (taste / performance / a11y / mobile / 3D) and exits non-zero below threshold. Cinematic taste becomes a CI-blockable number, not a vibe.
+- **Portable** — a craft skill, not a vendor plugin: it rides across Claude, Cursor, Hermes, OpenClaw on top of npm + plugin channels. The judgment travels; the tool is your choice.
+- **Multi-media** — one `scroll-choreography.json` compiles to the website *and* its launch film. Same beats, same easings, two media.
+
+Proven by a **3D/WebXR flagship** — one cinematic scroll site, four chapters, four 3D modalities (Object · World · Field · Figure), scoring 100 on the doctor.
+
+---
+
 ## The triad (say this everywhere)
 
 - **The motion is the constant.**

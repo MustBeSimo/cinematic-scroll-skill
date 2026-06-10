@@ -153,7 +153,49 @@ Minimum `line-height: 1.1` for display type, `1.5` for body. Maximum 2 typefaces
 
 ---
 
-## 5. Enforcement
+## 5. 3D / WebGL / XR banned patterns
+
+These apply when a build uses real 3D (Three.js / WebGL / `<model-viewer>` / WebXR — Tier B/C/D from `SKILL.md` Phase 3). 3D is the most expensive thing on a scroll page; a careless 3D chapter is worse than no 3D chapter. The authority for the correct patterns is `references/3d-stack.md` and `references/webxr.md`; the worked reference is `examples/flagship/`.
+
+### 5.1 Never leave `devicePixelRatio` uncapped
+**Why:** On a 3x retina phone an uncapped renderer rasterizes ~9× the pixels of a logical viewport — a "retina tax" that melts mid-tier GPUs, drains battery, and tanks the frame rate to a slideshow. It is the single most common WebGL performance failure.
+**Replacement:** Clamp `renderer.setPixelRatio(Math.min(devicePixelRatio, 2))` — and go lower on mobile (1.5 or even 1). One renderer per page; never spin up a second WebGL context per chapter.
+
+### 5.2 Never ship a 3D chapter with no non-WebGL fallback
+**Why:** WebGL can be unavailable (old device, disabled flag, blocklisted driver) or the context can be lost at runtime. With no fallback the user gets a blank canvas — a dead, broken-looking chapter.
+**Replacement:** Feature-detect WebGL before creating a context and provide a permanent poster / CSS fallback (a still image, a CSS gradient scene). Add a `webglcontextlost` handler that calls `e.preventDefault()` plus a `webglcontextrestored` handler that rebuilds the scene. The fallback is a first-class deliverable, not an afterthought.
+
+### 5.3 Never run continuous GPU animation without a `prefers-reduced-motion` path
+**Why:** A 3D scene that auto-rotates, drifts, or loops a shader ignores a user who has explicitly asked the OS for less motion. For vestibular-sensitive users this is not a preference — it is a health setting, and it also needlessly drains battery.
+**Replacement:** When `prefers-reduced-motion: reduce` is active, render a single static frame and stop — no rAF loop, no idle animation, no auto-orbit. Draw once, then halt.
+
+### 5.4 Never raycast or do heavy work every frame on scroll
+**Why:** Raycasting against scene geometry, recomputing bounding volumes, or rebuilding data structures inside the per-frame loop blows the 16.67ms budget and produces scroll jank exactly when the user is moving.
+**Replacement:** Throttle raycasts to pointer events (not every frame), cache results, and precompute anything stable. Gate the rAF loop on document visibility AND an `IntersectionObserver` so it does no work while the canvas is off-screen.
+
+### 5.5 Never ship giant uncompressed textures or un-Draco'd meshes
+**Why:** A 4K uncompressed texture is tens of megabytes of VRAM and a slow decode; an un-compressed glTF mesh balloons both download and parse time. Both stall first paint and pressure GPU memory until layers fall back to CPU rasterization.
+**Replacement:** Cap textures at 2K unless there is a named reason to go higher, use compressed formats (KTX2 / Basis) where supported, and compress geometry with Draco / meshopt. Budget and pipeline live in `ASSETS-3D.md` and `references/3d-stack.md`.
+
+### 5.6 Never force VR locomotion or move the user without consent
+**Why:** Moving the camera (the user's head) in VR while they stand still is the classic trigger for simulator sickness. Forced acceleration, smooth strafing, or camera shake in an immersive session can make people physically ill.
+**Replacement:** Default to teleport / snap-turn comfort locomotion, keep a stable horizon, and never translate the user without an explicit input. The 2D page must be complete without XR; XR is a session the user chooses to enter. See `references/webxr.md` for comfort and safety rules.
+
+### 5.7 Never bake readable UI text into 3D or generated imagery
+**Why:** Text baked into a mesh texture or an AI-generated image is unselectable, inaccessible to screen readers, blurs at distance/angle, cannot be localized, and is impossible to edit. It is the 3D version of putting your nav inside a JPEG.
+**Replacement:** Render titles, labels, captions, and HUD as HTML/CSS overlaid on the canvas (or as a CSS3D / DOM layer), so it stays selectable, crisp, accessible, and editable.
+
+### 5.8 Never skip `dispose()` on chapter teardown
+**Why:** Three.js does not garbage-collect GPU resources for you. Geometries, materials, textures, and render targets left undisposed leak VRAM on every chapter swap until the tab crashes or the browser drops layers back to CPU rasterization.
+**Replacement:** On teardown, explicitly `dispose()` every geometry, material, and texture (and the renderer / render targets), remove event listeners, and cancel the rAF handle. Treat teardown as a required counterpart to setup.
+
+### 5.9 Never hardcode 3D asset paths in code
+**Why:** Model, USDZ, and poster paths scattered through component code are impossible to audit, swap, or validate, and they silently rot when assets move — the failure mode is a blank chapter discovered in production.
+**Replacement:** Drive every runtime 3D asset path from a manifest (the `examples/flagship/assets-3d/manifest.json` shape: `version`, `basePath`, `chapters.{id}.{model, usdz, poster, scale, cameraNodes, clips, ar}`). Code reads paths from the manifest; it never inlines them.
+
+---
+
+## 6. Enforcement
 
 These guardrails are referenced in `SKILL.md` and are part of the agent's system prompt. When generating scroll-driven sections, the skill must:
 

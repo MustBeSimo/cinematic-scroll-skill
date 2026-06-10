@@ -1,0 +1,268 @@
+/* ───────────────────────────────────────────────────────────────────────
+   cinematic-scroll · FLAGSHIP (Mode A — vanilla Three.js, no build step)
+   Visual system: Atmospheric Sublime × Temporal Monument — vast negative
+   space, deep cobalt/violet atmosphere, a single electric-cyan accent,
+   slow revelation. ONE shared WebGL canvas, four scroll-driven chapters.
+
+   Motion contract (performance-budget.md): every DOM overlay animates with
+   transform + opacity ONLY. The 3D camera moves on rAF, never on layout.
+   Reduced-motion → one static frame, everything legible, no continuous loop.
+   ─────────────────────────────────────────────────────────────────────── */
+
+:root{
+  --void:#05060B;            /* near-black base */
+  --abyss:#070A14;           /* deep blue floor */
+  --cobalt:#0E1A38;          /* cobalt mid */
+  --cobalt-lit:#1B3A66;      /* cobalt highlight */
+  --violet:#241546;          /* violet depth */
+  --cyan:#3DE0FF;            /* the single accent — electric cyan edge-light */
+  --cyan-2:#8BF3FF;          /* brighter cyan for glow cores */
+  --amber:#FFB270;           /* warm secondary, used sparingly on FIGURE */
+  --ink:#EAF2F6;             /* off-white type */
+  --muted:#7E8FA6;           /* muted blue-grey body */
+  --line:rgba(234,242,246,.14);
+
+  --display:'Space Grotesk','Archivo',Impact,system-ui,sans-serif;
+  --ui:'Archivo',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+
+  --bg:var(--void);
+  --fg:var(--ink);
+  --fg-muted:var(--muted);
+
+  /* one intentional curve, reused as the house easing (taste §4.1) */
+  --curve-cinematic:cubic-bezier(.16,1,.3,1);
+  --curve-swing:cubic-bezier(.22,1,.36,1);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:var(--ui); font-weight:400;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  transition:background .9s var(--curve-swing);
+}
+a{ color:inherit; }
+::selection{ background:var(--cyan); color:#05060B; }
+
+/* visible keyboard focus everywhere — keyboard users must see where they are */
+:focus-visible{
+  outline:2px solid var(--cyan);
+  outline-offset:3px;
+  border-radius:2px;
+}
+/* don't show the ring on mouse interaction */
+:focus:not(:focus-visible){ outline:none; }
+
+/* ── the single shared WebGL stage (one renderer, one canvas) ──────────── */
+#gl-stage{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+}
+#gl-canvas{ display:block; width:100%; height:100%; }
+
+/* ── designed CSS fallback (no WebGL / context lost / budget mobile) ─────
+   Shares the manifest's chapter posters in spirit: a procedural gradient
+   field so the page is NEVER a broken/black canvas. Hidden by default;
+   the boot script reveals it (.no-webgl on <html>). */
+#gl-fallback{
+  position:fixed; inset:0; z-index:0; pointer-events:none; display:none;
+  background:
+    radial-gradient(60% 80% at 70% 18%, rgba(61,224,255,.18), rgba(61,224,255,0) 55%),
+    radial-gradient(90% 70% at 22% 92%, rgba(36,21,70,.55), rgba(7,10,20,0) 62%),
+    radial-gradient(50% 50% at 50% 50%, rgba(27,58,102,.30), rgba(7,10,20,0) 70%),
+    linear-gradient(180deg, var(--void) 0%, var(--abyss) 58%, var(--void) 100%);
+}
+#gl-fallback .poster-grain{
+  position:absolute; inset:0; opacity:.10; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+html.no-webgl #gl-fallback{ display:block; }
+html.no-webgl #gl-stage{ display:none; }
+
+/* atmospheric vignette + grain over everything 3D (cheap, GPU-composited) */
+.atmos{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(61,224,255,.05), rgba(61,224,255,0) 55%),
+    radial-gradient(140% 120% at 50% 100%, rgba(5,6,11,.65), rgba(5,6,11,0) 60%);
+  box-shadow:inset 0 0 140px rgba(5,6,11,.85), inset 0 0 0 1px rgba(61,224,255,.05);
+  transition:background .9s var(--curve-swing);
+}
+.grain{
+  position:fixed; inset:-50%; z-index:2; pointer-events:none; opacity:.12;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation:grainshift 5.4s steps(6) infinite;
+}
+@keyframes grainshift{
+  0%{transform:translate(0,0)} 16%{transform:translate(-3%,2%)}
+  33%{transform:translate(2%,-3%)} 50%{transform:translate(-2%,-2%)}
+  66%{transform:translate(3%,1%)} 83%{transform:translate(-1%,3%)} 100%{transform:translate(0,0)}
+}
+
+/* ── fixed masthead ────────────────────────────────────────────────────── */
+.masthead{
+  position:fixed; inset:0 0 auto 0; z-index:50;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:max(20px,env(safe-area-inset-top)) clamp(18px,4vw,56px) 20px;
+}
+.masthead .mark{ display:flex; align-items:baseline; gap:12px; pointer-events:auto; }
+.masthead .mark b{ font-family:var(--display); font-weight:700; font-size:18px; letter-spacing:.22em; color:var(--ink); }
+.masthead .mark span{ font-family:var(--mono); font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--cyan); }
+.masthead nav{ display:flex; gap:clamp(14px,2.4vw,34px); font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; pointer-events:auto; }
+.masthead nav a{ color:var(--muted); text-decoration:none; transition:color .3s var(--curve-cinematic); }
+@media (hover:hover){ .masthead nav a:hover{ color:var(--ink); } }
+@media (max-width:680px){ .masthead nav{ display:none; } }
+
+/* ── progress + chapter rail ───────────────────────────────────────────── */
+.rail{
+  position:fixed; right:clamp(12px,2vw,28px); top:50%; transform:translateY(-50%);
+  z-index:40; display:flex; flex-direction:column; gap:14px;
+  font-family:var(--mono); font-size:10px; color:var(--muted);
+}
+.rail .r{ display:flex; align-items:center; gap:10px; justify-content:flex-end; opacity:.5;
+  background:none; border:0; cursor:pointer; color:inherit; font:inherit;
+  transition:opacity .35s var(--curve-cinematic), color .35s var(--curve-cinematic); }
+.rail .r .num{ letter-spacing:.12em; }
+.rail .r .ln{ width:20px; height:1px; background:currentColor; transform-origin:right center;
+  transition:transform .35s var(--curve-cinematic), background-color .35s var(--curve-cinematic); }
+.rail .r.on{ opacity:1; color:var(--ink); }
+.rail .r.on .ln{ transform:scaleX(2.3); background-color:var(--cyan); }
+@media (max-width:680px){ .rail{ display:none; } }
+
+/* top scroll-progress bar — scaleX only (no width animation) */
+.scrollbar{
+  position:fixed; top:0; left:0; height:2px; width:100%; z-index:60;
+  transform-origin:left center; transform:scaleX(0);
+  background:linear-gradient(90deg, var(--cyan), var(--cyan-2));
+  box-shadow:0 0 12px rgba(61,224,255,.6);
+}
+
+/* ── chapter sections ──────────────────────────────────────────────────── */
+section{ position:relative; min-height:240vh; }   /* scroll room for the camera move */
+.stage{
+  position:sticky; top:0; height:100vh; overflow:hidden;
+  display:grid; align-content:center; justify-items:start;
+  padding:0 clamp(18px,6vw,96px);
+  perspective:1500px; perspective-origin:60% 48%;
+}
+.copytext{ transform-style:preserve-3d; }
+
+/* oversized chapter numeral — deepest ghost layer */
+.roman{
+  position:absolute; z-index:3; font-family:var(--display); font-weight:700;
+  font-size:clamp(11rem,40vw,38rem); line-height:.7; letter-spacing:-.03em;
+  color:var(--ink); opacity:.04; white-space:nowrap; pointer-events:none;
+  top:50%; left:46%; transform:translate(-50%,-50%); will-change:transform;
+  -webkit-user-select:none; user-select:none;
+}
+
+/* copy / title — the cinematic type */
+.copytext{ position:relative; z-index:6; max-width:min(92vw,1080px); will-change:transform,opacity; }
+.eyebrow{
+  font-family:var(--mono); font-size:clamp(10px,1vw,12px); letter-spacing:.34em;
+  text-transform:uppercase; color:var(--cyan); margin-bottom:clamp(16px,2.4vw,28px);
+  display:flex; align-items:center; gap:12px;
+}
+.eyebrow::before{ content:""; width:34px; height:1px; background:var(--cyan); display:inline-block; }
+
+h2.title{
+  font-family:var(--display); font-weight:700; line-height:.9;
+  letter-spacing:-.01em; text-transform:uppercase; color:var(--ink);
+  font-size:clamp(3rem,11vw,9.5rem);
+}
+/* each line wears a vertical MASK WIPE — overflow-clipped, the inner span
+   rises from 100% down. transform-only (no layout). */
+h2.title .ln{ display:block; overflow:hidden; }
+h2.title .ln .t{ display:inline-block; will-change:transform; }
+h2.title .accent{ color:var(--cyan); }
+
+.lede{ margin-top:clamp(22px,2.8vw,36px); max-width:50ch;
+  font-size:clamp(1rem,1.5vw,1.26rem); line-height:1.62; color:var(--fg-muted); }
+.lede .reveal{ display:inline-block; }
+.meta{ margin-top:clamp(18px,2.4vw,30px); font-family:var(--mono); font-size:10px;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+
+/* chapter actions (CTA + XR/AR buttons) */
+.actions{ margin-top:clamp(26px,3vw,40px); display:flex; flex-wrap:wrap; gap:14px; align-items:center; }
+.btn{
+  display:inline-flex; align-items:center; gap:10px;
+  padding:13px 24px; font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; text-decoration:none; cursor:pointer;
+  border:1px solid var(--line); background:rgba(14,26,56,.35); color:var(--ink);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  transition:transform .3s var(--curve-swing), border-color .3s var(--curve-cinematic), box-shadow .3s var(--curve-cinematic);
+}
+.btn .dot{ width:6px; height:6px; border-radius:50%; background:var(--cyan); box-shadow:0 0 10px var(--cyan); }
+@media (hover:hover){
+  .btn:hover{ transform:translateY(-2px); border-color:rgba(61,224,255,.55); box-shadow:0 0 30px rgba(61,224,255,.22); }
+}
+.btn.primary{ background:var(--cyan); color:#05060B; border-color:transparent; box-shadow:0 0 30px rgba(61,224,255,.35); }
+.btn.primary .dot{ background:#05060B; box-shadow:none; }
+@media (hover:hover){ .btn.primary:hover{ box-shadow:0 0 44px rgba(61,224,255,.6); } }
+.btn[hidden]{ display:none; }
+
+/* model-viewer (AR quick-look) — kept off-stage; only its native AR CTA shows */
+.mv-host{ position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; pointer-events:none; }
+model-viewer{ width:240px; height:240px; }
+.ar-cta{ /* styled like a .btn so the OS quick-look button matches the page */
+  display:inline-flex; align-items:center; gap:10px; padding:13px 24px;
+  font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  border:1px solid rgba(61,224,255,.4); background:rgba(14,26,56,.35); color:var(--ink); cursor:pointer;
+}
+
+/* scroll-cue badge (hero only) */
+.cuewrap{
+  position:absolute; z-index:7; left:clamp(18px,6vw,96px); bottom:clamp(26px,5vh,52px);
+  display:flex; align-items:center; gap:12px; will-change:transform,opacity;
+}
+.cue{
+  font-family:var(--mono); font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--muted);
+  border:1px solid var(--line); border-radius:999px; padding:8px 16px;
+  display:flex; align-items:center; gap:9px; background:rgba(5,6,11,.4); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);
+}
+.cue .dot{ width:6px; height:6px; border-radius:50%; background:var(--cyan); box-shadow:0 0 10px var(--cyan); animation:pulse 1.9s var(--curve-cinematic) infinite; }
+.cuewrap .bar{ width:1px; height:34px; background:linear-gradient(var(--cyan), transparent); transform-origin:top; animation:cuebar 2.2s var(--curve-cinematic) infinite; }
+@keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.3} }
+@keyframes cuebar{ 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.4)} }
+
+/* ── footer / colophon ─────────────────────────────────────────────────── */
+footer{ position:relative; z-index:6; padding:18vh clamp(18px,6vw,96px) 14vh; }
+footer .vine{ width:120px; height:1px; margin-bottom:30px; background:linear-gradient(90deg, var(--cyan), transparent); }
+footer .big{ font-family:var(--display); font-weight:700; text-transform:uppercase;
+  font-size:clamp(2rem,7vw,5rem); line-height:.94; letter-spacing:-.01em; color:var(--ink); }
+footer .big a{ color:var(--cyan); text-decoration:none; }
+footer .colophon{ margin-top:28px; font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+  color:var(--muted); text-transform:uppercase; max-width:64ch; line-height:1.9; }
+footer .colophon a{ color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(61,224,255,.3); }
+
+/* ── MOBILE (<=680px): static stacked layout, fewer layers, lower cost.
+   Sections un-pin; copy is visible by default so a JS failure never hides
+   content; the engine drops to a single low-res frame on this tier. ────── */
+@media (max-width:680px){
+  .grain{ display:none; }
+  section{ min-height:auto; padding:12vh 0; }
+  .stage{ position:static; height:auto; display:block; padding:0 22px; perspective:none; }
+  .roman{ position:static; opacity:.05; font-size:30vw; line-height:.8; margin:0 0 -4vh -1vw; display:block; transform:none; }
+  .copytext{ transform:none; opacity:1; }
+  h2.title{ font-size:14vw; }
+  h2.title .ln .t{ transform:none; }
+  .cuewrap{ position:static; transform:none; margin:30px 0 0; }
+  .reveal{ opacity:1; transform:none; }
+}
+
+/* ── REDUCED MOTION: snap to a readable static state; the engine renders a
+   single frame and stops. No continuous animation anywhere. ───────────── */
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  .grain, .cue .dot, .cuewrap .bar{ animation:none; }
+  section{ min-height:auto; padding:12vh 0; }
+  .stage{ position:static; height:auto; display:block; perspective:none; }
+  .roman{ position:static; transform:none !important; opacity:.05;
+    font-size:clamp(8rem,24vw,16rem); line-height:.8; display:block; margin-bottom:-3vh; }
+  .copytext{ transform:none !important; opacity:1 !important; }
+  h2.title .ln .t{ transform:none !important; opacity:1 !important; }
+  .cuewrap{ position:static; transform:none !important; margin-top:30px; opacity:1 !important; }
+  .reveal{ opacity:1 !important; transform:none !important; }
+  .btn{ transition:none; }
+}

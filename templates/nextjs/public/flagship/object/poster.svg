@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <!-- OBJECT — static poster for the no-WebGL / reduced-motion fallback. -->
+  <defs>
+    <radialGradient id="g" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#1a2438"/>
+      <stop offset="55%" stop-color="#0b101e"/>
+      <stop offset="100%" stop-color="#05060b"/>
+    </radialGradient>
+    <linearGradient id="m" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dfe8ff"/>
+      <stop offset="100%" stop-color="#7d8db0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <!-- faceted artifact -->
+  <g transform="translate(800,400)">
+    <polygon points="0,-150 110,-40 70,110 -70,110 -110,-40" fill="none" stroke="url(#m)" stroke-width="2.5"/>
+    <polygon points="0,-150 110,-40 0,20 -110,-40" fill="url(#m)" opacity="0.14"/>
+    <polygon points="-70,110 0,20 70,110" fill="url(#m)" opacity="0.22"/>
+    <line x1="0" y1="-150" x2="0" y2="20" stroke="url(#m)" stroke-width="1.4" opacity="0.7"/>
+    <line x1="-110" y1="-40" x2="110" y2="-40" stroke="url(#m)" stroke-width="1" opacity="0.4"/>
+  </g>
+  <!-- plinth shadow -->
+  <ellipse cx="800" cy="540" rx="190" ry="22" fill="#000" opacity="0.5"/>
+  <ellipse cx="800" cy="536" rx="150" ry="14" fill="#3de0ff" opacity="0.08"/>
+  <text x="800" y="700" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="26" letter-spacing="14" fill="#8b95ad">OBJECT</text>
+  <text x="800" y="742" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="15" letter-spacing="6" fill="#525c72">I · THE ARTIFACT</text>
+</svg>

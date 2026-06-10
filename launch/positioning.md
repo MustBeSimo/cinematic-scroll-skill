@@ -30,6 +30,16 @@ Three things are true at once, and the gap between them is the whole opportunity
 
 **Cinematic Scroll closes the gap:** it hands the agent a film-grammar process (audit → storyboard → spec → build → polish), taste guardrails so it doesn't produce slop, and tested templates. The agent stops writing snippets and starts art-directing.
 
+### The sharpened wedge
+
+Cinematic Scroll is **not a prompt pack. It is a craft contract**: plan the motion, build the scene, compile it to web *and* video, then run a doctor that catches cinematic slop before it ships. Most cinematic-web skills stop at prompting. This one makes craft:
+
+- **Measurable** — `cinematic-doctor` scores any build 0–100 (taste / performance / a11y / mobile / 3D) and exits non-zero below threshold, so quality is CI-gated, not a vibe.
+- **Portable** — one craft skill that rides across Claude, Cursor, Hermes, OpenClaw (AGENTS.md, `.cursor/`, `.codex/`, `.claude/`) on top of npm + plugin channels.
+- **Multi-media** — one `scroll-choreography.json` compiles to the website *and* its launch film.
+
+Proven by a **3D/WebXR flagship** (`examples/flagship/`): four chapters, four 3D modalities, scoring 100 on the doctor.
+
 ---
 
 ## Messaging pillars (every asset uses ≥1)

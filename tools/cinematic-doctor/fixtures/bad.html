@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- BAD: no viewport meta → renders desktop-width on phones -->
+  <title>Generic Parallax — the bad fixture</title>
+
+  <!-- BAD: render-blocking script in <head> with no defer/async/module -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+
+  <style>
+    *{ margin:0; padding:0; box-sizing:border-box;
+       /* BAD: transition: all + default ease (lazy, convergent) */
+       transition: all 0.3s ease; }
+    body{ background:#111; color:#fff; font-family:sans-serif; }
+
+    /* BAD: every "easing" is a default keyword, no custom cubic-bezier anywhere */
+    .fade{ opacity:0; transition: opacity 0.5s ease-in-out; }
+    .fade.in{ opacity:1; }
+
+    /* BAD: animating layout props (top/left/width/height/margin) */
+    .grow{ transition: width 0.4s linear, height 0.4s linear, margin 0.4s ease; }
+    .grow.on{ width:80%; height:300px; margin:40px; }
+    .slide{ position:absolute; transition: top 0.6s linear, left 0.6s ease-in-out; }
+
+    /* BAD: hover-only interaction, no touch/pointer fallback, no @media(hover) */
+    .card:hover{ top:-10px; left:5px; }
+    .btn:hover{ background:#444; }
+
+    /* BAD: no :focus / :focus-visible style */
+    /* BAD: no prefers-reduced-motion block */
+    /* BAD: no responsive breakpoint / touch branch */
+  </style>
+</head>
+<!-- BAD: no semantic landmarks (no main/nav/header/footer) -->
+<body>
+  <div class="wrap">
+    <!-- every section uses the SAME fade-in entrance (convergence) -->
+    <section class="fade" data-chapter>
+      <h1>Chapter One</h1>
+      <!-- BAD: img without alt -->
+      <img src="hero1.jpg" />
+    </section>
+    <section class="fade" data-chapter>
+      <h1>Chapter Two</h1>
+      <img src="hero2.jpg" />
+    </section>
+    <section class="fade" data-chapter>
+      <h1>Chapter Three</h1>
+      <img src="hero3.jpg" />
+    </section>
+    <section class="fade" data-chapter>
+      <h1>Chapter Four</h1>
+      <div class="card grow">card</div>
+      <a class="btn" href="#">click</a>
+    </section>
+  </div>
+
+  <script>
+    // BAD: raw scroll listener, no rAF throttle, writes layout props every frame,
+    // no reduced-motion / touch detection.
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY;
+      document.querySelectorAll('.slide').forEach(function (el) {
+        el.style.top = (y * 0.5) + 'px';
+        el.style.left = (y * 0.2) + 'px';
+        el.style.width = (200 + y * 0.1) + 'px';
+      });
+      // same fade for everything
+      document.querySelectorAll('.fade').forEach(function (el) { el.classList.add('in'); });
+    });
+  </script>
+</body>
+</html>

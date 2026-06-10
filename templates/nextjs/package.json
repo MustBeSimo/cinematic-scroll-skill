@@ -6,6 +6,8 @@
     "setup": "node scripts/setup.mjs",
     "generate": "node scripts/generate-chapter-assets.mjs",
     "generate:dry": "node scripts/generate-chapter-assets.mjs --dry-run",
+    "generate:flagship": "node scripts/generate-flagship-assets.mjs",
+    "generate:flagship:dry": "node scripts/generate-flagship-assets.mjs --dry-run",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -15,22 +17,30 @@
   "dependencies": {
     "@fal-ai/client": "^1.10.0",
     "@fal-ai/server-proxy": "^1.2.0",
+    "@google/model-viewer": "3.4.0",
     "@gsap/react": "^2.1.2",
+    "@react-three/drei": "^10.0.0",
+    "@react-three/fiber": "^9.0.0",
+    "@react-three/postprocessing": "^3.0.4",
+    "@react-three/xr": "^6.6.0",
     "choreo-3d": "1.0.0",
     "framer-motion": "^12.0.0",
     "gsap": "^3.13.0",
     "lenis": "^1.3.23",
     "next": "^15.5.18",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "three": "0.160.0"
   },
   "overrides": {
-    "postcss": "^8.5.15"
+    "postcss": "^8.5.15",
+    "postprocessing": "~6.38.3"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/three": "0.160.0",
     "autoprefixer": "^10.4.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.1.0",
