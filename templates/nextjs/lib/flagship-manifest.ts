@@ -121,7 +121,7 @@ export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
     runtime: '/flagship/object/object.glb', // e.g. '/flagship/object/object.glb'
     iosAr: null, // e.g. '/flagship/object/object.usdz'
     fallbackPoster: '/flagship/object/poster.svg',
-    scale: 1.0,
+    scale: 2.5, // hero framing — the watch fills the frame instead of sitting small on the floor
     pivot: 'base-center',
     cameraNodes: [],
   },
