@@ -1,0 +1,57 @@
+# Cinematic Scroll — quality gate in CI.
+#
+# The whole pitch is that cinematic taste is a number you can block on. This
+# workflow proves it: every push and PR runs `cinematic-doctor` over the bundled
+# examples and builds the React Three Fiber / WebXR flagship (Mode B). A red X
+# here means a build dropped below the craft bar or stopped compiling.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  craft-contract:
+    name: cinematic-doctor (quality gate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # The gate must be able to fail: good fixture passes, bad fixture fails.
+      - name: Doctor self-test
+        run: node tools/cinematic-doctor/cli.mjs --selftest
+
+      # Sweep every web build in the repo (landing pages + examples). Video
+      # compositions and test fixtures are skipped automatically. Default
+      # threshold is 80; a build under the bar exits non-zero and blocks merge.
+      - name: Score all web builds
+        run: node tools/cinematic-doctor/cli.mjs .
+
+  flagship-build:
+    name: flagship Mode B (R3F + WebXR build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: templates/nextjs
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install
+        run: npm install --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build

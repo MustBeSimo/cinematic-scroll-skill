@@ -17,8 +17,9 @@ categories of checks in this project's own `taste-guardrails.md` and
 # score one file
 node tools/cinematic-doctor/cli.mjs examples/noir/index.html
 
-# score a directory (scans *.html + examples/*/index.html)
-node tools/cinematic-doctor/cli.mjs .
+# score a directory (walks it recursively for *.html)
+node tools/cinematic-doctor/cli.mjs .          # whole repo
+node tools/cinematic-doctor/cli.mjs examples   # just the example worlds
 
 # raise the bar
 node tools/cinematic-doctor/cli.mjs path/to/build.html --min 90
@@ -31,10 +32,14 @@ node tools/cinematic-doctor/cli.mjs build.html --quiet   # exit code only
 node tools/cinematic-doctor/cli.mjs --selftest
 ```
 
-It accepts either a single `.html` file **or** a directory. For a directory it
-scans top-level `*.html` and every `examples/*/index.html`. When multiple files
-are scored, the gate fails if **any** file is below threshold (the lowest total
-drives the exit code).
+It accepts either a single `.html` file **or** a directory, which is walked
+recursively for `*.html`. Dependency/build trees (`node_modules`, `.next`,
+`dist`, …) and the doctor's own `fixtures/` are skipped. **HyperFrames video
+compositions** (fixed-canvas render targets — detected by `data-composition-id`
+or a pixel-pinned viewport) are recognized and skipped too: they're graded by
+the video pipeline, not against responsive web rules, so scoring them here would
+be a false positive. When multiple files are scored, the gate fails if **any**
+web build is below threshold (the lowest total drives the exit code).
 
 ## Categories & weights
 
@@ -102,13 +107,13 @@ dependency). It:
 
 Each `checks/*.mjs` exports `analyze(doc) -> { category, score, findings }`
 (or `{ category, score: null, na: true }`). `lib/scorecard.mjs` aggregates,
-normalizes, and renders. `index.mjs` wires it together and sets the exit code.
+normalizes, and renders. `cli.mjs` wires it together and sets the exit code.
 
 ## Files
 
 ```
 tools/cinematic-doctor/
-  index.mjs            CLI entry + --selftest
+  cli.mjs              CLI entry + --selftest  (index.mjs re-exports it)
   checks/taste.mjs
   checks/performance.mjs
   checks/a11y.mjs

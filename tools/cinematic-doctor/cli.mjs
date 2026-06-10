@@ -49,24 +49,47 @@ function scoreFile(file) {
   return scoreHtml(raw, file);
 }
 
-/** Collect candidate HTML files from a path (file or directory). */
+/** Directories that never contain gradeable web builds: dependency trees,
+ *  build output, and the doctor's own test fixtures (which include an
+ *  intentionally failing bad.html). Hidden dirs are skipped separately. */
+const SKIP_DIRS = new Set([
+  'node_modules', '.git', '.next', 'dist', 'build', 'out',
+  'coverage', '.thumbnails', 'fixtures',
+]);
+
+/** Collect *.html files from a path. A file resolves to itself; a directory
+ *  is walked recursively (skipping SKIP_DIRS and hidden dirs) so both
+ *  `examples` and a whole-repo `.` sweep find the real builds, not noise. */
 function collectTargets(target) {
   const st = statSync(target);
   if (st.isFile()) return [target];
   const out = [];
-  // top-level *.html
-  for (const name of readdirSync(target)) {
-    if (name.endsWith('.html')) out.push(join(target, name));
-  }
-  // examples/*/index.html
-  const examplesDir = join(target, 'examples');
-  if (existsSync(examplesDir) && statSync(examplesDir).isDirectory()) {
-    for (const name of readdirSync(examplesDir)) {
-      const idx = join(examplesDir, name, 'index.html');
-      if (existsSync(idx)) out.push(idx);
+  const walk = (dir) => {
+    for (const name of readdirSync(dir).sort()) {
+      const full = join(dir, name);
+      let s;
+      try { s = statSync(full); } catch { continue; }
+      if (s.isDirectory()) {
+        if (SKIP_DIRS.has(name) || name.startsWith('.')) continue;
+        walk(full);
+      } else if (name.endsWith('.html')) {
+        out.push(full);
+      }
     }
-  }
+  };
+  walk(target);
   return out;
+}
+
+/** HyperFrames video compositions are fixed-canvas render targets (e.g.
+ *  1920×1080 driven by a paused GSAP timeline), not responsive web builds.
+ *  Grading them against web rules — responsive breakpoints, reduced-motion,
+ *  visible focus — is a category error, so a sweep recognises and skips them.
+ *  Detected by the compiler's `data-composition-id` marker or a fixed-pixel
+ *  viewport (a real responsive site never pins viewport width to pixels). */
+function isVideoComposition(raw) {
+  return /data-composition-id\s*=/.test(raw)
+    || /<meta[^>]+name=["']viewport["'][^>]*content=["'][^"']*\bwidth=\s*\d{3,}/i.test(raw);
 }
 
 function parseArgs(argv) {
@@ -142,9 +165,27 @@ function main() {
   files = [...new Set(files)];
   if (files.length === 0) { console.error('no .html files found at target(s).'); process.exit(2); }
 
+  // Separate web builds from video compositions. The latter are fixed-canvas
+  // render targets graded by the video pipeline, not against responsive web
+  // rules — including them here would be a false negative on the web gate.
+  const webFiles = [];
+  const videoFiles = [];
+  for (const file of files) {
+    (isVideoComposition(readFileSync(file, 'utf8')) ? videoFiles : webFiles).push(file);
+  }
+
+  if (webFiles.length === 0) {
+    if (!opts.quiet) {
+      for (const f of videoFiles) {
+        console.log(`  ${relative(process.cwd(), f) || f} — video composition (fixed canvas), not graded as a web build`);
+      }
+    }
+    process.exit(0); // nothing web to gate; not a failure
+  }
+
   const reports = [];
   let worst = 100;
-  for (const file of files) {
+  for (const file of webFiles) {
     const agg = scoreFile(file);
     const rel = relative(process.cwd(), file) || file;
     const report = buildReport(rel, agg, opts.min);
@@ -163,8 +204,11 @@ function main() {
     console.log(JSON.stringify(out, null, 2));
   } else if (!opts.quiet) {
     console.log(`  report → ${relative(process.cwd(), reportPath) || reportPath}`);
+    if (videoFiles.length > 0) {
+      console.log(`  skipped ${videoFiles.length} video composition(s) (fixed canvas, graded by the video pipeline)`);
+    }
     if (reports.length > 1) {
-      console.log(`  lowest total across ${reports.length} files: ${worst}/100 → ${worst >= opts.min ? 'PASS' : 'FAIL'}`);
+      console.log(`  lowest total across ${reports.length} web build(s): ${worst}/100 → ${worst >= opts.min ? 'PASS' : 'FAIL'}`);
     }
   }
 
