@@ -328,10 +328,81 @@ window, or pins approaching the 400vh limit, flag it here with mitigation.
 6. **Specify mobile degradation implementation** per chapter, referencing
    `performance-budget.md` Section 3 (Mobile Degradation Matrix).
 
+7. **Select the 3D / shader stack tier** (see block below) and **declare the
+   chosen tier in the technical spec**. Default is Tier A (no 3D). Every step up
+   must be justified by a named narrative need, not a vibe.
+
+### 3D / Shader Stack Selection
+
+3D is the most expensive thing you can put on a scroll page. The default answer
+is **Tier A: no 3D.** Earn each step up the ladder with a reason. Pick the
+**lowest** tier that satisfies the narrative — climbing a tier multiplies cost
+(bundle, GPU memory, battery, asset-production time, failure surface). Read
+`references/3d-stack.md` and `references/webxr.md` before specifying any 3D.
+
+```
+Does the story actually need real 3D depth / rotation / parallax-in-space?
+│
+├─ NO  ──────────────────────────────────────────►  TIER A  (GSAP / CSS only)
+│       Fake depth with layered transforms + CSS 3D. 95% of cinematic
+│       scroll pages live here. (scroll-patterns.md #1, #6, #7.)
+│
+└─ YES → Do you have (or can you commission) a real model?
+         │
+         ├─ YES, a discrete object/scene/figure  ──►  TIER B  (Three + GLB)
+         │        A product, an environment, an avatar. Asset-driven.
+         │
+         └─ NO model — the visual IS the math  ─────►  TIER C  (Three + shaders)
+                  Fields, flows, particles, generative surfaces. Zero assets.
+
+         …and on top of B or C, only if a flat screen genuinely cannot deliver
+         the moment (scale / presence / embodiment):
+                                          ──────────►  TIER D  (+ WebXR)
+                  Immersive VR / room-scale AR. (references/webxr.md.)
+```
+
+- **Tier A — GSAP / CSS only.** The depth is illusory and a screen is the final
+  medium. The "3D Product Orbit" pattern is CSS `rotateY` on layered images, not
+  a mesh. If you cannot name a specific thing the user *does* that requires a
+  camera moving through real geometry, stay here.
+- **Tier B — GSAP + Three.js + GLB.** A discrete hero artifact whose form
+  carries the story and that the user orbits / inspects / configures, or a place
+  the camera flies through. Requires the GLB (or a committed path to it) plus the
+  `ASSETS-3D.md` hand-off and a manifest.
+- **Tier C — GSAP + Three.js + procedural shaders.** The visual *is* the
+  computation — a field, flow, surface, or particle system with no object to
+  model. Zero external assets; this is the procedural backbone (and the
+  fallback every Tier-B chapter degrades to).
+- **Tier D — any of B/C + WebXR.** Flatness is the actual limitation (scale,
+  presence, embodiment). XR is a session the user explicitly enters; never the
+  default render path. The 2D page must be complete on its own.
+
+**Pin every renderer version exactly — no `latest`, no floating majors.**
+Three.js makes breaking changes between minors; an un-pinned 3D stack is a
+future blank chapter. Pin vanilla Three to an exact patch (`three@0.160.0`) via
+a versioned CDN import map; pin Three exactly in package builds (caret only on
+the R3F wrappers, lockfile freezes the tree). Full pin table and import map in
+`references/3d-stack.md` Section 2.
+
+**Declare the stack tier in the technical spec** (the table in the output
+template). State the chosen tier, the named narrative need that justifies it,
+and the pinned versions. If two tiers both satisfy the story, ship the lower
+one — "could be 3D" is not "should be 3D." Full decision criteria, performance
+caps, fallback rules, and the scroll-camera pattern: `references/3d-stack.md`.
+WebXR session setup, comfort/safety, and AR quick-look: `references/webxr.md`.
+
 ### Output: `technical-spec.md`
 
 ```markdown
 # Technical Spec — [Project Name]
+
+## 3D / Shader Stack Tier
+
+- **Tier:** [A (GSAP/CSS only) / B (Three + GLB) / C (Three + shaders) / D (+ WebXR)]
+- **Narrative need (justifies the tier):** [named need, or "none — Tier A" ]
+- **Pinned versions:** [e.g., three@0.160.0 exact; @react-three/fiber ^8.15; @google/model-viewer ^3.5]
+- **Per-chapter:** [which chapters are 3D and at which tier; the rest are Tier A]
+- Source: `references/3d-stack.md` (selection + caps), `references/webxr.md` (Tier D)
 
 ## Package Selection
 
@@ -342,6 +413,8 @@ window, or pins approaching the 400vh limit, flag it here with mitigation.
 | choreo-3d | latest | Pinning orchestration, ScrollLayer, ScrollChoreography |
 | @gsap/react | latest | useGSAP hook for React integration |
 | next | ^15 | Framework (Mode B only) |
+| three | 0.160.0 | Renderer — **exact pin** (Tier B/C/D only) |
+| @google/model-viewer | ^3.5 | AR quick-look web component (Tier B/D only) |
 
 ## Component Architecture
 
@@ -538,6 +611,45 @@ replace word-stagger with plain opacity fade, never drop mobile fallback.
   `image_size`, `aspect_ratio`, or `negative_prompt`.
 - fal.ai key stays server-side only. Never in client components or `.env`.
 
+### 3D / WebGL / XR build rules (Tier B/C/D only)
+
+These apply **only** when the technical spec declared Tier B, C, or D. Tier A
+(GSAP/CSS) ships none of this. `examples/flagship/` is the worked 4-chapter
+reference; `references/3d-stack.md` (renderer + caps) and `references/webxr.md`
+(Tier D sessions) are the authority. Each rule below is enforceable — a miss is
+a bug, not a style choice.
+
+1. **Clamp `devicePixelRatio` ≤ 2** (lower on mobile, e.g. `Math.min(devicePixelRatio, isMobile ? 1.5 : 2)`).
+   Uncapped DPR is a retina GPU tax that melts mid-tier phones. **One renderer
+   per page** — never instantiate a second WebGL context per chapter.
+
+2. **Feature-detect WebGL before creating a context.** Probe for a context;
+   if it fails, render the **permanent poster / CSS fallback** — never a blank
+   canvas. The fallback is a first-class deliverable, not an afterthought.
+
+3. **Handle context loss.** Add a `webglcontextlost` listener that calls
+   `e.preventDefault()`, plus a `webglcontextrestored` handler that rebuilds the
+   scene. Without `preventDefault()` the context never comes back.
+
+4. **`prefers-reduced-motion: reduce` → render a single static frame.** Draw
+   once, then stop. No continuous rAF loop, no auto-rotate, no idle animation.
+
+5. **Gate the rAF loop.** Run frames only when the document is visible
+   (`document.visibilityState`) AND the canvas is on-screen (`IntersectionObserver`).
+   Stop the loop otherwise. On teardown, **dispose every geometry, material, and
+   texture** (and the renderer) — leaked GPU resources accumulate per chapter.
+
+6. **All runtime 3D asset paths come from a manifest** — never hardcode model,
+   USDZ, or poster paths in code. Read them from
+   `examples/flagship/assets-3d/manifest.json` (shape: `version`, `basePath`,
+   `chapters.{id}.{model, usdz, poster, scale, cameraNodes, clips, ar}`).
+
+7. **XR (Tier D) is feature-gated.** Check `navigator.xr` and
+   `await navigator.xr.isSessionSupported('immersive-vr' | 'immersive-ar')`
+   **before** rendering any Enter-VR / Enter-AR button. If unsupported, the
+   button never appears. The 2D page must be complete and shippable without XR —
+   XR is a session the user explicitly enters, never the default render path.
+
 ### Output: Mode A (single file) or Mode B (project directory)
 
 ---
@@ -588,6 +700,39 @@ and final quality gate.
 
 7. **Measure scroll jank** using the protocol from `performance-budget.md`
    Section 4 (Scroll Jank Measurement Protocol).
+
+8. **3D / XR polish checks (Tier B/C/D only).** Skip for Tier A. Verify:
+   - [ ] Context loss tested — force a `webglcontextlost`, confirm
+     `e.preventDefault()` fires and `webglcontextrestored` rebuilds the scene.
+   - [ ] Fallback verified — disable WebGL (or block the context) and confirm the
+     permanent poster / CSS fallback renders, never a blank canvas.
+   - [ ] Mobile `devicePixelRatio` lowered (≤ 2, lower on phones) and a single
+     renderer is used for the whole page.
+   - [ ] No per-frame allocation — no `new` geometries/materials/vectors inside
+     the rAF loop; no raycasting or heavy work every frame.
+   - [ ] Teardown disposes all geometries/materials/textures (no GPU leak across
+     chapters); rAF is gated on visibility + on-screen.
+   - [ ] `prefers-reduced-motion` renders a single static frame (no loop).
+   - [ ] XR feature-gated — Enter-VR/AR only appears after
+     `navigator.xr.isSessionSupported(...)`; the 2D page is complete without XR.
+   See `references/3d-stack.md` and `references/webxr.md` for the authority.
+
+9. **Run the cinematic-doctor quality gate — the polish phase is not complete
+   until it passes.** Every build SHOULD pass this executable gate before
+   shipping:
+
+   ```bash
+   npm run doctor -- examples/your-build/index.html
+   # equivalently (the gate's direct entry point):
+   node tools/cinematic-doctor/cli.mjs examples/your-build/index.html
+   ```
+
+   It statically scores the build 0–100 across taste, performance, a11y, mobile,
+   and (when 3D is detected) 3D categories, prints a scorecard, writes
+   `cinematic-report.json`, and **exits non-zero below the default threshold of
+   80** — so it is CI-blockable / pre-commit-hook ready. Treat a failing score as
+   a list of concrete fixes to apply, then re-run until it passes. Do not call
+   the build polished while cinematic-doctor is red.
 
 ### Output: `polish-report.md`
 
