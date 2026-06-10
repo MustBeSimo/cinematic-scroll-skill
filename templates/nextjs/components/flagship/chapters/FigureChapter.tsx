@@ -59,7 +59,13 @@ function FigureStage({ anchor, animate }: { anchor: THREE.Vector3; animate: bool
         color="#ffb270"
         opacity={0.55}
       />
-      <pointLight position={[0, 3.2, 1.4]} intensity={6} color="#ffb270" distance={9} />
+      {/* Warm key from the camera side + above — the light the viewer reads the
+          dance by. Sits between camera and figure so it lights the front, not
+          the back. */}
+      <pointLight position={[0.8, 2.6, 2.6]} intensity={10} color="#ffd2a6" distance={12} />
+      {/* Cool back rim — pops the silhouette off the dark stage so the figure
+          never sinks into the background. */}
+      <pointLight position={[-1.2, 2.4, -2.2]} intensity={6} color="#7fd6ff" distance={9} />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0]}>
         <ringGeometry args={[1.15, 1.3, 64]} />
         <meshStandardMaterial
@@ -90,10 +96,25 @@ function LoadedFigure({
     // keeps referencing the ORIGINAL skeleton, so the figure renders at the
     // world origin at raw size, ignoring this group's position and scale.
     const c = SkeletonUtils.clone(scene);
-    normalizeToHeight(c, 1.7); // human height, base at the floor
+    normalizeToHeight(c, 1.8); // human height, base at the floor
     return c;
   }, [scene]);
-  const { actions } = useAnimations(animations, group);
+
+  // STRIP ROOT MOTION. Mixamo dance clips animate the hips' *position*, so the
+  // character walks/drifts off the stage ring as it plays. Removing the hips
+  // position tracks pins the dance in place — it samba's centered on the ring
+  // instead of wandering out of frame. (Bone rotations are untouched, so the
+  // motion itself is unchanged; only the global translation is dropped.)
+  const inPlace = useMemo(
+    () =>
+      animations.map((clip) => {
+        const c = clip.clone();
+        c.tracks = c.tracks.filter((t) => !/hips\.position$/i.test(t.name));
+        return c;
+      }),
+    [animations]
+  );
+  const { actions } = useAnimations(inPlace, group);
 
   useEffect(() => {
     if (!animate) return;
