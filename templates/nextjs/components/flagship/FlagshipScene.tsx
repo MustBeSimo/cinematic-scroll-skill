@@ -20,7 +20,7 @@
 
 import { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, Preload, Scroll, ScrollControls, useScroll } from '@react-three/drei';
+import { Environment, MeshReflectorMaterial, Preload, Scroll, ScrollControls, Stars, useScroll } from '@react-three/drei';
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
 import { useXR, XR, XROrigin } from '@react-three/xr';
 import * as THREE from 'three';
@@ -65,6 +65,39 @@ function dwellEase(t: number): number {
   const seg = THREE.MathUtils.clamp(t, 0, 1) * segs;
   const i = Math.min(Math.floor(seg), segs - 1);
   return (i + smootherstep(seg - i)) / segs;
+}
+
+/**
+ * Per-chapter GL atmosphere tints — the scene-side half of the skill's
+ * signature environment morph (the overlay already morphs in CSS). Background
+ * and fog glide between these as the camera travels, so each chapter has its
+ * own air: steel (Object), abyssal navy (World), violet (Field), ember (Figure).
+ */
+const CHAPTER_TINTS: Record<FlagshipChapterId, THREE.Color> = {
+  object: new THREE.Color('#0a1018'),
+  world: new THREE.Color('#070d1d'),
+  field: new THREE.Color('#150e28'),
+  figure: new THREE.Color('#170f0a'),
+};
+
+/** Lerps scene background + fog color toward the active chapter's tint. */
+function AtmosphereMorph({ animate }: { animate: boolean }) {
+  const scroll = useScroll();
+  const scratch = useMemo(() => new THREE.Color(), []);
+
+  useFrame(({ scene }) => {
+    const segs = flagshipChapters.length - 1;
+    const t = animate ? scroll.offset : 0;
+    const seg = THREE.MathUtils.clamp(t, 0, 1) * segs;
+    const i = Math.min(Math.floor(seg), segs - 1);
+    const from = CHAPTER_TINTS[flagshipChapters[i].id];
+    const to = CHAPTER_TINTS[flagshipChapters[i + 1].id];
+    scratch.copy(from).lerp(to, smootherstep(seg - i));
+    if (scene.background instanceof THREE.Color) scene.background.lerp(scratch, 0.08);
+    if (scene.fog) scene.fog.color.lerp(scratch, 0.08);
+  });
+
+  return null;
 }
 
 export type FlagshipSceneProps = {
@@ -116,8 +149,21 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
         />
         <pointLight position={[-6, 3, -20]} intensity={30} color="#3de0ff" distance={40} />
 
+        {/* Deep-space backdrop — gives every chapter parallax depth for free.
+            `speed` 0 under reduced motion (a still sky, not a dead one). */}
+        <Stars
+          radius={90}
+          depth={50}
+          count={mobile ? 1200 : 3000}
+          factor={3.5}
+          saturation={0}
+          fade
+          speed={animate ? 0.5 : 0}
+        />
+
         <ScrollControls pages={FLAGSHIP_PAGES} damping={0.3}>
           <ScrollCameraRig animate={animate} />
+          <AtmosphereMorph animate={animate} />
           <ChapterRig animate={animate} mobile={mobile} />
           {/* HTML rail — portaled into the same scroll container so the copy and
               the GL camera advance in lockstep ("one choreography, two media"). */}
@@ -246,13 +292,32 @@ function ChapterRig({ animate, mobile }: { animate: boolean; mobile: boolean }) 
         scale={a.figure.scale}
         clips={a.figure.animations ?? []}
       />
-      {/* Mobile drops the heaviest extra: a ground reflection plane. */}
+      {/* Ground. Desktop: blurred mirror floor — the chapters, light strips and
+          halo reflect softly in it (the single biggest "premium" cue in the
+          scene). Mobile: a plain dark floor — grounded, but no reflection pass. */}
       {!mobile ? (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, -24]} receiveShadow>
-          <planeGeometry args={[40, 80]} />
-          <meshStandardMaterial color="#070a12" metalness={0.5} roughness={0.4} />
+          <planeGeometry args={[44, 92]} />
+          <MeshReflectorMaterial
+            blur={[300, 80]}
+            resolution={512}
+            mixBlur={1}
+            mixStrength={6}
+            roughness={0.85}
+            depthScale={1.1}
+            minDepthThreshold={0.4}
+            maxDepthThreshold={1.4}
+            color="#0a0e18"
+            metalness={0.6}
+            mirror={0.45}
+          />
         </mesh>
-      ) : null}
+      ) : (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, -24]}>
+          <planeGeometry args={[44, 92]} />
+          <meshStandardMaterial color="#070a12" metalness={0.5} roughness={0.5} />
+        </mesh>
+      )}
     </>
   );
 }
