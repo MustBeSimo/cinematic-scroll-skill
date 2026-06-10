@@ -21,6 +21,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // R3F v9 + React 19: Strict Mode double-mounts the Canvas in dev, causing
+  // "createRoot() on a container that already has a root" — disable until
+  // @react-three/fiber resolves the dev-mode cleanup race (production unaffected).
+  reactStrictMode: false,
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
   },
