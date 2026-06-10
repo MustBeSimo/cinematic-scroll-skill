@@ -300,8 +300,10 @@ function ChapterGate({
     const offset = animate ? scroll.offset : 0; // reduced motion: hold ch. 1
     const seg = dwellEase(THREE.MathUtils.clamp(offset, 0, 1)) * segs;
     const d = Math.abs(seg - index);
-    // Full presence while dwelling (d < ~0.3), gone by one chapter away.
-    const target = smootherstep(THREE.MathUtils.clamp((1.25 - d) / 0.95, 0, 1));
+    // LATE entrance: nothing until the camera is most of the way there
+    // (d < 0.5), full presence as it settles (d < 0.15). Mid-transit the rail
+    // is empty — the next chapter materializes on arrival, not during travel.
+    const target = smootherstep(THREE.MathUtils.clamp((0.5 - d) / 0.35, 0, 1));
     // Time-damped approach (~0.4s settle) — frame-rate independent, so an
     // entrance can never pop, even under a fast scroll flick.
     const k = animate ? 1 - Math.exp(-delta * 2.4) : 1;
@@ -309,10 +311,10 @@ function ChapterGate({
     const s = presence.current;
     g.visible = s > 0.002;
     g.scale.setScalar(Math.max(s, 1e-4));
-    // Scale around the chapter's OWN anchor (not the world origin), and let
-    // it rise the last stretch into place: world p' = s·p + (1−s)·anchor.
+    // Scale around the chapter's OWN anchor (not the world origin): it grows
+    // up from its floor point. No vertical sink — a partially-risen body
+    // half-clipped through the floor reads as a glitch, not an entrance.
     g.position.copy(anchor).multiplyScalar(1 - s);
-    g.position.y += (s - 1) * 1.2;
   });
 
   return <group ref={group}>{children}</group>;
