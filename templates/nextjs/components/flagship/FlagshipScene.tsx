@@ -1,0 +1,212 @@
+'use client';
+
+/**
+ * FLAGSHIP — Mode B (React Three Fiber + WebXR).
+ *
+ * One Canvas, one renderer, one scene graph; the camera travels between four
+ * chapters (OBJECT · WORLD · FIELD · FIGURE) as you scroll — the R3F twin of the
+ * vanilla Mode-A flagship (`examples/flagship/`). "One choreography, two media."
+ *
+ * Engineering contract (`references/3d-stack.md` + `webxr.md`):
+ *   • dpr={[1, 2]}  — pixelRatio clamp ≤ 2 (1.5 ceiling on mobile)
+ *   • drei <ScrollControls>/useScroll drive a lerped scroll-camera rig
+ *   • @react-three/xr v6: createXRStore + <XR store> + <XROrigin>; enter via
+ *     store.enterVR()/enterAR(); scroll-camera FREEZES while presenting
+ *   • <Environment> for image-based lighting (procedural preset — zero assets)
+ *   • useGLTF with graceful fallback to procedural geometry (per chapter)
+ *   • Suspense fallbacks; reduced-motion → one still frame; mobile → lighter
+ *   • R3F auto-disposes GPU resources on unmount (frameloop pauses when hidden)
+ */
+
+import { Suspense, useMemo, useRef } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Environment, Preload, Scroll, ScrollControls, useScroll } from '@react-three/drei';
+import { useXR, XR, XROrigin } from '@react-three/xr';
+import * as THREE from 'three';
+
+import {
+  assetManifest,
+  flagshipChapters,
+  FLAGSHIP_PAGES,
+  type FlagshipChapterId,
+} from '@/lib/flagship-manifest';
+import { flagshipXRStore } from '@/lib/flagship-xr';
+import { ObjectChapter } from './chapters/ObjectChapter';
+import { WorldChapter } from './chapters/WorldChapter';
+import { FieldChapter } from './chapters/FieldChapter';
+import { FigureChapter } from './chapters/FigureChapter';
+import { FlagshipOverlay } from './FlagshipOverlay';
+
+/** World-space anchor for each chapter — spaced along -Z; the camera dollies
+ *  between them. Index matches `flagshipChapters` order. */
+const CHAPTER_ANCHORS: Record<FlagshipChapterId, THREE.Vector3> = {
+  object: new THREE.Vector3(0, 0, 0),
+  world: new THREE.Vector3(0, 0, -16),
+  field: new THREE.Vector3(0, 0, -32),
+  figure: new THREE.Vector3(0, 0, -48),
+};
+
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+export type FlagshipSceneProps = {
+  /** When false (reduced motion / static), the scene holds one composed frame. */
+  animate: boolean;
+  /** Lower-cost path for narrow/coarse-pointer devices. */
+  mobile: boolean;
+};
+
+export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
+  // Mobile: tighter DPR ceiling (`3d-stack.md` §3/§4). Desktop: clamp ≤ 2.
+  const dpr = useMemo<[number, number]>(() => (mobile ? [1, 1.5] : [1, 2]), [mobile]);
+
+  return (
+    <Canvas
+      dpr={dpr}
+      shadows={!mobile}
+      gl={{
+        antialias: !mobile,
+        powerPreference: mobile ? 'default' : 'high-performance',
+        toneMapping: THREE.ACESFilmicToneMapping,
+        outputColorSpace: THREE.SRGBColorSpace,
+      }}
+      camera={{ position: [0, 1.6, 6], fov: 45, near: 0.1, far: 200 }}
+      // R3F pauses useFrame automatically when the canvas is not visible. Under
+      // reduced motion (`animate=false`) each chapter's useFrame holds a fixed,
+      // motionless pose — a still frame, not a blank canvas (`3d-stack.md` §4).
+      frameloop="always"
+    >
+      <XR store={flagshipXRStore}>
+        <XROrigin position={[0, 0, 6]} />
+        <color attach="background" args={['#05060b']} />
+        <fogExp2 attach="fog" args={['#05060b', mobile ? 0.018 : 0.014]} />
+
+        {/* Image-based lighting — procedural preset, zero external assets. */}
+        <Suspense fallback={null}>
+          <Environment preset="night" />
+        </Suspense>
+
+        {/* Key + rim lights (stable, level — no roll, `webxr.md` §5). */}
+        <ambientLight intensity={0.35} />
+        <directionalLight
+          position={[4, 8, 6]}
+          intensity={mobile ? 1.0 : 1.4}
+          castShadow={!mobile}
+          shadow-mapSize={mobile ? 512 : 1024}
+        />
+        <pointLight position={[-6, 3, -20]} intensity={30} color="#3de0ff" distance={40} />
+
+        <ScrollControls pages={FLAGSHIP_PAGES} damping={0.25}>
+          <ScrollCameraRig animate={animate} />
+          <ChapterRig animate={animate} mobile={mobile} />
+          {/* HTML rail — portaled into the same scroll container so the copy and
+              the GL camera advance in lockstep ("one choreography, two media"). */}
+          <Scroll html style={{ width: '100%' }}>
+            <FlagshipOverlay reducedMotion={!animate} />
+          </Scroll>
+        </ScrollControls>
+
+        <Preload all />
+      </XR>
+    </Canvas>
+  );
+}
+
+/**
+ * Scroll-camera rig (`3d-stack.md` §5). Maps `useScroll().offset` (0→1) to a
+ * lerped position along a CatmullRom path through the chapter anchors. FREEZES
+ * while an XR session is presenting — in a headset the user's head is the
+ * camera; driving it from scroll induces nausea (`webxr.md` §5).
+ */
+function ScrollCameraRig({ animate }: { animate: boolean }) {
+  const scroll = useScroll();
+  const current = useRef(0);
+  const presenting = useXR((s) => s.session != null);
+
+  const path = useMemo(() => {
+    const anchors = flagshipChapters.map((c) => {
+      const a = CHAPTER_ANCHORS[c.id];
+      return new THREE.Vector3(a.x, 1.6, a.z + 6); // eye height, a step back
+    });
+    return new THREE.CatmullRomCurve3(anchors, false, 'catmullrom', 0.5);
+  }, []);
+
+  const lookTarget = useMemo(() => new THREE.Vector3(), []);
+  const camPos = useMemo(() => new THREE.Vector3(), []);
+
+  useFrame(({ camera }) => {
+    if (presenting) return; // XR owns the camera — do not drive it.
+
+    const target = animate ? scroll.offset : 0.5 / FLAGSHIP_PAGES; // still: frame ch.1
+    current.current = lerp(current.current, target, animate ? 0.1 : 1);
+    const t = THREE.MathUtils.clamp(current.current, 0, 1);
+
+    path.getPointAt(t, camPos);
+    camera.position.copy(camPos);
+
+    // Look slightly ahead down the rail (toward the chapter the camera nears).
+    const ahead = THREE.MathUtils.clamp(t + 0.04, 0, 1);
+    path.getPointAt(ahead, lookTarget);
+    lookTarget.y = 1.2; // stable, level horizon — no roll
+    lookTarget.z -= 6; // look into the chapter, not at the rail point itself
+    camera.lookAt(lookTarget);
+  });
+
+  return null;
+}
+
+/**
+ * Mounts the four chapters and feeds each a per-chapter scroll progress ref
+ * (0→1 within its own band), updated imperatively each frame so chapters don't
+ * re-render on scroll.
+ */
+function ChapterRig({ animate, mobile }: { animate: boolean; mobile: boolean }) {
+  const scroll = useScroll();
+
+  // One progress ref per chapter — written in useFrame, read by each chapter.
+  const progressRefs = useRef<Record<FlagshipChapterId, { current: number }>>({
+    object: { current: 0 },
+    world: { current: 0 },
+    field: { current: 0 },
+    figure: { current: 0 },
+  });
+
+  useFrame(() => {
+    flagshipChapters.forEach((c, i) => {
+      // Each chapter owns a 1/N band of the scroll; map global offset → local 0→1.
+      progressRefs.current[c.id].current = scroll.range(i / FLAGSHIP_PAGES, 1 / FLAGSHIP_PAGES);
+    });
+  });
+
+  const a = assetManifest;
+  return (
+    <>
+      <ObjectChapter
+        anchor={CHAPTER_ANCHORS.object}
+        progress={progressRefs.current.object}
+        animate={animate}
+        modelUrl={a.object.runtime === 'procedural' ? null : a.object.runtime}
+        scale={a.object.scale}
+      />
+      <WorldChapter
+        anchor={CHAPTER_ANCHORS.world}
+        modelUrl={a.world.runtime === 'procedural' ? null : a.world.runtime}
+        scale={a.world.scale}
+      />
+      <FieldChapter anchor={CHAPTER_ANCHORS.field} progress={progressRefs.current.field} animate={animate} />
+      <FigureChapter
+        anchor={CHAPTER_ANCHORS.figure}
+        animate={animate}
+        modelUrl={a.figure.runtime === 'procedural' ? null : a.figure.runtime}
+        scale={a.figure.scale}
+        clips={a.figure.animations ?? []}
+      />
+      {/* Mobile drops the heaviest extra: a ground reflection plane. */}
+      {!mobile ? (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, -24]} receiveShadow>
+          <planeGeometry args={[40, 80]} />
+          <meshStandardMaterial color="#070a12" metalness={0.5} roughness={0.4} />
+        </mesh>
+      ) : null}
+    </>
+  );
+}
