@@ -225,8 +225,15 @@ play/scrub controls so you can watch any choreography in a plain browser.
 Same DOM contract (`[data-chapter]` / `[data-layer]` / `[data-title]`) serves
 both targets. Full mapping table + Remotion adapter:
 [`scroll-choreography-compilation.md`](./scroll-choreography-compilation.md) ·
-mixing strategy (HyperFrames × Remotion): [`video/PIPELINE.md`](./video/PIPELINE.md) ·
-reference film project: [`video/ship-in-5/`](./video/ship-in-5/)
+mixing strategy (HyperFrames × Remotion): [`video/PIPELINE.md`](./video/PIPELINE.md)
+
+Reference film projects — both stacks, ready to render:
+
+| Film | Stack | Length | What it covers |
+|---|---|---|---|
+| [`video/ship-in-5/`](./video/ship-in-5/) | HyperFrames | 60s | the launch guide: install → prompt → compose → ship |
+| [`video/flagship-3d/`](./video/flagship-3d/) | HyperFrames | 60s | the 3D/WebXR flagship: four movements, the generate pipeline, the dancer — zero asset files, fully deterministic |
+| `Promo` + `TwoMedia` + `Flagship3D` in [`video/`](./video/) | Remotion | 26–30s each | the product promo, the "one choreography, two media" feature film, and the flagship launch film (`npm run render:flagship`) |
 
 ---
 

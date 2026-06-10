@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <!-- HyperFrames composition — "Four Movements" (the 3D/WebXR flagship film)
+         Directed by the flagship route's own art direction: deep-space petroleum,
+         cyan #3de0ff / ember #ffb270 chapter accents, Space Grotesk + Space Mono,
+         the §4.1 easing curves. 60s · 5 scenes (9.5/12.5/18/10/10) · fully
+         self-contained (zero asset files) · deterministic paused GSAP timeline. -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #05060b; }
+      :root {
+        --bg: #05060b; --surface: rgba(10, 20, 28, 0.72); --line: rgba(110, 160, 175, 0.22);
+        --ink: #eef3f6; --muted: #8fa6ad;
+        --cyan: #3de0ff; --ember: #ffb270; --violet: #9a6cff; --teal: #5ED6C6;
+        --display: "Space Grotesk", sans-serif; --mono: "Space Mono", monospace;
+      }
+      #root { position: relative; width: 1920px; height: 1080px; background: var(--bg); }
+
+      /* atmosphere layers — each scene morphs the air (the flagship's
+         AtmosphereMorph, in CSS) */
+      .atmo { position: absolute; inset: 0; opacity: 0; }
+      #atmo-object { background: radial-gradient(110% 90% at 50% 12%, #0e2230 0%, #05060b 65%); }
+      #atmo-world  { background: radial-gradient(120% 100% at 30% 15%, #102a4e 0%, #05060b 62%); }
+      #atmo-field  { background: radial-gradient(115% 95% at 55% 30%, #241546 0%, #05060b 60%); }
+      #atmo-figure { background: radial-gradient(100% 90% at 50% 100%, #2a160a 0%, #05060b 62%); }
+
+      /* rail dust — the flagship's signature particle field, as DOM motes */
+      #dust { position: absolute; inset: 0; pointer-events: none; }
+      .mote { position: absolute; border-radius: 50%; background: var(--cyan);
+        box-shadow: 0 0 10px var(--cyan); opacity: 0; }
+
+      .scene { position: absolute; inset: 0; padding: 96px; /* title-safe inset */ }
+
+      .eyebrow { font: 700 24px/1 var(--mono); letter-spacing: .22em;
+        text-transform: uppercase; color: var(--cyan); }
+      .display { font-family: var(--display); font-weight: 700; color: var(--ink);
+        text-transform: uppercase; line-height: 0.98; letter-spacing: -0.01em; }
+      .display .w { display: inline-block; margin-right: .22em; }
+      .accent { color: var(--cyan); }
+      .cap { font: 400 20px/1.4 var(--mono); color: var(--muted);
+        letter-spacing: .08em; text-transform: uppercase; }
+
+      .card { background: var(--surface); border: 1px solid var(--line);
+        padding: 40px 48px; font: 400 32px/1.7 var(--mono); color: var(--ink); }
+      .card .ps { color: var(--cyan); }
+      .card .cm { color: var(--muted); font-size: 24px; }
+
+      /* SCENE 1 — HOOK */
+      #s1 { text-align: center; display: flex; flex-direction: column;
+        justify-content: center; align-items: center; }
+      #s1 .display { font-size: 158px; }
+      #s1 .eyebrow { margin-bottom: 42px; }
+
+      /* SCENE 2 — GENERATE: pipeline chips */
+      #s2 .display { font-size: 104px; margin: 28px 0 60px; }
+      #s2 .chips { display: flex; align-items: center; gap: 0; max-width: 1660px; }
+      .chip { flex: 0 0 330px; background: var(--surface); border: 1px solid var(--line);
+        border-radius: 14px; padding: 30px 32px; }
+      .chip .ic { font-size: 40px; color: var(--cyan); margin-bottom: 12px; }
+      .chip .nm { font: 700 34px/1.1 var(--display); color: var(--ink); }
+      .chip .sb { font: 400 20px/1.3 var(--mono); color: var(--muted); margin-top: 8px; }
+      .link { flex: 1; height: 2px; background: var(--line); position: relative; margin: 0 8px; }
+      .link .flow { position: absolute; inset: 0; width: 0; background: var(--cyan);
+        box-shadow: 0 0 14px var(--cyan); }
+      #s2 .card { max-width: 1100px; margin-top: 58px; }
+
+      /* SCENE 3 — MOVEMENTS index */
+      #s3 .display { font-size: 96px; margin: 26px 0 64px; }
+      .mv { display: flex; align-items: baseline; gap: 44px; padding: 26px 0;
+        border-bottom: 1px solid var(--line); }
+      .mv .rn { font: 700 30px/1 var(--mono); width: 70px; color: var(--muted); }
+      .mv .nm { font: 700 84px/1 var(--display); color: var(--ink); text-transform: uppercase; }
+      .mv .nt { font: 400 23px/1.4 var(--mono); color: var(--muted); margin-left: auto;
+        max-width: 600px; text-align: right; }
+      .mv.on-object .rn { color: var(--cyan); }
+      .mv.on-world  .rn { color: var(--teal); }
+      .mv.on-field  .rn { color: var(--violet); }
+      .mv.on-figure .rn { color: var(--ember); }
+
+      /* SCENE 4 — DANCER */
+      #s4 { text-align: center; display: flex; flex-direction: column;
+        justify-content: center; align-items: center; }
+      #s4 .display { font-size: 150px; }
+      #s4 .ember { color: var(--ember); }
+      #s4 .meta { font: 400 26px/1 var(--mono); color: var(--muted);
+        letter-spacing: .1em; margin-top: 46px; }
+      #spot { position: absolute; top: 0; left: 50%; width: 620px; height: 800px;
+        transform: translateX(-50%);
+        background: linear-gradient(180deg, rgba(255,178,112,0.30), rgba(255,178,112,0));
+        clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%); opacity: 0; }
+      #ring { position: absolute; bottom: 110px; left: 50%; width: 480px; height: 116px;
+        transform: translateX(-50%); border: 5px solid var(--ember); border-radius: 50%;
+        box-shadow: 0 0 60px rgba(255,178,112,0.55), inset 0 0 40px rgba(255,178,112,0.25);
+        opacity: 0; }
+
+      /* SCENE 5 — SHIP / end card */
+      #s5 { display: flex; flex-direction: column; justify-content: center; }
+      #s5 .display { font-size: 126px; }
+      #s5 .yours { color: var(--cyan); }
+      #s5 .url { font: 700 44px/1 var(--mono); color: var(--ink); margin-top: 66px; }
+      #s5 .rule { width: 0; height: 3px; background: var(--cyan); margin-top: 18px; }
+      #s5 .meta { font: 400 24px/1 var(--mono); color: var(--muted);
+        letter-spacing: .18em; margin-top: 26px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="60"
+         data-width="1920" data-height="1080">
+
+      <div class="atmo" id="atmo-object"></div>
+      <div class="atmo" id="atmo-world"></div>
+      <div class="atmo" id="atmo-field"></div>
+      <div class="atmo" id="atmo-figure"></div>
+      <div id="dust"></div>
+
+      <!-- ── SCENE 1 · HOOK (0–9.5s) ─────────────────────────────────── -->
+      <div id="s1" class="scene clip" data-start="0" data-duration="9.5" data-track-index="1">
+        <div class="eyebrow" id="s1-eyebrow">Object · World · Field · Figure</div>
+        <h1 class="display" id="s1-title">
+          <span class="w">Four</span><span class="w">movements.</span><br />
+          <span class="w accent">One</span><span class="w accent">scroll.</span>
+        </h1>
+        <p class="cap" id="s1-sub" style="margin-top:40px">
+          The 3D / WebXR flagship &mdash; React Three Fiber &middot; one Canvas &middot; one camera rail
+        </p>
+      </div>
+
+      <!-- ── SCENE 2 · GENERATE (9.5–22s) ──────────────────────────── -->
+      <div id="s2" class="scene clip" data-start="9.5" data-duration="12.5" data-track-index="2">
+        <div style="margin-top:80px">
+          <div class="eyebrow">01 · Generate</div>
+          <h2 class="display" id="s2-title"><span class="w">Real</span><span class="w">3D,</span>
+            <span class="w accent">one</span><span class="w accent">command.</span></h2>
+          <div class="chips" id="s2-chips">
+            <div class="chip"><div class="ic">&#9998;</div><div class="nm">prompt</div>
+              <div class="sb">one sentence</div></div>
+            <div class="link"><div class="flow" id="flow1"></div></div>
+            <div class="chip"><div class="ic">&#9703;</div><div class="nm">concept image</div>
+              <div class="sb">nano-banana-2</div></div>
+            <div class="link"><div class="flow" id="flow2"></div></div>
+            <div class="chip"><div class="ic">&#9671;</div><div class="nm">3D mesh</div>
+              <div class="sb">trellis &middot; rodin</div></div>
+            <div class="link"><div class="flow" id="flow3"></div></div>
+            <div class="chip"><div class="ic">&#11041;</div><div class="nm">web-ready .glb</div>
+              <div class="sb">draco + webp &middot; ~1 MB</div></div>
+          </div>
+          <div class="card" id="s2-card">
+            <div><span class="ps">$</span> npm run generate:flagship -- --apply</div>
+            <div class="cm" id="s2-note" style="margin-top:18px"># auto-compressed &middot; auto-normalized &middot; zero code change</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SCENE 3 · THE MOVEMENTS (22–40s) ──────────────────────── -->
+      <div id="s3" class="scene clip" data-start="22" data-duration="18" data-track-index="3">
+        <div style="margin-top:60px">
+          <div class="eyebrow">02 · Scroll</div>
+          <h2 class="display" id="s3-title"><span class="w">Chapters</span>
+            <span class="w">materialize</span><span class="w accent">on</span><span class="w accent">arrival.</span></h2>
+          <div class="mv on-object" id="mv1"><span class="rn">I</span>
+            <span class="nm">The Object</span>
+            <span class="nt">a hero artifact &middot; orbiting glint &middot; AR at true scale</span></div>
+          <div class="mv on-world" id="mv2"><span class="rn">II</span>
+            <span class="nm">The World</span>
+            <span class="nt">an instanced hall &middot; volumetric shafts &middot; room-scale VR</span></div>
+          <div class="mv on-field" id="mv3"><span class="rn">III</span>
+            <span class="nm">The Field</span>
+            <span class="nt">pure GLSL &middot; zero assets &middot; the always-works hero</span></div>
+          <div class="mv on-figure" id="mv4"><span class="rn">IV</span>
+            <span class="nm">The Figure</span>
+            <span class="nt">a rigged dancer on a breathing stage ring</span></div>
+        </div>
+      </div>
+
+      <!-- ── SCENE 4 · THE DANCER (40–50s) ─────────────────────────── -->
+      <div id="s4" class="scene clip" data-start="40" data-duration="10" data-track-index="4">
+        <div id="spot"></div>
+        <h2 class="display" id="s4-title">
+          <span class="w">It</span><span class="w">dances</span><br />
+          <span class="w ember">out</span><span class="w ember">of</span>
+          <span class="w ember">the</span><span class="w ember">box.</span>
+        </h2>
+        <div class="meta" id="s4-meta">dancer.glb &middot; rigged + animated &middot; 0.8 MB &middot; root motion stripped</div>
+        <div id="ring"></div>
+      </div>
+
+      <!-- ── SCENE 5 · SHIP (50–60s) ───────────────────────────────── -->
+      <div id="s5" class="scene clip" data-start="50" data-duration="10" data-track-index="5">
+        <div class="eyebrow">03 · Ship</div>
+        <h2 class="display" id="s5-title" style="margin-top:36px">
+          <span class="w">The</span><span class="w">motion</span><span class="w">is</span>
+          <span class="w">the</span><span class="w">constant.</span><br />
+          <span class="w yours">The</span><span class="w yours">look</span>
+          <span class="w yours">is</span><span class="w yours">yours.</span>
+        </h2>
+        <div class="url" id="s5-url">github.com/MustBeSimo/cinematic-scroll-skill</div>
+        <div class="rule" id="s5-rule"></div>
+        <div class="meta" id="s5-meta">MIT &middot; Free &middot; WebXR &middot; doctor-scored 100</div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      /* Easings per FRAME.md §4 / taste-guardrails §4.1:
+         entrance ≈ power3.out · exit ≈ power3.in · chapter cut ≈ power4.inOut */
+      const E_IN = "power3.out", E_OUT = "power3.in", E_CUT = "power4.inOut";
+
+      /* ── RAIL DUST — deterministic motes (seeded pseudo-random, no
+         Math.random), drifting on finite yoyo tweens that cover the full 60s.
+         The flagship's RailDust shader, translated to DOM. ── */
+      const dustHost = document.getElementById("dust");
+      const seeded = (i, k) => {
+        const x = Math.sin(i * 127.1 + k * 311.7) * 43758.5453;
+        return x - Math.floor(x);
+      };
+      for (let i = 0; i < 64; i++) {
+        const m = document.createElement("div");
+        m.className = "mote";
+        const s = 2 + seeded(i, 1) * 4;
+        m.style.width = s + "px"; m.style.height = s + "px";
+        m.style.left = (seeded(i, 2) * 1920) + "px";
+        m.style.top = (seeded(i, 3) * 1080) + "px";
+        dustHost.appendChild(m);
+        const dur = 4 + seeded(i, 4) * 5;
+        tl.to(m, { opacity: 0.18 + seeded(i, 5) * 0.4, duration: 1.2, ease: E_IN }, seeded(i, 6) * 2);
+        tl.to(m, {
+          x: (seeded(i, 7) - 0.5) * 120, y: (seeded(i, 8) - 0.5) * 90,
+          duration: dur, ease: "sine.inOut", repeat: Math.ceil(60 / dur), yoyo: true,
+        }, 0);
+      }
+
+      /* ── SCENE 1 · HOOK — word-stagger + object atmosphere ── */
+      tl.to("#atmo-object", { opacity: 1, duration: 1.4, ease: E_CUT }, 0);
+      tl.from("#s1-eyebrow", { autoAlpha: 0, letterSpacing: "0.5em", duration: 1.1, ease: E_IN }, 0.3);
+      tl.from("#s1-title .w", { y: 44, autoAlpha: 0, stagger: 0.09, duration: 0.9, ease: E_IN }, 0.8);
+      tl.from("#s1-sub", { autoAlpha: 0, y: 18, duration: 0.8, ease: E_IN }, 2.2);
+      tl.to("#s1", { autoAlpha: 0, y: -30, duration: 0.7, ease: E_OUT }, 8.6);
+
+      /* ── SCENE 2 · GENERATE — chips light, flow runs, command lands ── */
+      tl.to("#atmo-object", { opacity: 0, duration: 1.0, ease: E_CUT }, 9.5);
+      tl.to("#atmo-world", { opacity: 1, duration: 1.2, ease: E_CUT }, 9.6);
+      tl.from("#s2 .eyebrow", { autoAlpha: 0, duration: 0.5, ease: E_IN }, 9.9);
+      tl.from("#s2-title .w", { y: 34, autoAlpha: 0, stagger: 0.08, duration: 0.8, ease: E_IN }, 10.1);
+      tl.from("#s2 .chip", { y: 30, autoAlpha: 0, stagger: 0.5, duration: 0.8, ease: E_IN }, 11.0);
+      tl.to("#flow1", { width: "100%", duration: 0.6, ease: E_CUT }, 11.7);
+      tl.to("#flow2", { width: "100%", duration: 0.6, ease: E_CUT }, 12.2);
+      tl.to("#flow3", { width: "100%", duration: 0.6, ease: E_CUT }, 12.7);
+      tl.from("#s2-card", { y: 26, autoAlpha: 0, duration: 0.9, ease: E_IN }, 13.6);
+      tl.from("#s2-note", { autoAlpha: 0, duration: 0.6, ease: E_IN }, 14.6);
+      tl.to("#s2 > div", { autoAlpha: 0, y: -30, duration: 0.7, ease: E_OUT }, 21.1);
+
+      /* ── SCENE 3 · MOVEMENTS — the index lights up row by row ── */
+      tl.to("#atmo-world", { opacity: 0, duration: 1.0, ease: E_CUT }, 22.0);
+      tl.to("#atmo-field", { opacity: 1, duration: 1.2, ease: E_CUT }, 22.1);
+      tl.from("#s3 .eyebrow", { autoAlpha: 0, duration: 0.5, ease: E_IN }, 22.4);
+      tl.from("#s3-title .w", { y: 34, autoAlpha: 0, stagger: 0.08, duration: 0.8, ease: E_IN }, 22.6);
+      ["#mv1", "#mv2", "#mv3", "#mv4"].forEach((id, i) => {
+        const at = 24.2 + i * 3.4;
+        tl.from(id, { x: 60, autoAlpha: 0, duration: 0.9, ease: E_IN }, at);
+        /* each row "arrives" — the presence-gate beat from the route itself */
+        tl.fromTo(id + " .nm", { letterSpacing: "0.14em" }, { letterSpacing: "0em", duration: 1.2, ease: E_IN }, at);
+      });
+      tl.to("#s3 > div", { autoAlpha: 0, y: -30, duration: 0.7, ease: E_OUT }, 39.1);
+
+      /* ── SCENE 4 · DANCER — ember air, spotlight, breathing ring ── */
+      tl.to("#atmo-field", { opacity: 0, duration: 1.0, ease: E_CUT }, 40.0);
+      tl.to("#atmo-figure", { opacity: 1, duration: 1.2, ease: E_CUT }, 40.1);
+      tl.to("#spot", { opacity: 1, duration: 1.4, ease: E_IN }, 40.5);
+      tl.from("#s4-title .w", { y: 44, autoAlpha: 0, stagger: 0.09, duration: 0.9, ease: E_IN }, 40.8);
+      tl.to("#ring", { opacity: 1, duration: 0.9, ease: E_IN }, 41.6);
+      tl.to("#ring", { scale: 1.06, duration: 0.85, ease: "sine.inOut", repeat: 9, yoyo: true }, 41.6);
+      tl.from("#s4-meta", { autoAlpha: 0, duration: 0.7, ease: E_IN }, 42.6);
+      tl.to("#s4, #spot, #ring", { autoAlpha: 0, duration: 0.7, ease: E_OUT }, 49.2);
+
+      /* ── SCENE 5 · SHIP — end card, ≥3s hold (FRAME.md §6) ── */
+      tl.to("#atmo-figure", { opacity: 0, duration: 1.0, ease: E_CUT }, 50.0);
+      tl.to("#atmo-object", { opacity: 0.7, duration: 1.2, ease: E_CUT }, 50.1);
+      tl.from("#s5 .eyebrow", { autoAlpha: 0, duration: 0.5, ease: E_IN }, 50.4);
+      tl.from("#s5-title .w", { y: 38, autoAlpha: 0, stagger: 0.07, duration: 0.9, ease: E_IN }, 50.6);
+      tl.from("#s5-url", { autoAlpha: 0, y: 20, duration: 0.8, ease: E_IN }, 52.7);
+      tl.to("#s5-rule", { width: 760, duration: 0.9, ease: E_CUT }, 53.1);
+      tl.from("#s5-meta", { autoAlpha: 0, duration: 0.7, ease: E_IN }, 53.7);
+      /* hold composed end card from ~54.5s → 60s */
+
+      tl.set({}, {}, 60); /* pin composition duration to exactly 60s */
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
