@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AETHER — FOUR MOVEMENTS · cinematic-scroll flagship</title>
+<meta name="description" content="The cinematic-scroll flagship demo. One scroll-driven narrative, one shared WebGL renderer, four chapters: a premium product object, an environment fly-through, a procedural GPU shader field, and an avatar figure. Vanilla Three.js, no build step, runs from file://, zero external assets, with AR quick-look and WebXR feature-detected." />
+
+<!-- Open Graph -->
+<meta property="og:title" content="AETHER — FOUR MOVEMENTS" />
+<meta property="og:description" content="The cinematic-scroll flagship: one scroll, four 3D chapters, one renderer. Vanilla Three.js, no build, AR + WebXR feature-detected." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#05060B" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Space Grotesk (display) + Archivo (UI) + JetBrains Mono (labels) -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css" />
+
+<!-- ───────────────────────────────────────────────────────────────────────
+     CRITICAL CSS (inline) — the load-bearing motion + a11y rules, inlined so
+     they hold even if styles.css is slow/blocked, and so the contract is
+     legible in one file. The full visual system lives in styles.css.
+
+     Motion contract: ONE intentional house easing curve (taste §4.1) reused
+     across the page; DOM overlays animate transform/opacity ONLY (perf budget
+     §1). Entrance vocabulary is deliberately VARIED per chapter (mask wipe,
+     word/line stagger, translate rise, scale, letter-spacing scrub) so no two
+     chapters share a single fade-in (anti-convergence §4.5).
+     ─────────────────────────────────────────────────────────────────────── -->
+<style>
+  :root{
+    /* the single intentional curve, reused as the house easing */
+    --curve-cinematic:cubic-bezier(.16,1,.3,1);
+    --curve-swing:cubic-bezier(.22,1,.36,1);
+  }
+
+  /* visible keyboard focus everywhere (a11y) — never a hidden focus ring */
+  :focus-visible{ outline:2px solid #3DE0FF; outline-offset:3px; border-radius:2px; }
+  :focus:not(:focus-visible){ outline:none; }
+
+  /* varied entrance treatments (anti-convergence §4.5) — each chapter opts into
+     a different one via a data attribute; all transform/opacity only. */
+  [data-enter="mask"] .ln .t{ transform:translate3d(0,100%,0); transition:transform .8s var(--curve-cinematic); }   /* clip-path:inset mask wipe */
+  [data-enter="stagger"] .word,
+  [data-enter="stagger"] .line{ opacity:0; transform:translate3d(0,24px,0); transition:opacity .7s var(--curve-cinematic), transform .7s var(--curve-cinematic); }
+  [data-enter="rise"] .reveal{ opacity:0; transform:translateY(26px); transition:opacity .8s var(--curve-cinematic), transform .8s var(--curve-cinematic); }
+  [data-enter="scale"] .copytext{ transform:scale(1.06); opacity:0; transition:transform .9s var(--curve-swing), opacity .9s var(--curve-cinematic); }
+  [data-enter="track"] .eyebrow{ letter-spacing:.6em; transition:letter-spacing .8s var(--curve-cinematic); }       /* letter-spacing scrub */
+
+  /* :hover is guarded so it never becomes a dead interaction on touch */
+  @media (hover:hover){
+    .masthead nav a:hover{ color:#EAF2F6; }
+  }
+
+  /* responsive breakpoint — mobile gets the reduced-layer static path */
+  @media (max-width:680px){
+    .roman{ font-size:30vw; }
+  }
+
+  /* reduced motion: no continuous animation; everything legible and still */
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; }
+    [data-enter] .ln .t,
+    [data-enter] .reveal,
+    [data-enter] .word,
+    [data-enter] .line,
+    [data-enter] .copytext,
+    [data-enter] .eyebrow{ transform:none !important; opacity:1 !important; letter-spacing:normal !important; transition:none !important; }
+  }
+</style>
+
+<!-- ───────────────────────────────────────────────────────────────────────
+     3D STACK · PINNED VERSIONS (references/3d-stack.md §2)
+     three is loaded via an import map so `import 'three'` and
+     'three/addons/...' resolve to ONE pinned CDN version. The URL is the
+     lockfile. No bundler, no npm install, runs from file://.
+     ─────────────────────────────────────────────────────────────────────── -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<!-- @google/model-viewer ^3.5 — self-registering web component for AR quick-look
+     on phones (ARKit Quick Look on iOS, Scene Viewer on Android). Deferred via
+     type=module so it never blocks first paint. -->
+<script type="module"
+  src="https://unpkg.com/@google/model-viewer@3.4.0/dist/model-viewer.min.js"></script>
+</head>
+<body>
+
+<!-- one shared WebGL stage: a single renderer + canvas for all four chapters -->
+<div id="gl-stage" aria-hidden="true"><canvas id="gl-canvas"></canvas></div>
+
+<!-- designed CSS fallback: shown if WebGL is unsupported or a context is lost,
+     so the page is NEVER a broken/black canvas (a procedural poster field). -->
+<div id="gl-fallback" aria-hidden="true"><div class="poster-grain"></div></div>
+
+<div class="atmos" id="atmos" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="scrollbar" id="scrollbar" aria-hidden="true"></div>
+
+<header class="masthead">
+  <div class="mark">
+    <b>AETHER</b>
+    <span>Studio · cinematic-scroll flagship</span>
+  </div>
+  <nav aria-label="Primary">
+    <a href="#object">Object</a>
+    <a href="#world">World</a>
+    <a href="#field">Field</a>
+    <a href="#figure">Figure</a>
+  </nav>
+</header>
+
+<nav class="rail" id="rail" aria-label="Chapters"></nav>
+
+<main id="reel"></main>
+
+<footer id="colophon">
+  <div class="vine"></div>
+  <div class="big">One choreography.<br>Four <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">movements →</a></div>
+  <div class="colophon">
+    The cinematic-scroll flagship · vanilla Three.js 0.160.0, no build step, runs from file:// ·
+    zero external assets — every chapter renders procedural geometry today and upgrades to a real
+    .glb the moment one lands in <a href="assets-3d/manifest.json">assets-3d/manifest.json</a> with
+    zero code change · AETHER is a fictional studio.
+  </div>
+</footer>
+
+<!-- ───────────────────────────────────────────────────────────────────────
+     BOOT (inline, non-module) — runs before the engine to make three hard
+     decisions that must never depend on a module CDN succeeding:
+       1. WebGL feature-detection BEFORE any renderer is constructed. If
+          unsupported, reveal the designed CSS .fallback (no broken canvas).
+       2. prefers-reduced-motion detection (matchMedia) → the engine renders a
+          single static frame and never starts a continuous loop.
+       3. devicePixelRatio clamp helper — Math.min(devicePixelRatio, 2), lower
+          on mobile — shared by the engine.
+       4. webglcontextlost / webglcontextrestored handlers wired on the shared
+          canvas: a lost GPU context shows the fallback instead of going black,
+          a restored one rebuilds and resumes.
+       5. XR + AR feature-detection: navigator.xr / isSessionSupported() resolve
+          BEFORE any Enter-VR / View-in-AR affordance is shown — never a dead
+          button. (No requestSession is ever called here; the engine owns the
+          session via three's VRButton, also gated on this result.)
+     The engine (main.js) reads window.__FLAGSHIP__ for all of the above.
+     ─────────────────────────────────────────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+  var docEl = document.documentElement;
+
+  // ── 1. WebGL feature-detect (never construct a context if absent) ──────
+  function hasWebGL() {
+    try {
+      var c = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext &&
+        (c.getContext('webgl2') || c.getContext('webgl') || c.getContext('experimental-webgl')));
+    } catch (e) { return false; }
+  }
+  var webglOK = hasWebGL();
+  if (!webglOK) docEl.classList.add('no-webgl'); // reveal the CSS poster fallback
+
+  // ── 2. reduced motion + touch ──────────────────────────────────────────
+  var reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  var reduce = reduceMQ.matches;
+  var isTouch = matchMedia('(hover: none) and (pointer: coarse)').matches;
+  var isMobile = function () { return innerWidth <= 680; };
+
+  // ── 3. devicePixelRatio clamp — <=2 desktop, <=1.5 mobile (budget §2/§3) ─
+  function pixelRatio() {
+    var cap = isMobile() ? 1.5 : 2;
+    return Math.min(window.devicePixelRatio || 1, cap);
+  }
+
+  // ── 4. context-loss handlers on the shared canvas ──────────────────────
+  var canvas = document.getElementById('gl-canvas');
+  function showFallback() { docEl.classList.add('no-webgl'); }
+  function hideFallback() { docEl.classList.remove('no-webgl'); }
+  if (canvas) {
+    canvas.addEventListener('webglcontextlost', function (e) {
+      e.preventDefault();                 // REQUIRED — without this it never restores
+      showFallback();
+      if (window.__FLAGSHIP_ENGINE__ && window.__FLAGSHIP_ENGINE__.onContextLost)
+        window.__FLAGSHIP_ENGINE__.onContextLost();
+    }, false);
+    canvas.addEventListener('webglcontextrestored', function () {
+      if (window.__FLAGSHIP_ENGINE__ && window.__FLAGSHIP_ENGINE__.onContextRestored)
+        window.__FLAGSHIP_ENGINE__.onContextRestored();
+      hideFallback();
+    }, false);
+  }
+
+  // ── 5. XR + AR feature-detection (resolve BEFORE any button is shown) ───
+  // navigator.xr may be absent (no WebXR), present-but-unsupported (no
+  // headset), or supported. isSessionSupported() is async and can reject.
+  function xrSupport() {
+    if (!('xr' in navigator) || !navigator.xr) return Promise.resolve({ vr: false, ar: false });
+    var safe = function (mode) {
+      try { return navigator.xr.isSessionSupported(mode).catch(function () { return false; }); }
+      catch (e) { return Promise.resolve(false); }
+    };
+    return Promise.all([safe('immersive-vr'), safe('immersive-ar')])
+      .then(function (r) { return { vr: r[0], ar: r[1] }; });
+  }
+
+  window.__FLAGSHIP__ = {
+    webglOK: webglOK,
+    reduce: reduce,
+    isTouch: isTouch,
+    isMobile: isMobile,
+    pixelRatio: pixelRatio,
+    xrSupport: xrSupport,
+    showFallback: showFallback,
+    hideFallback: hideFallback,
+    canvas: canvas
+  };
+})();
+</script>
+
+<!-- the engine + the four chapters. type=module so the import map resolves
+     'three' and 'three/addons/...'. If three's CDN is unreachable, the module
+     fails to import and the designed CSS fallback above already stands in. -->
+<script type="module" src="main.js"></script>
+
+</body>
+</html>

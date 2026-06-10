@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "basePath": "assets-3d/",
+  "chapters": {
+    "object": {
+      "label": "Object",
+      "runtime": "procedural",
+      "iosAr": null,
+      "fallbackPoster": "object/poster.webp",
+      "scale": 1.0,
+      "pivot": "base-center",
+      "cameraNodes": []
+    },
+    "world": {
+      "label": "World",
+      "runtime": "procedural",
+      "iosAr": null,
+      "fallbackPoster": "world/poster.webp",
+      "scale": 1.0,
+      "cameraNodes": ["Camera_Start", "Camera_Mid", "Camera_End"]
+    },
+    "field": {
+      "label": "Field",
+      "runtime": "procedural",
+      "shader": "aurora-particle-field",
+      "fallbackPoster": "field/poster.webp",
+      "scale": 1.0
+    },
+    "figure": {
+      "label": "Figure",
+      "runtime": "procedural",
+      "iosAr": null,
+      "fallbackPoster": "figure/poster.webp",
+      "scale": 1.0,
+      "animations": ["Idle", "Gesture"],
+      "cameraNodes": []
+    }
+  }
+}
