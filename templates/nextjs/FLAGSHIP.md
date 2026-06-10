@@ -56,10 +56,11 @@ npm run generate:flagship             # object + world + figure → .glb + conce
 npm run generate:flagship -- --apply  # …and patch the manifest runtime paths
 ```
 
-Two stages per chapter: a concept image (default `fal-ai/flux-2-pro` — single
-centered subject on a dark ground, the framing image-to-3D reconstructs best),
-then image→3D via fal's **queue API** (default `fal-ai/trellis`; switch with
-`--mesh-model fal-ai/hunyuan3d/v2` or a Hyper3D/Rodin id). Field is skipped —
+Two stages per chapter: a concept image (default `fal-ai/nano-banana-2` —
+reasoning-guided, strong at accurate single-object renders; switch with
+`--image-model fal-ai/flux-2-pro`), then image→3D via fal's **queue API**
+(default `fal-ai/trellis`; switch with `--mesh-model fal-ai/hunyuan3d/v2` or a
+Hyper3D/Rodin id). Field is skipped —
 its shader is the asset. Loaded models **auto-normalize** to chapter height
 with their base on the floor (`lib/normalize-model.ts`), so arbitrary generated
 scales/offsets are safe. Generated meshes are **unrigged**: the Figure chapter

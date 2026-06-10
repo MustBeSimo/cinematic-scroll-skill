@@ -2,9 +2,9 @@
 /**
  * Flagship 3D asset generator — fal.ai, two stages per chapter:
  *
- *   1. IMAGE   text → concept image (default fal-ai/flux-2-pro, synchronous)
- *              Single centered subject on a plain dark ground — the framing
- *              image-to-3D models reconstruct best.
+ *   1. IMAGE   text → concept image (default fal-ai/nano-banana-2, synchronous;
+ *              --image-model for flux/gemini). Single centered subject on a
+ *              plain dark ground — the framing image-to-3D models reconstruct best.
  *   2. MESH    image → 3D GLB (default fal-ai/trellis, via fal's QUEUE API —
  *              mesh jobs run minutes, so we submit + poll, never block on
  *              a single HTTP call).
@@ -98,7 +98,7 @@ try {
 }
 
 const FAL_KEY = env.FAL_KEY;
-const IMAGE_MODEL = flags.imageModel ?? env.FAL_IMAGE_MODEL ?? 'fal-ai/flux-2-pro';
+const IMAGE_MODEL = flags.imageModel ?? env.FAL_IMAGE_MODEL ?? 'fal-ai/nano-banana-2';
 const MESH_MODEL = flags.meshModel ?? env.FAL_MESH_MODEL ?? 'fal-ai/trellis';
 
 if (!FAL_KEY && !flags.dryRun) {
@@ -111,11 +111,13 @@ const AUTH = { Authorization: `Key ${FAL_KEY}`, 'Content-Type': 'application/jso
 // ─── stage 1: concept image (synchronous fal.run, like the chapter script) ──
 
 function buildImageInput(modelId, prompt) {
+  // nano-banana-* = Google's Gemini image family on fal (reasoning-guided —
+  // strong at accurate single-object renders, ideal input for image-to-3D).
+  if (modelId.includes('nano-banana') || modelId.startsWith('fal-ai/gemini')) {
+    return { prompt, num_images: 1, aspect_ratio: '1:1', resolution: '1K', output_format: 'png' };
+  }
   if (modelId.startsWith('fal-ai/flux')) {
     return { prompt, image_size: 'square_hd', output_format: 'jpeg', enable_safety_checker: true, safety_tolerance: '2' };
-  }
-  if (modelId.startsWith('fal-ai/gemini')) {
-    return { prompt, aspect_ratio: '1:1', output_format: 'png', resolution: '1K', num_images: 1 };
   }
   return { prompt, aspect_ratio: '1:1', num_images: 1 };
 }
@@ -242,7 +244,9 @@ async function main() {
       const imageUrl = await generateConceptImage(ch.prompt);
       console.log(`  concept image ok (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
       const img = await fetch(imageUrl).then((r) => r.arrayBuffer());
-      await writeFile(resolve(dir, 'concept.jpg'), Buffer.from(img));
+      const ext = imageUrl.split('.').pop()?.split('?')[0]?.toLowerCase() ?? 'png';
+      const safeExt = ['jpg', 'jpeg', 'png', 'webp'].includes(ext) ? ext : 'png';
+      await writeFile(resolve(dir, `concept.${safeExt}`), Buffer.from(img));
 
       const t1 = Date.now();
       const glbUrl = await generateMesh(imageUrl);
