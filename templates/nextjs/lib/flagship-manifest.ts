@@ -120,7 +120,7 @@ export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
     label: 'Object',
     runtime: 'procedural', // e.g. '/flagship/object/object.glb'
     iosAr: null, // e.g. '/flagship/object/object.usdz'
-    fallbackPoster: '/flagship/object/poster.webp',
+    fallbackPoster: '/flagship/object/poster.svg',
     scale: 1.0,
     pivot: 'base-center',
     cameraNodes: [],
@@ -129,7 +129,7 @@ export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
     label: 'World',
     runtime: 'procedural',
     iosAr: null,
-    fallbackPoster: '/flagship/world/poster.webp',
+    fallbackPoster: '/flagship/world/poster.svg',
     scale: 1.0,
     cameraNodes: ['Camera_Start', 'Camera_Mid', 'Camera_End'],
   },
@@ -138,14 +138,14 @@ export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
     runtime: 'procedural', // Field is always procedural — never a GLB
     shader: 'aurora-particle-field',
     iosAr: null,
-    fallbackPoster: '/flagship/field/poster.webp',
+    fallbackPoster: '/flagship/field/poster.svg',
     scale: 1.0,
   },
   figure: {
     label: 'Figure',
     runtime: 'procedural',
     iosAr: null,
-    fallbackPoster: '/flagship/figure/poster.webp',
+    fallbackPoster: '/flagship/figure/poster.svg',
     scale: 1.0,
     animations: ['Idle', 'Gesture'],
     cameraNodes: [],

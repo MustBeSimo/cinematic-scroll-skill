@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <!-- WORLD — static poster for the no-WebGL / reduced-motion fallback. -->
+  <defs>
+    <radialGradient id="g" cx="50%" cy="46%" r="70%">
+      <stop offset="0%" stop-color="#0e1830"/>
+      <stop offset="60%" stop-color="#080d1a"/>
+      <stop offset="100%" stop-color="#05060b"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <!-- one-point-perspective colonnade -->
+  <g stroke="#2a3650" stroke-width="2" fill="none">
+    <line x1="200" y1="120" x2="690" y2="380"/><line x1="200" y1="780" x2="690" y2="520"/>
+    <line x1="1400" y1="120" x2="910" y2="380"/><line x1="1400" y1="780" x2="910" y2="520"/>
+  </g>
+  <g fill="#161f31">
+    <rect x="280" y="180" width="34" height="540"/><rect x="1286" y="180" width="34" height="540"/>
+    <rect x="470" y="260" width="24" height="380"/><rect x="1106" y="260" width="24" height="380"/>
+    <rect x="610" y="320" width="16" height="260"/><rect x="974" y="320" width="16" height="260"/>
+  </g>
+  <!-- guide-light strips -->
+  <g fill="#3de0ff">
+    <rect x="330" y="690" width="150" height="5" opacity="0.9"/><rect x="1120" y="690" width="150" height="5" opacity="0.9"/>
+    <rect x="510" y="618" width="100" height="4" opacity="0.65"/><rect x="990" y="618" width="100" height="4" opacity="0.65"/>
+    <rect x="640" y="566" width="62" height="3" opacity="0.45"/><rect x="898" y="566" width="62" height="3" opacity="0.45"/>
+  </g>
+  <rect x="740" y="400" width="120" height="110" fill="#3de0ff" opacity="0.06"/>
+  <text x="800" y="700" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="26" letter-spacing="14" fill="#8b95ad">WORLD</text>
+  <text x="800" y="742" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="15" letter-spacing="6" fill="#525c72">II · THE FLY-THROUGH</text>
+</svg>

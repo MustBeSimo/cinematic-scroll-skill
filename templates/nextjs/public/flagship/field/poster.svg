@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <!-- FIELD — static poster for the no-WebGL / reduced-motion fallback. -->
+  <defs>
+    <radialGradient id="g" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#10204a"/>
+      <stop offset="55%" stop-color="#241546"/>
+      <stop offset="100%" stop-color="#05060b"/>
+    </radialGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3de0ff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#3de0ff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#3de0ff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <!-- flow filaments -->
+  <g fill="none" stroke="url(#b)">
+    <path d="M0,330 C 380,250 700,470 1000,380 S 1450,260 1600,320" stroke-width="3"/>
+    <path d="M0,450 C 420,380 760,560 1080,470 S 1480,380 1600,430" stroke-width="2" opacity="0.7"/>
+    <path d="M0,560 C 360,500 720,650 1040,560 S 1460,480 1600,540" stroke-width="1.5" opacity="0.45"/>
+  </g>
+  <!-- motes -->
+  <g fill="#7fe9ff">
+    <circle cx="350" cy="290" r="3" opacity="0.8"/><circle cx="980" cy="350" r="2.4" opacity="0.6"/>
+    <circle cx="1240" cy="300" r="3.4" opacity="0.7"/><circle cx="620" cy="500" r="2" opacity="0.5"/>
+    <circle cx="1420" cy="480" r="2.6" opacity="0.6"/><circle cx="180" cy="520" r="2.2" opacity="0.45"/>
+  </g>
+  <text x="800" y="700" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="26" letter-spacing="14" fill="#8b95ad">FIELD</text>
+  <text x="800" y="742" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="15" letter-spacing="6" fill="#525c72">III · THE SHADER</text>
+</svg>

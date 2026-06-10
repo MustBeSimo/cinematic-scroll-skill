@@ -31,7 +31,8 @@
     "three": "0.160.0"
   },
   "overrides": {
-    "postcss": "^8.5.15"
+    "postcss": "^8.5.15",
+    "postprocessing": "~6.38.3"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
