@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <!-- HyperFrames composition — "Scored" (the cinematic-doctor film)
+         The argument: cinematic taste is now a number you can gate on.
+         Noir/petroleum air, teal #5ED6C6 verdicts, crimson #E8484F blocks,
+         Space Grotesk + Space Mono, the §4.1 easing curves. 45s · 5 scenes
+         (8/10/12/8/7) · fully self-contained (zero asset files) ·
+         deterministic paused GSAP timeline. -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #04070a; }
+      :root {
+        --bg: #04070a; --surface: rgba(8, 16, 18, 0.82); --line: rgba(120, 150, 150, 0.22);
+        --ink: #F5F3EE; --muted: #9FB2B2;
+        --teal: #5ED6C6; --crimson: #E8484F; --gold: #C9A227; --violet: #9a6cff; --green: #7BD88F;
+        --display: "Space Grotesk", sans-serif; --mono: "Space Mono", monospace;
+      }
+      #root { position: relative; width: 1920px; height: 1080px; background: var(--bg); }
+
+      /* atmosphere layers — the air shifts teal → crimson → teal as the
+         verdicts arrive */
+      .atmo { position: absolute; inset: 0; opacity: 0; }
+      #atmo-scan  { background: radial-gradient(110% 90% at 50% 20%, #0a1a1c 0%, #04070a 65%); }
+      #atmo-score { background: radial-gradient(100% 90% at 50% 100%, #0c1f1d 0%, #04070a 60%); }
+      #atmo-gate  { background: radial-gradient(110% 90% at 50% 0%, #14090b 0%, #04070a 58%); }
+
+      /* diagnostic grid + the doctor's scanline */
+      #grid { position: absolute; inset: 0; opacity: 0;
+        background-image: linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 96px 96px; }
+      #scanline { position: absolute; left: 0; right: 0; top: -160px; height: 120px;
+        background: linear-gradient(180deg, transparent, rgba(46,122,118,0.32), transparent);
+        opacity: 0; }
+
+      .scene { position: absolute; inset: 0; padding: 96px; /* title-safe inset */ }
+
+      .eyebrow { font: 700 24px/1 var(--mono); letter-spacing: .22em;
+        text-transform: uppercase; color: var(--teal); }
+      .display { font-family: var(--display); font-weight: 700; color: var(--ink);
+        text-transform: uppercase; line-height: 0.98; letter-spacing: -0.01em; }
+      .display .w { display: inline-block; margin-right: .22em; }
+      .accent { color: var(--teal); }
+      .cap { font: 400 22px/1.5 var(--mono); color: var(--muted);
+        letter-spacing: .08em; text-transform: uppercase; }
+
+      /* SCENE 1 — HOOK */
+      #s1 { text-align: center; display: flex; flex-direction: column;
+        justify-content: center; align-items: center; }
+      #s1 .display { font-size: 168px; }
+      #s1 .eyebrow { margin-bottom: 42px; }
+      #s1-sub { margin-top: 40px; }
+
+      /* SCENE 2 — SCAN: the terminal card */
+      #s2 { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+      #term { width: 1320px; background: var(--surface); border: 1px solid var(--line);
+        padding: 52px 64px; }
+      .ln { font: 400 28px/1.9 var(--mono); color: var(--muted); }
+      .ln.cmd { font-size: 34px; color: var(--teal); }
+      .ln .ok { color: var(--teal); margin-left: 18px; }
+
+      /* SCENE 3 — SCORE: the number + category bars */
+      #s3 { display: flex; justify-content: center; align-items: center; gap: 140px; }
+      #score-num { font: 700 380px/0.9 var(--display); color: var(--ink); letter-spacing: -10px; }
+      #score-sub { font: 400 26px/1 var(--mono); color: var(--muted); letter-spacing: 8px; margin-top: 18px; text-align: center; }
+      #bars { width: 560px; }
+      .bar { margin-bottom: 34px; }
+      .bar .hd { display: flex; justify-content: space-between;
+        font: 400 24px/1 var(--mono); letter-spacing: 3px; color: var(--muted); margin-bottom: 10px; }
+      .bar .tr { height: 8px; background: rgba(120,150,150,0.14); }
+      .bar .fl { height: 100%; width: 0; }
+      #b-taste .fl { background: var(--teal); box-shadow: 0 0 16px var(--teal); }
+      #b-perf  .fl { background: var(--green); box-shadow: 0 0 16px var(--green); }
+      #b-a11y  .fl { background: var(--gold); box-shadow: 0 0 16px var(--gold); }
+      #b-mob   .fl { background: var(--violet); box-shadow: 0 0 16px var(--violet); }
+      #b-3d    .fl { background: var(--crimson); box-shadow: 0 0 16px var(--crimson); }
+      .bar .hd .v { color: var(--ink); }
+
+      /* SCENE 4 — GATE: two verdict cards */
+      #s4 { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+      #s4-eyebrow { font: 400 26px/1 var(--mono); color: var(--muted); letter-spacing: 6px; margin-bottom: 56px; }
+      #cards { display: flex; gap: 70px; }
+      .verdict { width: 540px; padding: 44px 52px; position: relative; }
+      #v-fail { border: 1px solid rgba(232,72,79,0.45); background: rgba(20,8,10,0.8); }
+      #v-pass { border: 1px solid rgba(94,214,198,0.45); background: rgba(8,18,17,0.8); }
+      .verdict .n { font: 700 120px/1 var(--display); }
+      #v-fail .n { color: var(--crimson); }
+      #v-pass .n { color: var(--teal); }
+      .verdict .why { font: 400 24px/1.5 var(--mono); color: var(--muted); letter-spacing: 2px; margin-top: 16px; }
+      .verdict .res { font: 400 28px/1 var(--mono); letter-spacing: 4px; margin-top: 26px; }
+      #v-fail .res { color: var(--crimson); }
+      #v-pass .res { color: var(--teal); }
+      #stamp { position: absolute; top: 28px; right: 30px;
+        font: 700 30px/1 var(--mono); letter-spacing: 6px; color: var(--teal);
+        border: 3px solid var(--teal); padding: 10px 22px; opacity: 0; }
+
+      /* SCENE 5 — END */
+      #s5 { text-align: center; display: flex; flex-direction: column;
+        justify-content: center; align-items: center; }
+      #s5 .display { font-size: 120px; }
+      #s5-cmd { font: 400 30px/1 var(--mono); color: var(--teal); letter-spacing: 4px; margin-top: 38px; }
+      #s5-url { font: 400 26px/1 var(--mono); color: var(--muted); letter-spacing: 2px; margin-top: 22px; }
+
+      /* film finish — grain + letterbox (FRAME.md §5) */
+      #grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+      .bar-lb { position: absolute; left: 0; right: 0; height: 44px; background: #000; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="45" data-width="1920" data-height="1080">
+      <div class="atmo" id="atmo-scan"></div>
+      <div class="atmo" id="atmo-score"></div>
+      <div class="atmo" id="atmo-gate"></div>
+      <div id="grid"></div>
+      <div id="scanline"></div>
+
+      <!-- ── SCENE 1 · HOOK (0–8s) ─────────────────────────────────── -->
+      <div id="s1" class="scene clip" data-start="0" data-duration="8" data-track-index="1">
+        <div class="eyebrow" id="s1-eyebrow">cinematic-doctor</div>
+        <h1 class="display" id="s1-title">
+          <span class="w">Taste,</span><span class="w accent">scored.</span>
+        </h1>
+        <div class="cap" id="s1-sub">Cinematic slop stops at the gate.</div>
+      </div>
+
+      <!-- ── SCENE 2 · SCAN (8–18s) ────────────────────────────────── -->
+      <div id="s2" class="scene clip" data-start="8" data-duration="10" data-track-index="2">
+        <div id="term">
+          <div class="ln cmd" id="t0">$ npm run doctor -- examples/noir/index.html</div>
+          <div class="ln" id="t1">&#9656; taste&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pinned chapters &middot; mask reveals &middot; pacing<span class="ok">&#10003;</span></div>
+          <div class="ln" id="t2">&#9656; performance transform/opacity hot paths &middot; layer budget<span class="ok">&#10003;</span></div>
+          <div class="ln" id="t3">&#9656; a11y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; prefers-reduced-motion &middot; contrast &middot; focus<span class="ok">&#10003;</span></div>
+          <div class="ln" id="t4">&#9656; mobile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; stacked layout &middot; touch targets &middot; weight<span class="ok">&#10003;</span></div>
+          <div class="ln" id="t5">&#9656; 3d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; draco budget &middot; normalize &middot; xr freeze<span class="ok">&#10003;</span></div>
+        </div>
+        <div class="cap" id="s2-cap" style="margin-top:48px">Five disciplines. One pass.</div>
+      </div>
+
+      <!-- ── SCENE 3 · SCORE (18–30s) ──────────────────────────────── -->
+      <div id="s3" class="scene clip" data-start="18" data-duration="12" data-track-index="3">
+        <div>
+          <div id="score-num">0</div>
+          <div id="score-sub">/ 100 &middot; examples/noir</div>
+        </div>
+        <div id="bars">
+          <div class="bar" id="b-taste"><div class="hd"><span>TASTE</span><span class="v">92</span></div><div class="tr"><div class="fl" data-w="92"></div></div></div>
+          <div class="bar" id="b-perf"><div class="hd"><span>PERFORMANCE</span><span class="v">88</span></div><div class="tr"><div class="fl" data-w="88"></div></div></div>
+          <div class="bar" id="b-a11y"><div class="hd"><span>ACCESSIBILITY</span><span class="v">85</span></div><div class="tr"><div class="fl" data-w="85"></div></div></div>
+          <div class="bar" id="b-mob"><div class="hd"><span>MOBILE</span><span class="v">84</span></div><div class="tr"><div class="fl" data-w="84"></div></div></div>
+          <div class="bar" id="b-3d"><div class="hd"><span>3D</span><span class="v">86</span></div><div class="tr"><div class="fl" data-w="86"></div></div></div>
+        </div>
+      </div>
+
+      <!-- ── SCENE 4 · GATE (30–38s) ───────────────────────────────── -->
+      <div id="s4" class="scene clip" data-start="30" data-duration="8" data-track-index="4">
+        <div id="s4-eyebrow">THE GATE — EXITS NON-ZERO BELOW 80</div>
+        <div id="cards">
+          <div class="verdict" id="v-fail">
+            <div class="n">64</div>
+            <div class="why">scroll-jack hero &middot; no reduced-motion &middot; 14 MB of mesh</div>
+            <div class="res">&#10005; exit 1 — build blocked</div>
+          </div>
+          <div class="verdict" id="v-pass">
+            <div class="n">87</div>
+            <div class="why">pinned chapters &middot; still-frame fallback &middot; draco'd</div>
+            <div class="res">&#10003; exit 0 — ships</div>
+            <div id="stamp">PASS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SCENE 5 · END (38–45s) ────────────────────────────────── -->
+      <div id="s5" class="scene clip" data-start="38" data-duration="7" data-track-index="5">
+        <h2 class="display" id="s5-title">
+          <span class="w">Cinematic</span><span class="w">Scroll</span>
+        </h2>
+        <div id="s5-cmd">npm run doctor -- your-page.html</div>
+        <div id="s5-url">github.com/MustBeSimo/cinematic-scroll-skill</div>
+      </div>
+
+      <div id="grain"></div>
+      <div class="bar-lb" style="top:0"></div>
+      <div class="bar-lb" style="bottom:0"></div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      /* Easings per FRAME.md §4 / taste-guardrails §4.1:
+         entrance ≈ power3.out · exit ≈ power3.in · chapter cut ≈ power4.inOut */
+      const E_IN = "power3.out", E_OUT = "power3.in", E_CUT = "power4.inOut";
+
+      /* ── the diagnostic air: grid fades up, the scanline sweeps the whole
+         film — the doctor never stops reading ── */
+      tl.to("#grid", { opacity: 0.28, duration: 1.6, ease: E_IN }, 0);
+      /* each 9s sweep fades in as it starts (fromTo restarts both props) */
+      tl.fromTo("#scanline", { top: -160, autoAlpha: 0 },
+        { top: 1240, autoAlpha: 1, duration: 9, ease: "none", repeat: 4 }, 0);
+
+      /* ── SCENE 1 · HOOK — the claim ── */
+      tl.to("#atmo-scan", { opacity: 1, duration: 1.4, ease: E_CUT }, 0);
+      tl.from("#s1-eyebrow", { autoAlpha: 0, letterSpacing: "0.5em", duration: 1.1, ease: E_IN }, 0.3);
+      tl.from("#s1-title .w", { y: 44, autoAlpha: 0, stagger: 0.12, duration: 0.9, ease: E_IN }, 0.8);
+      tl.from("#s1-sub", { autoAlpha: 0, y: 18, duration: 0.8, ease: E_IN }, 2.2);
+      tl.to("#s1", { autoAlpha: 0, y: -30, duration: 0.7, ease: E_OUT }, 7.1);
+
+      /* ── SCENE 2 · SCAN — the terminal reads the build line by line ── */
+      tl.from("#term", { y: 26, autoAlpha: 0, duration: 0.9, ease: E_IN }, 8.2);
+      ["#t1", "#t2", "#t3", "#t4", "#t5"].forEach((id, i) => {
+        const at = 9.2 + i * 1.1;
+        tl.from(id, { x: -14, autoAlpha: 0, duration: 0.55, ease: E_IN, overwrite: "auto" }, at);
+        tl.from(id + " .ok", { autoAlpha: 0, scale: 0.4, duration: 0.4, ease: E_IN, overwrite: "auto" }, at + 0.7);
+      });
+      tl.from("#s2-cap", { autoAlpha: 0, y: 16, duration: 0.7, ease: E_IN }, 15.2);
+      tl.to("#s2", { autoAlpha: 0, y: -30, duration: 0.7, ease: E_OUT }, 17.1);
+
+      /* ── SCENE 3 · SCORE — the number lands heavy, the bars fill ── */
+      tl.to("#atmo-scan", { opacity: 0, duration: 1.0, ease: E_CUT }, 18.0);
+      tl.to("#atmo-score", { opacity: 1, duration: 1.2, ease: E_CUT }, 18.1);
+      const counter = { v: 0 };
+      const numEl = document.getElementById("score-num");
+      tl.to(counter, {
+        v: 87, duration: 2.4, ease: E_IN,
+        onUpdate: () => { numEl.textContent = Math.round(counter.v); },
+      }, 18.6);
+      tl.to("#score-num", { textShadow: "0 0 90px rgba(46,122,118,0.4)", duration: 0.8, ease: E_IN }, 21.0);
+      tl.from("#score-sub", { autoAlpha: 0, duration: 0.7, ease: E_IN }, 21.4);
+      document.querySelectorAll("#bars .fl").forEach((fl, i) => {
+        const at = 19.0 + i * 0.5;
+        tl.from(fl.closest(".bar"), { autoAlpha: 0, duration: 0.4, ease: E_IN, overwrite: "auto" }, at - 0.2);
+        tl.to(fl, { width: fl.dataset.w + "%", duration: 1.2, ease: E_IN, overwrite: "auto" }, at);
+      });
+      tl.to("#s3", { autoAlpha: 0, y: -30, duration: 0.7, ease: E_OUT }, 29.1);
+
+      /* ── SCENE 4 · GATE — crimson air; one blocked, one ships ── */
+      tl.to("#atmo-score", { opacity: 0, duration: 1.0, ease: E_CUT }, 30.0);
+      tl.to("#atmo-gate", { opacity: 1, duration: 1.2, ease: E_CUT }, 30.1);
+      tl.from("#s4-eyebrow", { autoAlpha: 0, duration: 0.6, ease: E_IN }, 30.4);
+      tl.from("#v-fail", { y: 30, autoAlpha: 0, duration: 0.8, ease: E_IN }, 30.9);
+      tl.from("#v-pass", { y: 30, autoAlpha: 0, duration: 0.8, ease: E_IN }, 32.3);
+      tl.fromTo("#stamp", { rotate: -9, scale: 0, autoAlpha: 0 },
+        { rotate: -9, scale: 1, autoAlpha: 1, duration: 0.5, ease: "back.out(2.2)" }, 33.4);
+      tl.to("#s4", { autoAlpha: 0, y: -30, duration: 0.7, ease: E_OUT }, 37.1);
+
+      /* ── SCENE 5 · END — composed card, ≥3s hold (FRAME.md §6) ── */
+      tl.to("#atmo-gate", { opacity: 0, duration: 1.0, ease: E_CUT }, 38.0);
+      tl.to("#atmo-scan", { opacity: 0.7, duration: 1.2, ease: E_CUT }, 38.1);
+      tl.from("#s5-title .w", { y: 38, autoAlpha: 0, stagger: 0.1, duration: 0.9, ease: E_IN }, 38.5);
+      tl.from("#s5-cmd", { autoAlpha: 0, y: 20, duration: 0.8, ease: E_IN }, 39.6);
+      tl.from("#s5-url", { autoAlpha: 0, duration: 0.7, ease: E_IN }, 40.2);
+      /* hold composed end card from ~41s → 45s */
+
+      tl.set({}, {}, 45); /* pin composition duration to exactly 45s */
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
