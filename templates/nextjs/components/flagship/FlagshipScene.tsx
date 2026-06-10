@@ -20,7 +20,7 @@
 
 import { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, MeshReflectorMaterial, Preload, Scroll, ScrollControls, Stars, useScroll } from '@react-three/drei';
+import { Environment, MeshReflectorMaterial, Preload, Scroll, ScrollControls, Stars, useGLTF, useScroll } from '@react-three/drei';
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
 import { useXR, XR, XROrigin } from '@react-three/xr';
 import * as THREE from 'three';
@@ -37,6 +37,16 @@ import { WorldChapter } from './chapters/WorldChapter';
 import { FieldChapter } from './chapters/FieldChapter';
 import { FigureChapter } from './chapters/FigureChapter';
 import { FlagshipOverlay } from './FlagshipOverlay';
+
+// Start GLB network requests at module-eval time — before the Canvas or any
+// chapter component mounts. This is the single biggest perceived-load win:
+// by the time the WebGL context is ready the meshes are already in cache.
+(function preloadModels() {
+  const urls = Object.values(assetManifest)
+    .map((e) => e.runtime)
+    .filter((r) => r !== 'procedural');
+  urls.forEach((url) => useGLTF.preload(url));
+})();
 
 /** World-space anchor for each chapter — spaced along -Z; the camera dollies
  *  between them. Index matches `flagshipChapters` order. */
@@ -135,8 +145,10 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
         {/* Image-based lighting — "city" preset for rich speculars on the glass
             core / brushed metal (the background stays the scene color above).
             Falls back to the analytic lights below if the HDR fetch fails. */}
+        {/* resolution={128} — specular sheen only, not visible background.
+            Half the default fetch size, no perceptible quality difference. */}
         <Suspense fallback={null}>
-          <Environment preset="city" />
+          <Environment preset="city" resolution={128} />
         </Suspense>
 
         {/* Key + rim lights (stable, level — no roll, `webxr.md` §5). */}
