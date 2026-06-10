@@ -59,8 +59,13 @@ npm run generate:flagship -- --apply  # …and patch the manifest runtime paths
 Two stages per chapter: a concept image (default `fal-ai/nano-banana-2` —
 reasoning-guided, strong at accurate single-object renders; switch with
 `--image-model fal-ai/flux-2-pro`), then image→3D via fal's **queue API**
-(default `fal-ai/trellis`; switch with `--mesh-model fal-ai/hunyuan3d/v2` or a
-Hyper3D/Rodin id). Field is skipped —
+(default `fal-ai/trellis`; for high-detail hero objects prefer
+`--mesh-model fal-ai/hyper3d/rodin`, or `--mesh-model fal-ai/hunyuan3d/v2`).
+Each saved mesh is then **auto-compressed in place** (Draco geometry + WebP
+textures via `@gltf-transform/cli`), taking a 10–13 MB raw mesh down to ~1–3 MB
+with no visible quality loss — drei's `useGLTF` decodes Draco by default and
+WebP textures load natively, so it's zero code change. Pass `--no-optimize` to
+keep the raw output. Field is skipped —
 its shader is the asset. Loaded models **auto-normalize** to chapter height
 with their base on the floor (`lib/normalize-model.ts`), so arbitrary generated
 scales/offsets are safe. Generated meshes are **unrigged**: the Figure chapter

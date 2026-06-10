@@ -30,10 +30,14 @@
  *     so arbitrary generated scales/offsets are safe.
  */
 
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { argv, env, exit } from 'node:process';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
+const execFileAsync = promisify(execFile);
 
 // ─── art direction per chapter (single subject, dark ground, no text) ──────
 
@@ -79,6 +83,10 @@ const readFlag = (name) => {
 const flags = {
   dryRun: args.includes('--dry-run'),
   apply: args.includes('--apply'),
+  // Web meshes must be light: Draco geometry + WebP textures (loads with zero
+  // code change — drei's useGLTF defaults Draco on, WebP decodes natively).
+  // On by default; --no-optimize keeps the raw generator output.
+  optimize: !args.includes('--no-optimize'),
   only: (readFlag('only') ?? '').split(',').filter(Boolean),
   imageModel: readFlag('image-model'),
   meshModel: readFlag('mesh-model'),
@@ -195,6 +203,24 @@ async function generateMesh(imageUrl, { timeoutMs = 12 * 60 * 1000, pollMs = 400
   return glbUrl;
 }
 
+// ─── compress: in-place Draco geometry + WebP textures (web-ready meshes) ──
+
+async function optimizeGlb(path) {
+  const before = (await stat(path)).size;
+  try {
+    await execFileAsync('npx', [
+      '--yes', '@gltf-transform/cli', 'optimize', path, path,
+      '--compress', 'draco', '--texture-compress', 'webp',
+    ]);
+  } catch (err) {
+    // Non-fatal: ship the raw mesh, just warn it's heavy.
+    console.warn(`  optimize skipped (${err.code === 'ENOENT' ? 'npx not found' : err.message.split('\n')[0]}) — raw mesh kept`);
+    return;
+  }
+  const after = (await stat(path)).size;
+  console.log(`  optimized → ${(before / 1e6).toFixed(1)} MB → ${(after / 1e6).toFixed(1)} MB (Draco + WebP)`);
+}
+
 // ─── optional: patch lib/flagship-manifest.ts runtime strings ──────────────
 
 async function applyToManifest(ids) {
@@ -255,6 +281,7 @@ async function main() {
       const out = resolve(dir, `${ch.id}.glb`);
       await writeFile(out, Buffer.from(glb));
       console.log(`  saved → public/flagship/${ch.id}/${ch.id}.glb (${(glb.byteLength / 1e6).toFixed(1)} MB)`);
+      if (flags.optimize) await optimizeGlb(out);
       done.push(ch.id);
     } catch (err) {
       console.error(`  ERROR  ${err.message}`);
