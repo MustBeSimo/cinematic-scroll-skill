@@ -118,7 +118,7 @@ export const flagshipChapters: FlagshipChapter[] = [
 export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
   object: {
     label: 'Object',
-    runtime: 'procedural', // e.g. '/flagship/object/object.glb'
+    runtime: '/flagship/object/object.glb', // e.g. '/flagship/object/object.glb'
     iosAr: null, // e.g. '/flagship/object/object.usdz'
     fallbackPoster: '/flagship/object/poster.svg',
     scale: 1.0,
@@ -127,7 +127,7 @@ export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
   },
   world: {
     label: 'World',
-    runtime: 'procedural',
+    runtime: '/flagship/world/world.glb',
     iosAr: null,
     fallbackPoster: '/flagship/world/poster.svg',
     scale: 1.0,
@@ -143,7 +143,7 @@ export const assetManifest: Record<FlagshipChapterId, FlagshipAssetEntry> = {
   },
   figure: {
     label: 'Figure',
-    runtime: 'procedural',
+    runtime: '/flagship/figure/figure.glb',
     iosAr: null,
     fallbackPoster: '/flagship/figure/poster.svg',
     scale: 1.0,
