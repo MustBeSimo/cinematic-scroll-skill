@@ -73,7 +73,7 @@ export function WorldChapter(props: WorldChapterProps) {
 }
 
 function LoadedWorld({ anchor, modelUrl, scale }: WorldChapterProps & { modelUrl: string }) {
-  const { scene } = useGLTF(modelUrl);
+  const { scene } = useGLTF(modelUrl, '/draco/');
   const cloned = useMemo(() => {
     const c = scene.clone(true);
     normalizeToHeight(c, 4.2); // hall height the camera rail passes through

@@ -233,9 +233,9 @@ Reference film projects — both stacks, ready to render:
 | Film | Stack | Length | What it covers |
 |---|---|---|---|
 | [`video/ship-in-5/`](./video/ship-in-5/) | HyperFrames | 60s | the launch guide: install → prompt → compose → ship |
-| [`video/flagship-3d/`](./video/flagship-3d/) | HyperFrames | 60s | the 3D/WebXR flagship: four movements, the generate pipeline, the dancer — zero asset files, fully deterministic |
+| [`video/flagship-3d/`](./video/flagship-3d/) | HyperFrames | 60s | the 3D/WebXR flagship — built on **real captures of the live route** (hero frame, virtual-time scroll-through, concept→mesh, the spotlit dancer) |
 | [`video/doctor/`](./video/doctor/) | HyperFrames | 45s | **"Scored"** — the cinematic-doctor film: the scan, the 0–100 score landing, the CI gate blocking a 64 and stamping an 87 PASS |
-| `Promo` + `TwoMedia` + `Flagship3D` + `Doctor` in [`video/`](./video/) | Remotion | 24–30s each | the product promo, the "one choreography, two media" feature film, the flagship launch film (`npm run render:flagship`), and the doctor quality-gate film (`npm run render:doctor`) |
+| `Promo` + `TwoMedia` + `Flagship3D` + `Doctor` in [`video/`](./video/) | Remotion | 24–30s each | the product promo, the "one choreography, two media" feature film, the flagship launch film built on the same live captures (`npm run render:flagship`), and the doctor quality-gate film (`npm run render:doctor`) |
 
 Every HyperFrames film has a Remotion twin (and vice versa) — two renderers,
 one art direction, so you can A/B the stacks or pick per platform.

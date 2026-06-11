@@ -100,7 +100,7 @@ with a composed still frame and respects the mobile budget:
   flicker: staggered ceiling lights down the World colonnade, and a warm
   concert spotlight over the Figure.
 - **Dynamic chapter dressing** — the hero artifact levitates (`Float`) with an
-  orbiting comet glint (`Trail`) and a breathing HDR stage ring; the dancer's
+  orbiting comet glint (an exact analytic ghost-tail — smooth at any frame rate) and a breathing HDR stage ring; the dancer's
   ring pulses on a samba-ish beat; gold/cyan/ember motes per chapter.
 - **Living atmosphere** — background, fog color **and fog density** morph per
   chapter (clean air for the Object, thick for the hall, near-vacuum for the
@@ -126,3 +126,20 @@ change**. A `null` model, a 404, or no WebGL all degrade gracefully (poster / pl
   `useFrame` when the canvas is hidden.
 - XR: buttons gated on `navigator.xr` detection; scroll-camera **freezes** while presenting
   (the headset owns the camera); a visible Exit affordance is always reachable.
+
+## Hardened against the real world (found by capturing the live route headless)
+
+Running the route in a strict, network-restricted headless Chromium surfaced
+five production bugs — all fixed:
+
+| Bug | Symptom | Fix |
+|---|---|---|
+| Cross-stage shader precision | `uVel`/`uTime` declared `highp` in vertex (default) but `mediump` in fragment — **program validation fails** on strict ANGLE/SwiftShader and some Android drivers | removed the manual `precision mediump float;` overrides; three injects matching `highp` into both stages of a `ShaderMaterial` |
+| CDN Draco decoder | `useGLTF` pulled the decoder from `gstatic.com` at runtime — every GLB fails offline/intranet/blocked-CDN | decoder self-hosted at `public/draco/`, all `useGLTF(url, '/draco/')` |
+| CDN HDR environment | `<Environment preset="city">` silently fetched `potsdamer_platz_1k.hdr` from a third-party CDN and **crashed the scene** when unreachable | procedural `<Lightformer>` studio in the route's palette — zero network |
+| Float overshoot at rail end | `dwellEase` could return `1 + 1ulp`; `CatmullRomCurve3.getPointAt(t > 1)` indexes past its points array — **hard crash on the final chapter** | output clamped |
+| Frame-rate-dependent damping | camera/FOV/parallax lerped by a per-frame factor — transit runs 2× faster at 120 Hz, never converges under load | time-based damping (`1 − e^(−k·Δt)`) everywhere |
+
+The comet glint was also rebuilt from drei's `<Trail>` (per-frame sampling →
+jagged web under load) to an exact ghost-tail evaluated analytically — smooth
+at any frame rate.

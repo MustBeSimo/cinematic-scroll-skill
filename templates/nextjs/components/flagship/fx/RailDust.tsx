@@ -50,7 +50,6 @@ const DustMaterial = shaderMaterial(
   `,
   // fragment — soft disc, steel→cyan with the twinkle, brighter under travel
   /* glsl */ `
-    precision mediump float;
     uniform float uVel;
     varying float vTwinkle;
     varying float vFade;

@@ -20,7 +20,7 @@
 
 import { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, MeshReflectorMaterial, Preload, Scroll, ScrollControls, Stars, useGLTF, useScroll } from '@react-three/drei';
+import { Environment, Lightformer, MeshReflectorMaterial, Preload, Scroll, ScrollControls, Stars, useGLTF, useScroll } from '@react-three/drei';
 import { Bloom, ChromaticAberration, EffectComposer, Noise, Vignette } from '@react-three/postprocessing';
 import { useXR, XR, XROrigin } from '@react-three/xr';
 import * as THREE from 'three';
@@ -48,7 +48,7 @@ import { FlagshipOverlay } from './FlagshipOverlay';
   const urls = Object.values(assetManifest)
     .map((e) => e.runtime)
     .filter((r) => r !== 'procedural');
-  urls.forEach((url) => useGLTF.preload(url));
+  urls.forEach((url) => useGLTF.preload(url, '/draco/'));
 })();
 
 /** World-space anchor for each chapter — spaced along -Z; the camera dollies
@@ -77,7 +77,10 @@ function dwellEase(t: number): number {
   const segs = flagshipChapters.length - 1;
   const seg = THREE.MathUtils.clamp(t, 0, 1) * segs;
   const i = Math.min(Math.floor(seg), segs - 1);
-  return (i + smootherstep(seg - i)) / segs;
+  // Clamp: the smootherstep polynomial can overshoot 1.0 by a float ulp at the
+  // rail's end, and CatmullRomCurve3.getPointAt(t > 1) indexes past its points
+  // array — a hard crash on the final chapter.
+  return Math.min((i + smootherstep(seg - i)) / segs, 1);
 }
 
 /**
@@ -167,14 +170,20 @@ export function FlagshipScene({ animate, mobile }: FlagshipSceneProps) {
         <color attach="background" args={['#05060b']} />
         <fogExp2 attach="fog" args={['#05060b', mobile ? 0.018 : 0.014]} />
 
-        {/* Image-based lighting — "city" preset for rich speculars on the glass
-            core / brushed metal (the background stays the scene color above).
-            Falls back to the analytic lights below if the HDR fetch fails. */}
-        {/* resolution={128} — specular sheen only, not visible background.
-            Half the default fetch size, no perceptible quality difference. */}
-        <Suspense fallback={null}>
-          <Environment preset="city" resolution={128} />
-        </Suspense>
+        {/* Image-based lighting — a procedural Lightformer studio instead of an
+            HDR preset: the "city" preset silently fetches potsdamer_platz_1k.hdr
+            from a third-party CDN at runtime and CRASHES the scene when it's
+            unreachable (offline, intranet, blocked CDN). Three rect formers in
+            the art direction's palette give the glass core / brushed metal its
+            speculars with zero network dependency. */}
+        <Environment resolution={128} frames={1}>
+          {/* cool overhead strip — the main broad specular */}
+          <Lightformer form="rect" intensity={2.4} color="#cfe8ee" position={[0, 6, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={[14, 6, 1]} />
+          {/* cyan side fill — picks out chapter-accent rims */}
+          <Lightformer form="rect" intensity={1.1} color="#3de0ff" position={[-7, 1.5, -2]} rotation={[0, Math.PI / 2, 0]} scale={[8, 3, 1]} />
+          {/* warm ember kicker opposite — the figure chapter's air */}
+          <Lightformer form="rect" intensity={0.8} color="#ffb270" position={[7, 1, -6]} rotation={[0, -Math.PI / 2, 0]} scale={[6, 2.5, 1]} />
+        </Environment>
 
         {/* Key + rim lights (stable, level — no roll, `webxr.md` §5). */}
         <ambientLight intensity={0.35} />
@@ -275,7 +284,10 @@ function ScrollCameraRig({ animate, mobile }: { animate: boolean; mobile: boolea
 
     const target = animate ? scroll.offset : 0.5 / FLAGSHIP_PAGES; // still: frame ch.1
     const prev = current.current;
-    current.current = lerp(current.current, target, animate ? 0.08 : 1);
+    // Time-based damping (~0.21s time constant), NOT a per-frame factor: a
+    // per-frame lerp makes transit speed scale with refresh rate (2x faster on
+    // 120 Hz, half-speed at 30 fps) and never converges under heavy load.
+    current.current = lerp(current.current, target, animate ? 1 - Math.exp(-4.8 * delta) : 1);
     // Dwell-and-travel: settle at each chapter, ease through the transit.
     const t = dwellEase(current.current);
 
@@ -286,7 +298,7 @@ function ScrollCameraRig({ animate, mobile }: { animate: boolean; mobile: boolea
       0,
       1,
     );
-    railVelocity.current = lerp(railVelocity.current, animate ? rawVel : 0, 0.06);
+    railVelocity.current = lerp(railVelocity.current, animate ? rawVel : 0, 1 - Math.exp(-3.6 * delta));
 
     path.getPointAt(t, camPos);
     camera.position.copy(camPos);
@@ -303,8 +315,9 @@ function ScrollCameraRig({ animate, mobile }: { animate: boolean; mobile: boolea
     // lets the viewer peek around the chapter. lookAt() below re-aims at the
     // anchor, so the subject stays framed; only the viewpoint slides.
     if (!mobile && animate) {
-      parallax.current.x = lerp(parallax.current.x, pointer.x, 0.04);
-      parallax.current.y = lerp(parallax.current.y, pointer.y, 0.04);
+      const pk = 1 - Math.exp(-2.4 * delta);
+      parallax.current.x = lerp(parallax.current.x, pointer.x, pk);
+      parallax.current.y = lerp(parallax.current.y, pointer.y, pk);
       camera.position.x += parallax.current.x * 0.35;
       camera.position.y += parallax.current.y * 0.18;
     }
@@ -321,7 +334,7 @@ function ScrollCameraRig({ animate, mobile }: { animate: boolean; mobile: boolea
     const cam = camera as THREE.PerspectiveCamera;
     const fovTarget = 45 + railVelocity.current * 7;
     if (Math.abs(cam.fov - fovTarget) > 0.01) {
-      cam.fov = lerp(cam.fov, fovTarget, 0.08);
+      cam.fov = lerp(cam.fov, fovTarget, 1 - Math.exp(-4.8 * delta));
       cam.updateProjectionMatrix();
     }
   });
