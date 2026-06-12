@@ -120,7 +120,7 @@ Paths vary by client — see [`COMPATIBILITY.md`](./COMPATIBILITY.md) for step-b
 - **Claude Desktop** — Settings → Capabilities → Skills → Upload
 - **Cursor** — drop into `.cursor/skills/` (or `npx cinematic-scroll-skill --dir .cursor/skills`)
 - **Hermes Agent** — `git clone` to `~/.hermes/skills/`
-- **OpenClaw** — `openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v2.1.0`
+- **OpenClaw** — via [ClawHub](https://clawhub.ai), the OpenClaw skill registry: `clawhub install cinematic-scroll` (or `openclaw skills install git:MustBeSimo/cinematic-scroll-skill@main`)
 
 ### Quick start
 After installing, describe what you want to build in chat — see [`examples/PROMPTS.md`](./examples/PROMPTS.md) for 20+ copy-paste examples across aesthetic worlds.
