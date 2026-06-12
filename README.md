@@ -180,7 +180,19 @@ Same engine, deliberately clashing aesthetics — five **single, build-free `ind
   </tr>
 </table>
 
-**Same motion grammar; any aesthetic.** These five show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for.
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/atelier/"><img src="assets/atelier-scroll-demo.gif" alt="Atelier Nocturne example — kinetic typography, shader-distorted imagery, magnetic cursor" width="100%"></a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/atelier/"><b>⑥ Awwwards techniques →</b></a><br>
+      <sub><b>ATELIER NOCTURNE</b> — the second-generation vocabulary, all five techniques in one build-free file: <b>shader-distorted imagery</b> (scroll-velocity ripple + RGB split + hover bulge, hand-rolled WebGL, DOM stays the source of truth), <b>kinetic typography</b> (per-char velocity skew), a <b>magnetic cursor</b>, a <b>preloader→hero handoff</b>, and <b>page-transition wipes</b> — every one reduced-motion-safe. Pattern doc: <a href="./references/awwwards-techniques.md"><code>references/awwwards-techniques.md</code></a> · <a href="./examples/atelier/">Source</a>. Doctor: <b>100/100</b>.</sub>
+    </td>
+  </tr>
+</table>
+
+**Same motion grammar; any aesthetic.** These six show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for.
 
 ### Running locally
 

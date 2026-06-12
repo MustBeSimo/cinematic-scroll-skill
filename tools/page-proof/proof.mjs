@@ -15,6 +15,12 @@
  *     --wait <ms>               settle time per shot (default 1200; use
  *                               6000+ for WebGL pages under software GL)
  *     --viewport 1440x900       viewport size
+ *     --fps                     measure scroll smoothness: drives a steady
+ *                               6s scroll on rAF and reports avg fps + the
+ *                               share of dropped frames (>34ms). DOM pages
+ *                               only — headless software-GL makes WebGL fps
+ *                               unrepresentative; measure those in a real
+ *                               browser.
  *     --browser <path>          Chromium/Chrome executable. Auto-detected from
  *                               $CHROME_PATH, Playwright/Puppeteer caches, and
  *                               common system locations.
@@ -104,10 +110,48 @@ page.on('console', (m) => { if (m.type() === 'error') push('console', m.text());
 page.on('pageerror', (e) => push('pageerror', e.message));
 page.on('requestfailed', (r) => push('request', `${r.url()} ${r.failure()?.errorText ?? ''}`));
 
+const MEASURE_FPS = args.includes('--fps');
+
 const shots = [];
+let fps = null;
 try {
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(Math.max(WAIT, 1200));
+
+  if (MEASURE_FPS) {
+    // Drive a steady real-time scroll for ~6s and sample rAF deltas — the
+    // budget says transform/opacity-only hot paths, so frames > 34ms (two
+    // missed vsyncs at 60 Hz) count as jank.
+    fps = await page.evaluate(() => new Promise((resolve) => {
+      const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      const DURATION = 6000;
+      const t0 = performance.now();
+      let last = t0;
+      const deltas = [];
+      function frame(now) {
+        deltas.push(now - last);
+        last = now;
+        const p = Math.min(1, (now - t0) / DURATION);
+        window.scrollTo(0, p * max);
+        if (p < 1) requestAnimationFrame(frame);
+        else {
+          deltas.shift(); // first delta spans setup
+          const avgMs = deltas.reduce((a, b) => a + b, 0) / Math.max(1, deltas.length);
+          const long = deltas.filter((d) => d > 34).length;
+          resolve({
+            avgFps: Math.round(1000 / avgMs),
+            frames: deltas.length,
+            droppedPct: Math.round((long / Math.max(1, deltas.length)) * 100),
+            worstMs: Math.round(Math.max(...deltas)),
+          });
+        }
+      }
+      requestAnimationFrame(frame);
+    }));
+    console.log(`fps: avg ${fps.avgFps} · dropped ${fps.droppedPct}% · worst frame ${fps.worstMs}ms (${fps.frames} frames)`);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(400);
+  }
   for (const f of SHOTS) {
     await page.evaluate((fr) => {
       const max = document.documentElement.scrollHeight - innerHeight;
@@ -126,7 +170,7 @@ await browser.close();
 
 const hard = errors.filter((e) => e.kind !== 'media');
 const verdict = hard.length === 0 ? 'CLEAN' : 'ERRORS';
-const report = { url, viewport: `${VW}x${VH}`, verdict, errors, shots };
+const report = { url, viewport: `${VW}x${VH}`, verdict, errors, shots, ...(fps ? { fps } : {}) };
 fs.writeFileSync(path.join(OUT, 'proof.json'), JSON.stringify(report, null, 2));
 
 console.log(`\npage-proof: ${verdict} — ${hard.length} runtime error(s), ${errors.length - hard.length} media advisories, ${shots.length} shot(s)`);

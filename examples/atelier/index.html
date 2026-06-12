@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ATELIER NOCTURNE — We shape light</title>
+<meta name="description" content="The cinematic-scroll Awwwards-technique example: shader-distorted imagery (scroll-velocity ripple + RGB split + hover bulge), kinetic typography, a magnetic cursor, preloader→hero choreography, and page-transition wipes — all reduced-motion-safe, in one build-free file. Fictional studio." />
+<meta name="theme-color" content="#0a0a0c" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+
+<style>
+/* ============================================================================
+   ATELIER NOCTURNE — the Awwwards-techniques example (references/
+   awwwards-techniques.md). Obsidian / ivory / one brass accent. One house
+   curve. Transform/opacity hot paths only.
+   ========================================================================== */
+:root{
+  --bg:#0a0a0c; --bg2:#101014; --ink:#ece8df; --muted:#8d897f; --brass:#c8a96a;
+  --line:rgba(236,232,223,.14);
+  --curve:cubic-bezier(.16,1,.3,1);      /* the single house easing */
+  --curve-exit:cubic-bezier(.7,0,.84,0);
+  --display:"Space Grotesk",sans-serif; --serif:"Cormorant Garamond",serif;
+  --mono:"Space Mono",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+body{background:var(--bg);color:var(--ink);font-family:var(--display);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--brass);color:var(--bg)}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:2px}
+:focus:not(:focus-visible){outline:none}
+
+/* film grain over everything (cheap, one layer) */
+.grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ── PRELOADER (technique 4: counts → wipes INTO the hero) ─────────────── */
+#loader{position:fixed;inset:0;z-index:90;background:var(--bg2);
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:clamp(20px,4vw,56px)}
+#loader .word{font:500 clamp(15px,1.6vw,21px)/1 var(--mono);letter-spacing:.34em;color:var(--muted)}
+#loader .count{font:700 clamp(64px,12vw,160px)/0.9 var(--display);letter-spacing:-.04em;color:var(--ink)}
+#loader .count em{font-style:normal;color:var(--brass)}
+html.loaded #loader{display:none}
+
+/* ── PAGE-TRANSITION COVER (technique 5) ───────────────────────────────── */
+#cover{position:fixed;inset:0;z-index:80;background:var(--brass);
+  transform:translateY(101%);pointer-events:none}
+
+/* ── CUSTOM CURSOR (technique 3) — mounted by JS on fine pointers only ─── */
+.cur-dot,.cur-ring{position:fixed;left:0;top:0;z-index:70;pointer-events:none;
+  border-radius:50%;will-change:transform}
+.cur-dot{width:6px;height:6px;background:var(--brass)}
+.cur-ring{width:38px;height:38px;opacity:.6;transition:opacity .35s var(--curve)}
+.cur-ring::before{content:'';position:absolute;inset:0;border:1px solid var(--brass);
+  border-radius:50%;transition:transform .35s var(--curve)}
+html.cur-on .cur-ring.is-active{opacity:1}
+html.cur-on .cur-ring.is-active::before{transform:scale(1.7)}
+
+/* ── MASTHEAD ──────────────────────────────────────────────────────────── */
+header.mast{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;
+  align-items:center;justify-content:space-between;
+  padding:clamp(16px,2.4vw,30px) clamp(20px,4vw,56px);
+  background:linear-gradient(to bottom,rgba(10,10,12,.85),rgba(10,10,12,0))}
+.mast b{font:700 17px/1 var(--display);letter-spacing:.08em}
+.mast b em{font-style:normal;color:var(--brass)}
+.mast nav{display:flex;gap:clamp(14px,2.4vw,30px)}
+.mast nav a{font:400 11px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;padding:8px 2px}
+@media(hover:hover){.mast nav a:hover{color:var(--ink)}}
+@media(max-width:720px){.mast nav{display:none}}
+
+/* ── HERO (technique 2: kinetic chars + letter-spacing scrub) ──────────── */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+  padding:0 clamp(20px,4vw,56px);position:relative}
+.hero .eyebrow{font:400 clamp(11px,1.1vw,13px)/1 var(--mono);letter-spacing:.5em;
+  text-transform:uppercase;color:var(--brass);margin-bottom:clamp(18px,3vw,34px)}
+.hero h1{font:700 clamp(44px,9.4vw,138px)/0.96 var(--display);letter-spacing:-.03em;
+  text-transform:uppercase;max-width:14ch}
+.hero h1 .ch{display:inline-block;will-change:transform}
+.hero h1 .it{font-family:var(--serif);font-style:italic;font-weight:400;
+  text-transform:none;color:var(--brass)}
+.hero .sub{margin-top:clamp(20px,3vw,36px);max-width:44ch;
+  font:400 clamp(15px,1.5vw,19px)/1.7 var(--serif);color:var(--muted)}
+.hero .cta-row{margin-top:clamp(26px,4vw,48px);display:flex;gap:18px;align-items:center}
+.scroll-cue{position:absolute;bottom:clamp(18px,3vw,36px);left:clamp(20px,4vw,56px);
+  font:400 10px/1 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+
+/* magnetic buttons */
+.btn{display:inline-flex;align-items:center;gap:12px;min-height:48px;
+  padding:14px 26px;border:1px solid var(--line);border-radius:999px;
+  font:700 12px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;background:transparent;
+  transition:border-color .4s var(--curve),background .4s var(--curve),color .4s var(--curve);
+  will-change:transform}
+.btn .dot{width:7px;height:7px;border-radius:50%;background:var(--brass)}
+@media(hover:hover){.btn:hover{border-color:var(--brass);background:rgba(200,169,106,.08)}}
+
+/* ── WORKS (technique 1: shader-distorted imagery) ─────────────────────── */
+.works{padding:clamp(70px,12vw,160px) clamp(20px,4vw,56px);display:grid;gap:clamp(80px,14vw,200px)}
+.work{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,60px);align-items:center}
+.work:nth-child(even){direction:rtl}
+.work>*{direction:ltr}
+.work figure{position:relative;overflow:hidden;border-radius:4px}
+.work figure img{width:100%;display:block;aspect-ratio:4/3;object-fit:cover}
+.work .meta .num{font:400 11px/1 var(--mono);letter-spacing:.3em;color:var(--brass)}
+.work .meta h2{margin-top:14px;font:700 clamp(30px,4.6vw,64px)/1.02 var(--display);
+  letter-spacing:-.02em;text-transform:uppercase}
+/* mask-wipe reveal: each title line clips up from an inset box */
+.work .meta h2 .ln{display:block;overflow:hidden}
+.work .meta h2 .ln .t{display:inline-block;will-change:transform}
+.work .meta p{margin-top:18px;max-width:38ch;font:400 clamp(14px,1.35vw,17px)/1.75 var(--serif);color:var(--muted)}
+.work .meta .tag{margin-top:20px;font:400 10px/1.9 var(--mono);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted)}
+@media(max-width:860px){.work{grid-template-columns:1fr}.work:nth-child(even){direction:ltr}}
+
+/* ── MANIFESTO (entrance variety: scale settle + tracking scrub) ───────── */
+.manifesto{min-height:80svh;display:grid;place-items:center;text-align:center;
+  padding:clamp(70px,10vw,140px) clamp(20px,4vw,56px);position:relative}
+.manifesto .kicker{font:400 11px/1 var(--mono);letter-spacing:.6em;text-transform:uppercase;
+  color:var(--brass);will-change:letter-spacing}
+.manifesto blockquote{margin-top:clamp(22px,4vw,44px);max-width:24ch;
+  font:400 clamp(30px,5.4vw,72px)/1.18 var(--serif);font-style:italic;
+  transform:scale(1.06);opacity:0;will-change:transform,opacity}
+.manifesto blockquote em{font-style:italic;color:var(--brass)}
+
+/* ── END ───────────────────────────────────────────────────────────────── */
+footer.end{padding:clamp(80px,12vw,160px) clamp(20px,4vw,56px) clamp(40px,6vw,80px);
+  border-top:1px solid var(--line);display:grid;gap:clamp(30px,5vw,60px)}
+.end h2{font:700 clamp(36px,7vw,104px)/1 var(--display);letter-spacing:-.03em;text-transform:uppercase}
+.end h2 a{color:inherit;text-decoration:none;border-bottom:3px solid var(--brass)}
+.end .cols{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;
+  font:400 11px/1.9 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.end .cols a{color:var(--muted)}
+@media(hover:hover){.end .cols a:hover{color:var(--ink)}}
+
+/* back-to-repo pill (shared affordance across all live demos) */
+.repo-home-pill{position:fixed;left:max(14px,env(safe-area-inset-left));
+  bottom:max(14px,env(safe-area-inset-bottom));z-index:65;display:inline-flex;
+  align-items:center;gap:8px;padding:9px 14px 9px 12px;border-radius:999px;
+  font:600 12px/1 var(--mono);letter-spacing:.04em;color:#fff;
+  background:rgba(10,12,16,.72);border:1px solid rgba(255,255,255,.18);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-decoration:none;
+  box-shadow:0 4px 18px rgba(0,0,0,.34);
+  transition:transform .25s var(--curve),background .25s var(--curve),border-color .25s var(--curve)}
+@media(hover:hover){.repo-home-pill:hover{transform:translateY(-2px);
+  background:rgba(10,12,16,.86);border-color:rgba(255,255,255,.34)}}
+
+/* WebGL layer sits over the figures, under the text */
+#fx{position:fixed;inset:0;z-index:5;pointer-events:none}
+.works,.hero,.manifesto,footer.end{position:relative;z-index:10}
+.work figure{z-index:1}
+
+/* ── REDUCED MOTION: the page opens composed; nothing animates ─────────── */
+@media (prefers-reduced-motion:reduce){
+  #loader{display:none}
+  #fx{display:none}
+  .cur-dot,.cur-ring{display:none}
+  .manifesto blockquote{transform:none;opacity:1}
+  *{animation:none!important;transition:none!important}
+}
+/* coarse pointers: native cursor, plain imagery (degrade matrix) */
+@media (pointer:coarse){ #fx{display:none} }
+</style>
+</head>
+<body>
+
+<!-- preloader: real readiness (fonts + first image), hard 1.6s cap -->
+<noscript>
+  <!-- No JS: the page renders fully (plain images, composed type) — hide the
+       JS-driven preloader and GL canvas so nothing covers the content. -->
+  <style>#loader,#fx,#cover{display:none!important}</style>
+</noscript>
+<div id="loader" aria-hidden="true">
+  <div class="word">ATELIER&nbsp;NOCTURNE</div>
+  <div class="count"><em id="pct">00</em></div>
+</div>
+<div id="cover" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<a class="repo-home-pill" href="https://github.com/MustBeSimo/cinematic-scroll-skill"
+   target="_blank" rel="noopener" aria-label="Back to the cinematic-scroll repository on GitHub">
+  <span aria-hidden="true">&larr;</span> cinematic-scroll
+</a>
+
+<header class="mast">
+  <b>ATELIER <em>NOCTURNE</em></b>
+  <nav aria-label="Primary">
+    <a href="#works" data-wipe>Works</a>
+    <a href="#manifesto" data-wipe>Manifesto</a>
+    <a href="#contact" data-wipe>Contact</a>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO — kinetic chars carry scroll momentum; eyebrow tracking scrubs in -->
+  <section class="hero" aria-label="Atelier Nocturne">
+    <p class="eyebrow" id="eyebrow">Independent design atelier</p>
+    <h1 id="heroTitle" aria-label="We shape light into interfaces.">
+      <span aria-hidden="true" id="heroChars">We shape <span class="it">light</span> into interfaces.</span>
+    </h1>
+    <p class="sub">Three partners, no juniors, one rule: every pixel earns its
+      place. Selected work below — slow scroll recommended.</p>
+    <div class="cta-row">
+      <a class="btn" href="#works" data-magnetic data-wipe><span class="dot"></span>Selected works</a>
+    </div>
+    <p class="scroll-cue">Scroll — 01 / 03</p>
+  </section>
+
+  <!-- WORKS — each image is a WebGL distortion plane (data-distort) -->
+  <section class="works" id="works" aria-label="Selected works">
+    <article class="work">
+      <figure>
+        <img data-distort src="img/work-chronometer.webp"
+             alt="Macro product render of a skeleton chronometer in dark steel and brass" />
+      </figure>
+      <div class="meta">
+        <p class="num">01 — Horology</p>
+        <h2><span class="ln"><span class="t">Meridian</span></span>
+            <span class="ln"><span class="t">Chronometer</span></span></h2>
+        <p>Launch film and configurator for a movement that took nine years.
+          The site holds its breath the way the watch does.</p>
+        <p class="tag">Art direction · WebGL · 2025</p>
+      </div>
+    </article>
+
+    <article class="work">
+      <figure>
+        <img data-distort src="img/work-fresco.webp"
+             alt="Renaissance fresco detail, warm ochre and umber tones" />
+      </figure>
+      <div class="meta">
+        <p class="num">02 — Patrimony</p>
+        <h2><span class="ln"><span class="t">Uffizi</span></span>
+            <span class="ln"><span class="t">Restoration</span></span></h2>
+        <p>A digital archive where the varnish comes off as you scroll —
+          five centuries, one fingertip.</p>
+        <p class="tag">Editorial system · Archive · 2024</p>
+      </div>
+    </article>
+
+    <article class="work">
+      <figure>
+        <img data-distort src="img/work-protocol.webp"
+             alt="Rain-lit neon city street, lone figure walking into teal fog" />
+      </figure>
+      <div class="meta">
+        <p class="num">03 — Entertainment</p>
+        <h2><span class="ln"><span class="t">Neon</span></span>
+            <span class="ln"><span class="t">Protocol</span></span></h2>
+        <p>Title sequence and pre-order site for the season's loudest quiet
+          game. The fog is a shader; the dread is real.</p>
+        <p class="tag">Motion identity · Launch · 2025</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- MANIFESTO — scale-settle entrance + letter-spacing scrub kicker -->
+  <section class="manifesto" id="manifesto" aria-label="Manifesto">
+    <div>
+      <p class="kicker" id="kicker">The rule of the house</p>
+      <blockquote id="quote">Restraint is the loudest thing <em>we make.</em></blockquote>
+    </div>
+  </section>
+</main>
+
+<footer class="end" id="contact">
+  <h2><a href="mailto:studio@nocturne.example" data-magnetic>studio@nocturne.example</a></h2>
+  <div class="cols">
+    <span>Paris · Tokyo · remote</span>
+    <span>Built with the <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a>
+      Agent Skill — the Awwwards-techniques example · fictional studio, no real brands</span>
+  </div>
+</footer>
+
+<script>
+/* ============================================================================
+   ATELIER NOCTURNE — all five techniques from references/awwwards-techniques.md
+   in ~300 lines. One rAF writer; every damping is time-based (1 − e^(−k·Δt)).
+   ========================================================================== */
+(function () {
+  'use strict';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const E = 'power3.out';                       // GSAP twin of the house curve
+  const damp = (k, dt) => 1 - Math.exp(-k * Math.max(dt, 1e-4));
+
+  /* ── shared velocity bus: damped, signed scroll velocity in [-1, 1] ───── */
+  const vel = { raw: 0, eased: 0 };
+  let lastY = scrollY, lastT = performance.now();
+  function readVelocity(now) {
+    const dt = Math.max((now - lastT) / 1000, 1e-4);
+    const dy = scrollY - lastY;
+    vel.raw = Math.max(-1, Math.min(1, (dy / dt) / 2800));
+    lastY = scrollY; lastT = now;
+  }
+
+  /* ── 2 · KINETIC TYPE: split hero into chars once ─────────────────────── */
+  const heroChars = [];
+  (function split() {
+    const host = document.getElementById('heroChars');
+    if (!host) return;
+    const walk = (node) => {
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          for (const c of n.textContent) {
+            if (c === ' ') { frag.append(' '); continue; }
+            const s = document.createElement('span');
+            s.className = 'ch'; s.textContent = c;
+            frag.append(s); heroChars.push(s);
+          }
+          n.replaceWith(frag);
+        } else walk(n);
+      });
+    };
+    walk(host);
+  })();
+
+  /* ── 3 · MAGNETIC CURSOR (fine pointers, motion allowed) ──────────────── */
+  let dot = null, ring = null;
+  const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
+  const dotP = { x: mouse.x, y: mouse.y }, ringP = { x: mouse.x, y: mouse.y };
+  const magnets = [];
+  if (fine && !reduce) {
+    document.documentElement.classList.add('cur-on');
+    dot = document.createElement('div'); dot.className = 'cur-dot';
+    ring = document.createElement('div'); ring.className = 'cur-ring';
+    document.body.append(dot, ring);
+    addEventListener('pointermove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+    document.querySelectorAll('[data-magnetic]').forEach((el) => magnets.push({ el, tx: 0, ty: 0 }));
+  }
+
+  /* ── 1 · SHADER-DISTORTED IMAGERY (DistortionLayer) ───────────────────── */
+  const GL = (function DistortionLayer() {
+    if (reduce || !fine) return null;                  // degrade matrix: plain <img>
+    const canvas = document.getElementById('fx');
+    const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false });
+    if (!gl) return null;
+
+    const VS = `attribute vec2 aPos; varying vec2 vUv;
+      uniform vec4 uRect; /* x,y,w,h in clip space */
+      void main(){ vUv = aPos; vec2 p = uRect.xy + aPos * uRect.zw;
+        gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0); gl_Position.y *= -1.0; }`;
+    const FS = `precision highp float; varying vec2 vUv;
+      uniform sampler2D uTex; uniform float uTime, uVel, uHover; uniform vec2 uMouse;
+      void main(){
+        vec2 uv = vUv;
+        float v = uVel;
+        /* velocity ripple — small, directional, never glitchy */
+        uv.y += sin(uv.x * 7.0 + uTime * 1.3) * 0.012 * abs(v);
+        uv.x += sin(uv.y * 9.0 - uTime * 1.1) * 0.008 * abs(v);
+        /* hover bulge toward the cursor */
+        vec2 toM = uv - uMouse; float d = length(toM);
+        uv -= normalize(toM + 1e-5) * uHover * 0.045 * smoothstep(0.5, 0.0, d);
+        /* chromatic split scales with motion */
+        float s = 0.006 * abs(v) + 0.005 * uHover;
+        float r = texture2D(uTex, uv + vec2(s, 0.0)).r;
+        vec2 gbUv = uv;
+        float g = texture2D(uTex, gbUv).g;
+        float b = texture2D(uTex, uv - vec2(s, 0.0)).b;
+        gl_FragColor = vec4(r, g, b, 1.0);
+      }`;
+    function sh(type, src) {
+      const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+      return s;
+    }
+    const prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS));
+    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+    gl.useProgram(prog);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0, 1,0, 0,1, 1,1]), gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, 'aPos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+    const U = {};
+    ['uRect','uTime','uVel','uHover','uMouse','uTex'].forEach((n) => U[n] = gl.getUniformLocation(prog, n));
+
+    const planes = [];
+    document.querySelectorAll('img[data-distort]').forEach((img) => {
+      const make = () => {
+        const tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        planes.push({ img, tex, hover: 0 });
+        img.style.visibility = 'hidden';            // DOM keeps layout + a11y
+      };
+      img.complete && img.naturalWidth ? make() : img.addEventListener('load', make, { once: true });
+    });
+
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    resize(); addEventListener('resize', resize, { passive: true });
+
+    // context loss: unhide the images — the page reads identically
+    canvas.addEventListener('webglcontextlost', (e) => {
+      e.preventDefault();
+      planes.forEach((p) => { p.img.style.visibility = 'visible'; });
+      canvas.style.display = 'none';
+    });
+
+    function draw(time, dt) {
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      for (const p of planes) {
+        const r = p.img.getBoundingClientRect();
+        if (r.bottom < -80 || r.top > innerHeight + 80) { continue; }
+        // hover proximity (cursor inside rect → 1), damped
+        const inside = mouse.x > r.left && mouse.x < r.right && mouse.y > r.top && mouse.y < r.bottom;
+        p.hover += ((inside ? 1 : 0) - p.hover) * damp(6, dt);
+        gl.bindTexture(gl.TEXTURE_2D, p.tex);
+        gl.uniform1i(U.uTex, 0);
+        gl.uniform4f(U.uRect, r.left / innerWidth, r.top / innerHeight, r.width / innerWidth, r.height / innerHeight);
+        gl.uniform1f(U.uTime, time);
+        gl.uniform1f(U.uVel, vel.eased);
+        gl.uniform1f(U.uHover, p.hover);
+        gl.uniform2f(U.uMouse, (mouse.x - r.left) / Math.max(1, r.width), (mouse.y - r.top) / Math.max(1, r.height));
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+    }
+    return { draw };
+  })();
+
+  /* ── THE ONE rAF WRITER ───────────────────────────────────────────────── */
+  let prev = performance.now();
+  function loop(now) {
+    const dt = Math.min((now - prev) / 1000, 0.05); prev = now;
+    readVelocity(now);
+    vel.eased += (vel.raw - vel.eased) * damp(4.5, dt);
+
+    // kinetic chars: skew + lift carry the scroll momentum (capped)
+    const skew = vel.eased * 6, lift = vel.eased * -10;
+    for (let i = 0; i < heroChars.length; i++) {
+      heroChars[i].style.transform =
+        `translateY(${(lift * (0.5 + (i % 5) * 0.18)).toFixed(2)}px) skewY(${skew.toFixed(2)}deg)`;
+    }
+
+    // cursor: dot tight, ring lagging — the lag is the luxury
+    if (dot) {
+      dotP.x += (mouse.x - dotP.x) * damp(28, dt);
+      dotP.y += (mouse.y - dotP.y) * damp(28, dt);
+      ringP.x += (mouse.x - ringP.x) * damp(10, dt);
+      ringP.y += (mouse.y - ringP.y) * damp(10, dt);
+      dot.style.transform = `translate(${dotP.x - 3}px,${dotP.y - 3}px)`;
+      let near = false;
+      for (const m of magnets) {
+        const r = m.el.getBoundingClientRect();
+        const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        const dx = mouse.x - cx, dy = mouse.y - cy;
+        const dist = Math.hypot(dx, dy);
+        const pull = Math.max(0, 1 - dist / 110);
+        m.tx += (dx * pull * 0.32 - m.tx) * damp(10, dt);
+        m.ty += (dy * pull * 0.32 - m.ty) * damp(10, dt);
+        m.el.style.transform = `translate(${m.tx.toFixed(2)}px,${m.ty.toFixed(2)}px)`;
+        if (pull > 0.25) near = true;
+      }
+      ring.classList.toggle('is-active', near);
+      ring.style.transform = `translate(${ringP.x - 19}px,${ringP.y - 19}px)`;
+    }
+
+    if (GL) GL.draw(now / 1000, dt);
+    requestAnimationFrame(loop);
+  }
+  if (!reduce) requestAnimationFrame(loop);
+
+  /* ── 4 · PRELOADER → HERO handoff (one continuous timeline) ───────────── */
+  const seen = sessionStorage.getItem('nocturne-loaded');
+  function heroIn(gsap) {
+    gsap.fromTo('#eyebrow', { letterSpacing: '1.1em', autoAlpha: 0 },
+      { letterSpacing: '0.5em', autoAlpha: 1, duration: 1.1, ease: E });
+    gsap.from('.hero .ch', { yPercent: 105, duration: 0.9, ease: E, stagger: 0.018, delay: 0.08 });
+    gsap.from('.hero .sub, .hero .cta-row, .scroll-cue',
+      { autoAlpha: 0, y: 22, duration: 0.9, ease: E, stagger: 0.1, delay: 0.45 });
+  }
+  function boot() {
+    const gsap = window.gsap;
+    if (!gsap) { document.documentElement.classList.add('loaded'); return; }
+    gsap.registerPlugin(window.ScrollTrigger);
+
+    if (reduce || seen) {
+      document.documentElement.classList.add('loaded');
+      if (!reduce && window.__coverEnter) {
+        // arriving through a page transition: enter via the cover, not the counter
+        gsap.fromTo('#cover', { y: 0 }, { yPercent: 101, duration: 0.7, ease: 'power3.inOut',
+          onComplete: () => gsap.set('#cover', { clearProps: 'all' }) });
+        heroIn(gsap);
+      }
+    } else {
+      // count against real readiness: fonts + the first work image, capped 1.6s
+      const pct = document.getElementById('pct');
+      const state = { n: 0 };
+      const ready = Promise.race([
+        Promise.allSettled([document.fonts.ready,
+          new Promise((res) => { const i = document.querySelector('img[data-distort]');
+            (i && !i.complete) ? i.addEventListener('load', res, { once: true }) : res(); })]),
+        new Promise((res) => setTimeout(res, 1400)),
+      ]);
+      const count = gsap.to(state, { n: 100, duration: 1.2, ease: 'power2.inOut', paused: true,
+        onUpdate: () => { pct.textContent = String(Math.round(state.n)).padStart(2, '0'); } });
+      count.play();
+      ready.then(() => {
+        count.timeScale(2.2);                       // sprint to 100 once truly ready
+        count.eventCallback('onComplete', () => {
+          const tl = gsap.timeline();
+          tl.to('#loader', { clipPath: 'inset(0 0 100% 0)', duration: 0.85, ease: 'power4.inOut' })
+            .add(() => { document.documentElement.classList.add('loaded'); sessionStorage.setItem('nocturne-loaded', '1'); }, '-=0.35')
+            .add(() => heroIn(gsap), '-=0.55');     // overlap: the seam is the craft
+        });
+      });
+    }
+
+    /* scroll reveals — VARIED per section (mask · stagger · scale · scrub) */
+    if (!reduce) {
+      document.querySelectorAll('.work').forEach((w) => {
+        gsap.from(w.querySelectorAll('h2 .t'), {
+          yPercent: 110, duration: 0.95, ease: E, stagger: 0.12,
+          scrollTrigger: { trigger: w, start: 'top 72%' } });
+        gsap.from(w.querySelectorAll('.num, p, .tag'), {
+          autoAlpha: 0, y: 18, duration: 0.8, ease: E, stagger: 0.09,
+          scrollTrigger: { trigger: w, start: 'top 70%' } });
+        gsap.from(w.querySelector('figure'), {
+          clipPath: 'inset(12% 8% 12% 8%)', autoAlpha: 0.4, duration: 1.15, ease: E,
+          scrollTrigger: { trigger: w, start: 'top 78%' } });
+      });
+      gsap.fromTo('#kicker', { letterSpacing: '1.4em', autoAlpha: 0 },
+        { letterSpacing: '0.6em', autoAlpha: 1, duration: 1.2, ease: E,
+          scrollTrigger: { trigger: '.manifesto', start: 'top 68%' } });
+      gsap.to('#quote', { scale: 1, autoAlpha: 1, duration: 1.3, ease: E,
+        scrollTrigger: { trigger: '.manifesto', start: 'top 62%' } });
+      gsap.from('.end h2, .end .cols', { autoAlpha: 0, y: 26, duration: 0.9, ease: E, stagger: 0.12,
+        scrollTrigger: { trigger: '.end', start: 'top 80%' } });
+    } else {
+      // reduced motion: everything composed, no triggers
+      document.getElementById('quote').style.cssText = 'transform:none;opacity:1';
+    }
+
+    /* ── 5 · PAGE TRANSITIONS: cover wipe on internal nav ─────────────────
+       Same-document anchors here (this is a one-pager); the same handler
+       works for real hrefs — wipe, then navigate under the cover. */
+    if (!reduce) {
+      document.querySelectorAll('a[data-wipe]').forEach((a) => {
+        a.addEventListener('click', (e) => {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+          const href = a.getAttribute('href');
+          if (!href || !href.startsWith('#')) return;     // external: never intercept
+          const target = document.querySelector(href);
+          if (!target) return;
+          e.preventDefault();
+          const tl = gsap.timeline();
+          tl.fromTo('#cover', { y: '101%', yPercent: 0 }, { y: '0%', duration: 0.45, ease: 'power3.in' })
+            .add(() => { target.scrollIntoView(); })
+            .to('#cover', { y: '-101%', duration: 0.5, ease: 'power3.out' }, '+=0.05')
+            .set('#cover', { y: '101%' });
+        });
+      });
+    }
+  }
+
+  // gsap is deferred; boot when it lands (or degrade gracefully without it)
+  if (window.gsap) boot();
+  else addEventListener('DOMContentLoaded', () => { window.gsap ? boot() : setTimeout(boot, 400); });
+})();
+</script>
+</body>
+</html>

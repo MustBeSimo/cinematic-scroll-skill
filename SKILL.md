@@ -45,6 +45,7 @@ Read this section first; read the rest as the route demands. Three rules:
 | "3D / WebGL / WebXR / 'like the flagship'" | Mode A → adapt `examples/flagship/` (vanilla three, manifest-driven GLBs, FX layer). Mode B → the `/flagship` route (`templates/nextjs/FLAGSHIP.md`). Generate real meshes: `npm run generate:flagship -- --apply` (needs `FAL_KEY`). | `references/3d-stack.md` · `ASSETS-3D.md` |
 | "a launch film / video of the site" | Compile the same choreography to video: `node compile-choreography.mjs scene.json --target video`, or author HyperFrames/Remotion directly in `video/`. | `FRAME.md` · `video/PIPELINE.md` |
 | "audit / review / improve my page" | Run the doctor first, fix what it flags, re-run. | `tools/cinematic-doctor/README.md` |
+| "Awwwards-tier / image distortion / kinetic type / custom cursor / preloader / page transitions" | The five second-generation techniques, each with its degrade contract; all five live in `examples/atelier/`. | `references/awwwards-techniques.md` |
 
 **2 · Match the gating to the ask.** The 5-phase pipeline below produces an
 artifact per phase. When the user wants the *process* (or the brief is genuinely
@@ -76,9 +77,28 @@ npm run proof -- <url-or-file>          # tools/page-proof — headless run +
 `page-proof` opens the page in headless Chromium, scrolls it, collects every
 console error / uncaught exception / failed request, and writes screenshots at
 each depth (`.page-proof/proof.json` + shots). Exit 1 means runtime errors —
-fix and re-run. LOOK at the shots before calling a build done: shader
-validation failures, dead canvases, and broken layouts are invisible to static
-checks. Needs `playwright-core` + any Chrome (`--wait 8000` for WebGL pages).
+fix and re-run. Add `--fps` on DOM pages to measure scroll smoothness (avg fps
++ dropped-frame share — the §1 transform/opacity budget, measured, not
+asserted). Needs `playwright-core` + any Chrome (`--wait 8000` for WebGL).
+
+**Then LOOK at the shots — this step is not optional.** You can read images:
+open every screenshot page-proof wrote and grade the frame like a director
+reviewing dailies, against `taste-guardrails.md`:
+
+- **Composition** — is there a clear focal point at every depth, or dead/empty
+  frames mid-scroll? (A dwell with nothing composed in view is a failed shot.)
+- **Hierarchy** — does the type read in order (eyebrow → display → body)?
+  Any title colliding with imagery or another overlay?
+- **Reveal state** — are entrance animations finished or stuck half-way
+  (clipped masks, 0-opacity text that never arrived)?
+- **Canvas truth** — for WebGL: is the scene actually rendering, or is it a
+  black/empty canvas behind healthy-looking DOM?
+- **Edges** — stretched or wrongly-cropped media, horizontal overflow,
+  elements pinned off-screen.
+
+Anything you would screenshot-and-complain-about as a user, fix and re-prove.
+A build is done when the doctor passes, proof exits 0, AND the shots would
+survive an art director's review.
 
 ---
 
