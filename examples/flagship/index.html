@@ -95,6 +95,26 @@
   crossorigin="anonymous"></script>
 </head>
 <body>
+  <!-- Persistent "back to repo" affordance — present on every live demo page. -->
+  <style>
+    .repo-home-pill{position:fixed;left:max(14px,env(safe-area-inset-left));
+      bottom:max(14px,env(safe-area-inset-bottom));z-index:9999;display:inline-flex;
+      align-items:center;gap:8px;padding:9px 14px 9px 12px;border-radius:999px;
+      font:600 12px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.04em;
+      color:#fff;background:rgba(10,12,16,.72);border:1px solid rgba(255,255,255,.18);
+      -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-decoration:none;
+      box-shadow:0 4px 18px rgba(0,0,0,.34);transition:transform .25s cubic-bezier(.22,1,.36,1),background .25s cubic-bezier(.22,1,.36,1),border-color .25s cubic-bezier(.22,1,.36,1)}
+    .repo-home-pill:hover{transform:translateY(-2px);background:rgba(10,12,16,.86);border-color:rgba(255,255,255,.34)}
+    .repo-home-pill .arw{font-size:14px;line-height:1;transition:transform .25s cubic-bezier(.22,1,.36,1)}
+    .repo-home-pill:hover .arw{transform:translateX(-3px)}
+    @media (prefers-reduced-motion:reduce){.repo-home-pill,.repo-home-pill .arw{transition:none}
+      .repo-home-pill:hover{transform:none}.repo-home-pill:hover .arw{transform:none}}
+  </style>
+  <a class="repo-home-pill" href="https://github.com/MustBeSimo/cinematic-scroll-skill"
+     target="_blank" rel="noopener"
+     aria-label="Back to the cinematic-scroll repository on GitHub">
+    <span class="arw" aria-hidden="true">&larr;</span> cinematic-scroll
+  </a>
 
 <!-- one shared WebGL stage: a single renderer + canvas for all four chapters -->
 <div id="gl-stage" aria-hidden="true"><canvas id="gl-canvas"></canvas></div>

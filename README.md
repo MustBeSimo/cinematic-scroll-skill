@@ -47,7 +47,11 @@ node tools/cinematic-doctor/cli.mjs examples/luxe/index.html   # → score + per
 npm run doctor -- examples/flagship/index.html                 # → 100
 ```
 
-The doctor **exits non-zero below 80**, so you can wire it into CI and block builds that score under the bar.
+The doctor **exits non-zero below 80**, so you can wire it into CI and block builds that score under the bar. Its runtime twin, [`tools/page-proof/`](./tools/page-proof/), opens the build in headless Chromium and returns console errors + scroll screenshots — contract *and* evidence:
+
+```bash
+npm run proof -- examples/noir/index.html
+```
 
 ### 3D / WebXR flagship
 
