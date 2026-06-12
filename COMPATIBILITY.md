@@ -9,7 +9,7 @@ This document provides documented installation paths for each platform, with evi
 | Claude Desktop | ✅ Verified | Upload skill folder | Settings → Capabilities → Skills → Upload |
 | Cursor | ✅ Verified | Drop into `.cursor/skills/` | Auto-discovery, no reload required |
 | Hermes Agent | ✅ Verified | `git clone` to `~/.hermes/skills/` | Fully compatible; tested June 1, 2026 |
-| OpenClaw | ✅ Verified | `git clone` to `~/.openclaw/workspace/skills/` | Fully compatible; tested June 1, 2026 |
+| OpenClaw | ✅ Verified | [ClawHub](https://clawhub.ai): `clawhub install cinematic-scroll` (or `git clone` to `~/.openclaw/workspace/skills/`) | Fully compatible; tested June 1, 2026 |
 | skills.sh | 🚀 Target | Registry submission | Primary distribution channel |
 
 ---
@@ -127,6 +127,39 @@ ls -la ~/.openclaw/workspace/skills/cinematic-scroll-skill/
 
 **Usage:**
 OpenClaw automatically discovers the skill from the workspace directory.
+
+#### Via ClawHub (the OpenClaw skill registry)
+
+```bash
+clawhub install cinematic-scroll
+```
+
+Browse it at [clawhub.ai](https://clawhub.ai). ClawHub keeps a version history
+per publish, so installs are auditable and pinnable.
+
+#### Publishing a new version (maintainers)
+
+ClawHub uploads the folder you point it at — publish a **lean bundle** (the
+agent contract + references + tools + templates), not the full repo with its
+GIF/video/GLB marketing assets (~hundreds of MB):
+
+```bash
+# 1. stage a clean export of the skill contract
+EXPORT=$(mktemp -d)
+git archive HEAD SKILL.md manifest.json LICENSE taste-guardrails.md FRAME.md \
+  ASSETS-3D.md MODELS.md references/ tools/ examples/PROMPTS.md \
+  compile-choreography.mjs scroll-choreography.json | tar -x -C "$EXPORT"
+
+# 2. authenticate (GitHub account ≥ 1 week old) and publish
+clawhub login
+clawhub skill publish "$EXPORT" --slug cinematic-scroll \
+  --name "Cinematic Scroll" --version <X.Y.Z>   # match manifest.json
+
+# preview what a sync would do without uploading
+clawhub sync --dry-run
+```
+
+CLI reference: [github.com/openclaw/clawhub → docs/cli.md](https://github.com/openclaw/clawhub/blob/main/docs/cli.md).
 
 **Key findings:**
 - ✅ Full repository installs correctly via git clone
