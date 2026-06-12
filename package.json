@@ -37,7 +37,8 @@
   "scripts": {
     "doctor": "node tools/cinematic-doctor/cli.mjs",
     "doctor:selftest": "node tools/cinematic-doctor/cli.mjs --selftest",
-    "prepack": "rm -rf templates/nextjs/node_modules"
+    "prepack": "rm -rf templates/nextjs/node_modules",
+    "proof": "node tools/page-proof/proof.mjs"
   },
   "keywords": [
     "claude",
@@ -66,5 +67,8 @@
   "license": "MIT",
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.60.0"
   }
 }

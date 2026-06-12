@@ -64,9 +64,21 @@ node tools/cinematic-doctor/cli.mjs <your-page>.html   # 0–100; exits non-zero
 Fix what it flags and re-run until it passes — the same gate CI enforces. The
 doctor scores taste, performance, a11y, mobile, and 3D; its findings reference
 the exact guardrail sections to read. For Mode B also run `npm run typecheck`
-and `npm run build` in the project. If a browser is available, eyeball at least
-one real render (open the page, scroll it; headless screenshots count) — the
-doctor catches contract violations, not broken pixels.
+and `npm run build` in the project.
+
+The doctor grades the static contract; pair it with the runtime half:
+
+```bash
+npm run proof -- <url-or-file>          # tools/page-proof — headless run +
+                                        # console errors + scroll screenshots
+```
+
+`page-proof` opens the page in headless Chromium, scrolls it, collects every
+console error / uncaught exception / failed request, and writes screenshots at
+each depth (`.page-proof/proof.json` + shots). Exit 1 means runtime errors —
+fix and re-run. LOOK at the shots before calling a build done: shader
+validation failures, dead canvases, and broken layouts are invisible to static
+checks. Needs `playwright-core` + any Chrome (`--wait 8000` for WebGL pages).
 
 ---
 
