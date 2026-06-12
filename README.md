@@ -53,6 +53,17 @@ The doctor **exits non-zero below 80**, so you can wire it into CI and block bui
 
 [`examples/flagship/`](./examples/flagship/) is one cinematic scroll site, four chapters, four 3D modalities (Object · World · Field · Figure) — vanilla Three.js (Mode A) plus React Three Fiber + WebXR (Mode B). The 3D stack decision tree lives in [`references/3d-stack.md`](./references/3d-stack.md) (with [`references/webxr.md`](./references/webxr.md) and asset hand-off in [`ASSETS-3D.md`](./ASSETS-3D.md)).
 
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/">
+  <img src="assets/flagship-ride.gif" alt="The full flagship ride — a scroll-driven React Three Fiber camera rail travelling through four 3D movements: the generated watch on its stage ring, the instanced hall, the GLSL field, and the spotlit dancer. Captured from the live route." width="100%">
+</a>
+
+<sub>↑ <b>Captured from the live route, not a mockup</b> — the scroll-driven camera rail riding all four movements: the fal.ai-generated chronometer on its breathing stage ring → the instanced colonnade → the pure-GLSL field → the rigged dancer under her concert spotlight. Velocity-reactive rail dust, aurora curtains, volumetric shafts, bloom.</sub>
+
+| | |
+|---|---|
+| <img src="assets/flagship-chapters.jpg" alt="The four movements — Precision in Form, Into the Hall, The Math is the Image, Meet the Figure" width="100%"> | <img src="assets/flagship-dancer.gif" alt="The rigged dancer samba-ing out of the box under a concert spotlight on the ember stage ring" width="100%"> |
+| <sub>The four movements, each with its own air — chapters materialize on arrival.</sub> | <sub>`dancer.glb` — rigged + animated, 0.8 MB, dances out of the box.</sub> |
+
 The Mode-B twin ships in the Next.js template as a route (`/flagship` — [`templates/nextjs/FLAGSHIP.md`](./templates/nextjs/FLAGSHIP.md)), and it goes well beyond the vanilla version:
 
 - **Generate real 3D assets with one command.** `npm run generate:flagship` runs a two-stage fal.ai pipeline per chapter: an art-directed concept image (`fal-ai/nano-banana-2`), then image→3D (`fal-ai/trellis` by default, `fal-ai/hyper3d/rodin` for high-detail heroes). Each mesh is **auto-compressed in place** (Draco geometry + WebP textures, ~10–13 MB raw → ~1–3 MB) and **auto-normalized** at load to chapter height with its base on the floor — arbitrary generated scales and offsets are safe, including rigged (skinned) models.
