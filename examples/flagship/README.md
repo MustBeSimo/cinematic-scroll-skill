@@ -4,7 +4,7 @@ The **flagship** demo for **cinematic-scroll** and the public proof the skill pr
 best-in-class output. One scroll-driven cinematic narrative, **one shared WebGL
 renderer / scene / canvas**, and a camera that travels between **four chapters** as you
 scroll — built in **vanilla Three.js** (Tier B/C/D of `references/3d-stack.md`) with
-**no build step, no npm install, and zero external assets**. It runs from `file://`.
+**no build step and no npm install**. It ships **real Draco-compressed meshes** — a fal.ai-generated chronometer, a colonnade hall, and a **Mixamo-rigged dancer** (samba plays out of the box, root motion stripped) — and **degrades to designed procedural geometry** when opened from `file://` or offline, so it never breaks.
 
 Visual system: **Atmospheric Sublime × Temporal Monument** — vast negative space, deep
 cobalt/violet atmosphere, a single **electric-cyan** edge-light accent, slow revelation.
@@ -46,16 +46,30 @@ stands in and the page stays whole.
 | `index.html` | Semantic landmarks, viewport, the import map + model-viewer, the **boot** script (WebGL / reduced-motion / XR feature-detection, DPR clamp, context-loss handlers), and critical CSS. |
 | `main.js` (`type=module`) | The engine and the four chapters — one renderer, the scroll-camera, all procedural placeholders, the GLSL field, and the manifest upgrade path. |
 | `styles.css` | The full visual system. |
-| `assets-3d/manifest.json` | The 3D hand-off manifest (schema in `ASSETS-3D.md`). Today every chapter is `model: null` → procedural. Fill in a real `.glb`/`.usdz` path and it loads instead — **zero code change**. |
+| `assets-3d/manifest.json` | The 3D hand-off manifest (schema in `ASSETS-3D.md`). Ships real `.glb` paths for object/world/figure (+ `height`, `spin`, `stripRootMotion`); set any back to `"procedural"` for the zero-asset path — **zero code change**. |
 
-## Runs today with ZERO 3D assets
+## Real meshes by manifest — procedural by fallback
 
-Every chapter renders **procedural geometry** (the Tier-C stand-in from
-`references/3d-stack.md` §7). The engine fetches `assets-3d/manifest.json`; for any
-chapter whose `model` path resolves and loads clean, the real GLB replaces the
-placeholder (`GLTFLoader` + `DRACOLoader`, lazy-imported only when a real model exists).
-A `null` model, a 404, or an offline `file://` open all keep the placeholder — no per-
-chapter `if`, no broken state. See `ASSETS-3D.md` for the per-chapter spec.
+The engine fetches `assets-3d/manifest.json`; for any chapter whose `runtime` path
+resolves and loads clean, the real GLB replaces the placeholder (`GLTFLoader` +
+`DRACOLoader`, lazy-imported only when a real model exists). Loaded models are
+**auto-normalized** to the manifest's `height` with a **pose-aware bounding box**
+(bind-pose boxes lie for rigged exports), their clips play through an
+`AnimationMixer`, and `stripRootMotion` keeps a Mixamo dance planted on its mark.
+A `"procedural"` runtime, a 404, or an offline `file://` open all keep the designed
+placeholder — no per-chapter `if`, no broken state. See `ASSETS-3D.md` for the spec.
+
+## The FX layer (zero assets, pure GLSL/geometry)
+
+- **Rail dust** — one `THREE.Points` cloud spanning the whole camera rail, one draw
+  call, **scroll-velocity reactive**: motes swell + brighten in transit and settle at
+  every dwell, while the lens **FOV kicks** +6° at speed. Point size is hard-capped so
+  a mote passing the lens reads as a spark, never a bokeh blob.
+- **Fake-volumetric light shafts** — open cones with beam falloff + organic flicker:
+  two cool ceiling lights raking the hall, one warm concert spotlight on the dancer.
+- **Breathing stage rings** — emissive cyan/ember rings under the object and figure.
+- All damping is **time-based** (`1 − e^(−k·Δt)`), so pacing is identical at 60 Hz,
+  120 Hz, and under load; reduced motion composes one still frame.
 
 ## Engineering contract (enforced by `cinematic-doctor`)
 

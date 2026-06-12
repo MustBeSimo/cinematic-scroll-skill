@@ -288,9 +288,13 @@ async function startEngine() {
     },
   };
 
+  // ── FX layer: rail dust + light shafts + stage rings (zero assets) ──────
+  const fx = buildFXLayer(track, anchors, scene);
+  const mixers = [];   // AnimationMixers for any rigged GLB the manifest loads
+
   // ── try to upgrade Tier-B chapters from the manifest (zero code change) ──
   // runtime:"procedural" → keep procedural. A real .glb path → load + replace.
-  upgradeFromManifest(manifest, groups, track, scene).catch(() => { /* keep placeholders */ });
+  upgradeFromManifest(manifest, groups, track, scene, mixers).catch(() => { /* keep placeholders */ });
 
   // ── XR + AR affordances — feature-detected BEFORE any button is shown ───
   await mountXRAndAR(renderer, manifest);
@@ -353,7 +357,9 @@ async function startEngine() {
     camTarget.y += 0.25 * Math.sin(t * Math.PI * 3);
 
     if (!renderer.xr.isPresenting) {
-      camera.position.lerp(camTarget, reduce ? 1 : 0.08);
+      // time-based damping (~0.2s constant) — a per-frame factor would run 2x
+      // faster at 120 Hz and never converge under load.
+      camera.position.lerp(camTarget, reduce ? 1 : 1 - Math.exp(-4.8 * Math.max(dt, 1e-4)));
       lookTarget.set(0, 1.2, camTarget.z - 6);
       camera.lookAt(lookTarget);
     }
@@ -371,6 +377,22 @@ async function startEngine() {
     const figNear = 1 - clamp(Math.abs(t - 3 / span) * span, 0, 1);
     amber.intensity = 2.4 * figNear;
     amber.position.copy(anchors[3]).add(new THREE.Vector3(2, 2.5, 2));
+
+    // rigged GLBs: advance their clips (the dancer's samba)
+    for (const mx of mixers) mx.update(dt);
+
+    // travel velocity (0 at a dwell, →1 in fast transit) feeds the FX layer
+    const rawVel = reduce ? 0 : clamp((Math.abs(target - current) / Math.max(dt, 1e-4)) * 10, 0, 1);
+    fx.update(time, dt, rawVel);
+
+    // FOV kick — the lens widens a touch at speed, settles to 46° at dwells
+    if (!renderer.xr.isPresenting && !reduce) {
+      const fovTarget = 46 + fx.velocity * 6;
+      if (Math.abs(camera.fov - fovTarget) > 0.01) {
+        camera.fov += (fovTarget - camera.fov) * (1 - Math.exp(-4.8 * Math.max(dt, 1e-4)));
+        camera.updateProjectionMatrix();
+      }
+    }
   }
 
   let loopArmed = false;
@@ -387,7 +409,7 @@ async function startEngine() {
         loopArmed = false;
         return;
       }
-      current += (target - current) * (reduce ? 1 : 0.1);
+      current += (target - current) * (reduce ? 1 : 1 - Math.exp(-5.5 * dt));
       updateScene(dt, presenting ? clamp(current, 0, 1) : current);
       renderer.render(scene, camera);
     });
@@ -694,6 +716,139 @@ function buildFigureChapter(track, anchor) {
   return { group, update };
 }
 
+/* ===========================================================================
+   FX LAYER — the journey's air (zero assets, pure GLSL/geometry).
+   • Rail dust: ONE Points cloud spanning the whole camera rail, one draw call.
+     Scroll-velocity reactive: motes swell + brighten in transit, settle at
+     every dwell — travel FEELS like travel.
+   • Light shafts: fake-volumetric open cones (vUv beam falloff + organic
+     flicker) — two ceiling lights down the hall, one warm concert spotlight
+     over the figure.
+   • Stage rings: breathing emissive rings under the object and the figure.
+   All of it answers reduced-motion with a composed still (uVel stays 0, time
+   is frozen by the renderOnce path) and the mobile tier cuts particle counts.
+   =========================================================================== */
+function buildFXLayer(track, anchors, scene) {
+  const fxGroup = new THREE.Group();
+  const mobile = BOOT.isMobile();
+
+  // ── rail dust ────────────────────────────────────────────────────────────
+  const COUNT = mobile ? 280 : 950;
+  const zNear = 8, zFar = anchors[anchors.length - 1].z - 14;
+  const pos = new Float32Array(COUNT * 3);
+  const seed = new Float32Array(COUNT);
+  for (let i = 0; i < COUNT; i++) {
+    pos[i * 3] = (Math.random() - 0.5) * 22;
+    pos[i * 3 + 1] = Math.random() * 7 - 1.2;
+    pos[i * 3 + 2] = zNear + (zFar - zNear) * Math.random();
+    seed[i] = Math.random() * Math.PI * 2;
+  }
+  const dustGeo = track(new THREE.BufferGeometry());
+  dustGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  dustGeo.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+  const dustMat = track(new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uTime: { value: 0 }, uVel: { value: 0 }, uPixelRatio: { value: BOOT.pixelRatio() } },
+    vertexShader: `
+      attribute float aSeed;
+      uniform float uTime, uVel, uPixelRatio;
+      varying float vTwinkle;
+      void main() {
+        vec3 p = position;
+        p.x += sin(uTime * 0.35 + aSeed) * 0.45;
+        p.y += sin(uTime * 0.28 + aSeed * 1.7) * 0.35;
+        vTwinkle = 0.55 + 0.45 * sin(uTime * 1.6 + aSeed * 3.1);
+        vec4 mv = modelViewMatrix * vec4(p, 1.0);
+        gl_Position = projectionMatrix * mv;
+        // perspective-scaled with a hard cap: a mote drifting right past the
+        // lens must read as a spark, never a screen-filling bokeh blob.
+        gl_PointSize = min((1.6 + 1.1 * vTwinkle) * uPixelRatio * (1.0 + uVel * 2.2) * (110.0 / max(1.0, -mv.z)), 26.0 * uPixelRatio);
+      }`,
+    fragmentShader: `
+      uniform float uVel;
+      varying float vTwinkle;
+      void main() {
+        float d = length(gl_PointCoord - 0.5);
+        float disc = smoothstep(0.5, 0.08, d);
+        vec3 tint = mix(vec3(0.55, 0.78, 0.85), vec3(0.24, 0.88, 1.0), vTwinkle);
+        gl_FragColor = vec4(tint, disc * vTwinkle * (0.26 + uVel * 0.8));
+      }`,
+  }));
+  const dust = new THREE.Points(dustGeo, dustMat);
+  dust.frustumCulled = false;
+  fxGroup.add(dust);
+
+  // ── fake-volumetric light shaft (open cone, beam falloff + flicker) ─────
+  const shaftMats = [];
+  function addShaft(apex, height, radius, color, intensity) {
+    const geo = track(new THREE.ConeGeometry(radius, height, 24, 1, true));
+    const mat = track(new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      uniforms: { uTime: { value: 0 }, uColor: { value: new THREE.Color(color) }, uIntensity: { value: intensity } },
+      vertexShader: `
+        varying vec2 vUv;
+        varying float vFres;
+        void main() {
+          vUv = uv;
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          vec3 n = normalize(normalMatrix * normal);
+          vFres = abs(dot(normalize(-mv.xyz), n));
+          gl_Position = projectionMatrix * mv;
+        }`,
+      fragmentShader: `
+        uniform float uTime, uIntensity;
+        uniform vec3 uColor;
+        varying vec2 vUv;
+        varying float vFres;
+        void main() {
+          float beam = pow(vUv.y, 1.6);                                   // bright at apex, fades down
+          float flicker = 0.86 + 0.14 * sin(uTime * 1.7 + vUv.x * 6.28);  // organic, never strobing
+          float a = beam * flicker * vFres * uIntensity;
+          gl_FragColor = vec4(uColor, a);
+        }`,
+    }));
+    const cone = new THREE.Mesh(geo, mat);
+    cone.position.set(apex.x, apex.y - height / 2, apex.z);   // geometry apex sits at `apex`
+    fxGroup.add(cone);
+    shaftMats.push(mat);
+  }
+  // two cool ceiling lights raking the hall, one warm spotlight on the figure
+  addShaft(new THREE.Vector3(anchors[1].x, 4.6, anchors[1].z - 2), 6.2, 2.2, 0x3de0ff, 0.30);
+  if (!mobile) addShaft(new THREE.Vector3(anchors[1].x, 4.6, anchors[1].z - 8), 6.2, 2.2, 0x3de0ff, 0.24);
+  addShaft(new THREE.Vector3(anchors[3].x, 4.4, anchors[3].z - 3.5), 5.6, 1.9, 0xffb270, 0.42);
+
+  // ── breathing stage rings (object cyan · figure ember) ──────────────────
+  const rings = [];
+  function addRing(center, r, color) {
+    const geo = track(new THREE.RingGeometry(r, r * 1.08, 64));
+    const mat = track(new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.6, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const ring = new THREE.Mesh(geo, mat);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.copy(center);
+    fxGroup.add(ring);
+    rings.push(ring);
+  }
+  addRing(new THREE.Vector3(anchors[0].x, -0.98, anchors[0].z - 1.5), 1.35, 0x3de0ff);
+  addRing(new THREE.Vector3(anchors[3].x, -0.98, anchors[3].z - 3.5), 1.1, 0xffb270);
+
+  scene.add(fxGroup);
+
+  let velSmoothed = 0;
+  function update(time, dt, vel) {
+    velSmoothed += (vel - velSmoothed) * (1 - Math.exp(-3.6 * Math.max(dt, 1e-4)));
+    dustMat.uniforms.uTime.value = time;
+    dustMat.uniforms.uVel.value = velSmoothed;
+    shaftMats.forEach((m) => { m.uniforms.uTime.value = time; });
+    rings.forEach((ring, i) => {
+      const pulse = 1 + Math.sin(time * (1.2 + i * 0.25)) * 0.03;
+      ring.scale.setScalar(pulse);
+      ring.material.opacity = 0.45 + 0.2 * (0.5 + 0.5 * Math.sin(time * (1.2 + i * 0.25)));
+    });
+  }
+  return { group: fxGroup, update, get velocity() { return velSmoothed; } };
+}
+
 /* ---------------------------------------------------------------------------
    ENV MAP — a tiny procedural cube so PBR metal has reflections (no asset).
    --------------------------------------------------------------------------- */
@@ -726,7 +881,45 @@ function buildEnvMap(renderer) {
    procedural. This is the "data, not code" swap: no per-chapter branches in the
    build above. The only source of runtime asset paths is the manifest.
    --------------------------------------------------------------------------- */
-async function upgradeFromManifest(manifest, groups, track, scene) {
+/* Pose-aware bounding box. `Box3.setFromObject` measures a SKINNED mesh from
+   its bind-pose geometry — for rigged exports (Mixamo) that box is a fraction
+   of a unit and lies about the real size. `computeBoundingBox()` on a
+   SkinnedMesh re-derives it from the POSED vertices, already in the root's
+   frame (do NOT re-multiply by matrixWorld — that double-counts the scale). */
+function measurePosedBox(root) {
+  const box = new THREE.Box3();
+  let sawSkinned = false;
+  root.traverse((o) => {
+    if (o.isSkinnedMesh && o.skeleton) {
+      sawSkinned = true;
+      o.computeBoundingBox();
+      if (o.boundingBox) box.union(o.boundingBox);
+    }
+  });
+  if (!sawSkinned) box.setFromObject(root);
+  return box;
+}
+
+/* Normalize an arbitrary generated/third-party model: stand `height` units
+   tall, centered on X/Z, base resting at local y = 0. Makes the manifest's
+   numbers creative choices instead of unit-conversion guesses. */
+function normalizeToHeight(root, height) {
+  root.updateWorldMatrix(true, true);
+  const box = measurePosedBox(root);
+  if (box.isEmpty()) return;
+  const size = new THREE.Vector3();
+  box.getSize(size);
+  if (size.y > 1e-6) root.scale.multiplyScalar(height / size.y);
+  root.updateWorldMatrix(true, true);
+  const scaled = measurePosedBox(root);
+  const center = new THREE.Vector3();
+  scaled.getCenter(center);
+  root.position.x -= center.x;
+  root.position.z -= center.z;
+  root.position.y -= scaled.min.y;
+}
+
+async function upgradeFromManifest(manifest, groups, track, scene, mixers) {
   if (!manifest || !manifest.chapters) return;
   const idToGroup = { object: groups[0], world: groups[1], field: groups[2], figure: groups[3] };
   const base = manifest.basePath || 'assets-3d/';
@@ -735,6 +928,8 @@ async function upgradeFromManifest(manifest, groups, track, scene) {
   for (const [id, cfg] of entries) {
     // "procedural" (or missing) → keep the procedural placeholder. Only a real
     // runtime path is loaded; a path that 404s falls back silently (catch below).
+    // From file:// the fetch fails too — the page never breaks, it just stays
+    // on the designed placeholders.
     if (!cfg || !cfg.runtime || cfg.runtime === 'procedural') continue;
     const target = idToGroup[id];
     if (!target) continue;
@@ -748,22 +943,58 @@ async function upgradeFromManifest(manifest, groups, track, scene) {
       draco.setDecoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/draco/');
       loader.setDRACOLoader(draco);
       const gltf = await loader.loadAsync(base + cfg.runtime);
+
+      // wrap in a holder so normalize/choreography never fight the file's own
+      // root transform; the holder is what the engine positions + animates.
       const real = gltf.scene;
-      const s = cfg.scale || 1;
-      real.scale.setScalar(s);
-      // place the real model where the placeholder sat, then dispose placeholder
-      real.position.copy(target.group.position);
-      // clear placeholder children + dispose
+      normalizeToHeight(real, cfg.height || 2);
+      const holder = new THREE.Group();
+      holder.add(real);
+
+      const anchor = target.group.position.clone();
+      if (id === 'object') {
+        // hero artifact: centered at the anchor, levitating (base→center shift)
+        real.position.y -= (cfg.height || 2) / 2;
+        holder.position.copy(anchor).setY(anchor.y + (cfg.lift ?? 0.4));
+      } else {
+        // world / figure: base on the floor plane the placeholders implied
+        holder.position.set(anchor.x, -1, anchor.z + (id === 'figure' ? -3.5 : 0));
+      }
+
+      // animation: play whatever clips the file carries; strip root motion so
+      // a Mixamo dance stays planted on its mark instead of drifting offstage.
+      let mixer = null;
+      if (gltf.animations && gltf.animations.length) {
+        const clips = gltf.animations.map((clip) => {
+          if (cfg.stripRootMotion) clip.tracks = clip.tracks.filter((tr) => !/hips\.position$/i.test(tr.name));
+          return clip;
+        });
+        mixer = new THREE.AnimationMixer(real);
+        const action = mixer.clipAction(clips[0]);
+        action.play();
+        if (reduce) { mixer.update(1.2); }          // reduced motion: one held pose
+        else mixers.push(mixer);
+      }
+
+      // swap: dispose placeholder, install the real model + a new update fn
       target.group.traverse((o) => {
         if (o.geometry) o.geometry.dispose();
         if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose());
       });
       scene.remove(target.group);
-      scene.add(real);
-      target.group = real;                       // future updates target the real model
+      scene.add(holder);
+      target.group = holder;
+      const baseY = holder.position.y;
+      const spin = cfg.spin || 0;
+      target.update = (time, dt, cp, near) => {
+        if (spin) holder.rotation.y += dt * spin;
+        if (id === 'object') holder.position.y = baseY + Math.sin(time * 1.1) * 0.07; // levitate
+        if (id === 'figure') holder.rotation.y = Math.sin(time * 0.4) * 0.25;         // face the room
+      };
       draco.dispose();
+      console.info(`[flagship] chapter "${id}" upgraded → ${cfg.runtime}`);
     } catch (e) {
-      // 404 / decode error → keep the procedural placeholder, no visible break
+      // 404 / decode error / file:// → keep the procedural placeholder, no visible break
       console.info(`[flagship] chapter "${id}" stays procedural (${e.message})`);
     }
   }
