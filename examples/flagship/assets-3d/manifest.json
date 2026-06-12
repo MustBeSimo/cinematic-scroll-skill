@@ -1,22 +1,24 @@
 {
-  "version": 1,
+  "version": 2,
   "basePath": "assets-3d/",
   "chapters": {
     "object": {
       "label": "Object",
-      "runtime": "procedural",
+      "runtime": "object/object.glb",
       "iosAr": null,
       "fallbackPoster": "object/poster.webp",
-      "scale": 1.0,
+      "height": 2.1,
+      "lift": 0.55,
+      "spin": 0.3,
       "pivot": "base-center",
       "cameraNodes": []
     },
     "world": {
       "label": "World",
-      "runtime": "procedural",
+      "runtime": "world/world.glb",
       "iosAr": null,
       "fallbackPoster": "world/poster.webp",
-      "scale": 1.0,
+      "height": 6.5,
       "cameraNodes": ["Camera_Start", "Camera_Mid", "Camera_End"]
     },
     "field": {
@@ -28,11 +30,12 @@
     },
     "figure": {
       "label": "Figure",
-      "runtime": "procedural",
+      "runtime": "figure/dancer.glb",
       "iosAr": null,
       "fallbackPoster": "figure/poster.webp",
-      "scale": 1.0,
-      "animations": ["Idle", "Gesture"],
+      "height": 1.85,
+      "animations": ["SambaDance"],
+      "stripRootMotion": true,
       "cameraNodes": []
     }
   }

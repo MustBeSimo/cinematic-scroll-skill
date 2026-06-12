@@ -1,7 +1,7 @@
 ---
 name: cinematic-scroll
 description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with AI-generated visuals (Mode B). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 visual systems, and a transform/opacity performance budget as built-in craft constraints.
-version: 2.2.0
+version: 2.3.0
 permissions:
   - filesystem:read     # read project files to audit and build cinematic layouts
   - filesystem:write    # create and modify HTML, CSS, TypeScript, and asset files
@@ -31,6 +31,44 @@ This is v2.0 — built on a **5-phase gated pipeline**. Every phase produces a
 reviewable artifact. The user approves each phase before the next begins.
 This replaces the v1.0 one-shot generation model with a process that
 consistently produces production-quality output.
+
+## Agent quickstart — route, act, verify
+
+Read this section first; read the rest as the route demands. Three rules:
+
+**1 · Route the request.** Match what the user asked for and go straight to work:
+
+| Request shape | Do this | Read first |
+|---|---|---|
+| "a scroll section / hero / one-pager" | **Mode A**: one self-contained `.html` (GSAP + ScrollTrigger via pinned CDN + SRI). Start from the closest `examples/*` page. | Phase 4 Mode A rules · `taste-guardrails.md` |
+| "a release site / product launch / multi-chapter story" | **Mode B**: copy `templates/nextjs/` verbatim, then art-direct. | Phase 4 Mode B rules · `templates/nextjs/README` |
+| "3D / WebGL / WebXR / 'like the flagship'" | Mode A → adapt `examples/flagship/` (vanilla three, manifest-driven GLBs, FX layer). Mode B → the `/flagship` route (`templates/nextjs/FLAGSHIP.md`). Generate real meshes: `npm run generate:flagship -- --apply` (needs `FAL_KEY`). | `references/3d-stack.md` · `ASSETS-3D.md` |
+| "a launch film / video of the site" | Compile the same choreography to video: `node compile-choreography.mjs scene.json --target video`, or author HyperFrames/Remotion directly in `video/`. | `FRAME.md` · `video/PIPELINE.md` |
+| "audit / review / improve my page" | Run the doctor first, fix what it flags, re-run. | `tools/cinematic-doctor/README.md` |
+
+**2 · Match the gating to the ask.** The 5-phase pipeline below produces an
+artifact per phase. When the user wants the *process* (or the brief is genuinely
+ambiguous), gate each phase on their approval as written. When the user asked for
+a *result* ("build me…", one-shot, CI, or another agent invoked you), run the
+phases internally without pausing, still emit the artifacts (`cinematic-audit.md`,
+`motion-storyboard.md`, `technical-spec.md`, `polish-report.md`) as the audit
+trail, and replace human gates with the verify loop below. Never block an
+autonomous run waiting for approval the user can't give.
+
+**3 · Verify before you call it done — every time.**
+
+```bash
+node tools/cinematic-doctor/cli.mjs <your-page>.html   # 0–100; exits non-zero < 80
+```
+
+Fix what it flags and re-run until it passes — the same gate CI enforces. The
+doctor scores taste, performance, a11y, mobile, and 3D; its findings reference
+the exact guardrail sections to read. For Mode B also run `npm run typecheck`
+and `npm run build` in the project. If a browser is available, eyeball at least
+one real render (open the page, scroll it; headless screenshots count) — the
+doctor catches contract violations, not broken pixels.
+
+---
 
 ## The aesthetic is the user's — the motion is yours
 
