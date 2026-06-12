@@ -31,7 +31,6 @@ const ShaftMaterial = shaderMaterial(
     }
   `,
   /* glsl */ `
-    precision mediump float;
     varying vec2 vUv;
     varying float vFres;
     uniform float uTime;

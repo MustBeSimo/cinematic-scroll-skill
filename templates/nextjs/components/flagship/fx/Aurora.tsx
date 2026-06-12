@@ -31,7 +31,6 @@ const AuroraMaterial = shaderMaterial(
     }
   `,
   /* glsl */ `
-    precision mediump float;
     varying vec2 vUv;
     uniform float uTime;
     uniform float uSeed;

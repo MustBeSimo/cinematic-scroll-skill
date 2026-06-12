@@ -99,7 +99,7 @@ export const flagshipChapters: FlagshipChapter[] = [
     roman: '04',
     eyebrow: 'Movement IV · The Figure',
     title: [{ line: 'Meet the' }, { line: 'Figure', accent: true }],
-    lede: 'A presence built from primitives, holding a gentle idle — a stand-in for a rigged avatar that drops in via the manifest with zero code change. Stand beside it in AR, or step into the same space in VR.',
+    lede: 'A rigged dancer, samba playing out of the box — planted on its stage ring, lit by a single concert spotlight. Swap in any avatar via the manifest with zero code change. Stand beside it in AR, or step into the same space in VR.',
     accent: '#ffb270',
     morph:
       'radial-gradient(120% 100% at 70% 14%, rgba(255,178,112,.10), rgba(255,178,112,0) 52%), radial-gradient(110% 90% at 24% 100%, rgba(36,21,70,.42), rgba(7,10,20,0) 60%)',

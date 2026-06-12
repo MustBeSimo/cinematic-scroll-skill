@@ -107,7 +107,7 @@ function LoadedFigure({
   clips,
 }: FigureChapterProps & { modelUrl: string }) {
   const group = useRef<THREE.Group>(null);
-  const { scene, animations } = useGLTF(modelUrl);
+  const { scene, animations } = useGLTF(modelUrl, '/draco/');
   const cloned = useMemo(() => {
     // SkeletonUtils.clone, NOT scene.clone: a plain clone of a skinned mesh
     // keeps referencing the ORIGINAL skeleton, so the figure renders at the

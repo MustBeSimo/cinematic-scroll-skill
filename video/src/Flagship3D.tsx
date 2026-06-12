@@ -2,29 +2,30 @@ import React from 'react';
 import {AbsoluteFill, Series} from 'remotion';
 import {theme} from './theme';
 import {Grain} from './components/Grain';
-import {F3DHook, F3DPipeline, F3DMovements, F3DDancer, F3DEnd} from './scenes/Flagship3DScenes';
+import {F3DHook, F3DRide, F3DGenerate, F3DDancer, F3DEnd} from './scenes/Flagship3DScenes';
 
 // FLAGSHIP-3D — 900 frames @ 30fps = 30s. The launch film for the /flagship
-// route: four movements, the one-command generate pipeline, the out-of-the-box
-// dancer. Pure motion graphics (no captures), so it renders deterministically
-// anywhere. 110 + 160 + 360 + 120 + 150 = 900.
+// route, built on REAL captures of the live page (public/flagship/): the hero
+// frame, a 9s scroll-through recorded with a deterministic virtual-time
+// camera, the fal.ai concept→mesh pair, and the spotlit dancer.
+// 120 + 270 + 180 + 150 + 180 = 900.
 export const Flagship3D: React.FC = () => {
   return (
     <AbsoluteFill style={{backgroundColor: theme.bgDeep}}>
       <Series>
-        <Series.Sequence durationInFrames={110}>
+        <Series.Sequence durationInFrames={120}>
           <F3DHook />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={160}>
-          <F3DPipeline />
+        <Series.Sequence durationInFrames={270}>
+          <F3DRide />
         </Series.Sequence>
-        <Series.Sequence durationInFrames={360}>
-          <F3DMovements />
-        </Series.Sequence>
-        <Series.Sequence durationInFrames={120}>
-          <F3DDancer />
+        <Series.Sequence durationInFrames={180}>
+          <F3DGenerate />
         </Series.Sequence>
         <Series.Sequence durationInFrames={150}>
+          <F3DDancer />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={180}>
           <F3DEnd />
         </Series.Sequence>
       </Series>

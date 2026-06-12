@@ -15,7 +15,7 @@
 
 import { Suspense, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { ContactShadows, Float, MeshTransmissionMaterial, Sparkles, Trail, useGLTF } from '@react-three/drei';
+import { ContactShadows, Float, MeshTransmissionMaterial, Sparkles, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { normalizeToHeight } from '@/lib/normalize-model';
@@ -53,8 +53,10 @@ export function ObjectChapter(props: ObjectChapterProps) {
  * and a drift of gold motes. Every element answers `animate=false` with a
  * still pose, never a blank.
  */
+const TAIL_GHOSTS = 9;
+
 function ObjectStage({ anchor, animate, scale, mobile }: ObjectChapterProps) {
-  const glint = useRef<THREE.Mesh>(null);
+  const glint = useRef<THREE.Group>(null);
   const ring = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock }) => {
@@ -62,12 +64,18 @@ function ObjectStage({ anchor, animate, scale, mobile }: ObjectChapterProps) {
     const g = glint.current;
     if (g) {
       // A tilted, eccentric orbit — reads as inspection, not a turntable.
+      // The comet + tail are EXACT path evaluations (head at angle a, each
+      // ghost at a - k·Δ), not per-frame trail samples: a sampled ribbon
+      // (drei <Trail>) turns into a jagged web whenever the frame rate dips.
       const a = t * 0.85;
-      g.position.set(
-        Math.cos(a) * 0.78 * scale,
-        (0.52 + Math.sin(a * 2.0) * 0.16) * scale,
-        Math.sin(a) * 0.66 * scale,
-      );
+      g.children.forEach((child, i) => {
+        const ga = a - i * 0.085;
+        child.position.set(
+          Math.cos(ga) * 0.78 * scale,
+          (0.52 + Math.sin(ga * 2.0) * 0.16) * scale,
+          Math.sin(ga) * 0.66 * scale,
+        );
+      });
     }
     const r = ring.current;
     if (r) {
@@ -80,6 +88,26 @@ function ObjectStage({ anchor, animate, scale, mobile }: ObjectChapterProps) {
 
   return (
     <group position={anchor}>
+      {/* Orbiting comet glint with an exact ghost tail — desktop only. */}
+      {!mobile && animate ? (
+        <group ref={glint}>
+          {Array.from({ length: TAIL_GHOSTS }, (_, i) => {
+            const fade = 1 - i / TAIL_GHOSTS;
+            return (
+              <mesh key={i} scale={0.35 + fade * 0.65}>
+                <sphereGeometry args={[0.022 * scale, 10, 10]} />
+                <meshBasicMaterial
+                  color={i === 0 ? '#ffeed4' : '#ffd9a0'}
+                  transparent
+                  opacity={i === 0 ? 1 : fade * 0.55}
+                  toneMapped={false}
+                  depthWrite={false}
+                />
+              </mesh>
+            );
+          })}
+        </group>
+      ) : null}
       {/* Breathing stage ring under the artifact — HDR emissive, blooms. */}
       <mesh ref={ring} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.014, 0]}>
         <ringGeometry args={[0.52 * scale, 0.56 * scale, 64]} />
@@ -103,15 +131,6 @@ function ObjectStage({ anchor, animate, scale, mobile }: ObjectChapterProps) {
         color="#ffd9a0"
         opacity={0.5}
       />
-      {/* Orbiting comet glint — desktop only (Trail is an extra pass). */}
-      {!mobile && animate ? (
-        <Trail width={0.5} length={5.5} color={new THREE.Color('#ffd9a0')} attenuation={(w) => w * w}>
-          <mesh ref={glint}>
-            <sphereGeometry args={[0.022 * scale, 12, 12]} />
-            <meshBasicMaterial color="#ffeed4" toneMapped={false} />
-          </mesh>
-        </Trail>
-      ) : null}
     </group>
   );
 }
@@ -125,7 +144,7 @@ function LoadedObject({
   modelUrl,
   scale,
 }: ObjectChapterProps & { modelUrl: string }) {
-  const { scene } = useGLTF(modelUrl);
+  const { scene } = useGLTF(modelUrl, '/draco/');
   const cloned = useMemo(() => {
     const c = scene.clone(true);
     normalizeToHeight(c, 1.1); // hero-artifact height above the plinth
