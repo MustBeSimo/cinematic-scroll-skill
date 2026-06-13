@@ -119,7 +119,7 @@ Also listed on **[agentskills.io](https://agentskills.io)** (search "cinematic-s
 Paths vary by client — see [`COMPATIBILITY.md`](./COMPATIBILITY.md) for step-by-step instructions:
 - **Claude Desktop** — Settings → Capabilities → Skills → Upload
 - **Cursor** — drop into `.cursor/skills/` (or `npx cinematic-scroll-skill --dir .cursor/skills`)
-- **Hermes Agent** — `git clone` to `~/.hermes/skills/`
+- **Hermes Agent** — `hermes skills install MustBeSimo/cinematic-scroll-skill` (repo form — pulls the full multi-file skill, including `references/`, `templates/`, and `tools/`), or `git clone` to `~/.hermes/skills/`
 - **OpenClaw** — via [ClawHub](https://clawhub.ai), the OpenClaw skill registry: `clawhub install cinematic-scroll` (or `openclaw skills install git:MustBeSimo/cinematic-scroll-skill@main`)
 
 ### Quick start
