@@ -62,8 +62,12 @@ export const ReelWorlds: React.FC = () => {
 const WorldClip: React.FC<{src: string; rate: number}> = ({src, rate}) => {
   const f = useCurrentFrame();
   const op = interpolate(f, [0, 10, 206, 224], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  // Guaranteed dynamism: a continuous vertical pan (overscan + translateY) on
+  // top of the clip's own scroll, so the page is ALWAYS visibly moving — even
+  // across the pages' long pinned chapters that otherwise read as a still.
+  const pan = interpolate(f, [0, 230], [70, -70], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   return (
-    <OffthreadVideo src={staticFile(src)} startFrom={0} playbackRate={rate} muted style={{width: '100%', height: '100%', objectFit: 'cover', opacity: op}} />
+    <OffthreadVideo src={staticFile(src)} startFrom={0} playbackRate={rate} muted style={{width: '100%', height: '100%', objectFit: 'cover', opacity: op, transform: `scale(1.22) translateY(${pan}px)`}} />
   );
 };
 
