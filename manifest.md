@@ -47,7 +47,11 @@ Every experience starts from a baseline that works everywhere: static layout, re
 
 ## Version History
 
-### v2.3.2 (Current)
+### v2.3.4 (Current)
+
+- **Intent/behavior reconciliation (ClawHub follow-up audit):** Removed remaining declared-vs-actual contradictions so the manifest and SKILL.md describe exactly what runs. WebXR/AR and 3D GLB generation are now described as **user-initiated** (feature-gated, template-provided) rather than "opt-in/inactive" — resolving the tool-poisoning flag. The context-isolation boundary now explicitly names its two user-initiated network exceptions (audit-mode URL fetch; pinned third-party CDN assets in generated pages). The 5-phase pipeline is described as **adaptively gated** consistently across SKILL.md (no more "approves each phase" vs "runs internally" contradiction). Corrected example head-comments that claimed "no external JS" / "only Google Fonts" (they progressively enhance with deferred CDN GSAP). Added inline third-party-fetch warnings at the DRACO decoder, `<model-viewer>` loader, and `fal.subscribe` call sites. Added an explicit `activation` block (trigger phrases + negative examples) to manifest.json. Softened absolutist craft language to affirm user override of palette/tone/intensity/language.
+
+### v2.3.2
 
 - **Security & disclosure hardening:** Resolved 19 ClawHub audit findings — clarified audit mode as agent-driven analysis (not a standalone binary), added CDN third-party disclosure to generated pages, strengthened credential-sharing warnings, resolved pipeline gating contradiction (`gated: true` → `gated: "adaptive"`), added context isolation boundary, and added explicit activation/non-activation guidelines.
 
@@ -73,7 +77,7 @@ Every experience starts from a baseline that works everywhere: static layout, re
 - **Two-mode architecture:** Mode A (single-file HTML artifact, zero build) + Mode B (full Next.js project scaffold).
 - **Core motion primitives:** Pinned chapters, 5-7 depth layers, multi-depth parallax, 3D mouse tilt, background morphing between chapters, mask/stagger/letter-spacing title reveals, scroll-spy index rail.
 - **fal.ai integration:** AI-generated chapter imagery through FLUX.2 Pro, with server-side proxy for key security.
-- **Zero-dependency demos:** Mode A examples run from `file://` with hand-rolled rAF, no build, no CDN.
+- **Zero-dependency demo core:** Mode A examples run from `file://` with a hand-rolled rAF core and no build step; the dependency-free core renders fully offline. (Later versions add one optional deferred-GSAP showcase beat loaded from a pinned CDN with a vanilla fallback — see v2.1.0 and the per-page disclosures.)
 - **Reference direction:** Shopify Editions as art-direction benchmark for chaptered release storytelling.
 
 ## Compatibility

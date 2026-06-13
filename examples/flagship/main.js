@@ -940,6 +940,10 @@ async function upgradeFromManifest(manifest, groups, track, scene, mixers) {
       const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
       const loader = new GLTFLoader();
       const draco = new DRACOLoader();
+      // THIRD-PARTY NETWORK CALL: the Draco decoder (wasm/js) is fetched from the
+      // unpkg.com CDN at runtime, only on this Draco-compressed-model path. If your
+      // deployment policy forbids third-party CDNs, self-host the decoder and point
+      // setDecoderPath() at your own origin. Disclosed in manifest.json → security.
       draco.setDecoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/draco/');
       loader.setDRACOLoader(draco);
       const gltf = await loader.loadAsync(base + cfg.runtime);

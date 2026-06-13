@@ -64,6 +64,11 @@ export function ModelViewer({ src, iosSrc, poster, alt, ctaLabel = 'View in your
   const [loaded, setLoaded] = useState(false);
 
   // Lazy-register the web component on the client only (it self-registers).
+  // THIRD-PARTY NETWORK CALL: this fetches and executes the @google/model-viewer
+  // module from the unpkg.com CDN at runtime (version-pinned). It runs only when an
+  // AR/quick-look view is rendered. If your CSP / deployment policy forbids third-party
+  // CDNs, self-host model-viewer and point `url` at your own origin (and add an SRI
+  // hash to the script element below). Disclosed in manifest.json → security.
   useEffect(() => {
     let cancelled = false;
     const url = `https://unpkg.com/@google/model-viewer@${MODEL_VIEWER_VERSION}/dist/model-viewer.min.js`;

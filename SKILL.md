@@ -1,7 +1,7 @@
 ---
 name: cinematic-scroll
-description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with optional AI-generated visuals via the fal.ai remote API (Mode B — requires your own fal.ai key; makes outbound API calls to fal.ai). Includes an optional audit mode in which the agent analyzes a user-supplied URL using its own browser/fetch access and scores the scroll experience on 4 dimensions (Pacing, Performance, Accessibility, Emotional Arc). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 visual systems, and a transform/opacity performance budget as built-in craft constraints. Advanced capabilities (WebXR immersive sessions, 3D GLB generation) are opt-in only — see activation guidelines below.
-version: 2.3.2
+description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with optional AI-generated visuals via the fal.ai remote API (Mode B — requires your own fal.ai key; makes outbound API calls to fal.ai). Includes an optional audit mode in which the agent analyzes a user-supplied URL using its own browser/fetch access and scores the scroll experience on 4 dimensions (Pacing, Performance, Accessibility, Emotional Arc). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 visual systems, and a transform/opacity performance budget as built-in craft constraints. Advanced capabilities are user-initiated, not absent: WebXR/AR sessions are feature-gated and only start on an explicit user action (an Enter VR/AR button that appears solely when the device reports support), and 3D GLB generation lives in the Mode B Next.js template (`templates/nextjs/scripts/generate-flagship-assets.mjs`, run with your own fal.ai key) — see activation guidelines below.
+version: 2.3.4
 author: Simone Leonelli
 license: MIT
 metadata:
@@ -15,11 +15,15 @@ permissions:
   - shell:execute       # run npm/node scripts (setup, generate, typecheck, build) and the local page-proof tool (Playwright) for headless page screenshots — all optional, user-initiated
   - env                 # read FAL_KEY / FAL_IMAGE_MODEL for fal.ai generation and CHROME_PATH / PLAYWRIGHT_BROWSERS_PATH to locate a local browser (all optional, user-initiated)
 
-# Context isolation: this skill operates only on content explicitly provided in the
-# current conversation. It does not access, recall, or act on files, credentials,
-# or data from previous sessions or other users. FAL_KEY and all credentials must
-# be supplied explicitly by the current user in this session — never inferred from
-# memory or prior context.
+# Context isolation: this skill acts only on content, files, and credentials supplied
+# in the CURRENT session — it never accesses, recalls, or acts on data from previous
+# sessions or other users, and FAL_KEY/credentials must be given explicitly here,
+# never inferred from memory or prior context. Two deliberate, user-initiated network
+# exceptions are disclosed below (and in manifest.json → security.thirdPartyNetworkCalls):
+# (1) audit mode fetches the user-supplied URL via the agent's OWN browser/fetch — only
+# sites the user owns or is authorized to test; (2) generated pages load pinned
+# third-party CDN assets (GSAP, Google Fonts, three.js/Draco, @google/model-viewer) when
+# opened in a browser — self-host these if your deployment policy requires it.
 
 # Activation: invoke this skill when the user asks to BUILD or AUDIT a
 # cinematic/scroll/parallax/3D-tilt website, launch page, or editorial microsite,
@@ -50,10 +54,13 @@ React pages: pinned chapters, multi-depth parallax, 3D mouse tilt,
 environment-morphing backgrounds, reduced-motion-safe degradation, and
 (optionally) a full Next.js release site with fal.ai-generated visuals.
 
-This is v2.0 — built on a **5-phase gated pipeline**. Every phase produces a
-reviewable artifact. The user approves each phase before the next begins.
-This replaces the v1.0 one-shot generation model with a process that
-consistently produces production-quality output.
+This is v2.0 — built on a **5-phase pipeline** that is *adaptively* gated (see
+"Match the gating to the ask" below). Every phase produces a reviewable artifact:
+the user approves each phase before the next **when they want the process or the
+brief is ambiguous**, and the agent runs straight through **when handed a complete
+brief or asked for a result directly** (still emitting every artifact). This
+replaces the v1.0 one-shot model with a process that consistently produces
+production-quality output.
 
 ## Agent quickstart — route, act, verify
 
@@ -147,10 +154,12 @@ are *different* worlds from the same engine — proof the look is a variable, no
 
 The difference between slop and craft is anti-convergence. This skill ships
 with `taste-guardrails.md` — 11 banned patterns, a cinematic vocabulary,
-pacing rules, and anti-convergence principles. These are **hard constraints**,
-not suggestions. An agent that does not enforce taste produces tasteless
-output regardless of prompt quality. Every generated file is checked against
-the banned patterns list before delivery.
+pacing rules, and anti-convergence principles. These are the skill's default
+**craft constraints** (anti-slop quality, not a forced aesthetic or locale): the
+user's explicit preferences always win — palette, tone, intensity, language, or a
+minimal/static fallback are theirs to set. Absent such direction, an agent that
+skips these guardrails produces tasteless output regardless of prompt quality, so
+every generated file is checked against the banned-patterns list before delivery.
 
 ## 2. Process over prompt
 
@@ -178,9 +187,13 @@ pre-launch checklist). Quality is not a feeling — it is a checklist.
 
 # The 5-Phase Pipeline
 
-Each phase produces a reviewable `.md` artifact. The user reviews and
-approves each phase before proceeding. The agent never skips a phase
-without explicit user consent.
+Each phase produces a reviewable `.md` artifact. Gating is **adaptive** (see the
+quickstart's "Match the gating to the ask"): when the user wants the process or the
+brief is ambiguous, the user reviews and approves each phase before the next; when
+the user asked for a direct result (a complete brief, one-shot, CI, or another agent
+invoked this skill), the agent runs the phases internally without pausing and still
+emits every artifact as the audit trail. The agent never silently drops a phase's
+artifact.
 
 ---
 

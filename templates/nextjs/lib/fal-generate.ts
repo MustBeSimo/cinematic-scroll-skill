@@ -36,6 +36,12 @@ export async function generateEditionImage(
     seed: input.seed,
   });
 
+  // THIRD-PARTY DATA TRANSMISSION: this sends `modelInput` — which includes the
+  // built prompt derived from the user's brief — to the fal.ai remote API over the
+  // network, authenticated with the server-side FAL_KEY. Prompts and the resulting
+  // image URLs leave your infrastructure and are processed/billed by fal.ai. This
+  // runs only on a user-initiated Mode B generation. Disclosed in manifest.json →
+  // security and SKILL.md; do not pass secrets or PII in the brief.
   const result = await fal.subscribe(modelId, {
     input: modelInput,
     logs: true,
