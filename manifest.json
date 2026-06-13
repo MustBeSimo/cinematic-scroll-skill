@@ -86,7 +86,7 @@
     "env"
   ],
   "security": {
-    "note": "All sensitive capabilities are optional and user-initiated. FAL_KEY is a billable secret — store it in a gitignored .env.local or a secret manager, never in source or version control. Audit mode uses the agent's own browser/fetch access to analyze a user-supplied URL (not a local headless binary); the request may trigger analytics or side effects on the target — only audit sites you own or are authorized to test. Mode A output pages load GSAP, Google Fonts, and @google/model-viewer from third-party CDNs (SRI-pinned where applicable) — self-host these if your deployment policy requires it. See manifest.md → Security & Privacy and audit-mode.md.",
+    "note": "All sensitive capabilities are optional and user-initiated. FAL_KEY is a billable secret — store it in a gitignored .env.local or a secret manager, never in source or version control. Audit mode uses the agent's own browser/fetch access to analyze a user-supplied URL (not a local headless binary); the request may trigger analytics or side effects on the target — only audit sites you own or are authorized to test. Mode A output pages load GSAP + ScrollTrigger and three.js from cdn.jsdelivr.net, the three.js Draco decoder and @google/model-viewer from unpkg.com, and Google Fonts from fonts.googleapis.com / fonts.gstatic.com (SRI-pinned where the format allows — ES-module import maps cannot carry SRI) — self-host these if your deployment policy requires it. See manifest.md → Security & Privacy and audit-mode.md.",
     "secrets": [
       "FAL_KEY",
       "GENERATE_API_SECRET"
@@ -94,7 +94,7 @@
     "thirdPartyNetworkCalls": [
       {"when": "Mode B image/asset generation", "destination": "fal.ai API", "trigger": "user-initiated, requires FAL_KEY"},
       {"when": "Audit mode", "destination": "user-supplied URL", "trigger": "user-initiated, explicit confirmation required"},
-      {"when": "Mode A output pages", "destination": "unpkg.com (GSAP), fonts.googleapis.com, fonts.gstatic.com, cdn.jsdelivr.net (@google/model-viewer)", "trigger": "loaded by the generated HTML when opened in a browser — self-host to avoid"}
+      {"when": "Mode A output pages", "destination": "cdn.jsdelivr.net (GSAP + ScrollTrigger, three.js), unpkg.com (three.js Draco decoder, @google/model-viewer), fonts.googleapis.com + fonts.gstatic.com (Google Fonts)", "trigger": "loaded by the generated HTML when opened in a browser — self-host to avoid"}
     ],
     "disclosure": "manifest.md#security--privacy"
   },

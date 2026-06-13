@@ -16,14 +16,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-<!-- Three.js r165 — module (non-blocking) -->
+<!-- THIRD-PARTY CDN: Three.js r165 ES module, loaded via importmap from cdn.jsdelivr.net
+     (non-blocking). Import maps cannot carry an SRI integrity hash — self-host
+     three.module.js if your deployment policy requires subresource integrity. Disclosed
+     in manifest.json -> security.thirdPartyNetworkCalls. -->
 <script type="importmap">
 {"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"}}
 </script>
 
-<!-- GSAP + ScrollTrigger — deferred, non-blocking -->
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous"></script>
+<!-- GSAP + ScrollTrigger — deferred, non-blocking, SRI-pinned (graceful vanilla fallback
+     if the CDN is blocked; see the typeof-guard before any gsap call). -->
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
 
 <style>
 /* ============================================================
