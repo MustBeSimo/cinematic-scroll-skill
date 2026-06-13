@@ -192,7 +192,19 @@ Same engine, deliberately clashing aesthetics — five **single, build-free `ind
   </tr>
 </table>
 
-**Same motion grammar; any aesthetic.** These six show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for.
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><div style="background:radial-gradient(80% 60% at 40% 60%,#4F3FFF44 0%,transparent 70%),#060812;min-height:200px;display:flex;align-items:center;justify-content:center"><code style="color:#4F3FFF">NEXUS · IMMERSIVE LAB</code></div></a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><b>⑧ 3D Immersive / Tier C shaders →</b></a><br>
+      <sub><b>NEXUS · IMMERSIVE LAB</b> — a fictional XR studio built on Tier C procedural shaders (no external model needed): a 15,000-particle galaxy field (custom GLSL vertex + fragment, per-particle phase attributes, pulsing glow), a 60×60 displacement grid (wave equation in vertex shader, indigo→cyan color lerp), and a Lorenz-inspired particle attractor (500 particles updated per frame in JS). WebXR session gate (Enter VR button appears only when `navigator.xr.isSessionSupported` returns true). Context loss handled, rAF gated on visibility + IntersectionObserver, mobile canvas suppressed. Doctor: <b>100/100</b>.</sub>
+    </td>
+  </tr>
+</table>
+
+**Same motion grammar; any aesthetic.** These seven examples show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for.
 
 ### Running locally
 

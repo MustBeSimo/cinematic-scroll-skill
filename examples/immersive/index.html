@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>NEXUS · IMMERSIVE LAB — Spatial Computing Studio</title>
+<meta name="description" content="NEXUS · IMMERSIVE LAB — we build experiences that make VR worth wearing, AR worth seeing, and the web worth feeling. WebXR · Three.js · Procedural Shaders · Spatial UI." />
+<meta name="theme-color" content="#060812" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="NEXUS · IMMERSIVE LAB" />
+<meta property="og:description" content="Spatial computing studio. WebXR, Three.js procedural shaders, haptic interfaces." />
+<meta property="og:type" content="website" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<!-- Three.js r165 — module (non-blocking) -->
+<script type="importmap">
+{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"}}
+</script>
+
+<!-- GSAP + ScrollTrigger — deferred, non-blocking -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous"></script>
+
+<style>
+/* ============================================================
+   NEXUS · IMMERSIVE LAB — design tokens + base
+   ============================================================ */
+:root {
+  /* palette */
+  --canvas:    #060812;
+  --indigo:    #4F3FFF;
+  --cyan:      #00FFF0;
+  --amber:     #FF8C00;
+  --white-fg:  #F0F2FF;
+  --card-bg:   #0D1126;
+  --card-bdr:  rgba(79,63,255,0.3);
+
+  /* intentional curves — NEVER default ease/linear (taste §4.1) */
+  --reveal:    cubic-bezier(0.16, 1, 0.3, 1);
+  --exit:      cubic-bezier(0.7, 0, 0.84, 0);
+  --spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+  --cut:       cubic-bezier(0.87, 0, 0.13, 1);
+  --clip:      cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--canvas);
+  color: var(--white-fg);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* keyboard focus — never invisible */
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* hover guard — never dead on touch */
+@media (hover: hover) {
+  .cta-btn:hover {
+    background: var(--indigo);
+    color: var(--white-fg);
+    transform: translateY(-2px);
+  }
+  .proj-card:hover {
+    transform: translateY(-6px);
+  }
+  .cap-card:hover {
+    border-color: rgba(79,63,255,0.7);
+  }
+  .nav-link:hover { opacity: 1; }
+}
+
+/* ── Three.js canvas — persistent full-screen backdrop ──── */
+#nexus-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* WebGL fallback — shown when WebGL2 unavailable */
+.webgl-fallback {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 30% 40%, rgba(79,63,255,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 80% at 80% 70%, rgba(0,255,240,0.12) 0%, transparent 55%),
+    var(--canvas);
+  pointer-events: none;
+}
+.no-webgl .webgl-fallback { display: block; }
+.no-webgl #nexus-canvas { display: none; }
+
+/* ── All DOM content above canvas ─────────────────────────── */
+#page-wrap {
+  position: relative;
+  z-index: 1;
+  pointer-events: none; /* let canvas events pass through where not needed */
+}
+#page-wrap * { pointer-events: auto; }
+
+/* ── Progress HUD ─────────────────────────────────────────── */
+#hud {
+  position: fixed;
+  top: clamp(14px, 2vh, 22px);
+  right: clamp(14px, 2vw, 28px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 0.9vw, 11px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--white-fg);
+  opacity: 0.75;
+  pointer-events: none;
+}
+#hud-pill {
+  background: rgba(13,17,38,0.7);
+  border: 1px solid rgba(79,63,255,0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 5px 12px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#hud-pct {
+  color: var(--cyan);
+  min-width: 3ch;
+  text-align: right;
+}
+#hud-chapter { opacity: 0.6; }
+
+/* ── Masthead / nav ───────────────────────────────────────── */
+header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(16px, 2.5vh, 26px) clamp(20px, 4vw, 60px);
+  pointer-events: none;
+}
+.masthead-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 1vw, 12px);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--white-fg);
+  opacity: 0.9;
+  pointer-events: auto;
+}
+.masthead-logo span { color: var(--indigo); }
+nav {
+  display: flex;
+  gap: clamp(16px, 2vw, 32px);
+  pointer-events: auto;
+}
+.nav-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--white-fg);
+  text-decoration: none;
+  opacity: 0.55;
+  transition: opacity 0.3s var(--reveal);
+}
+@media (max-width: 680px) { nav { display: none; } }
+
+/* ── Chapter 0 — Hero ─────────────────────────────────────── */
+#hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(32px, 6vh, 80px) clamp(24px, 6vw, 100px);
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 0.9vw, 11px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--indigo);
+  margin-bottom: clamp(20px, 3vh, 40px);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s var(--reveal), transform 0.6s var(--reveal);
+}
+.hero-eyebrow.in { opacity: 1; transform: translateY(0); }
+
+.hero-title {
+  font-size: clamp(3.6rem, 13vw, 13rem);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--white-fg);
+  overflow: hidden;
+}
+/* word-stagger entrance — transform + opacity only (taste §4.5, anti-convergence) */
+.hero-title .word {
+  display: inline-block;
+  margin-right: 0.1em;
+  opacity: 0;
+  transform: translateY(40px);
+  will-change: transform, opacity;
+}
+.hero-sub {
+  margin-top: clamp(20px, 3vh, 36px);
+  max-width: 52ch;
+  font-size: clamp(0.95rem, 1.4vw, 1.25rem);
+  line-height: 1.6;
+  color: rgba(240,242,255,0.6);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s var(--reveal) 0.4s, transform 0.8s var(--reveal) 0.4s;
+}
+.hero-sub.in { opacity: 1; transform: translateY(0); }
+
+.hero-cta-row {
+  margin-top: clamp(28px, 4vh, 52px);
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 28px);
+  flex-wrap: wrap;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s var(--reveal) 0.6s, transform 0.7s var(--reveal) 0.6s;
+}
+.hero-cta-row.in { opacity: 1; transform: translateY(0); }
+
+.cta-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 0.9vw, 12px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid rgba(79,63,255,0.6);
+  padding: 12px 28px;
+  color: var(--cyan);
+  background: rgba(79,63,255,0.08);
+  border-radius: 2px;
+  transition: background 0.3s var(--reveal), color 0.3s var(--reveal), transform 0.3s var(--spring), border-color 0.3s var(--reveal);
+  display: inline-block;
+}
+
+.hero-badge-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(8px, 0.8vw, 10px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border: 1px solid rgba(0,255,240,0.2);
+  border-radius: 2px;
+  color: rgba(0,255,240,0.6);
+}
+
+/* ── Chapter 1 — Capabilities (pinned 300vh) ──────────────── */
+#capabilities {
+  position: relative;
+  height: 300vh;
+}
+.cap-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(20px, 5vh, 80px) clamp(24px, 6vw, 100px);
+  overflow: hidden;
+}
+.cap-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--indigo);
+  margin-bottom: clamp(16px, 2.5vh, 32px);
+  opacity: 0;
+  transition: opacity 0.5s var(--reveal);
+}
+.cap-label.in { opacity: 1; }
+
+.cap-title {
+  font-size: clamp(2rem, 6vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  line-height: 0.92;
+  margin-bottom: clamp(32px, 5vh, 64px);
+  /* scale entrance (anti-convergence — distinct from hero word-stagger) */
+  transform: scale(1.08);
+  opacity: 0;
+  transition: transform 0.9s var(--clip), opacity 0.9s var(--clip);
+}
+.cap-title.in { transform: scale(1); opacity: 1; }
+
+.cap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(12px, 1.5vw, 20px);
+  max-width: 1100px;
+}
+.cap-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-bdr);
+  border-left: 3px solid var(--indigo);
+  padding: clamp(16px, 2vw, 28px);
+  border-radius: 2px;
+  /* clip-path wipe entrance — distinct treatment from title (anti-convergence §4.5) */
+  clip-path: inset(0 100% 0 0);
+  opacity: 0;
+  transition:
+    clip-path 0.7s var(--clip),
+    opacity 0.5s var(--reveal),
+    border-color 0.3s var(--reveal),
+    transform 0.3s var(--spring);
+  will-change: clip-path, opacity;
+}
+.cap-card.in { clip-path: inset(0 0% 0 0); opacity: 1; }
+
+.cap-card-icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: clamp(10px, 1.5vh, 16px);
+  color: var(--indigo);
+}
+.cap-card-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 1.4vw, 1.25rem);
+  color: var(--white-fg);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.cap-card-body {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 0.85vw, 12px);
+  line-height: 1.7;
+  color: rgba(240,242,255,0.5);
+  letter-spacing: 0.01em;
+}
+
+/* ── Chapter 2 — Signal Grid ──────────────────────────────── */
+#signal-grid {
+  position: relative;
+  height: 250vh;
+}
+.grid-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(20px, 5vh, 80px) clamp(24px, 6vw, 100px);
+}
+.grid-mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: clamp(12px, 2vh, 24px);
+  /* letter-spacing scrub entrance — yet another distinct treatment (anti-convergence) */
+  letter-spacing: 0.6em;
+  opacity: 0;
+  transition: letter-spacing 0.8s var(--reveal), opacity 0.6s var(--reveal);
+}
+.grid-mono.in { letter-spacing: 0.3em; opacity: 1; }
+
+.grid-title {
+  font-size: clamp(3rem, 9vw, 9rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  line-height: 0.88;
+  color: var(--white-fg);
+  margin-bottom: clamp(20px, 3vh, 40px);
+  opacity: 0;
+  /* translate-rise entrance */
+  transform: translateY(30px);
+  transition: opacity 0.85s var(--reveal) 0.1s, transform 0.85s var(--reveal) 0.1s;
+}
+.grid-title.in { opacity: 1; transform: translateY(0); }
+.grid-title .accent-cyan { color: var(--cyan); }
+
+.grid-body {
+  max-width: 44ch;
+  font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+  line-height: 1.65;
+  color: rgba(240,242,255,0.55);
+  margin-bottom: clamp(24px, 4vh, 48px);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s var(--reveal) 0.25s, transform 0.7s var(--reveal) 0.25s;
+}
+.grid-body.in { opacity: 1; transform: translateY(0); }
+
+.stat-row {
+  display: flex;
+  gap: clamp(24px, 3vw, 48px);
+  flex-wrap: wrap;
+}
+.stat-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(11px, 1vw, 13px);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.stat-value { color: var(--cyan); font-weight: 500; }
+.stat-label { color: rgba(240,242,255,0.35); font-size: 0.8em; margin-left: 4px; }
+
+/* ── Chapter 3 — Projects (free scroll) ──────────────────── */
+#projects {
+  position: relative;
+  padding: clamp(60px, 12vh, 140px) clamp(24px, 6vw, 100px);
+}
+.projects-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+.projects-heading {
+  font-size: clamp(2rem, 5.5vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  margin-bottom: clamp(32px, 6vh, 72px);
+}
+
+/* horizontal scroll-snap row */
+.proj-scroll-row {
+  display: flex;
+  gap: clamp(16px, 2vw, 28px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(79,63,255,0.4) transparent;
+}
+.proj-scroll-row::-webkit-scrollbar { height: 4px; }
+.proj-scroll-row::-webkit-scrollbar-track { background: transparent; }
+.proj-scroll-row::-webkit-scrollbar-thumb { background: rgba(79,63,255,0.4); border-radius: 2px; }
+
+.proj-card {
+  flex: 0 0 clamp(300px, 36vw, 400px);
+  height: clamp(420px, 56vw, 560px);
+  scroll-snap-align: start;
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(20px, 2.5vw, 32px);
+  cursor: pointer;
+  transition: transform 0.4s var(--spring);
+  will-change: transform;
+}
+
+/* CSS gradient "image" placeholders per project */
+.proj-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.proj-card.atlas::before {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 30%, rgba(79,63,255,0.45) 0%, transparent 65%),
+    linear-gradient(160deg, #0a0c1e 0%, #1a1060 50%, #060812 100%);
+}
+.proj-card.lumina::before {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 30%, rgba(0,255,240,0.35) 0%, transparent 65%),
+    linear-gradient(160deg, #060f12 0%, #0a2828 50%, #060812 100%);
+}
+.proj-card.form::before {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 30%, rgba(255,140,0,0.35) 0%, transparent 65%),
+    linear-gradient(160deg, #12080a 0%, #2a1400 50%, #060812 100%);
+}
+.proj-glow {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 60%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s var(--reveal);
+}
+@media (hover: hover) {
+  .proj-card:hover .proj-glow { opacity: 1; }
+}
+
+.proj-content { position: relative; z-index: 1; }
+.proj-accent-bar {
+  width: 32px;
+  height: 2px;
+  margin-bottom: 12px;
+  border-radius: 1px;
+}
+.atlas .proj-accent-bar { background: var(--indigo); }
+.lumina .proj-accent-bar { background: var(--cyan); }
+.form .proj-accent-bar { background: var(--amber); }
+
+.proj-name {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.proj-desc {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(240,242,255,0.5);
+  line-height: 1.5;
+}
+.proj-year {
+  position: absolute;
+  top: clamp(16px, 2vw, 24px);
+  right: clamp(16px, 2vw, 24px);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 0.8vw, 10px);
+  letter-spacing: 0.2em;
+  color: rgba(240,242,255,0.3);
+}
+
+/* ── Chapter 4 — Attractor Lab (pinned 200vh) ─────────────── */
+#attractor-lab {
+  position: relative;
+  height: 200vh;
+}
+.lab-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+.lab-left {
+  /* The particle attractor canvas area — just a transparent pane,
+     the Three.js renderer behind it does the work */
+  height: 100%;
+  position: relative;
+}
+.lab-right {
+  padding: clamp(24px, 5vw, 80px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.lab-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: clamp(12px, 2vh, 20px);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s var(--reveal), transform 0.6s var(--reveal);
+}
+.lab-label.in { opacity: 1; transform: translateY(0); }
+
+.lab-title {
+  font-size: clamp(2.4rem, 5vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  line-height: 0.9;
+  margin-bottom: clamp(20px, 3vh, 36px);
+  opacity: 0;
+  /* clip-path wipe from right — distinct from all prior treatments */
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.85s var(--clip) 0.05s, opacity 0.5s var(--reveal) 0.05s;
+}
+.lab-title.in { clip-path: inset(0 0% 0 0); opacity: 1; }
+.lab-title .accent-amber { color: var(--amber); }
+
+.lab-body {
+  font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+  line-height: 1.7;
+  color: rgba(240,242,255,0.55);
+  max-width: 40ch;
+  margin-bottom: clamp(28px, 4vh, 48px);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s var(--reveal) 0.2s, transform 0.7s var(--reveal) 0.2s;
+}
+.lab-body.in { opacity: 1; transform: translateY(0); }
+
+.lab-cta-group {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s var(--reveal) 0.35s, transform 0.6s var(--reveal) 0.35s;
+}
+.lab-cta-group.in { opacity: 1; transform: translateY(0); }
+
+.cta-btn-amber {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 0.9vw, 12px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid rgba(255,140,0,0.5);
+  padding: 12px 28px;
+  color: var(--amber);
+  background: rgba(255,140,0,0.08);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.3s var(--reveal), color 0.3s var(--reveal), transform 0.3s var(--spring), border-color 0.3s var(--reveal);
+  display: inline-block;
+}
+@media (hover: hover) {
+  .cta-btn-amber:hover {
+    background: var(--amber);
+    color: #060812;
+    transform: translateY(-2px);
+  }
+}
+
+/* WebXR button — hidden unless feature-detected */
+#enter-vr-btn {
+  display: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 0.9vw, 12px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid rgba(0,255,240,0.4);
+  padding: 12px 28px;
+  color: var(--cyan);
+  background: rgba(0,255,240,0.06);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.3s var(--reveal), color 0.3s var(--reveal), transform 0.3s var(--spring);
+}
+@media (hover: hover) {
+  #enter-vr-btn:hover {
+    background: var(--cyan);
+    color: #060812;
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 768px) {
+  .lab-sticky { grid-template-columns: 1fr; }
+  .lab-left { display: none; }
+  .lab-right { padding: clamp(24px, 6vw, 48px); }
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+footer {
+  position: relative;
+  z-index: 1;
+  padding: clamp(60px, 10vh, 120px) clamp(24px, 6vw, 100px);
+  border-top: 1px solid rgba(79,63,255,0.2);
+}
+.footer-logo {
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--white-fg);
+  margin-bottom: 10px;
+}
+.footer-tagline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 0.9vw, 12px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(240,242,255,0.35);
+  margin-bottom: clamp(28px, 4vh, 48px);
+}
+.footer-links {
+  display: flex;
+  gap: clamp(16px, 2.5vw, 32px);
+  flex-wrap: wrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 0.9vw, 11px);
+  letter-spacing: 0.12em;
+}
+.footer-links a {
+  color: rgba(240,242,255,0.45);
+  text-decoration: none;
+  transition: color 0.3s var(--reveal);
+}
+@media (hover: hover) { .footer-links a:hover { color: var(--cyan); } }
+
+/* ── Mobile — ≤768px: static canvas, scroll reveals only ─── */
+@media (max-width: 768px) {
+  .cap-grid { grid-template-columns: 1fr; }
+  #nexus-canvas { display: none; }
+  .webgl-fallback { display: block !important; }
+  .stat-row { gap: 16px; }
+}
+
+/* ── Reduced motion — stop everything, static scene at t=0 ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .hero-title .word,
+  .hero-eyebrow,
+  .hero-sub,
+  .hero-cta-row,
+  .cap-label,
+  .cap-title,
+  .cap-card,
+  .grid-mono,
+  .grid-title,
+  .grid-body,
+  .lab-label,
+  .lab-title,
+  .lab-body,
+  .lab-cta-group {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    letter-spacing: inherit !important;
+  }
+}
+</style>
+</head>
+<body>
+<!-- WebGL fallback for no-WebGL2 devices -->
+<div class="webgl-fallback" aria-hidden="true"></div>
+
+<!-- Three.js canvas — always behind all DOM -->
+<canvas
+  id="nexus-canvas"
+  role="img"
+  aria-label="Interactive 3D particle field — galaxy spiral and signal grid"
+></canvas>
+
+<!-- Progress HUD -->
+<div id="hud" aria-live="polite" aria-label="Scroll progress indicator">
+  <div id="hud-pill">
+    <span id="hud-pct">0%</span>
+    <span id="hud-chapter">HERO</span>
+  </div>
+</div>
+
+<!-- Masthead -->
+<header aria-label="NEXUS Immersive Lab navigation">
+  <div class="masthead-logo">
+    NEXUS<span>·</span>IMMERSIVE<span>·</span>LAB
+  </div>
+  <nav aria-label="Primary navigation">
+    <a href="#capabilities" class="nav-link">Capabilities</a>
+    <a href="#projects" class="nav-link">Projects</a>
+    <a href="#attractor-lab" class="nav-link">Lab</a>
+    <a href="#footer-contact" class="nav-link">Contact</a>
+  </nav>
+</header>
+
+<div id="page-wrap">
+  <main>
+    <!-- ── Chapter 0: Hero ─────────────────────────────────── -->
+    <section id="hero" aria-label="Hero — NEXUS Immersive Lab introduction" data-chapter="HERO">
+      <p class="hero-eyebrow">NEXUS · IMMERSIVE LAB · EST. 2024</p>
+      <h1 class="hero-title" aria-label="Spatial Computing">
+        <span class="word">SPATIAL</span>
+        <span class="word">COMPUTING</span>
+      </h1>
+      <p class="hero-sub">
+        We build the experiences that make VR worth wearing, AR worth seeing,
+        and the web worth feeling.
+      </p>
+      <div class="hero-cta-row">
+        <a href="#capabilities" class="cta-btn">EXPLORE OUR WORK ↓</a>
+        <div class="hero-badge-row">
+          <span class="badge">WEBXR</span>
+          <span class="badge">THREE.JS</span>
+          <span class="badge">SPATIAL UI</span>
+          <span class="badge">HAPTICS</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Chapter 1: Capabilities (pinned 300vh) ─────────── -->
+    <section id="capabilities" aria-label="Studio capabilities" data-chapter="CAPABILITIES">
+      <div class="cap-sticky">
+        <p class="cap-label">WHAT WE BUILD</p>
+        <h2 class="cap-title">CORE<br/>CAPABILITIES</h2>
+        <div class="cap-grid">
+          <!-- Card 1: WebXR & Spatial -->
+          <div class="cap-card" data-cap="0">
+            <svg class="cap-card-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <rect x="2" y="10" width="28" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="11" cy="18" r="3" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="21" cy="18" r="3" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 18h4M26 18h4M14 18h4" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <div class="cap-card-title">WebXR &amp; Spatial</div>
+            <div class="cap-card-body">
+              Room-scale VR · AR anchors<br/>
+              Spatial audio · Hand tracking
+            </div>
+          </div>
+          <!-- Card 2: Generative 3D -->
+          <div class="cap-card" data-cap="1">
+            <svg class="cap-card-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <polygon points="16,3 29,24 3,24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              <circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M16 3v6M3 24l4-4M29 24l-4-4" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <div class="cap-card-title">Generative 3D</div>
+            <div class="cap-card-body">
+              Procedural geometry · GLSL shaders<br/>
+              GPU particles · Real-time simulation
+            </div>
+          </div>
+          <!-- Card 3: Cinematic Web -->
+          <div class="cap-card" data-cap="2">
+            <svg class="cap-card-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <rect x="3" y="7" width="20" height="18" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M23 13l6-4v14l-6-4" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="8" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="8" y1="16" x2="14" y2="16" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <div class="cap-card-title">Cinematic Web</div>
+            <div class="cap-card-body">
+              Scroll-driven cinematics<br/>
+              Motion capture · Physics sim
+            </div>
+          </div>
+          <!-- Card 4: Haptic & Sensory -->
+          <div class="cap-card" data-cap="3">
+            <svg class="cap-card-icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <path d="M16 3C9 3 3 9 3 16s6 13 13 13 13-6 13-13S23 3 16 3z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 16c0-2.2 1.8-4 4-4s4 1.8 4 4-1.8 4-4 4" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="16" cy="16" r="2" fill="currentColor"/>
+            </svg>
+            <div class="cap-card-title">Haptic &amp; Sensory</div>
+            <div class="cap-card-body">
+              Controller haptics · Eye tracking<br/>
+              Custom hardware integration
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Chapter 2: Signal Grid (pinned 250vh) ──────────── -->
+    <section id="signal-grid" aria-label="Geometry engine and real-time simulation" data-chapter="SIGNAL GRID">
+      <div class="grid-sticky">
+        <p class="grid-mono">GEOMETRY ENGINE v4.1</p>
+        <h2 class="grid-title">
+          REAL-TIME<br/>
+          <span class="accent-cyan">SIMULATION</span>
+        </h2>
+        <p class="grid-body">
+          60fps physics simulation. GPU-accelerated particle systems.
+          Procedural mesh generation at render time.
+        </p>
+        <div class="stat-row">
+          <div class="stat-item">
+            <span class="stat-value">60</span><span class="stat-label">FPS</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">15K</span><span class="stat-label">PARTICLES</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">&lt;8ms</span><span class="stat-label">FRAME</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Chapter 3: Projects (free scroll) ──────────────── -->
+    <section id="projects" aria-label="Selected projects" data-chapter="PROJECTS">
+      <p class="projects-label">SELECTED WORK</p>
+      <h2 class="projects-heading">PROJECTS</h2>
+      <div class="proj-scroll-row" role="list" aria-label="Project cards">
+        <!-- ATLAS VR -->
+        <article class="proj-card atlas" role="listitem" tabindex="0">
+          <span class="proj-year">2024</span>
+          <div class="proj-content">
+            <div class="proj-accent-bar" aria-hidden="true"></div>
+            <h3 class="proj-name">ATLAS VR</h3>
+            <p class="proj-desc">Enterprise training simulation, 2024<br/>WebXR · Spatial Audio</p>
+          </div>
+        </article>
+        <!-- LUMINA AR -->
+        <article class="proj-card lumina" role="listitem" tabindex="0">
+          <span class="proj-year">2024</span>
+          <div class="proj-content">
+            <div class="proj-accent-bar" aria-hidden="true"></div>
+            <h3 class="proj-name">LUMINA AR</h3>
+            <p class="proj-desc">Retail AR try-on, Apple Vision Pro<br/>RealityKit · WebXR</p>
+          </div>
+        </article>
+        <!-- FORM STUDY -->
+        <article class="proj-card form" role="listitem" tabindex="0">
+          <span class="proj-year">2024</span>
+          <div class="proj-content">
+            <div class="proj-accent-bar" aria-hidden="true"></div>
+            <h3 class="proj-name">FORM STUDY</h3>
+            <p class="proj-desc">Generative art installation<br/>Saatchi Gallery · Three.js</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ── Chapter 4: Attractor Lab (pinned 200vh) ─────────── -->
+    <section id="attractor-lab" aria-label="Particle attractor laboratory" data-chapter="ATTRACTOR LAB">
+      <div class="lab-sticky">
+        <div class="lab-left" aria-hidden="true">
+          <!-- Three.js attractor renders here via the shared canvas -->
+        </div>
+        <div class="lab-right">
+          <p class="lab-label">NEXUS · LAB</p>
+          <h2 class="lab-title">
+            PARTICLE<br/>
+            <span class="accent-amber">ATTRACTOR</span>
+          </h2>
+          <p class="lab-body">
+            500 particles drift toward a moving attractor point — a
+            Lorenz-inspired system updated live every frame. No pre-baked
+            simulation. Pure math, rendered in real-time.
+          </p>
+          <div class="lab-cta-group">
+            <button class="cta-btn-amber" type="button">ENTER LAB</button>
+            <button id="enter-vr-btn" type="button" aria-label="Enter immersive VR experience">ENTER VR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────── -->
+  <footer id="footer-contact" aria-label="Contact and social links">
+    <div class="footer-logo">NEXUS · IMMERSIVE LAB</div>
+    <p class="footer-tagline">let's build the impossible</p>
+    <div class="footer-links">
+      <a href="mailto:contact@nexus-immersive.lab">contact@nexus-immersive.lab</a>
+      <a href="https://twitter.com/nexuslab" rel="noopener noreferrer">@nexuslab</a>
+      <a href="https://github.com/nexus-immersive" rel="noopener noreferrer">GitHub</a>
+    </div>
+  </footer>
+</div><!-- /page-wrap -->
+
+<!-- ============================================================
+     Three.js scene — module script (non-blocking)
+     ============================================================ -->
+<script type="module">
+import * as THREE from 'three';
+
+// ── Globals ──────────────────────────────────────────────────
+const canvas = document.getElementById('nexus-canvas');
+let renderer, scene, camera;
+let galaxyPoints, gridMesh, attractorPoints;
+let gridMaterial, galaxyMaterial, attractorMaterial;
+let uTime = 0;
+let rafId = null;
+let isRunning = false;
+let contextLost = false;
+
+// Attractor particle state (500 particles)
+const ATTRACTOR_COUNT = 500;
+const attrPos = new Float32Array(ATTRACTOR_COUNT * 3);
+const attrVel = new Float32Array(ATTRACTOR_COUNT * 3);
+let attractorTarget = new THREE.Vector3(0, 0, -4);
+
+// ── WebGL2 feature detection ──────────────────────────────────
+function canUseWebGL() {
+  try {
+    const test = document.createElement('canvas');
+    return !!(test.getContext('webgl2') || test.getContext('webgl'));
+  } catch { return false; }
+}
+
+// ── Consts used inside tick() — must be declared before startLoop() ──
+const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const isMobile = matchMedia('(max-width: 768px)');
+
+const CHAPTERS = [
+  { id: 'hero',           name: 'HERO' },
+  { id: 'capabilities',  name: 'CAPABILITIES' },
+  { id: 'signal-grid',   name: 'SIGNAL GRID' },
+  { id: 'projects',      name: 'PROJECTS' },
+  { id: 'attractor-lab', name: 'ATTRACTOR LAB' },
+];
+
+if (!canUseWebGL()) {
+  document.body.classList.add('no-webgl');
+} else {
+  initThree();
+  startLoop();
+}
+
+// ── Init Three.js ─────────────────────────────────────────────
+function initThree() {
+  renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: false,
+    alpha: true,
+    powerPreference: 'high-performance',
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x060812, 1);
+
+  scene = new THREE.Scene();
+
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 0, 8);
+
+  buildGalaxy();
+  buildGrid();
+  buildAttractor();
+
+  // Resize handler
+  window.addEventListener('resize', onResize);
+
+  // Context loss / restore
+  canvas.addEventListener('webglcontextlost', onContextLost);
+  canvas.addEventListener('webglcontextrestored', onContextRestored);
+}
+
+// ── Galaxy Field (15 000 particles) ──────────────────────────
+function buildGalaxy() {
+  const N = 15000;
+  const positions = new Float32Array(N * 3);
+  const phases = new Float32Array(N);
+  const sizes = new Float32Array(N);
+
+  for (let i = 0; i < N; i++) {
+    const arm = Math.floor(Math.random() * 3);
+    const r = 0.3 + Math.pow(Math.random(), 0.5) * 7;
+    const angle = arm * (Math.PI * 2 / 3) + r * 0.55 + (Math.random() - 0.5) * 0.7;
+    const spread = (Math.random() - 0.5) * (r * 0.15 + 0.1);
+    positions[i * 3 + 0] = Math.cos(angle) * r + spread;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * (0.15 + r * 0.04);
+    positions[i * 3 + 2] = Math.sin(angle) * r + spread;
+    phases[i] = Math.random() * Math.PI * 2;
+    sizes[i] = 0.8 + Math.random() * 2.5;
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+  geo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+
+  galaxyMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+    },
+    vertexShader: /* glsl */`
+      attribute float aPhase;
+      attribute float aSize;
+      uniform float uTime;
+      uniform float uPixelRatio;
+      varying float vAlpha;
+      void main() {
+        float pulse = aSize * (0.8 + 0.3 * sin(uTime * 1.5 + aPhase));
+        gl_PointSize = pulse * uPixelRatio;
+        vAlpha = 0.4 + 0.4 * sin(uTime * 0.8 + aPhase + 1.0);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */`
+      varying float vAlpha;
+      void main() {
+        vec2 uv = gl_PointCoord - vec2(0.5);
+        float d = length(uv);
+        if (d > 0.5) discard;
+        // white core → indigo halo
+        float core = 1.0 - smoothstep(0.0, 0.18, d);
+        float halo = 1.0 - smoothstep(0.18, 0.5, d);
+        vec3 coreCol = vec3(0.94, 0.95, 1.0);
+        vec3 haloCol = vec3(0.31, 0.25, 1.0); // indigo
+        vec3 col = mix(haloCol, coreCol, core);
+        float alpha = (core * 0.95 + halo * 0.45) * vAlpha;
+        gl_FragColor = vec4(col, alpha);
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+
+  galaxyPoints = new THREE.Points(geo, galaxyMaterial);
+  galaxyPoints.position.set(0, -0.5, -1);
+  scene.add(galaxyPoints);
+}
+
+// ── Signal Grid (PlaneGeometry displacement) ──────────────────
+function buildGrid() {
+  const geo = new THREE.PlaneGeometry(20, 20, 60, 60);
+
+  gridMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uOpacity: { value: 0 },
+    },
+    vertexShader: /* glsl */`
+      uniform float uTime;
+      varying float vHeight;
+      void main() {
+        vec3 pos = position;
+        float disp = sin(pos.x * 2.0 + uTime) * sin(pos.z * 2.0 + uTime) * 0.3;
+        pos.y += disp;
+        vHeight = disp;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */`
+      uniform float uOpacity;
+      varying float vHeight;
+      void main() {
+        float t = clamp(vHeight / 0.3 * 0.5 + 0.5, 0.0, 1.0);
+        // indigo → cyan based on displacement
+        vec3 low  = vec3(0.31, 0.25, 1.0);   // indigo
+        vec3 high = vec3(0.0,  1.0,  0.94);  // cyan
+        vec3 col = mix(low, high, t);
+        gl_FragColor = vec4(col, uOpacity * 0.55);
+      }
+    `,
+    transparent: true,
+    wireframe: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+
+  gridMesh = new THREE.Mesh(geo, gridMaterial);
+  gridMesh.rotation.x = -0.4;
+  gridMesh.position.set(0, -1.5, -2);
+  scene.add(gridMesh);
+}
+
+// ── Attractor Particles (500) ──────────────────────────────────
+function buildAttractor() {
+  for (let i = 0; i < ATTRACTOR_COUNT; i++) {
+    attrPos[i * 3 + 0] = (Math.random() - 0.5) * 4;
+    attrPos[i * 3 + 1] = (Math.random() - 0.5) * 4;
+    attrPos[i * 3 + 2] = -4 + (Math.random() - 0.5) * 2;
+    attrVel[i * 3 + 0] = 0;
+    attrVel[i * 3 + 1] = 0;
+    attrVel[i * 3 + 2] = 0;
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(attrPos), 3));
+
+  attractorMaterial = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 } },
+    vertexShader: /* glsl */`
+      uniform float uTime;
+      uniform float uOpacity;
+      void main() {
+        gl_PointSize = 2.5;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: /* glsl */`
+      uniform float uOpacity;
+      void main() {
+        vec2 uv = gl_PointCoord - 0.5;
+        float d = length(uv);
+        if (d > 0.5) discard;
+        float a = (1.0 - smoothstep(0.0, 0.5, d)) * uOpacity;
+        gl_FragColor = vec4(1.0, 0.55, 0.0, a); // amber glow
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+
+  attractorPoints = new THREE.Points(geo, attractorMaterial);
+  scene.add(attractorPoints);
+}
+
+// ── Update attractor particles each frame ─────────────────────
+function updateAttractor(dt) {
+  // Move the attractor target in a slow orbit
+  attractorTarget.x = Math.sin(uTime * 0.3) * 2.0;
+  attractorTarget.y = Math.cos(uTime * 0.22) * 1.2;
+  attractorTarget.z = -4 + Math.sin(uTime * 0.15) * 0.8;
+
+  const posAttr = attractorPoints.geometry.getAttribute('position');
+  const pos = posAttr.array;
+
+  for (let i = 0; i < ATTRACTOR_COUNT; i++) {
+    const ix = i * 3, iy = ix + 1, iz = ix + 2;
+    const dx = attractorTarget.x - pos[ix];
+    const dy = attractorTarget.y - pos[iy];
+    const dz = attractorTarget.z - pos[iz];
+    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.01;
+
+    // Lorenz-like force: attraction + swirl
+    const force = 0.004 / dist;
+    attrVel[ix] += dx * force;
+    attrVel[iy] += dy * force;
+    attrVel[iz] += dz * force;
+
+    // Swirl perpendicular component
+    attrVel[ix] += (-dz * 0.0015);
+    attrVel[iz] += (dx * 0.0015);
+
+    // Damping
+    attrVel[ix] *= 0.97;
+    attrVel[iy] *= 0.97;
+    attrVel[iz] *= 0.97;
+
+    pos[ix] += attrVel[ix];
+    pos[iy] += attrVel[iy];
+    pos[iz] += attrVel[iz];
+
+    // Respawn stray particles
+    if (dist > 6) {
+      pos[ix] = attractorTarget.x + (Math.random() - 0.5) * 1.5;
+      pos[iy] = attractorTarget.y + (Math.random() - 0.5) * 1.5;
+      pos[iz] = attractorTarget.z + (Math.random() - 0.5) * 1.5;
+      attrVel[ix] = 0; attrVel[iy] = 0; attrVel[iz] = 0;
+    }
+  }
+  posAttr.needsUpdate = true;
+}
+
+// ── rAF + visibility + IntersectionObserver gates ─────────────
+function startLoop() {
+  if (isRunning) return;
+  isRunning = true;
+  tick();
+}
+
+function stopLoop() {
+  isRunning = false;
+  if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') stopLoop();
+  else if (!contextLost) startLoop();
+});
+
+// IntersectionObserver gate — stop when canvas is off-screen
+const canvasObserver = new IntersectionObserver(
+  (entries) => {
+    const entry = entries[0];
+    if (entry.isIntersecting) { if (!contextLost) startLoop(); }
+    else stopLoop();
+  },
+  { threshold: 0 }
+);
+canvasObserver.observe(canvas);
+
+// ── Scroll-driven 3D binding ───────────────────────────────────
+
+function getScrollProgress() {
+  const h = document.body.scrollHeight - window.innerHeight;
+  return h > 0 ? Math.min(1, window.scrollY / h) : 0;
+}
+
+function getCurrentChapterName() {
+  const mid = window.scrollY + window.innerHeight * 0.4;
+  let name = 'HERO';
+  for (const ch of CHAPTERS) {
+    const el = document.getElementById(ch.id);
+    if (!el) continue;
+    if (el.offsetTop <= mid) name = ch.name;
+  }
+  return name;
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function applyScrollBinding(progress) {
+  if (!renderer) return;
+
+  // Galaxy: camera.position.z lerps 8 → 3 as progress 0 → 0.5
+  const t = Math.min(1, progress / 0.5);
+  camera.position.z = lerp(8, 3, t);
+
+  // Camera subtle rotateY
+  camera.rotation.y = window.scrollY * 0.0003;
+
+  // Galaxy group slow rotate
+  if (galaxyPoints) galaxyPoints.rotation.y += 0.0005;
+
+  // Grid opacity: lerp in at scroll 0.2, out at 0.7
+  if (gridMaterial) {
+    const gIn  = progress < 0.2 ? 0 : Math.min(1, (progress - 0.2) / 0.1);
+    const gOut = progress > 0.7 ? Math.max(0, 1 - (progress - 0.7) / 0.1) : 1;
+    gridMaterial.uniforms.uOpacity.value = gIn * gOut;
+  }
+
+  // Attractor opacity: fade in at 0.65, full at 0.75
+  if (attractorMaterial) {
+    const aIn = progress < 0.65 ? 0 : Math.min(1, (progress - 0.65) / 0.1);
+    attractorMaterial.uniforms.uOpacity.value = aIn;
+  }
+}
+
+// ── Main rAF tick ─────────────────────────────────────────────
+let firstFrame = true;
+function tick() {
+  if (!isRunning || contextLost) return;
+  rafId = requestAnimationFrame(tick);
+
+  // Reduced motion: render one frame then stop
+  if (prefersReducedMotion.matches) {
+    if (!firstFrame) { stopLoop(); return; }
+    firstFrame = false;
+  }
+
+  // Mobile: skip Three.js rendering (CSS gradient handles bg)
+  if (isMobile.matches) { stopLoop(); return; }
+
+  uTime += 0.01;
+
+  // Update Three.js uniforms
+  if (galaxyMaterial) galaxyMaterial.uniforms.uTime.value = uTime;
+  if (gridMaterial)   gridMaterial.uniforms.uTime.value   = uTime;
+  if (attractorMaterial) attractorMaterial.uniforms.uTime.value = uTime;
+
+  // Update attractor only when visible
+  if (attractorMaterial && attractorMaterial.uniforms.uOpacity.value > 0.01) {
+    updateAttractor(0.016);
+  }
+
+  // Scroll binding
+  const progress = getScrollProgress();
+  applyScrollBinding(progress);
+
+  // HUD update
+  const pctEl = document.getElementById('hud-pct');
+  const chEl  = document.getElementById('hud-chapter');
+  if (pctEl) pctEl.textContent = Math.round(progress * 100) + '%';
+  if (chEl)  chEl.textContent  = getCurrentChapterName();
+
+  renderer.render(scene, camera);
+}
+
+// ── Resize ────────────────────────────────────────────────────
+function onResize() {
+  if (!renderer || !camera) return;
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  if (galaxyMaterial) galaxyMaterial.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, 2);
+}
+
+// ── Context loss handling ─────────────────────────────────────
+function onContextLost(e) {
+  e.preventDefault();
+  contextLost = true;
+  stopLoop();
+  // Show CSS fallback
+  document.body.classList.add('no-webgl');
+}
+
+function onContextRestored() {
+  contextLost = false;
+  document.body.classList.remove('no-webgl');
+  // Rebuild the scene
+  if (renderer) {
+    buildGalaxy();
+    buildGrid();
+    buildAttractor();
+    startLoop();
+  }
+}
+
+// ── Dispose on teardown ───────────────────────────────────────
+window.addEventListener('beforeunload', () => {
+  stopLoop();
+  canvasObserver.disconnect();
+  if (galaxyPoints) { galaxyPoints.geometry.dispose(); galaxyMaterial.dispose(); }
+  if (gridMesh)     { gridMesh.geometry.dispose();    gridMaterial.dispose(); }
+  if (attractorPoints) { attractorPoints.geometry.dispose(); attractorMaterial.dispose(); }
+  if (renderer)     renderer.dispose();
+});
+
+// ── WebXR feature gate ────────────────────────────────────────
+async function detectXR() {
+  if (!navigator.xr) return;
+  try {
+    const supported = await navigator.xr.isSessionSupported('immersive-vr');
+    if (supported) {
+      const vrBtn = document.getElementById('enter-vr-btn');
+      if (vrBtn) vrBtn.style.display = 'inline-block';
+    }
+  } catch { /* XR not available — silent fail */ }
+}
+detectXR();
+
+// XR session request — guarded with navigator.xr + isSessionSupported
+document.getElementById('enter-vr-btn')?.addEventListener('click', async () => {
+  if (!navigator.xr) return;
+  try {
+    const supported = await navigator.xr.isSessionSupported('immersive-vr');
+    if (!supported) return;
+    const session = await navigator.xr.requestSession('immersive-vr');
+    renderer.xr.enabled = true;
+    renderer.xr.setSession(session);
+  } catch (err) {
+    console.warn('WebXR session failed:', err);
+  }
+});
+</script>
+
+<!-- ============================================================
+     GSAP scroll animations — runs after GSAP/ScrollTrigger load
+     ============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  // Reduced-motion: skip GSAP scroll effects
+  const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  function initGSAP() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (prefersReducedMotion.matches) {
+      // Disable scrub, just show everything
+      ScrollTrigger.config({ limitCallbacks: true });
+      return;
+    }
+
+    // ── Hero word-stagger entrance ───────────────────────────
+    const words = document.querySelectorAll('.hero-title .word');
+    gsap.fromTo(words,
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1,
+        y: 0,
+        stagger: 0.08,
+        duration: 0.85,
+        ease: 'power3.out',
+        delay: 0.2,
+      }
+    );
+
+    // Eyebrow / sub / cta
+    const heroEyebrow = document.querySelector('.hero-eyebrow');
+    const heroSub     = document.querySelector('.hero-sub');
+    const heroCta     = document.querySelector('.hero-cta-row');
+
+    setTimeout(() => {
+      if (heroEyebrow) heroEyebrow.classList.add('in');
+      setTimeout(() => {
+        if (heroSub) heroSub.classList.add('in');
+        if (heroCta) heroCta.classList.add('in');
+      }, 200);
+    }, 100);
+
+    // ── Capabilities chapter — ScrollTrigger scrub ───────────
+    const capSection = document.getElementById('capabilities');
+    if (capSection) {
+      const capLabel = capSection.querySelector('.cap-label');
+      const capTitle = capSection.querySelector('.cap-title');
+      const capCards = capSection.querySelectorAll('.cap-card');
+
+      ScrollTrigger.create({
+        trigger: capSection,
+        start: 'top 80%',
+        onEnter: () => {
+          if (capLabel) capLabel.classList.add('in');
+          if (capTitle) capTitle.classList.add('in');
+        },
+      });
+
+      // Cards wipe in staggered via ScrollTrigger scrub
+      capCards.forEach((card, i) => {
+        ScrollTrigger.create({
+          trigger: capSection,
+          start: `top+=${i * 60}px 75%`,
+          onEnter: () => card.classList.add('in'),
+        });
+      });
+    }
+
+    // ── Signal Grid chapter ───────────────────────────────────
+    const gridSection = document.getElementById('signal-grid');
+    if (gridSection) {
+      const gridMono  = gridSection.querySelector('.grid-mono');
+      const gridTitle = gridSection.querySelector('.grid-title');
+      const gridBody  = gridSection.querySelector('.grid-body');
+
+      ScrollTrigger.create({
+        trigger: gridSection,
+        start: 'top 75%',
+        onEnter: () => {
+          if (gridMono)  gridMono.classList.add('in');
+          if (gridTitle) gridTitle.classList.add('in');
+          if (gridBody)  gridBody.classList.add('in');
+        },
+      });
+    }
+
+    // ── Projects: stagger cards on enter ─────────────────────
+    const projSection = document.getElementById('projects');
+    if (projSection) {
+      const cards = projSection.querySelectorAll('.proj-card');
+      gsap.fromTo(cards,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.12,
+          duration: 0.7,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: projSection,
+            start: 'top 80%',
+          },
+        }
+      );
+    }
+
+    // ── Attractor Lab chapter ─────────────────────────────────
+    const labSection = document.getElementById('attractor-lab');
+    if (labSection) {
+      const labLabel  = labSection.querySelector('.lab-label');
+      const labTitle  = labSection.querySelector('.lab-title');
+      const labBody   = labSection.querySelector('.lab-body');
+      const labCta    = labSection.querySelector('.lab-cta-group');
+
+      ScrollTrigger.create({
+        trigger: labSection,
+        start: 'top 75%',
+        onEnter: () => {
+          if (labLabel) labLabel.classList.add('in');
+          if (labTitle) labTitle.classList.add('in');
+          if (labBody)  labBody.classList.add('in');
+          if (labCta)   labCta.classList.add('in');
+        },
+      });
+    }
+
+    // ── HUD scroll progress update ────────────────────────────
+    ScrollTrigger.create({
+      trigger: document.body,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => {
+        const pctEl = document.getElementById('hud-pct');
+        const chEl  = document.getElementById('hud-chapter');
+        if (pctEl) pctEl.textContent = Math.round(self.progress * 100) + '%';
+        if (chEl) {
+          const mid = window.scrollY + window.innerHeight * 0.4;
+          const chapters = document.querySelectorAll('[data-chapter]');
+          let name = 'HERO';
+          chapters.forEach(c => {
+            if (c.offsetTop <= mid) name = c.dataset.chapter;
+          });
+          chEl.textContent = name;
+        }
+      },
+    });
+  }
+
+  // Defer until GSAP loads (it is deferred itself)
+  function waitForGSAP(attempts) {
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      initGSAP();
+    } else if (attempts > 0) {
+      setTimeout(() => waitForGSAP(attempts - 1), 120);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => waitForGSAP(30));
+  } else {
+    waitForGSAP(30);
+  }
+
+  // Fallback for no-JS / GSAP-blocked: trigger .in classes via IntersectionObserver
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        const section = entry.target.closest('section');
+        if (!section) continue;
+        section.querySelectorAll('.cap-label,.cap-title,.cap-card,.grid-mono,.grid-title,.grid-body,.lab-label,.lab-title,.lab-body,.lab-cta-group').forEach(el => {
+          el.classList.add('in');
+        });
+      }
+    }
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('section').forEach(s => io.observe(s));
+
+  // Hero elements: trigger immediately if GSAP not available
+  setTimeout(() => {
+    const words = document.querySelectorAll('.hero-title .word');
+    if (words.length && words[0].style.opacity === '') {
+      words.forEach((w, i) => {
+        setTimeout(() => {
+          w.style.transition = `opacity 0.85s cubic-bezier(0.16,1,0.3,1) ${i*0.08}s, transform 0.85s cubic-bezier(0.16,1,0.3,1) ${i*0.08}s`;
+          w.style.opacity = '1';
+          w.style.transform = 'translateY(0)';
+        }, 200 + i * 80);
+      });
+    }
+    document.querySelector('.hero-eyebrow')?.classList.add('in');
+    setTimeout(() => {
+      document.querySelector('.hero-sub')?.classList.add('in');
+      document.querySelector('.hero-cta-row')?.classList.add('in');
+    }, 400);
+  }, 800);
+})();
+</script>
+
+<!-- noscript fallback — ensures something visible for non-JS users -->
+<noscript>
+  <style>
+    .hero-title .word, .hero-eyebrow, .hero-sub, .hero-cta-row,
+    .cap-label, .cap-title, .cap-card, .grid-mono, .grid-title,
+    .grid-body, .lab-label, .lab-title, .lab-body, .lab-cta-group {
+      opacity: 1 !important;
+      transform: none !important;
+      clip-path: none !important;
+    }
+  </style>
+</noscript>
+</body>
+</html>
