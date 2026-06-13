@@ -63,7 +63,14 @@ In your Next.js project root (same folder as `package.json`):
    NEXT_PUBLIC_SITE_NAME="My Release Page"
    ```
 
+   > **NEVER share this file or screenshot its contents.** `.env.local` contains
+   > your `FAL_KEY` — a billable secret. If shared, anyone can generate images
+   > charged to your fal.ai account. Do not paste it into Slack, GitHub issues,
+   > AI chat windows, or support threads. If exposed, regenerate it immediately
+   > in the fal.ai dashboard.
+
 3. Confirm `.env.local` is in `.gitignore` (Next.js adds this by default).
+   Run `git check-ignore -v .env.local` to verify before your first commit.
 
 ### Environment variables explained
 

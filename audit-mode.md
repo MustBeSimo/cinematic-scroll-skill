@@ -5,14 +5,21 @@
 > and scores them on four dimensions. It outputs a `remediation-plan.md` with specific,
 > prioritized fixes.
 
+> [!NOTE]
+> **How audit mode works:** The agent analyzes the target URL using its own browser
+> access (WebFetch / browser tool) — it is **not** a standalone CLI binary or a local
+> Playwright script. The agent fetches the page, inspects its HTML/CSS/JS for scroll
+> patterns, and applies the scoring rubrics below. For local headless page screenshots
+> and console-error capture, use the separate `tools/page-proof/proof.mjs` tool.
+
 > [!WARNING]
-> **Audit mode loads the target URL in a real local browser and interacts with it.**
+> **Audit mode fetches the target URL via the agent's network access.**
 > Before auditing, understand the implications:
-> - The page is fully loaded and its JavaScript executed, and the page is scrolled
->   for ~10s to collect behavior data. This can trigger analytics, ad impressions,
->   or other side effects on the visited site.
-> - The request originates from **your machine**, exposing your IP address and user
->   agent to the target site and any third parties it calls.
+> - The page is fetched and its HTML/CSS inspected. Depending on the agent's browser
+>   tool, JavaScript may be executed and scroll behavior observed. This can trigger
+>   analytics, ad impressions, or other side effects on the visited site.
+> - The request originates from **the agent's network context**, not your machine
+>   directly — but it still reaches the target server.
 > - **Only audit sites you own or are authorized to test.** For sites that require
 >   login, you must supply credentials or a pre-authenticated session — doing so
 >   exposes that authenticated context to the audit run. Prefer a throwaway/test

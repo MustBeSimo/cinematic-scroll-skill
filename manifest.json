@@ -1,7 +1,7 @@
 {
   "name": "cinematic-scroll",
   "version": "2.3.2",
-  "description": "Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, release/launch pages, and editorial microsites. Single self-contained scroll sections (Mode A) or full Shopify-Editions-style Next.js release pages with AI-generated visuals (Mode B). A cinematic web production studio in an Agent Skill: an optional 5-phase pipeline (Cinematic Audit → Motion Storyboard → Technical Spec → Build → Polish) with taste guardrails, 12 scroll patterns, 7 visual systems, a scroll-choreography.json schema, and a 4-dimension audit mode. Built with React, Next.js, GSAP, Lenis, fal.ai.",
+  "description": "Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, release/launch pages, and editorial microsites. Single self-contained scroll sections (Mode A) or full Shopify-Editions-style Next.js release pages with optional AI-generated visuals via the fal.ai remote API (Mode B — requires your own fal.ai key; makes outbound API calls to fal.ai servers). A cinematic web production studio in an Agent Skill: an optional 5-phase pipeline (Cinematic Audit → Motion Storyboard → Technical Spec → Build → Polish) with taste guardrails, 12 scroll patterns, 7 visual systems, a scroll-choreography.json schema, and a 4-dimension audit mode (agent-driven analysis using the agent's browser/fetch access — not a standalone binary). WebXR and 3D GLB generation are opt-in advanced capabilities, inactive by default. Built with React, Next.js, GSAP, Lenis, fal.ai.",
   "author": {
     "name": "Simone Leonelli",
     "email": "simone@w230.net"
@@ -70,25 +70,30 @@
     "env"
   ],
   "security": {
-    "note": "All sensitive capabilities are optional and user-initiated. FAL_KEY is a billable secret — store it in a gitignored .env.local or a secret manager, never in source or version control. Audit mode loads a user-supplied URL in a local headless browser from the user's machine (IP/session exposure; only audit sites you own or are authorized to test). See manifest.md → Security & Privacy and audit-mode.md.",
+    "note": "All sensitive capabilities are optional and user-initiated. FAL_KEY is a billable secret — store it in a gitignored .env.local or a secret manager, never in source or version control. Audit mode uses the agent's own browser/fetch access to analyze a user-supplied URL (not a local headless binary); the request may trigger analytics or side effects on the target — only audit sites you own or are authorized to test. Mode A output pages load GSAP, Google Fonts, and @google/model-viewer from third-party CDNs (SRI-pinned where applicable) — self-host these if your deployment policy requires it. See manifest.md → Security & Privacy and audit-mode.md.",
     "secrets": [
       "FAL_KEY",
       "GENERATE_API_SECRET"
+    ],
+    "thirdPartyNetworkCalls": [
+      {"when": "Mode B image/asset generation", "destination": "fal.ai API", "trigger": "user-initiated, requires FAL_KEY"},
+      {"when": "Audit mode", "destination": "user-supplied URL", "trigger": "user-initiated, explicit confirmation required"},
+      {"when": "Mode A output pages", "destination": "unpkg.com (GSAP), fonts.googleapis.com, fonts.gstatic.com, cdn.jsdelivr.net (@google/model-viewer)", "trigger": "loaded by the generated HTML when opened in a browser — self-host to avoid"}
     ],
     "disclosure": "manifest.md#security--privacy"
   },
   "modes": [
     {
       "name": "Scroll artifact",
-      "description": "Single self-contained HTML or .tsx scroll section / page. No build step, no AI keys. Fast preview."
+      "description": "Single self-contained HTML or .tsx scroll section / page. No build step, no AI keys. Generated pages load GSAP and Google Fonts from third-party CDNs (SRI-pinned). Fast preview."
     },
     {
       "name": "Full release site",
-      "description": "Tested Next.js App Router templates + fal.ai asset pipeline for a complete cinematic release website. Bring your own fal.ai key."
+      "description": "Tested Next.js App Router templates + optional fal.ai remote API pipeline for AI-generated chapter imagery. Requires your own fal.ai account and FAL_KEY. Makes outbound API calls to fal.ai servers."
     },
     {
       "name": "Cinematic audit",
-      "description": "Analyze an existing URL's scroll experience. Scores pacing, performance, accessibility, and emotional arc. Outputs remediation-plan.md with prioritized fixes."
+      "description": "Agent-driven analysis of an existing URL's scroll experience using the agent's browser/fetch access. Scores pacing, performance, accessibility, and emotional arc. Outputs remediation-plan.md with prioritized fixes. This is not a standalone CLI tool."
     }
   ],
   "references": [
@@ -101,7 +106,8 @@
   ],
   "pipeline": {
     "phases": 5,
-    "gated": true,
+    "gated": "adaptive",
+    "gatedNote": "Phases gate on user approval when the user wants the process (ambiguous brief, iterative workflow). Phases run internally without pausing when the user asked for a direct result ('build me…', one-shot, CI invocation, or another agent invoked this skill). The agent never blocks an autonomous run waiting for approval the user cannot give.",
     "artifacts": [
       "cinematic-audit.md",
       "motion-storyboard.md",

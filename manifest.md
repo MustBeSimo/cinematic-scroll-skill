@@ -47,7 +47,11 @@ Every experience starts from a baseline that works everywhere: static layout, re
 
 ## Version History
 
-### v2.1.0 (Current)
+### v2.3.2 (Current)
+
+- **Security & disclosure hardening:** Resolved 19 ClawHub audit findings — clarified audit mode as agent-driven analysis (not a standalone binary), added CDN third-party disclosure to generated pages, strengthened credential-sharing warnings, resolved pipeline gating contradiction (`gated: true` → `gated: "adaptive"`), added context isolation boundary, and added explicit activation/non-activation guidelines.
+
+### v2.1.0
 
 - **Mobile-ready animated sites:** Mobile is no longer a static fallback. Every output keeps touch-safe scroll-coupled motion below 768px — lerped image parallax plus scroll-linked entrance reveals (no pinning, no 3D tilt). A flat, motionless mobile page is now a documented failure mode (`references/mobile-motion.md`, `performance-budget.md` Section 3). Only `prefers-reduced-motion` renders fully static.
 - **GSAP showcase beats in examples:** The bundled examples run a dependency-free vanilla rAF core, progressively enhanced with one deferred-GSAP showcase beat each.
@@ -55,7 +59,7 @@ Every experience starts from a baseline that works everywhere: static layout, re
 
 ### v2.0.0
 
-- **5-phase gated pipeline:** Cinematic Audit → Motion Storyboard → Technical Spec → Build → Polish. Each phase gates the next. No more prompt-to-code one-shots.
+- **5-phase adaptive pipeline:** Cinematic Audit → Motion Storyboard → Technical Spec → Build → Polish. Each phase produces a reviewable artifact. Phases gate on user approval for interactive workflows; phases run internally without pausing for one-shot requests or agent-to-agent invocations. No more silent prompt-to-code one-shots.
 - **Taste guardrails system:** 11 banned patterns (no filter animation, no layout-property animation, no scroll-jacking short content, no setState in scroll handlers, etc.), 7 anti-convergence principles, cinematic vocabulary with film-term-to-implementation mapping, and pacing rules derived from perceptual psychology.
 - **Reference library:** 12 scroll patterns (Pinned Hero, Scrubbed Timeline, Velocity-Reactive, Sticky Narrative, Chaptered Release, Parallax Gallery, 3D Product Orbit, Editorial Longread, Data Story, Landing Sequence, Portfolio Reveal, Archive Explorer) with depth configs, transition types, and mobile strategies for each. 7 visual systems (Symmetric Monument, Clinical Noir, Storybook Geometry, Temporal Monument, Atmospheric Sublime, Warm Scrapbook, Naturalistic Drift) for art-direction direction.
 - **Performance budget:** 60fps contract with frame budgets, permitted/forbidden property lists, will-change strategy, mobile degradation matrix (4 tiers), and Core Web Vitals targets.
@@ -129,10 +133,11 @@ background. Declared permissions: `filesystem:read`, `filesystem:write`,
 
 | Capability | When it runs | Why | What to know |
 |---|---|---|---|
-| **Reads env vars** (`FAL_KEY`, `FAL_IMAGE_MODEL`, `GENERATE_API_SECRET`, `CHROME_PATH`, `PLAYWRIGHT_BROWSERS_PATH`) | Mode B generation; audit/page-proof | Authenticate fal.ai and locate a local browser | `FAL_KEY` is a billable secret — keep it in a gitignored `.env.local` or a secret manager, never in source/prompts/commits. Use a least-privilege key and rotate if exposed. |
-| **Network fetch** | fal.ai generation (Mode B); loading a URL in audit mode | Generate images/3D assets; analyze a target site | fal.ai calls send your prompt to a third party (see License & Legal). Audit mode loads the URL from **your** machine, exposing your IP/user-agent and possibly triggering side effects on the target — only audit sites you own or are authorized to test. See `audit-mode.md`. |
-| **Shell / subprocess** | `npm`/`node` scripts; `npx @gltf-transform/cli`; local headless browser (Playwright) | Build, typecheck, optimize GLB assets, render proofs | Runs local tooling with flags like `--no-sandbox` on a browser **you** launch against pages **you** choose. No remote command execution. |
-| **Third-party CDNs** | Generated/example pages only | Load GSAP, Google Fonts, `@google/model-viewer` | Standard front-end CDNs in *output* pages (SRI-pinned where applicable). Self-host these if your deployment forbids third-party origins. |
+| **Reads env vars** (`FAL_KEY`, `FAL_IMAGE_MODEL`, `GENERATE_API_SECRET`, `CHROME_PATH`, `PLAYWRIGHT_BROWSERS_PATH`) | Mode B generation; audit/page-proof | Authenticate fal.ai and locate a local browser | `FAL_KEY` is a billable secret — keep it in a gitignored `.env.local` or a secret manager, never in source/prompts/commits/screenshots/AI chat threads. Use a least-privilege key and rotate immediately if exposed. |
+| **Remote API calls to fal.ai** | Mode B image/GLB generation only | Generate chapter imagery and 3D assets | Sends your image prompts and parameters to fal.ai servers (a third party). Requires your own `FAL_KEY`. Costs real money per call — see `MODELS.md` and fal.ai pricing. Entirely opt-in; Mode A works at $0 with no API calls. |
+| **Agent browser/fetch access (audit mode)** | Audit mode, per explicit user request | Analyze a target URL's scroll experience | The agent fetches and inspects the target page using its own network access. This may trigger analytics, ad impressions, or other side effects on the visited site. Only audit sites you own or are authorized to test. See `audit-mode.md`. |
+| **Shell / subprocess** | `npm`/`node` scripts; `npx @gltf-transform/cli`; `tools/page-proof/proof.mjs` (Playwright) | Build, typecheck, optimize GLB assets, render headless page screenshots | Runs local tooling you explicitly invoke. `page-proof` opens a local Playwright browser against pages **you** choose. No remote command execution. |
+| **Third-party CDNs in generated pages** | Mode A output pages, when opened in a browser | Load GSAP, Google Fonts, `@google/model-viewer` | `unpkg.com` (GSAP), `fonts.googleapis.com` / `fonts.gstatic.com` (Google Fonts), `cdn.jsdelivr.net` (`@google/model-viewer`) are loaded by the HTML the skill generates. These are outbound requests from the end-user's browser, not from the agent. All CDN scripts are SRI-pinned (integrity hash + `crossorigin`). Self-host if your deployment policy restricts third-party origins. |
 
 **Least-privilege guidance:** CSS-only mode (Mode A) needs none of the network,
 env, or AI capabilities. Audit mode is opt-in per URL. The fal.ai pipeline only
