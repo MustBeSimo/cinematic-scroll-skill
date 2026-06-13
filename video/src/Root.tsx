@@ -6,23 +6,31 @@ import {Flagship3D} from './Flagship3D';
 import {Doctor} from './Doctor';
 import {Reel} from './Reel';
 import {ReelVertical} from './ReelVertical';
+import {Reel2} from './Reel2';
 
-// Five 16:9 compositions (render at --scale=2 for 4K):
-//   Reel       — 60s flagship sizzle: real scroll footage of the live example
-//                pages (hook → prompt → 5 worlds → 3D+doctor → two-media → end).
-//   Promo      — ~25.8s product promo (prompt → site → worlds → end card)
-//   TwoMedia   — 30s feature film: "One choreography. Two media." Includes the
-//                dogfood scene driven by the compiled scroll-choreography.json.
-//   Flagship3D — 30s launch film for the 3D/WebXR flagship route: four
-//                movements, the generate:flagship pipeline, the dancer.
-//   Doctor     — 24s launch film for cinematic-doctor: the scan, the score,
-//                the CI gate that blocks cinematic slop below 80.
+// Six 16:9 compositions (render at --scale=2 for 4K):
+//   Reel       — 60s flagship sizzle (original cut)
+//   Reel2      — 60s re-edit: every act has live footage from frame 0,
+//                no text-only bridge slides; 5 worlds including NEXUS LAB
+//   ReelVertical — 9:16 vertical version of Reel (original)
+//   Promo      — ~25.8s product promo
+//   TwoMedia   — 30s "One choreography. Two media." feature film
+//   Flagship3D — 30s launch film for the 3D/WebXR flagship
+//   Doctor     — 24s cinematic-doctor launch film
 export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
         id="Reel"
         component={Reel}
+        durationInFrames={1800}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="Reel2"
+        component={Reel2}
         durationInFrames={1800}
         fps={30}
         width={1920}
