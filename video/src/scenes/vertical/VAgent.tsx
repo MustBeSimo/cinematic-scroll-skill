@@ -5,7 +5,9 @@ import {bright} from '../../theme';
 
 // ACT II — THE AGENT (6–14s), vertical. It's a SKILL, not a library. Describe
 // the brand in a terminal card; the agent writes the choreography JSON.
-const PROMPT = 'quiet luxury launch — warm cream, 5 chapters';
+// Generic on purpose: the montage shows RANGE, so the prompt shouldn't imply
+// one specific aesthetic (a "quiet luxury" prompt clashed with noir leading).
+const PROMPT = 'build a cinematic scroll site for my product launch';
 
 export const VAgent: React.FC = () => {
   const frame = useCurrentFrame();

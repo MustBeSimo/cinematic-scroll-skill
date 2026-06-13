@@ -22,7 +22,10 @@ export const VEnd: React.FC = () => {
       <div style={{fontFamily: serif, color: bright.inkSoft, fontSize: 54, fontStyle: 'italic', marginTop: 26}}>
         The motion is the constant.<br />The look is yours.
       </div>
-      <div style={{height: 4, width: rule, background: bright.cognac, marginTop: 44}} />
+      <div style={{fontFamily: mono, color: bright.cognac, fontSize: 32, letterSpacing: 5, marginTop: 30}}>
+        BY SIMONE LEONELLI
+      </div>
+      <div style={{height: 4, width: rule, background: bright.cognac, marginTop: 36}} />
 
       {/* one primary action — high contrast, thumb-sized */}
       <div style={{marginTop: 64, transform: `scale(${interpolate(btn, [0, 1], [0.9, 1])})`, opacity: btn}}>

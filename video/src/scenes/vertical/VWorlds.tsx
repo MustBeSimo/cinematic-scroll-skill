@@ -9,11 +9,13 @@ import {bright} from '../../theme';
 // an eased accelerate→decelerate wipe — the transition demonstrates the product.
 const H = 1920;
 
+// rate kept low enough that each clip is STILL SCROLLING when it wipes out —
+// a frozen last frame reads as a snap. (clipDur/rate ≥ on-screen frames.)
 const WORLDS = [
-  {src: 'footage/noir.mp4',        arrive: 0,   rate: 0.70, index: '01', title: 'VANTASCOPE',     name: 'Sci-fi noir',           accent: '#E8484F'},
-  {src: 'footage/renaissance.mp4', arrive: 156, rate: 0.70, index: '02', title: 'CLASSIC TOUCH',  name: 'Renaissance editorial', accent: '#B6892F'},
-  {src: 'footage/luxe.mp4',        arrive: 336, rate: 0.82, index: '03', title: 'MAISON SOLENNE', name: 'Quiet luxury',          accent: '#A4652F'},
-  {src: 'footage/pop.mp4',         arrive: 516, rate: 0.62, index: '04', title: 'BLOOM',           name: 'Gen-Z pop',             accent: '#FF2E93'},
+  {src: 'footage/noir.mp4',        arrive: 0,   rate: 0.60, index: '01', title: 'VANTASCOPE',     name: 'Sci-fi noir',           accent: '#E8484F'},
+  {src: 'footage/renaissance.mp4', arrive: 156, rate: 0.60, index: '02', title: 'CLASSIC TOUCH',  name: 'Renaissance editorial', accent: '#B6892F'},
+  {src: 'footage/luxe.mp4',        arrive: 336, rate: 0.74, index: '03', title: 'MAISON SOLENNE', name: 'Quiet luxury',          accent: '#A4652F'},
+  {src: 'footage/pop.mp4',         arrive: 516, rate: 0.54, index: '04', title: 'BLOOM',           name: 'Gen-Z pop',             accent: '#FF2E93'},
 ];
 
 const CARD_W = 1000;
@@ -44,7 +46,7 @@ export const VWorlds: React.FC = () => {
             {/* centered 16:9 footage card */}
             <div style={{width: CARD_W, height: CARD_H, borderRadius: 16, overflow: 'hidden', border: `2px solid ${bright.line}`, boxShadow: '0 30px 70px rgba(20,12,6,0.4)', position: 'relative'}}>
               <Sequence from={Math.max(0, w.arrive - 24)} durationInFrames={230}>
-                <OffthreadVideo src={staticFile(w.src)} startFrom={0} playbackRate={w.rate} muted style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                <WorldClip src={w.src} rate={w.rate} />
               </Sequence>
               <div style={{position: 'absolute', left: 0, bottom: 0, width: 8, height: '100%', background: w.accent}} />
             </div>
@@ -58,6 +60,16 @@ export const VWorlds: React.FC = () => {
       {/* a thin scroll-progress rail, far right — reinforces "this is scroll" */}
       <ScrollRail frame={frame} />
     </AbsoluteFill>
+  );
+};
+
+// Sequence-relative fade so the clip eases in (decode) and eases out (wipe),
+// never popping or freezing on a hard frame.
+const WorldClip: React.FC<{src: string; rate: number}> = ({src, rate}) => {
+  const f = useCurrentFrame();
+  const op = interpolate(f, [0, 10, 206, 224], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  return (
+    <OffthreadVideo src={staticFile(src)} startFrom={0} playbackRate={rate} muted style={{width: '100%', height: '100%', objectFit: 'cover', opacity: op}} />
   );
 };
 

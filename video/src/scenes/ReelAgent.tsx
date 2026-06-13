@@ -6,7 +6,9 @@ import {bright} from '../theme';
 // ACT II — THE AGENT (6–14s). The unique framing the old cut abandoned: this
 // is a SKILL for coding agents, not a manual library. Describe the brand, the
 // agent writes the choreography. Ties back to Act I's JSON.
-const PROMPT = 'quiet luxury launch — warm cream, 5 chapters';
+// Generic on purpose: the montage shows RANGE, so the prompt shouldn't imply
+// one specific aesthetic (a "quiet luxury" prompt clashed with noir leading).
+const PROMPT = 'build a cinematic scroll site for my product launch';
 
 export const ReelAgent: React.FC = () => {
   const frame = useCurrentFrame();

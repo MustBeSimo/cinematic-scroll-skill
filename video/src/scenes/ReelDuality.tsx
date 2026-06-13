@@ -23,10 +23,11 @@ export const ReelDuality: React.FC = () => {
 
   return (
     <AbsoluteFill style={{backgroundColor: bright.paper, justifyContent: 'center', alignItems: 'center'}}>
-      {/* the two outputs, showing the SAME scroll */}
-      <div style={{display: 'flex', gap: 40, opacity: panelFade, transform: `translateX(0px)`}}>
-        <Panel label="WEBSITE" shift={offset} accent={bright.cognac} />
-        <Panel label="LAUNCH FILM" shift={-offset} accent={bright.oxblood} highlight />
+      {/* the two outputs of one file — same content, two distinct media surfaces
+          (a browser and a video player), so it never reads as one clip pasted twice */}
+      <div style={{display: 'flex', gap: 40, opacity: panelFade}}>
+        <Panel label="WEBSITE" kind="browser" shift={offset} accent={bright.cognac} />
+        <Panel label="LAUNCH FILM" kind="player" shift={-offset} accent={bright.oxblood} highlight />
       </div>
 
       {/* json chip */}
@@ -49,16 +50,36 @@ export const ReelDuality: React.FC = () => {
   );
 };
 
-const Panel: React.FC<{label: string; shift: number; accent: string; highlight?: boolean}> = ({label, shift, accent, highlight}) => {
+const Panel: React.FC<{label: string; kind: 'browser' | 'player'; shift: number; accent: string; highlight?: boolean}> = ({label, kind, shift, accent, highlight}) => {
   const frame = useCurrentFrame();
-  // identical scroll in both — proves the duality. Same source, same timing.
+  const chrome = 44; // top/bottom UI bar height
+  // same content, same timing in both — proves identity; the CHROME differs.
   return (
     <div style={{transform: `translateX(${shift}px)`}}>
-      <div style={{width: 720, height: 460, borderRadius: 14, overflow: 'hidden', border: `2px solid ${highlight ? accent : bright.line}`, boxShadow: '0 30px 70px rgba(40,26,12,0.3)', position: 'relative'}}>
-        <OffthreadVideo src={staticFile('footage/noir.mp4')} startFrom={0} playbackRate={1.0} muted style={{width: '100%', height: '100%', objectFit: 'cover'}} />
-        <div style={{position: 'absolute', top: 14, left: 16, fontFamily: mono, fontSize: 24, fontWeight: 700, letterSpacing: 3, color: '#fff', background: 'rgba(10,12,15,0.7)', padding: '6px 14px', borderRadius: 6}}>
-          {label}
+      <div style={{width: 720, borderRadius: 14, overflow: 'hidden', border: `2px solid ${highlight ? accent : bright.line}`, boxShadow: '0 30px 70px rgba(40,26,12,0.3)', position: 'relative', background: '#0d0f12'}}>
+        {/* browser chrome on top */}
+        {kind === 'browser' && (
+          <div style={{height: chrome, display: 'flex', alignItems: 'center', gap: 8, padding: '0 16px', background: '#1a1d22'}}>
+            <span style={{width: 11, height: 11, borderRadius: 11, background: '#ff5f57'}} />
+            <span style={{width: 11, height: 11, borderRadius: 11, background: '#febc2e'}} />
+            <span style={{width: 11, height: 11, borderRadius: 11, background: '#28c840'}} />
+            <span style={{flex: 1, marginLeft: 12, height: 22, borderRadius: 11, background: '#0d0f12', fontFamily: mono, fontSize: 14, color: '#8b97a2', display: 'flex', alignItems: 'center', paddingLeft: 14}}>maison-solenne.com</span>
+          </div>
+        )}
+        <div style={{height: 412, overflow: 'hidden', position: 'relative'}}>
+          <OffthreadVideo src={staticFile('footage/studio.mp4')} startFrom={0} playbackRate={1.0} muted style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+          <div style={{position: 'absolute', top: 14, left: 16, fontFamily: mono, fontSize: 22, fontWeight: 700, letterSpacing: 3, color: '#fff', background: 'rgba(10,12,15,0.7)', padding: '6px 14px', borderRadius: 6}}>{label}</div>
         </div>
+        {/* video scrubber on the bottom */}
+        {kind === 'player' && (
+          <div style={{height: chrome, display: 'flex', alignItems: 'center', gap: 14, padding: '0 18px', background: '#1a1d22'}}>
+            <span style={{fontSize: 16, color: '#fff'}}>▶</span>
+            <span style={{flex: 1, height: 5, borderRadius: 5, background: '#3a3f47', position: 'relative'}}>
+              <span style={{position: 'absolute', left: 0, top: 0, bottom: 0, width: `${interpolate(frame, [40, 150], [6, 78], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})}%`, background: accent, borderRadius: 5}} />
+            </span>
+            <span style={{fontFamily: mono, fontSize: 14, color: '#8b97a2'}}>0:42 / 0:60</span>
+          </div>
+        )}
       </div>
     </div>
   );

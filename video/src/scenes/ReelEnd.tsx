@@ -23,7 +23,10 @@ export const ReelEnd: React.FC = () => {
       <div style={{fontFamily: serif, color: bright.inkSoft, fontSize: 46, fontStyle: 'italic', marginTop: 12}}>
         The motion is the constant. The look is yours.
       </div>
-      <div style={{height: 3, width: rule, background: bright.cognac, marginTop: 28}} />
+      <div style={{fontFamily: mono, color: bright.cognac, fontSize: 25, letterSpacing: 5, marginTop: 16}}>
+        BY SIMONE LEONELLI
+      </div>
+      <div style={{height: 3, width: rule, background: bright.cognac, marginTop: 24}} />
 
       {/* one primary action — high contrast, thumb-sized */}
       <div style={{marginTop: 46, transform: `scale(${interpolate(btn, [0, 1], [0.9, 1])})`, opacity: btn}}>
