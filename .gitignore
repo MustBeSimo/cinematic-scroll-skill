@@ -141,3 +141,8 @@ video/out/
 
 # cinematic-doctor generated report (re-created on every run)
 tools/cinematic-doctor/cinematic-report.json
+
+# Reel: 4K master is local-only (too heavy for git); share the 1080p.
+assets/reel.mp4
+# Raw capture working dir — canonical render input is video/public/footage/.
+video/footage/

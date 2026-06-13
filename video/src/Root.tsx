@@ -4,8 +4,11 @@ import {Promo} from './Promo';
 import {TwoMedia} from './TwoMedia';
 import {Flagship3D} from './Flagship3D';
 import {Doctor} from './Doctor';
+import {Reel} from './Reel';
 
-// Four 16:9 compositions (render at --scale=2 for 4K):
+// Five 16:9 compositions (render at --scale=2 for 4K):
+//   Reel       — 60s flagship sizzle: real scroll footage of the live example
+//                pages (hook → prompt → 5 worlds → 3D+doctor → two-media → end).
 //   Promo      — ~25.8s product promo (prompt → site → worlds → end card)
 //   TwoMedia   — 30s feature film: "One choreography. Two media." Includes the
 //                dogfood scene driven by the compiled scroll-choreography.json.
@@ -16,6 +19,14 @@ import {Doctor} from './Doctor';
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="Reel"
+        component={Reel}
+        durationInFrames={1800}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
       <Composition
         id="Promo"
         component={Promo}
