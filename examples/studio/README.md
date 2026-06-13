@@ -43,8 +43,14 @@ upgrade to real AI-generated stills:
 The Cowork sandbox can't reach fal.ai, so run this on a machine that can
 (e.g. Claude Code on your Mac):
 
+> **Your `FAL_KEY` is a billable secret.** Keep it in `.env.local` (already
+> gitignored), never paste it into source, prompts, or chat, and never commit it.
+> Anyone with the key can spend your fal.ai credits. Rotate it at
+> <https://fal.ai/dashboard/keys> if it's ever exposed.
+
 ```bash
 # 1. put your key in a gitignored .env.local (this folder or repo root):
+#    (.env.local is gitignored by default — never commit a real key)
 echo 'FAL_KEY=xxxxxxxx:xxxxxxxx' > .env.local
 
 # 2. preview the prompts (no cost):

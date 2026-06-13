@@ -5,6 +5,20 @@
 > and scores them on four dimensions. It outputs a `remediation-plan.md` with specific,
 > prioritized fixes.
 
+> [!WARNING]
+> **Audit mode loads the target URL in a real local browser and interacts with it.**
+> Before auditing, understand the implications:
+> - The page is fully loaded and its JavaScript executed, and the page is scrolled
+>   for ~10s to collect behavior data. This can trigger analytics, ad impressions,
+>   or other side effects on the visited site.
+> - The request originates from **your machine**, exposing your IP address and user
+>   agent to the target site and any third parties it calls.
+> - **Only audit sites you own or are authorized to test.** For sites that require
+>   login, you must supply credentials or a pre-authenticated session — doing so
+>   exposes that authenticated context to the audit run. Prefer a throwaway/test
+>   account over real credentials, and never audit a site whose terms forbid it.
+> - Confirm before auditing `localhost`/internal URLs (see Input Validation below).
+
 ---
 
 ## Table of Contents

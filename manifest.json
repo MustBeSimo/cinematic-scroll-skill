@@ -62,6 +62,21 @@
       "FAL_IMAGE_MODEL"
     ]
   },
+  "permissions": [
+    "filesystem:read",
+    "filesystem:write",
+    "network:fetch",
+    "shell:execute",
+    "env"
+  ],
+  "security": {
+    "note": "All sensitive capabilities are optional and user-initiated. FAL_KEY is a billable secret — store it in a gitignored .env.local or a secret manager, never in source or version control. Audit mode loads a user-supplied URL in a local headless browser from the user's machine (IP/session exposure; only audit sites you own or are authorized to test). See manifest.md → Security & Privacy and audit-mode.md.",
+    "secrets": [
+      "FAL_KEY",
+      "GENERATE_API_SECRET"
+    ],
+    "disclosure": "manifest.md#security--privacy"
+  },
   "modes": [
     {
       "name": "Scroll artifact",

@@ -120,6 +120,24 @@ CSS scroll-driven animations (`@scroll-timeline`) are not used — all scroll ef
 | Test device (mid-range) | iPhone 12 / Pixel 6 | Degradation tier 2 testing |
 | Test device (budget) | iPhone SE / budget Android | Degradation tier 3 testing |
 
+## Security & Privacy
+
+This skill is a disclosed web-production and audit tool. Every sensitive capability
+below is purpose-driven, optional, and user-initiated — none runs silently in the
+background. Declared permissions: `filesystem:read`, `filesystem:write`,
+`network:fetch`, `shell:execute`, `env`.
+
+| Capability | When it runs | Why | What to know |
+|---|---|---|---|
+| **Reads env vars** (`FAL_KEY`, `FAL_IMAGE_MODEL`, `GENERATE_API_SECRET`, `CHROME_PATH`, `PLAYWRIGHT_BROWSERS_PATH`) | Mode B generation; audit/page-proof | Authenticate fal.ai and locate a local browser | `FAL_KEY` is a billable secret — keep it in a gitignored `.env.local` or a secret manager, never in source/prompts/commits. Use a least-privilege key and rotate if exposed. |
+| **Network fetch** | fal.ai generation (Mode B); loading a URL in audit mode | Generate images/3D assets; analyze a target site | fal.ai calls send your prompt to a third party (see License & Legal). Audit mode loads the URL from **your** machine, exposing your IP/user-agent and possibly triggering side effects on the target — only audit sites you own or are authorized to test. See `audit-mode.md`. |
+| **Shell / subprocess** | `npm`/`node` scripts; `npx @gltf-transform/cli`; local headless browser (Playwright) | Build, typecheck, optimize GLB assets, render proofs | Runs local tooling with flags like `--no-sandbox` on a browser **you** launch against pages **you** choose. No remote command execution. |
+| **Third-party CDNs** | Generated/example pages only | Load GSAP, Google Fonts, `@google/model-viewer` | Standard front-end CDNs in *output* pages (SRI-pinned where applicable). Self-host these if your deployment forbids third-party origins. |
+
+**Least-privilege guidance:** CSS-only mode (Mode A) needs none of the network,
+env, or AI capabilities. Audit mode is opt-in per URL. The fal.ai pipeline only
+activates when you supply a key.
+
 ## License & Legal
 
 **MIT License** — see [LICENSE](./LICENSE) file. Free for any use, personal or commercial.

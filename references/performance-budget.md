@@ -76,12 +76,12 @@ clip-path (animated)   — main-thread cost; can blow the frame budget
 // Correct: toggle will-change around animation lifecycle
 const element = document.querySelector('.parallax-layer');
 
-// 200ms before animation
-setTimeout(() => element.style.willChange = 'transform', 0);
+// Promote the layer first, THEN start the animation ~200ms later — this
+// gives the compositor time to create the layer before motion begins.
+element.style.willChange = 'transform';
+setTimeout(() => startAnimation(), 200);
 
-// Animation runs
-
-// 200ms after animation completes
+// 200ms after animation completes, release the layer
 animation.onComplete = () => {
   setTimeout(() => element.style.willChange = 'auto', 200);
 };
@@ -307,9 +307,9 @@ Test on ALL of the following before shipping:
 | Max images per chapter | 3 | 2 | Hard limit |
 | Max image weight (total) | 500KB | 200KB | Hard limit |
 | Max image dimensions | 1920px wide | 828px wide | Hard limit |
-| Image format | WebP | WebP | Required |
-| Fallback format | AVIF | AVIF | When browser support > 85% |
-| Legacy fallback | JPEG | JPEG | For IE11 (if required) |
+| Preferred format | AVIF | AVIF | Best compression; serve first via `<picture>` |
+| Fallback format | WebP | WebP | Required baseline for browsers without AVIF |
+| Legacy fallback | JPEG | JPEG | Final `<img>` src for very old browsers |
 
 ### Image Loading Strategy
 
