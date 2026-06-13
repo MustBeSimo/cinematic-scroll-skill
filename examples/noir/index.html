@@ -4,17 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>VANTASCOPE — HOLLOW STAR · cinematic-scroll example</title>
-<meta name="description" content="A cinematic sci-fi noir scroll page — near-black + deep teal atmosphere, crimson edge-light, heavy film grain, a figure-in-fog parallax still with a scroll-driven 3D camera. A flagship example for the cinematic-scroll Agent Skill." />
+<meta name="description" content="A clean cinematic sci-fi studio — bold editorial type, open negative space, a single crimson signal across four chapters. A flagship example for the cinematic-scroll Agent Skill." />
 
 <!-- Open Graph -->
 <meta property="og:title" content="VANTASCOPE — HOLLOW STAR" />
-<meta property="og:description" content="Cinematic sci-fi noir scroll — teal fog, crimson edge-light, film grain, 3D camera. Built with the cinematic-scroll Agent Skill." />
+<meta property="og:description" content="Clean sci-fi editorial — bold type, open space, a single crimson signal. Built with the cinematic-scroll Agent Skill." />
 <meta property="og:type" content="website" />
-<meta name="theme-color" content="#0A0C0F" />
+<meta name="theme-color" content="#F5F4F0" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Oswald (condensed film-poster display) + Archivo (UI) + JetBrains Mono (labels) -->
+<!-- Oswald (condensed display) + Archivo (UI) + JetBrains Mono (labels) -->
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;600;700&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <!-- GSAP + ScrollTrigger (now 100% free) — powers the dedicated "Approach" showcase:
@@ -25,33 +25,30 @@
 
 <style>
   /* ───────────────────────────────────────────────────────────────
-     cinematic-scroll · CINEMATIC SCI-FI NOIR example
-     Visual system: Atmospheric Sublime — vast negative space, atmospheric
-     haze, slow revelation — with Temporal Monument chiaroscuro contrast.
-     Single-file, no build, GitHub-Pages friendly. Only external resource:
-     Google Fonts. Motion is COMPOSITOR-ONLY (transform + opacity).
-     Title treatment = vertical clip-path MASK WIPE (not a cross-fade).
-     Reduced-motion + touch + mobile all degrade to a clean static mid-state.
+     cinematic-scroll · VANTASCOPE — "SIGNAL CLEAR" redesign
+     Visual system: Clean Editorial Sci-Fi — warm-white canvas,
+     massive Oswald headlines in near-black, crimson as the ONE
+     signal accent. Open negative space, architectural geometry,
+     no grain. Fresh 2026 studio aesthetic, not noir 2017.
      ─────────────────────────────────────────────────────────────── */
 
-  :root{
-    --black:#0A0C0F;            /* near-black base */
-    --teal-deep:#0B1A1F;        /* deep teal atmosphere floor */
-    --teal:#14343C;             /* teal mid */
-    --teal-lit:#1E5460;         /* teal highlight */
-    --crimson:#E23A4E;          /* the single accent — edge-light */
-    --crimson-2:#FF566B;        /* brighter crimson for glow cores */
-    --ink:#E9ECEE;             /* off-white type */
-    --muted:#7E8C92;           /* muted teal-grey body */
-    --line:rgba(233,236,238,.14);
+  :root {
+    --bg:       #F5F4F0;
+    --surface:  #FFFFFF;
+    --fg:       #0A0B0F;
+    --fg-dim:   #606370;
+    --signal:   #E23A4E;
+    --signal-2: #FF566A;
+    --blue:     #1044F2;
+    --line:     rgba(10,11,15,.10);
+    --line-2:   rgba(10,11,15,.18);
 
-    --display:'Oswald',Impact,'Haettenschweiler','Arial Narrow Bold',sans-serif;
-    --ui:'Archivo',system-ui,sans-serif;
-    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+    --display: 'Oswald', Impact, 'Arial Narrow Bold', sans-serif;
+    --ui:      'Archivo', system-ui, sans-serif;
+    --mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
 
-    --bg:var(--black);
-    --fg:var(--ink);
-    --fg-muted:var(--muted);
+    --bg-fg: var(--fg);
+    --fg-muted: var(--fg-dim);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -62,70 +59,63 @@
     transition:background .9s cubic-bezier(.22,1,.36,1);
   }
   a{color:inherit}
-  ::selection{ background:var(--crimson); color:#fff; }
+  ::selection{ background:var(--signal); color:#fff; }
 
-  /* ── fixed atmosphere: deep-teal vignette + grain (lowest depth) ──── */
+  /* ── fixed atmosphere: very subtle tinted gradients (light mode) ── */
   .atmos{
     position:fixed; inset:0; z-index:-2; pointer-events:none;
     background:
-      radial-gradient(130% 100% at 78% 8%,  rgba(30,84,96,.34), rgba(30,84,96,0) 55%),
-      radial-gradient(120% 90%  at 18% 100%, rgba(20,52,60,.42), rgba(11,26,31,0) 60%),
-      radial-gradient(80% 60%   at 92% 88%,  rgba(226,58,78,.10), rgba(226,58,78,0) 55%),
-      linear-gradient(180deg, var(--black) 0%, var(--teal-deep) 58%, var(--black) 100%);
+      radial-gradient(80% 55% at 88% 0%,  rgba(16,68,242,.07) 0%, transparent 60%),
+      radial-gradient(60% 50% at 10% 100%, rgba(226,58,78,.05)  0%, transparent 55%),
+      linear-gradient(160deg, #EEEEF5 0%, var(--bg) 40%, #F5F3EE 100%);
     transition:background .9s cubic-bezier(.22,1,.36,1);
   }
-  /* heavy film grain overlay (inline SVG noise — animation-free, GPU-cheap) */
-  .grain{
-    position:fixed; inset:-50%; z-index:-1; pointer-events:none; opacity:.16;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    animation:grainshift 5.2s steps(6) infinite;
+  /* no grain — clean canvas */
+
+  /* top scroll-progress bar */
+  .scrollbar{
+    position:fixed; top:0; left:0; height:2px; width:0%; z-index:60;
+    background:linear-gradient(90deg, var(--signal), var(--signal-2));
+    box-shadow:0 0 10px rgba(226,58,78,.35);
   }
-  @keyframes grainshift{
-    0%{transform:translate(0,0)} 16%{transform:translate(-3%,2%)}
-    33%{transform:translate(2%,-3%)} 50%{transform:translate(-2%,-2%)}
-    66%{transform:translate(3%,1%)} 83%{transform:translate(-1%,3%)} 100%{transform:translate(0,0)}
-  }
-  /* thin crimson edge-light hairline framing the whole viewport */
-  .edge{ position:fixed; inset:0; z-index:45; pointer-events:none;
-    box-shadow:inset 0 0 0 1px rgba(226,58,78,.10), inset 0 0 120px rgba(8,10,14,.7); }
 
   /* ── fixed masthead ───────────────────────────────────────────── */
   .masthead{
     position:fixed; inset:0 0 auto 0; z-index:50;
     display:flex; align-items:center; justify-content:space-between;
     padding:max(20px,env(safe-area-inset-top)) clamp(18px,4vw,56px) 20px;
+    background:rgba(245,244,240,.82);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
   }
-  .masthead .mark{ display:flex; align-items:baseline; gap:12px; pointer-events:auto; }
-  .masthead .mark b{ font-family:var(--display); font-weight:700; font-size:18px; letter-spacing:.26em; color:var(--ink); }
-  .masthead .mark span{ font-family:var(--mono); font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--crimson); }
-  .masthead nav{ display:flex; gap:clamp(14px,2.4vw,34px); font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; pointer-events:auto; }
-  .masthead nav a{ color:var(--muted); text-decoration:none; transition:color .3s; }
-  .masthead nav a:hover{ color:var(--ink); }
+  .masthead .mark{ display:flex; align-items:baseline; gap:14px; pointer-events:auto; }
+  .masthead .mark b{ font-family:var(--display); font-weight:700; font-size:18px; letter-spacing:.26em; color:var(--fg); }
+  .masthead .mark span{ font-family:var(--mono); font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--signal); }
+  .masthead nav{ display:flex; gap:clamp(14px,2.4vw,34px); font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; }
+  .masthead nav a{ color:var(--fg-dim); text-decoration:none; transition:color .3s; }
+  .masthead nav a:hover{ color:var(--fg); }
   @media (max-width:680px){ .masthead nav{ display:none; } }
 
   /* ── progress + index rail ────────────────────────────────────── */
   .rail{
     position:fixed; right:clamp(12px,2vw,28px); top:50%; transform:translateY(-50%);
     z-index:40; display:flex; flex-direction:column; gap:14px;
-    font-family:var(--mono); font-size:10px; color:var(--muted);
+    font-family:var(--mono); font-size:10px; color:var(--fg-dim);
   }
-  .rail .r{ display:flex; align-items:center; gap:10px; justify-content:flex-end; opacity:.55; transition:opacity .35s, color .35s; }
+  .rail .r{ display:flex; align-items:center; gap:10px; justify-content:flex-end; opacity:.35; transition:opacity .35s, color .35s; }
   .rail .r .num{ letter-spacing:.12em; }
   .rail .r .ln{ width:20px; height:1px; background:currentColor; transition:width .35s, background .35s; }
-  .rail .r.on{ opacity:1; color:var(--ink); }
-  .rail .r.on .ln{ width:46px; height:2px; background:var(--crimson); }
-  /* top-of-page scroll progress bar */
-  .scrollbar{ position:fixed; top:0; left:0; height:2px; width:0%; z-index:60;
-    background:linear-gradient(90deg, var(--crimson), var(--crimson-2)); box-shadow:0 0 12px rgba(226,58,78,.6); }
+  .rail .r.on{ opacity:1; color:var(--fg); }
+  .rail .r.on .ln{ width:46px; height:2px; background:var(--signal); }
   @media (max-width:680px){ .rail{ display:none; } }
 
   /* ── chapter section ──────────────────────────────────────────── */
-  section{ position:relative; min-height:230vh; }     /* pin room */
+  section{ position:relative; min-height:230vh; }
   .stage{
     position:sticky; top:0; height:100vh; overflow:hidden;
     display:grid; grid-template-columns:1fr; align-content:center;
     padding:0 clamp(18px,5vw,80px);
-    perspective:1500px; perspective-origin:62% 48%;   /* scroll-driven 3D camera */
+    perspective:1500px; perspective-origin:62% 48%;
   }
   .figwrap,.copytext,.cuewrap{ transform-style:preserve-3d; }
   .figwrap .frame{ transform-style:preserve-3d; }
@@ -134,126 +124,145 @@
   .roman{
     position:absolute; z-index:1; font-family:var(--display); font-weight:700;
     font-size:clamp(14rem,52vw,46rem); line-height:.7; letter-spacing:-.02em;
-    color:var(--ink); opacity:.045; white-space:nowrap; pointer-events:none;
+    color:var(--fg); opacity:.038; white-space:nowrap; pointer-events:none;
     top:50%; left:46%; transform:translate(-50%,-50%); will-change:transform;
     -webkit-user-select:none; user-select:none;
   }
 
-  /* figure-in-fog framed parallax still */
-  .figwrap{ position:absolute; z-index:3; right:clamp(18px,5vw,80px); top:50%;
+  /* figure frame — clean, architectural */
+  .figwrap{
+    position:absolute; z-index:3; right:clamp(18px,5vw,80px); top:50%;
     width:clamp(280px,40vw,580px); aspect-ratio:4/5; transform:translateY(-50%);
-    will-change:transform,opacity; }
+    will-change:transform,opacity;
+  }
   .frame{ position:relative; width:100%; height:100%; }
   .pic{
     position:absolute; inset:0; background-size:cover; background-position:center 35%;
-    background-color:var(--teal-deep);
-    box-shadow:0 40px 90px rgba(0,0,0,.6), 0 0 1px rgba(226,58,78,.5);
+    background-color:var(--surface);
+    box-shadow:0 32px 72px rgba(10,11,15,.11), 0 0 0 1px rgba(10,11,15,.08);
     transition:transform .25s ease-out;
   }
-  /* CSS-only placeholder visual — figure-in-fog, teal + crimson edge-light */
+  /* clean light-mode placeholder: geometric grid + signal rim */
   .pic.placeholder{
     background-image:
-      /* crimson rim along the right edge of the "figure" */
-      radial-gradient(60% 120% at 88% 50%, rgba(226,58,78,.55) 0%, rgba(226,58,78,0) 42%),
-      /* the silhouetted figure mass, lit from teal behind */
-      radial-gradient(46% 78% at 50% 64%, rgba(8,10,13,.96) 0%, rgba(8,10,13,.7) 40%, rgba(8,10,13,0) 70%),
-      /* teal atmospheric backlight / fog */
-      radial-gradient(90% 80% at 38% 22%, rgba(30,84,96,.7) 0%, rgba(20,52,60,.3) 45%, rgba(11,26,31,0) 75%),
-      /* fog banding */
-      repeating-linear-gradient(8deg, rgba(20,52,60,.10) 0 7px, rgba(11,26,31,.04) 7px 20px),
-      linear-gradient(160deg, var(--teal) 0%, var(--teal-deep) 55%, var(--black) 100%);
+      /* signal rim — right edge glow */
+      linear-gradient(to left, rgba(226,58,78,.16) 0%, transparent 28%),
+      /* fine architectural grid */
+      repeating-linear-gradient(0deg,  rgba(10,11,15,.04) 0 1px, transparent 1px 64px),
+      repeating-linear-gradient(90deg, rgba(10,11,15,.04) 0 1px, transparent 1px 64px),
+      /* clean ambient gradient */
+      linear-gradient(170deg, #E8EBF3 0%, #EDE9E2 55%, #F5F4F0 100%);
   }
-  .pic::after{ /* grain locked to the still */
-    content:""; position:absolute; inset:0; opacity:.4; mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.4'/%3E%3C/svg%3E");
-    pointer-events:none;
-  }
-  /* crimson edge-light streak baked over the frame */
-  .frame .rim{ position:absolute; top:8%; right:-1px; width:2px; height:84%;
-    background:linear-gradient(180deg, rgba(226,58,78,0), var(--crimson) 40%, var(--crimson-2) 55%, rgba(226,58,78,0));
-    box-shadow:0 0 18px rgba(226,58,78,.8); pointer-events:none; }
-  .figcap{ position:absolute; left:0; bottom:-26px; display:flex; justify-content:space-between; width:100%;
-    font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:var(--muted); }
-  .figcap .n{ color:var(--crimson); }
-  /* corner brackets */
-  .frame .br{ position:absolute; width:26px; height:26px; border:1.5px solid var(--crimson); opacity:.85; }
+  /* corner brackets: clean, near-black at low opacity */
+  .frame .br{ position:absolute; width:26px; height:26px; border:1.5px solid var(--fg); opacity:.15; }
   .frame .br.tl{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
   .frame .br.tr{ top:-1px; right:-1px; border-left:0; border-bottom:0; }
   .frame .br.bl{ bottom:-1px; left:-1px; border-right:0; border-top:0; }
   .frame .br.brc{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
+  /* crimson signal rim */
+  .frame .rim{
+    position:absolute; top:8%; right:-1px; width:2px; height:84%;
+    background:linear-gradient(180deg, rgba(226,58,78,0), var(--signal) 40%, var(--signal-2) 55%, rgba(226,58,78,0));
+    box-shadow:0 0 14px rgba(226,58,78,.45); pointer-events:none;
+  }
+  .figcap{
+    position:absolute; left:0; bottom:-26px; display:flex; justify-content:space-between; width:100%;
+    font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:var(--fg-dim);
+  }
+  .figcap .n{ color:var(--signal); }
 
-  /* copy / title — the film-poster type */
+  /* copy / title — bold film-poster type on light canvas */
   .copytext{ position:relative; z-index:6; max-width:min(92vw,1180px); will-change:transform,opacity; }
-  .eyebrow{ font-family:var(--mono); font-size:clamp(10px,1vw,12px); letter-spacing:.36em; text-transform:uppercase; color:var(--crimson); margin-bottom:clamp(16px,2.4vw,28px); display:flex; align-items:center; gap:12px; }
-  .eyebrow::before{ content:""; width:34px; height:1px; background:var(--crimson); display:inline-block; }
+  .eyebrow{
+    font-family:var(--mono); font-size:clamp(10px,1vw,12px); letter-spacing:.36em;
+    text-transform:uppercase; color:var(--signal); margin-bottom:clamp(16px,2.4vw,28px);
+    display:flex; align-items:center; gap:12px;
+  }
+  .eyebrow::before{ content:""; width:34px; height:1px; background:var(--signal); display:inline-block; }
+
   h2.title{
     font-family:var(--display); font-weight:700; line-height:.88;
-    letter-spacing:.005em; text-transform:uppercase; color:var(--ink);
+    letter-spacing:.005em; text-transform:uppercase; color:var(--fg);
     font-size:clamp(3rem,12vw,11rem);
   }
-  /* each line wears a vertical clip-path MASK WIPE (top→bottom reveal) */
   h2.title .ln{ display:block; overflow:hidden; }
   h2.title .ln .t{ display:inline-block; will-change:transform; }
-  h2.title .accent{ color:var(--crimson); }
-  .lede{ margin-top:clamp(22px,2.8vw,36px); max-width:48ch; font-size:clamp(1rem,1.5vw,1.28rem);
-    line-height:1.62; color:var(--fg-muted); font-weight:400; }
+  h2.title .accent{ color:var(--signal); }
+
+  .lede{
+    margin-top:clamp(22px,2.8vw,36px); max-width:48ch;
+    font-size:clamp(1rem,1.5vw,1.28rem); line-height:1.62;
+    color:var(--fg-dim); font-weight:400;
+  }
   .lede .reveal{ display:inline; }
-  .meta{ margin-top:clamp(18px,2.4vw,30px); font-family:var(--mono); font-size:10px; letter-spacing:.2em;
-    text-transform:uppercase; color:var(--muted); }
-  .cta{ margin-top:clamp(26px,3vw,40px); display:inline-flex; align-items:center; gap:12px;
-    padding:14px 28px; background:var(--crimson); color:#0A0C0F;
+  .meta{
+    margin-top:clamp(18px,2.4vw,30px); font-family:var(--mono); font-size:10px;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--fg-dim);
+  }
+
+  /* CTA — clean outlined pill on light canvas */
+  .cta{
+    margin-top:clamp(26px,3vw,40px); display:inline-flex; align-items:center; gap:12px;
+    padding:13px 28px;
+    border:1.5px solid var(--signal); color:var(--signal);
+    background:transparent; border-radius:3px;
     font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase;
-    text-decoration:none; box-shadow:0 0 30px rgba(226,58,78,.45); transition:transform .3s, box-shadow .3s; }
-  .cta:hover{ transform:translateY(-2px); box-shadow:0 0 44px rgba(226,58,78,.7); }
+    text-decoration:none;
+    transition:background .28s cubic-bezier(.22,1,.36,1), color .28s cubic-bezier(.22,1,.36,1), transform .28s cubic-bezier(.22,1,.36,1);
+  }
+  .cta:hover{ background:var(--signal); color:#fff; transform:translateY(-2px); }
 
   /* scroll-cue badge (hero only) */
-  .cuewrap{ position:absolute; z-index:7; left:50%; bottom:clamp(26px,5vh,52px); transform:translateX(-50%);
-    display:flex; flex-direction:column; align-items:center; gap:9px; will-change:transform,opacity; }
-  .cue{ font-family:var(--mono); font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--muted);
-    border:1px solid var(--line); border-radius:999px; padding:8px 16px;
-    display:flex; align-items:center; gap:9px; background:rgba(10,12,15,.4); backdrop-filter:blur(4px); }
-  .cue .dot{ width:6px; height:6px; border-radius:50%; background:var(--crimson); box-shadow:0 0 10px var(--crimson); animation:pulse 1.9s ease-in-out infinite; }
-  .cuewrap .bar{ width:1px; height:34px; background:linear-gradient(var(--crimson), transparent); transform-origin:top; animation:cuebar 2.2s ease-in-out infinite; }
+  .cuewrap{
+    position:absolute; z-index:7; left:50%; bottom:clamp(26px,5vh,52px); transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:9px; will-change:transform,opacity;
+  }
+  .cue{
+    font-family:var(--mono); font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--fg-dim);
+    border:1px solid var(--line-2); border-radius:999px; padding:8px 16px;
+    display:flex; align-items:center; gap:9px;
+    background:rgba(245,244,240,.80); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  }
+  .cue .dot{ width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 9px var(--signal); animation:pulse 1.9s ease-in-out infinite; }
+  .cuewrap .bar{ width:1px; height:34px; background:linear-gradient(var(--signal), transparent); transform-origin:top; animation:cuebar 2.2s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.3} }
   @keyframes cuebar{ 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.4)} }
 
   /* ── footer / colophon ────────────────────────────────────────── */
   footer{ position:relative; z-index:2; padding:16vh clamp(18px,5vw,80px) 14vh; }
-  footer .vine{ width:120px; height:1px; margin-bottom:30px; background:linear-gradient(90deg, var(--crimson), transparent); }
-  footer .big{ font-family:var(--display); font-weight:600; text-transform:uppercase;
-    font-size:clamp(2rem,8vw,5.6rem); line-height:.92; letter-spacing:.01em; color:var(--ink); }
-  footer .big a{ color:var(--crimson); text-decoration:none; }
-  footer .meta{ margin-top:28px; font-family:var(--mono); font-size:11px; letter-spacing:.16em; color:var(--muted); text-transform:uppercase; max-width:62ch; line-height:1.8; }
-  footer .meta a{ color:var(--crimson); text-decoration:none; border-bottom:1px solid rgba(226,58,78,.3); }
+  footer .vine{ width:120px; height:1.5px; margin-bottom:30px; background:linear-gradient(90deg, var(--signal), transparent); }
+  footer .big{
+    font-family:var(--display); font-weight:600; text-transform:uppercase;
+    font-size:clamp(2rem,8vw,5.6rem); line-height:.92; letter-spacing:.01em; color:var(--fg);
+  }
+  footer .big a{ color:var(--signal); text-decoration:none; }
+  footer .meta{
+    margin-top:28px; font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+    color:var(--fg-dim); text-transform:uppercase; max-width:62ch; line-height:1.8;
+  }
+  footer .meta a{ color:var(--signal); text-decoration:none; border-bottom:1px solid rgba(226,58,78,.3); }
 
-  /* ── mobile (<=680px): static stacked layout. With JS (html.m-anim) every
-     element does a ONE-TIME entrance reveal as it scrolls into view —
-     IntersectionObserver + a compositor-only CSS transition (translate3d +
-     opacity), staggered by a per-element --d delay. NOT scroll-bound, so
-     native momentum scroll stays smooth (no per-frame JS, no layout reads).
-     NO pin, NO 3D tilt, NO filter. Everything is visible by default so a JS
-     failure never hides content; reduced-motion (below) forces it static. ── */
+  /* ── mobile ─────────────────────────────────────────────────────── */
   @media (max-width:680px){
-    .grain{ display:none; }
     section{ min-height:auto; padding:8vh 0; }
     .stage{ position:static; height:auto; display:block; padding:0 22px; perspective:none; }
-    .roman{ position:static; opacity:.06; font-size:32vw; line-height:.8; margin:0 0 -6vh -2vw; display:block; }
+    .roman{ position:static; opacity:.032; font-size:32vw; line-height:.8; margin:0 0 -6vh -2vw; display:block; }
     .figwrap{ position:static; width:100%; transform:none; margin:24px 0 34px; aspect-ratio:16/11; opacity:1; }
     .copytext{ transform:none; opacity:1; }
     h2.title{ font-size:15vw; }
     h2.title .ln .t{ transform:none; clip-path:none; opacity:1; }
     .cuewrap{ position:static; transform:none; margin:30px auto 0; opacity:1; }
-    .reveal{ opacity:1; transform:none; }   /* visible fail-safe (no JS) */
+    .reveal{ opacity:1; transform:none; }
     html.m-on .figwrap, html.m-on .roman{ will-change:transform; }
   }
 
-  /* ── reduced motion: snap to a readable mid-state, no scroll-driven motion ── */
+  /* ── reduced motion ──────────────────────────────────────────── */
   @media (prefers-reduced-motion:reduce){
     html{ scroll-behavior:auto; }
-    .grain,.cue .dot,.cuewrap .bar{ animation:none; }
+    .cue .dot,.cuewrap .bar{ animation:none; }
     section{ min-height:auto; padding:11vh 0; }
     .stage{ position:static; height:auto; display:block; perspective:none; }
-    .roman{ position:static; transform:none!important; opacity:.06; font-size:clamp(8rem,26vw,18rem); line-height:.8; display:block; margin-bottom:-4vh; }
+    .roman{ position:static; transform:none!important; opacity:.032; font-size:clamp(8rem,26vw,18rem); line-height:.8; display:block; margin-bottom:-4vh; }
     .figwrap{ position:static; width:min(560px,92vw); transform:none!important; margin:30px 0 44px; opacity:1!important; }
     .copytext{ transform:none!important; opacity:1!important; }
     h2.title .ln .t{ transform:none!important; clip-path:none!important; opacity:1!important; }
@@ -261,29 +270,34 @@
     .reveal{ opacity:1!important; transform:none!important; }
   }
 
-  /* ── GSAP SHOWCASE — "THE APPROACH" ─────────────────────────────────
-     A dedicated viewport that demonstrates two techniques the hand-rolled
-     engine doesn't: a DOLLY-ZOOM (Vertigo — taste-guardrails §2) on the
-     backdrop and a SCRUBBED SIGNAL DRAW (stroke-dashoffset, pattern #2).
-     GSAP pins .show-stage; static defaults below keep it whole when GSAP is
-     absent / reduced-motion / mobile (dolly at rest, waveform fully drawn). */
-  section.showcase{ min-height:0; }                 /* GSAP pin owns the scroll room */
+  /* ── GSAP SHOWCASE — "THE APPROACH" ────────────────────────────
+     A dedicated viewport demonstrating two techniques: a DOLLY-ZOOM
+     (Vertigo) on the backdrop and a SCRUBBED SIGNAL DRAW (stroke-dashoffset).
+     Clean geometric aesthetic — light canvas, the signal waveform in crimson. */
+  section.showcase{ min-height:0; }
   .show-stage{ position:relative; height:100vh; overflow:hidden; display:grid; place-items:center; }
   .show-stage .dolly{
     position:absolute; inset:-12%; z-index:0; transform-origin:60% 46%; will-change:transform;
     background:
-      radial-gradient(56% 88% at 50% 60%, rgba(8,10,13,0) 0%, rgba(8,10,13,.55) 72%),
-      radial-gradient(72% 60% at 50% 28%, rgba(30,84,96,.50), rgba(11,26,31,0) 70%),
-      radial-gradient(40% 78% at 50% 54%, rgba(226,58,78,.16), rgba(226,58,78,0) 60%),
-      linear-gradient(180deg, var(--black) 0%, var(--teal-deep) 60%, var(--black) 100%);
+      radial-gradient(60% 70% at 50% 40%, rgba(16,68,242,.07) 0%, transparent 60%),
+      radial-gradient(40% 50% at 50% 60%, rgba(226,58,78,.05) 0%, transparent 50%),
+      repeating-linear-gradient(0deg,  rgba(10,11,15,.03) 0 1px, transparent 1px 80px),
+      repeating-linear-gradient(90deg, rgba(10,11,15,.03) 0 1px, transparent 1px 80px),
+      linear-gradient(160deg, #EDEEF5 0%, var(--bg) 50%, #F5F3EE 100%);
   }
   .show-stage .waveform{ position:relative; z-index:2; width:min(80vw,1120px); height:140px; overflow:visible; }
-  .show-stage .waveform path{ fill:none; stroke:var(--crimson); stroke-width:2; stroke-linecap:round;
-    filter:drop-shadow(0 0 6px rgba(226,58,78,.5)); }   /* static (non-animated) glow — allowed */
-  .show-cap{ position:absolute; z-index:3; bottom:14vh; left:0; right:0; text-align:center;
-    font-family:var(--mono); color:var(--muted); }
-  .show-cap b{ display:block; font-family:var(--display); font-weight:700; letter-spacing:.28em;
-    color:var(--ink); font-size:clamp(1.4rem,4vw,2.4rem); margin-bottom:10px; }
+  .show-stage .waveform path{
+    fill:none; stroke:var(--signal); stroke-width:2.5; stroke-linecap:round;
+    filter:drop-shadow(0 0 5px rgba(226,58,78,.3));
+  }
+  .show-cap{
+    position:absolute; z-index:3; bottom:14vh; left:0; right:0; text-align:center;
+    font-family:var(--mono); color:var(--fg-dim);
+  }
+  .show-cap b{
+    display:block; font-family:var(--display); font-weight:700; letter-spacing:.28em;
+    color:var(--fg); font-size:clamp(1.4rem,4vw,2.4rem); margin-bottom:10px;
+  }
   .show-cap span{ font-size:11px; letter-spacing:.22em; text-transform:uppercase; }
   @media (max-width:680px){
     .show-stage{ height:auto; padding:16vh 22px; }
@@ -293,16 +307,16 @@
 </style>
 </head>
 <body>
-  <!-- Persistent "back to repo" affordance — present on every live demo page. -->
+  <!-- Persistent "back to repo" affordance -->
   <style>
     .repo-home-pill{position:fixed;left:max(14px,env(safe-area-inset-left));
       bottom:max(14px,env(safe-area-inset-bottom));z-index:9999;display:inline-flex;
       align-items:center;gap:8px;padding:9px 14px 9px 12px;border-radius:999px;
       font:600 12px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.04em;
-      color:#fff;background:rgba(10,12,16,.72);border:1px solid rgba(255,255,255,.18);
+      color:var(--fg);background:rgba(245,244,240,.86);border:1px solid rgba(10,11,15,.18);
       -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-decoration:none;
-      box-shadow:0 4px 18px rgba(0,0,0,.34);transition:transform .25s cubic-bezier(.22,1,.36,1),background .25s cubic-bezier(.22,1,.36,1),border-color .25s cubic-bezier(.22,1,.36,1)}
-    .repo-home-pill:hover{transform:translateY(-2px);background:rgba(10,12,16,.86);border-color:rgba(255,255,255,.34)}
+      box-shadow:0 4px 18px rgba(10,11,15,.10);transition:transform .25s cubic-bezier(.22,1,.36,1),background .25s}
+    .repo-home-pill:hover{transform:translateY(-2px);background:rgba(245,244,240,.96)}
     .repo-home-pill .arw{font-size:14px;line-height:1;transition:transform .25s cubic-bezier(.22,1,.36,1)}
     .repo-home-pill:hover .arw{transform:translateX(-3px)}
     @media (prefers-reduced-motion:reduce){.repo-home-pill,.repo-home-pill .arw{transition:none}
@@ -315,20 +329,18 @@
   </a>
 
 <div class="atmos" id="atmos" aria-hidden="true"></div>
-<div class="grain" aria-hidden="true"></div>
-<div class="edge" aria-hidden="true"></div>
 <div class="scrollbar" id="scrollbar" aria-hidden="true"></div>
 
 <header class="masthead">
   <div class="mark">
     <b>VANTASCOPE</b>
-    <span>Pictures · Interactive</span>
+    <span>Signal · Studio</span>
   </div>
   <nav aria-label="Primary">
     <a href="#signal">Signal</a>
     <a href="#descent">Descent</a>
     <a href="#witness">Witness</a>
-    <a href="#access">Request Access</a>
+    <a href="#access">Access</a>
   </nav>
 </header>
 
@@ -348,54 +360,45 @@
 
 <script>
 /* ───────────────────────────────────────────────────────────────
-   Manifest — single source of truth. Edit this array to retheme;
-   the DOM and the motion are generated from it. Fictional studio.
-   Each chapter:
-     id        slug → asset filename (assets/<id>.jpg) + section anchor
-     roman     oversized watermark numeral (ghost layer)
-     eyebrow   small mono label
-     fig/figLabel  bottom caption on the framed still
-     title     array of LINES; each line = [text, accent?]  (accent → crimson)
-     lede      supporting paragraph (sci-fi noir voice)
-     morph     teal-atmosphere gradient this chapter morphs TO
-     cue       true → render the scroll-cue badge (hero only)
-     cta       optional CTA label (final chapter)
-     prompt    image-generation prompt (noir still; NO baked-in text)
+   Manifest — single source of truth for the VANTASCOPE demo.
+   Each chapter: id, roman, eyebrow, fig/figLabel, title lines,
+   lede, morph (background that the atmos transitions to on enter),
+   cue (hero scroll-badge), cta (final chapter only), prompt.
    ─────────────────────────────────────────────────────────────── */
 const CHAPTERS = [
   {
     id:'0-signal', roman:'I', eyebrow:'VANTASCOPE · TRANSMISSION MMXXVI',
-    fig:'PLATE I', figLabel:'STANDING FIGURE, IN FOG',
+    fig:'PLATE I', figLabel:'STANDING FIGURE, OPEN FIELD',
     title:[['HOLLOW',0],['STAR',1]],
     lede:'Forty years after the last carrier went dark, a single coherent pulse climbs out of the noise floor. It is not a beacon. It is a name — and it is calling one of us back.',
-    morph:'radial-gradient(130% 100% at 78% 8%, rgba(30,84,96,.40), rgba(30,84,96,0) 55%), radial-gradient(120% 90% at 18% 100%, rgba(20,52,60,.46), rgba(11,26,31,0) 60%), linear-gradient(180deg, #0A0C0F 0%, #0B1A1F 58%, #0A0C0F 100%)',
+    morph:'radial-gradient(80% 55% at 88% 0%, rgba(16,68,242,.07) 0%, transparent 60%), radial-gradient(60% 50% at 10% 100%, rgba(226,58,78,.05) 0%, transparent 55%), linear-gradient(160deg, #EEEEF5 0%, #F5F4F0 40%, #F5F3EE 100%)',
     cue:true,
-    prompt:'Cinematic sci-fi noir still: a lone figure in a long coat seen from behind, standing in thick teal volumetric fog, lit by a single hard crimson rim-light along one edge, vast empty hangar receding into darkness, anamorphic lens, heavy film grain, near-black shadows, no text, no logos, Atmospheric Sublime mood, 4:5'
+    prompt:'Cinematic sci-fi editorial still: a lone figure in a long coat seen from behind, standing on a vast white-marble floor, geometric light shafts from above, open architectural space, one thin crimson line of light along one right edge, ultra clean, no grain, no text, no logos, 4:5'
   },
   {
     id:'1-descent', roman:'II', eyebrow:'CHAPTER II · THE DESCENT',
-    fig:'PLATE II', figLabel:'CORRIDOR, EMERGENCY AMBER',
+    fig:'PLATE II', figLabel:'CORRIDOR, CLEAN THRESHOLD',
     title:[['INTO THE',0],['QUIET DARK',1]],
     lede:'The derelict has no power, no heat, no record of ever having launched. Yet the corridors are warm where a body has just passed. We go down because the pulse is below us — and because turning back was never an option that survived the briefing.',
-    morph:'radial-gradient(120% 100% at 20% 12%, rgba(20,52,60,.50), rgba(11,26,31,0) 58%), radial-gradient(90% 70% at 88% 92%, rgba(226,58,78,.14), rgba(226,58,78,0) 55%), linear-gradient(180deg, #090B0E 0%, #0A1418 60%, #08090C 100%)',
-    prompt:'Cinematic sci-fi noir still: a narrow derelict-spaceship corridor descending into blackness, faint emergency crimson strip-lighting, teal cold haze drifting through the frame, a silhouetted figure small at the far end, wet metal reflections, extreme contrast, heavy grain, no text, no logos, anamorphic, 4:5'
+    morph:'radial-gradient(70% 60% at 20% 90%, rgba(226,58,78,.06) 0%, transparent 55%), radial-gradient(90% 50% at 80% 10%, rgba(16,68,242,.05) 0%, transparent 60%), linear-gradient(180deg, #F5F4F0 0%, #F0EFF5 50%, #F5F4F0 100%)',
+    prompt:'Cinematic sci-fi editorial still: a long brutalist corridor, concrete walls, geometric shafts of white overhead light, a single thin crimson line along the right wall, a silhouetted figure small at the far end, ultra minimal, sharp architectural, no grain, no text, no logos, 4:5'
   },
   {
     id:'2-witness', roman:'III', eyebrow:'CHAPTER III · THE WITNESS',
     fig:'PLATE III', figLabel:'FACE, HALF-LIT',
     title:[['IT REMEMBERS',0],['YOUR NAME',1]],
     lede:'Whatever answered the signal was not built and was not born. It wears the architecture like a held breath, and when it finally turns toward the light it is wearing a face you buried four decades ago — patient, unhurried, almost kind.',
-    morph:'radial-gradient(130% 100% at 70% 10%, rgba(30,84,96,.30), rgba(30,84,96,0) 52%), radial-gradient(100% 80% at 30% 96%, rgba(226,58,78,.22), rgba(226,58,78,0) 58%), linear-gradient(180deg, #0A0C0F 0%, #120A0E 64%, #08090C 100%)',
-    prompt:'Cinematic sci-fi noir still: extreme close portrait of a face half-lit, one side in deep teal shadow, the other catching a thin crimson edge-light, fog particles suspended in the air, unreadable expression, anamorphic, ultra high contrast chiaroscuro, heavy film grain, no text, no logos, 4:5'
+    morph:'radial-gradient(100% 80% at 50% 0%, rgba(16,68,242,.05) 0%, transparent 55%), linear-gradient(180deg, #F5F4F0 0%, #EEF0F5 60%, #F5F4F0 100%)',
+    prompt:'Cinematic sci-fi editorial still: extreme close portrait, face half-lit by clean white light, one side in cool neutral shadow, a thin crimson signal-line along the jaw, ultra clean, architectural background, sharp contrast, no grain, no text, no logos, 4:5'
   },
   {
     id:'3-access', roman:'IV', eyebrow:'CHAPTER IV · THE OFFER',
-    fig:'PLATE IV', figLabel:'OPEN AIRLOCK, BACKLIT',
+    fig:'PLATE IV', figLabel:'OPEN THRESHOLD, BACKLIT',
     title:[['STAY OR',0],['ANSWER IT',1]],
     lede:'The airlock is open. On one side, the long cold ride home and a report no one will believe. On the other, the thing wearing your past, holding the door, asking only that you walk through it of your own accord. VANTASCOPE invites you to decide on the descent.',
-    morph:'radial-gradient(130% 100% at 80% 8%, rgba(30,84,96,.36), rgba(30,84,96,0) 55%), radial-gradient(110% 90% at 22% 100%, rgba(226,58,78,.18), rgba(226,58,78,0) 58%), linear-gradient(180deg, #0A0C0F 0%, #0B1A1F 56%, #0A0C0F 100%)',
+    morph:'radial-gradient(80% 60% at 75% 5%, rgba(16,68,242,.08) 0%, transparent 55%), radial-gradient(60% 50% at 25% 95%, rgba(226,58,78,.06) 0%, transparent 50%), linear-gradient(160deg, #EEEEF5 0%, #F5F4F0 40%, #F5F3EE 100%)',
     cta:'Request early access',
-    prompt:'Cinematic sci-fi noir still: a backlit open airlock doorway, blinding teal-white light pouring through fog, a silhouetted figure standing in the threshold framed by crimson edge-light, vast darkness around the frame, anamorphic flares, heavy grain, ultra contrast, no text, no logos, 4:5'
+    prompt:'Cinematic sci-fi editorial still: a clean white threshold doorway, blinding white light pouring through, a silhouetted figure in the threshold, minimal architectural surround, one thin crimson line along the right edge, open negative space, no grain, no text, no logos, 4:5'
   },
 ];
 
@@ -419,7 +422,6 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     sec.id = ch.id.replace(/^\d+-/,'');
     sec.dataset.morph = ch.morph;
 
-    /* title: one block per LINE, each line a vertical clip-path mask wipe */
     const titleHTML = ch.title.map(([txt,acc]) =>
       `<span class="ln"><span class="t${acc?' accent':''}">${txt}</span></span>`
     ).join('');
@@ -461,14 +463,10 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     rail.appendChild(r);
   }
 
-  /* ── APPEND THE GSAP SHOWCASE BEAT ("THE APPROACH") ──────────────────
-     Inserted right after the hero so it reads: signal → the approach →
-     descent. Built BEFORE sections/rails are collected so the centre-spy
-     and index rail stay aligned. Pure markup here; motion is wired at the
-     end (desktop-only, only if GSAP loaded). */
+  /* GSAP SHOWCASE — "THE APPROACH" */
   const show = document.createElement('section');
   show.className = 'showcase'; show.id = 'approach';
-  show.dataset.morph = 'radial-gradient(120% 100% at 50% 0%, rgba(30,84,96,.42), rgba(11,26,31,0) 60%), linear-gradient(180deg, #0A0C0F 0%, #0B1A1F 60%, #08090C 100%)';
+  show.dataset.morph = 'radial-gradient(120% 100% at 50% 0%, rgba(16,68,242,.06), transparent 60%), linear-gradient(180deg, #F5F4F0 0%, #EEEEF5 60%, #F5F4F0 100%)';
   show.innerHTML = `
     <div class="show-stage">
       <div class="dolly" aria-hidden="true"></div>
@@ -480,7 +478,7 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
         <span>A single coherent pulse climbs out of the noise floor</span>
       </div>
     </div>`;
-  reel.insertBefore(show, reel.children[1] || null);   // after hero (index 0)
+  reel.insertBefore(show, reel.children[1] || null);
   const sr = document.createElement('div');
   sr.className = 'r'; sr.dataset.id = 'approach';
   sr.innerHTML = `<span class="num">&#8767;</span><span class="ln"></span>`;
@@ -489,15 +487,10 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
   const sections = [...document.querySelectorAll('section')];
   const rails = [...rail.querySelectorAll('.r')];
 
-  /* rail click → smooth scroll to chapter */
   rails.forEach(r => r.addEventListener('click', () => {
     document.getElementById(r.dataset.id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
   }));
 
-  /* background morph + active rail via whichever section crosses screen-center.
-     Sections are 230vh (taller than the viewport), so a threshold observer can
-     never fire — collapse the root to a 1px band at the vertical center via
-     rootMargin: the section straddling the middle of the screen is active. */
   function applyActive(sec){
     const idx = sections.indexOf(sec);
     atmos.style.background = sec.dataset.morph;
@@ -507,11 +500,8 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     entries.forEach(e=>{ if (e.isIntersecting) applyActive(e.target); });
   },{ rootMargin:'-50% 0px -50% 0px', threshold:0 });
   sections.forEach(s=>spy.observe(s));
-  applyActive(sections[0]); // paint initial state immediately
+  applyActive(sections[0]);
 
-  /* top scroll-progress bar (cheap, transform/width-free: scaleX on a 0%-wide bar
-     would need width; instead drive `width` only here — NOT in the parallax loop —
-     this runs on a throttled handler and never touches layout of other elements). */
   let pTick=false;
   function progress(){
     const max = document.documentElement.scrollHeight - innerHeight;
@@ -520,26 +510,14 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
   }
   bar.style.width='100%'; bar.style.transformOrigin='left center'; bar.style.transform='scaleX(0)';
 
-  /* reduced-motion: fully static, no scroll-driven motion (content already
-     visible via CSS). Keep only the cheap progress bar. */
   if (reduce){
     addEventListener('scroll',()=>{ if(!pTick){pTick=true;requestAnimationFrame(progress);} },{passive:true});
     progress();
     return;
   }
 
-  /* ── MOBILE — cinematic scroll (JS, works on every engine incl. Safari) ────
-     Safari reports CSS.supports('animation-timeline') = true but does NOT drive
-     scroll-driven animations, so we don't use them at all. Instead, a single
-     rAF loop (only while scrolling) drives compositor-only transforms:
-       • figure + Roman watermark PARALLAX, lerped toward a scroll-derived target
-         (eased so it reads as smooth cinematic drift, not scroll-lag)
-       • title lines + copy reveal once on enter (IntersectionObserver)
-     Offsets are cached (no per-frame getBoundingClientRect). No pin / 3D / filter. */
   if (isMobile()){
     document.documentElement.classList.add('m-on');
-
-    /* one-shot entrance reveals for text */
     const EASE='cubic-bezier(.16,1,.3,1)', DUR=800;
     const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
       e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
@@ -552,8 +530,6 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
       sec.querySelectorAll('h2 .ln .t').forEach(t=> reveal(t,(i++)*80));
       sec.querySelectorAll('.copytext .reveal').forEach(el=> reveal(el,(i++)*80));
     });
-
-    /* lerped parallax — figure (vertical) + Roman watermark (horizontal counter-drift) */
     const movers=[];
     document.querySelectorAll('section').forEach(sec=>{
       const fig=sec.querySelector('.figwrap'); if(fig) movers.push({el:fig, axis:'y', amp:46});
@@ -576,23 +552,12 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     return;
   }
 
-  /* ── desktop parallax — COMPOSITOR-ONLY cinematic engine ───────────────
-     Cinematic grammar (taste-guardrails §2):
-       • CRANE SHOT  — figure translateY + rotateX swing as the camera cranes in
-       • TRACKING    — Roman watermark drifts on a deep counter-axis plane
-       • MASK WIPE   — each title line revealed via vertical clip-path (NOT cross-fade)
-     Unified approach→pin→exit timeline T∈[0,1]; never starts invisible.
-     Only transform + opacity (+ clip-path on the title wipe, which is NOT animated
-     continuously per-frame — it snaps through discrete reveal steps via smooth()).
-     3D camera disabled on touch / reduced-motion (taste-guardrails §1.9). */
-  let mx=0,my=0;  // pointer blend for the live 3D camera
+  /* desktop parallax — COMPOSITOR-ONLY cinematic engine */
+  let mx=0,my=0;
   if(!isTouch && !reduce){
     addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); },{passive:true});
   }
 
-  /* cache each section's document-relative top + height (read once at init and
-     on debounced resize) so the per-frame loop never touches layout (perf-budget
-     §1). rect.top+scrollY is the safe absolute top regardless of offsetParent. */
   let tops=[], heights=[];
   function measure(){ const y=scrollY; tops=sections.map(s=>s.getBoundingClientRect().top+y); heights=sections.map(s=>s.offsetHeight); }
   measure();
@@ -603,38 +568,34 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     const vh=innerHeight;
     sections.forEach((sec,i)=>{
       const top=tops[i]-scrollY;
-      // perf: skip sections well off-screen
       if(top>vh*1.2 || top+heights[i]<-vh*0.2) return;
       const total=heights[i]+vh;
       const T=clamp((vh-top)/total,0,1);
       const enter=smooth(0.06,0.32,T);
       const exit=1-smooth(0.66,0.90,T);
       const live=enter*exit;
-      const drift=0.46-T;                  // signed, ~0 at hold
-      const onStage = T>0.04 && T<0.96;    // only drive 3D while in view (perf)
+      const drift=0.46-T;
+      const onStage = T>0.04 && T<0.96;
 
-      /* figure-in-fog — crane-in with 3D camera swing (depth 0.75) */
       const fig=sec.querySelector('.figwrap');
       if(fig){ const d=+fig.dataset.depth;
-        const z = -120*(1-enter) + drift*110*d;          // translateZ dolly
+        const z = -120*(1-enter) + drift*110*d;
         const y = drift*300*d;
         const sc = 0.92 + 0.08*enter;
-        const ry = drift*8 + (onStage ? mx*2.4 : 0);      // rotateY ±2° spec
-        const rx = -drift*10 + (onStage ? -my*4 : 0);     // rotateX ±4° spec
+        const ry = drift*8 + (onStage ? mx*2.4 : 0);
+        const rx = -drift*10 + (onStage ? -my*4 : 0);
         fig.style.transform =
           `translateY(calc(-50% + ${y.toFixed(1)}px)) translateZ(${z.toFixed(1)}px) `+
           `rotateX(${clamp(rx,-4,4).toFixed(2)}deg) rotateY(${clamp(ry,-2,2).toFixed(2)}deg) scale(${sc.toFixed(3)})`;
         fig.style.opacity=(0.08+0.92*live).toFixed(3);
       }
 
-      /* Roman watermark — deep tracking drift, counter-axis to the type */
       const roman=sec.querySelector('.roman');
       if(roman){ const d=+roman.dataset.depth;
         roman.style.transform=
           `translate(calc(-50% + ${(drift*480*d).toFixed(0)}px),-50%) translateZ(-420px) scale(${(1.05-0.05*enter).toFixed(3)})`;
       }
 
-      /* copy block + per-line MASK WIPE (vertical clip-path top→bottom) */
       const copy=sec.querySelector('.copytext');
       if(copy){
         copy.style.transform=`translateY(${(drift*84).toFixed(1)}px) rotateX(${(drift*5).toFixed(2)}deg)`;
@@ -642,9 +603,6 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
         const lines=copy.querySelectorAll('h2 .ln .t'); const n=lines.length;
         lines.forEach((t,k)=>{
           const t0=0.06+(k/n)*0.20; const wp=smooth(t0,t0+0.18,T);
-          // compositor-only mask wipe: .ln has overflow:hidden, the line is pushed
-          // 100% down (masked) at wp=0 and rises to 0 at wp=1 — same "rises behind
-          // a mask" read as the old clip-path inset, now transform-only.
           t.style.transform=`translate3d(0, ${((1-wp)*100).toFixed(1)}%, 0)`;
           t.style.opacity=(0.15+0.85*wp).toFixed(3);
         });
@@ -652,7 +610,6 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
         rev.forEach((el,k)=>{ el.style.opacity=(smooth(0.16+k*0.03,0.40+k*0.03,T)*exit).toFixed(3); });
       }
 
-      /* scroll-cue badge — faster drift, fades out as the hero releases */
       const cue=sec.querySelector('.cuewrap');
       if(cue){ const d=+cue.dataset.depth;
         cue.style.transform=`translate(-50%, ${(drift*120*d).toFixed(1)}px) translateZ(60px)`;
@@ -666,10 +623,9 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',()=>{ticking=true;requestAnimationFrame(parallax);},{passive:true});
   if(!isTouch && !reduce) addEventListener('pointermove',onScroll,{passive:true});
-  parallax(); // initial paint so nothing starts invisible
+  parallax();
 
-  /* second-order micro-tilt on the still itself (pointer, non-touch) — adds
-     depth over the figure's scroll camera; lives on .pic so it doesn't fight .figwrap */
+  /* second-order micro-tilt on the still (pointer, non-touch) */
   if(!isTouch && !reduce){
     document.querySelectorAll('.frame').forEach(frame=>{
       const pic=frame.querySelector('.pic');
@@ -682,12 +638,7 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
     });
   }
 
-  /* ── GSAP SHOWCASE WIRING — desktop & non-reduced (guarded by the early
-     return above, then matchMedia again so it auto-kills on resize into a
-     small/reduced context). Two cinematic techniques (taste-guardrails §2):
-       • DOLLY-ZOOM (Vertigo) — the backdrop pushes in while the caption holds
-       • SCRUBBED SIGNAL DRAW — the waveform draws via stroke-dashoffset (pattern #2)
-     If GSAP never loads, #approach simply stays at its complete static state. */
+  /* GSAP SHOWCASE WIRING — dolly-zoom + scrubbed signal draw */
   (function wireShowcase(tries){
     if(!window.gsap || !window.ScrollTrigger){
       if(tries>0) requestAnimationFrame(()=>wireShowcase(tries-1));
@@ -706,8 +657,8 @@ function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=
       gsap.set(path, { strokeDasharray:len, strokeDashoffset:len, willChange:'stroke-dashoffset' });
       const tl = gsap.timeline({ scrollTrigger:{
         trigger:'#approach', start:'top top', end:'+=130%', pin:stage, anticipatePin:1 } });
-      tl.fromTo(dolly, { scale:1 },         { scale:1.26, ease:'none' }, 0)                              // dolly-zoom
-        .to(path,      { strokeDashoffset:0, ease:'none' }, 0)                                           // signal draw
+      tl.fromTo(dolly, { scale:1 },         { scale:1.26, ease:'none' }, 0)
+        .to(path,      { strokeDashoffset:0, ease:'none' }, 0)
         .fromTo(cap,   { opacity:0, y:22 }, { opacity:1, y:0, ease:'power2.out', duration:0.4 }, 0.08);
       return () => gsap.set([dolly, path, cap], { clearProps:'all' });
     });

@@ -155,7 +155,7 @@ Same engine, deliberately clashing aesthetics — five **single, build-free `ind
 <table>
   <tr>
     <td width="33%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/"><img src="assets/noir-scroll-demo.gif" alt="Sci-fi noir example — teal fog and crimson edge-light loop" width="100%"></a>
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/"><img src="assets/noir-scroll-demo.gif" alt="Vantascope — clean editorial sci-fi, warm white canvas, bold black type, crimson signal accent" width="100%"></a>
     </td>
     <td width="33%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/luxe/"><img src="assets/luxe-scroll-demo.gif" alt="Quiet luxury example — ivory and sand still-life loop" width="100%"></a>
@@ -166,8 +166,8 @@ Same engine, deliberately clashing aesthetics — five **single, build-free `ind
   </tr>
   <tr>
     <td width="33%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/"><b>③ Sci-fi noir →</b></a><br>
-      <sub>Studio <b>VANTASCOPE</b>, title <b>HOLLOW STAR</b>. Near-black void, deep-teal fog, crimson edge-light, film grain. 4 chapters, scroll-linked 3D camera, vertical mask-wipe title reveals. <a href="./examples/noir/">Source</a>.</sub>
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/"><b>③ Signal clean →</b></a><br>
+      <sub>Studio <b>VANTASCOPE</b>, title <b>HOLLOW STAR</b>. Warm-white canvas, massive near-black Oswald type, single crimson signal accent — clean editorial sci-fi. 4 chapters, scroll-linked 3D camera, vertical mask-wipe title reveals. <a href="./examples/noir/">Source</a>.</sub>
     </td>
     <td width="33%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/luxe/"><b>④ Quiet luxury →</b></a><br>
@@ -308,7 +308,7 @@ cinematic-scroll-skill/
 │   ├── KNOWN_ISSUES.md       # QA log of real failure modes + fixes
 │   ├── renaissance/          # Mode A example — warm classical editorial
 │   ├── studio/               # Mode A example — brutalist creative-director portfolio
-│   ├── noir/                 # Mode A example — sci-fi noir (VANTASCOPE)
+│   ├── noir/                 # Mode A example — signal clean / editorial sci-fi (VANTASCOPE)
 │   ├── luxe/                 # Mode A example — quiet luxury (Maison Solenne)
 │   ├── pop/                  # Mode A example — Gen-Z pop (BLOOM)
 │   └── flagship/             # the 3D/WebXR flagship — four chapters, four 3D modalities

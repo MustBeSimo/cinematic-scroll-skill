@@ -13,7 +13,7 @@ const H = 1080;
 // rate kept low enough that each clip is STILL SCROLLING when it wipes out —
 // a frozen last frame reads as a snap. (clipDur/rate ≥ on-screen frames.)
 const WORLDS = [
-  {src: 'footage/noir.mp4',        arrive: 0,   rate: 0.60, index: '01', title: 'VANTASCOPE',     name: 'Sci-fi noir',           accent: '#E8484F'},
+  {src: 'footage/noir.mp4',        arrive: 0,   rate: 0.60, index: '01', title: 'VANTASCOPE',     name: 'Signal clean',          accent: '#E23A4E'},
   {src: 'footage/renaissance.mp4', arrive: 156, rate: 0.60, index: '02', title: 'CLASSIC TOUCH',  name: 'Renaissance editorial', accent: '#B6892F'},
   {src: 'footage/luxe.mp4',        arrive: 336, rate: 0.74, index: '03', title: 'MAISON SOLENNE', name: 'Quiet luxury',          accent: '#A4652F'},
   {src: 'footage/pop.mp4',         arrive: 516, rate: 0.54, index: '04', title: 'BLOOM',           name: 'Gen-Z pop',             accent: '#FF2E93'},
