@@ -28,8 +28,10 @@ still runs on the hand-rolled engine and **THE DROP stays at a complete static
 state**. The wiring uses `gsap.matchMedia()` so it auto-disables under
 `prefers-reduced-motion` and at ≤768px.
 
-Single self-contained `index.html` — no build step, no npm, no JS libraries.
-Only external resource is Google Fonts. GitHub-Pages-native.
+Single self-contained `index.html` — no build step, no npm, no bundler.
+External resources: Google Fonts and a pinned GSAP + ScrollTrigger CDN
+(SRI-pinned, `defer` + feature-detected, with a vanilla rAF fallback if it
+fails to load). GitHub-Pages-native.
 
 ## Run / preview
 

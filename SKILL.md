@@ -1,7 +1,7 @@
 ---
 name: cinematic-scroll
 description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with AI-generated visuals (Mode B). Includes an optional audit mode that loads a user-supplied URL in a local headless browser and scores its scroll experience. Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 visual systems, and a transform/opacity performance budget as built-in craft constraints.
-version: 2.3.0
+version: 2.3.1
 author: Simone Leonelli
 license: MIT
 metadata:
@@ -647,8 +647,8 @@ This phase operates in two modes. Follow the mode specified in the
 | Output | One self-contained `.html` (inline CSS + JS) or `.tsx` component | Next.js App Router project from `templates/nextjs/` |
 | Build step | None | `npm install && npm run dev` |
 | AI assets | None (CSS/SVG/static only) | Optional fal.ai pipeline (bring your own key) |
-| GSAP | Not included (zero-dependency by design) | Full GSAP + plugins (now free) |
-| Smooth scroll | rAF-throttled handlers | Lenis or ScrollSmoother |
+| GSAP | GSAP + ScrollTrigger via a **pinned CDN + SRI** (vanilla rAF fallback for no-CDN sandboxes) | Full GSAP + plugins (now free), via npm |
+| Smooth scroll | ScrollTrigger scrub + rAF-throttled handlers | Lenis or ScrollSmoother |
 
 If the request is ambiguous, default to **Mode A** for a single section
 and **Mode B** when the user says "site", "page", "release", "launch",
@@ -657,9 +657,12 @@ or "landing".
 ### Mode A build rules
 
 - Single self-contained HTML file: `<!DOCTYPE html>` ... `</html>`, inline
-  CSS + JS, renders immediately with no build step.
-- No GSAP, no Lenis, no npm packages. `requestAnimationFrame`-throttled
-  scroll handlers only.
+  CSS + JS, renders immediately with **no build step and no npm packages**.
+- Load **GSAP + ScrollTrigger from a pinned CDN with SRI** (exact version, integrity
+  hash, `crossorigin` — as every `examples/*` page does). For sandboxes where the
+  CDN is unreachable, fall back to `requestAnimationFrame`-throttled scroll handlers:
+  identical motion grammar, zero dependencies. Either way there is no bundler and
+  nothing to `npm install`. (Lenis is Mode B only.)
 - `perspective: 1200px` on chapter wrapper. 3D transforms on at least one
   layer (`rotateX` ±4deg max, `rotateY` ±2deg max).
 - Minimum 5 depth layers per chapter.

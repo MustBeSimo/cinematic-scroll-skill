@@ -67,6 +67,10 @@ mixing strategy.
 
 The DOM contract is unchanged — `[data-chapter]` scenes with `[data-layer]`
 and `[data-title]` children — so **one HTML skeleton serves both targets**.
+(The web and video targets use `[data-layer]`. The **HyperFrames** target alone
+auto-renames it to `[data-cs-layer]` in both skeleton and timeline, because
+HyperFrames reserves `data-layer` for its own track runtime — you author
+`data-layer` everywhere; the compiler handles the rename for that one target.)
 
 ### Using the video output
 
