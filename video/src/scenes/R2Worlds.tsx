@@ -14,7 +14,7 @@ const WORLDS = [
   {src: 'footage/renaissance.mp4', arrive: 156, rate: 0.60, index: '02', title: 'CLASSIC TOUCH',  name: 'Renaissance editorial', accent: '#B6892F'},
   {src: 'footage/luxe.mp4',        arrive: 336, rate: 0.74, index: '03', title: 'MAISON SOLENNE', name: 'Quiet luxury',          accent: '#A4652F'},
   {src: 'footage/pop.mp4',         arrive: 516, rate: 0.54, index: '04', title: 'BLOOM',           name: 'Gen-Z pop',             accent: '#FF2E93'},
-  {src: 'footage/flagship.mp4',    arrive: 696, rate: 0.55, index: '05', title: 'NEXUS LAB',       name: '3D / Immersive',        accent: '#4F3FFF'},
+  {src: 'footage/flagship-ride.mp4', arrive: 696, rate: 0.55, index: '05', title: 'NEXUS LAB',       name: '3D / Immersive',        accent: '#4F3FFF'},
 ];
 
 export const R2Worlds: React.FC = () => {

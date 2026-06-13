@@ -7,6 +7,8 @@
     "studio": "remotion studio src/index.ts",
     "render:reel": "remotion render src/index.ts Reel ../assets/reel.mp4 --codec=h264 --crf=16 --pixel-format=yuv420p --scale=2",
     "render:reel:1080": "remotion render src/index.ts Reel ../assets/reel-1080.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
+    "render:reel2": "remotion render src/index.ts Reel2 ../assets/reel2.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
+    "poster:reel2": "remotion still src/index.ts Reel2 ../assets/reel2-poster.jpg --frame=480 --scale=2",
     "render:reel:webm": "remotion render src/index.ts Reel ../assets/reel.webm --codec=vp9 --scale=1.5",
     "poster:reel": "remotion still src/index.ts Reel ../assets/reel-poster.jpg --frame=620 --scale=2",
     "render:vertical": "remotion render src/index.ts ReelVertical ../assets/reel-vertical.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
