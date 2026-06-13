@@ -19,8 +19,7 @@
 <p align="center">
   Built <em>with the skill itself</em> &nbsp;·&nbsp; adapts to your GitHub theme: dark → <strong>Petroleum Editorial</strong>, light → <strong>Swiss Museum</strong><br>
   <a href="https://mustbesimo.github.io/cinematic-scroll-skill/#how">▶ Watch the 30-second demo</a> &nbsp;·&nbsp;
-  <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/">⚡ Nexus Immersive (3D / WebXR)</a> &nbsp;·&nbsp;
-  <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/">🎬 3D Flagship</a>
+  <a href="#flagships">⚡ Two 3D / WebXR flagships, live ↓</a>
 </p>
 
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">
@@ -60,15 +59,33 @@ The doctor **exits non-zero below 80**, so you can wire it into CI and block bui
 npm run proof -- examples/noir/index.html
 ```
 
-### 3D / WebXR flagship
+<a id="flagships"></a>
+### ⚡ Two 3D / WebXR flagships — real WebGL, both doctor 100/100
 
-[`examples/flagship/`](./examples/flagship/) is one cinematic scroll site, four chapters, four 3D modalities (Object · World · Field · Figure) — vanilla Three.js (Mode A) plus React Three Fiber + WebXR (Mode B). The 3D stack decision tree lives in [`references/3d-stack.md`](./references/3d-stack.md) (with [`references/webxr.md`](./references/webxr.md) and asset hand-off in [`ASSETS-3D.md`](./ASSETS-3D.md)).
+Beyond the build-free Mode-A worlds, the skill ships two **real-3D** reference sites. Open either live:
 
-<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/">
-  <img src="assets/flagship-ride.gif" alt="The full flagship ride — a scroll-driven React Three Fiber camera rail travelling through four 3D movements: the generated watch on its stage ring, the instanced hall, the GLSL field, and the spotlit dancer. Captured from the live route." width="100%">
-</a>
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/"><img src="assets/flagship-ride.gif" alt="The 3D Flagship — a scroll-driven React Three Fiber camera rail travelling through four 3D movements: the generated watch on its stage ring, the instanced hall, the GLSL field, and the spotlit dancer. Captured from the live route." width="100%"></a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><img src="assets/immersive-preview.png" alt="Nexus Immersive Lab — a 15,000-particle galaxy field behind a massive SPATIAL COMPUTING headline on a deep-space canvas." width="100%"></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/"><b>🎬 3D Flagship — Four Movements →</b></a><br>
+      <sub><b>React Three Fiber + WebXR</b>, captured from the live route. A scroll-driven camera rail through four 3D modalities (Object · World · Field · Figure): a fal.ai-generated hero artifact on its stage ring → an instanced colonnade hall → a pure-GLSL field → a rigged dancer samba-ing under a concert spotlight. Velocity-reactive rail dust, aurora curtains, volumetric shafts, bloom.<br><br><code>three.js</code> · <code>R3F</code> · <code>WebXR</code> · <code>Draco/WebP</code> · <code>fal.ai</code> — vanilla twin in <a href="./examples/flagship/">examples/flagship</a>.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><b>⚡ Nexus Immersive — Spatial Computing →</b></a><br>
+      <sub><b>Tier C procedural shaders</b> — no external model needed. A 15,000-particle galaxy field (custom GLSL vertex + fragment, per-particle phase), a 60×60 wave-equation displacement grid (indigo→cyan lerp), and a Lorenz-inspired attractor. A WebXR session gate shows <i>Enter VR</i> only when <code>navigator.xr.isSessionSupported</code> returns true; context-loss handled, rAF gated on visibility + IntersectionObserver, mobile canvas suppressed.<br><br><code>three.js</code> · <code>GLSL</code> · <code>WebXR</code> — source in <a href="./examples/immersive/">examples/immersive</a>.</sub>
+    </td>
+  </tr>
+</table>
 
-<sub>↑ <b>Captured from the live route, not a mockup</b> — the scroll-driven camera rail riding all four movements: the fal.ai-generated chronometer on its breathing stage ring → the instanced colonnade → the pure-GLSL field → the rigged dancer under her concert spotlight. Velocity-reactive rail dust, aurora curtains, volumetric shafts, bloom.</sub>
+**The flagship in depth.** [`examples/flagship/`](./examples/flagship/) is one cinematic scroll site, four chapters, four 3D modalities — vanilla Three.js (Mode A) plus React Three Fiber + WebXR (Mode B). The 3D stack decision tree lives in [`references/3d-stack.md`](./references/3d-stack.md) (with [`references/webxr.md`](./references/webxr.md) and asset hand-off in [`ASSETS-3D.md`](./ASSETS-3D.md)).
 
 | | |
 |---|---|
@@ -199,19 +216,7 @@ Same engine, deliberately clashing aesthetics — five **single, build-free `ind
   </tr>
 </table>
 
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><img src="assets/immersive-preview.png" alt="Nexus Immersive Lab — galaxy particle field behind massive SPATIAL COMPUTING headline on deep-space canvas" width="100%"></a>
-    </td>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><b>⑧ 3D Immersive / Tier C shaders →</b></a><br>
-      <sub><b>NEXUS · IMMERSIVE LAB</b> — a fictional XR studio built on Tier C procedural shaders (no external model needed): a 15,000-particle galaxy field (custom GLSL vertex + fragment, per-particle phase attributes, pulsing glow), a 60×60 displacement grid (wave equation in vertex shader, indigo→cyan color lerp), and a Lorenz-inspired particle attractor (500 particles updated per frame in JS). WebXR session gate (Enter VR button appears only when <code>navigator.xr.isSessionSupported</code> returns true). Context loss handled, rAF gated on visibility + IntersectionObserver, mobile canvas suppressed. Doctor: <b>100/100</b>.</sub>
-    </td>
-  </tr>
-</table>
-
-**Same motion grammar; any aesthetic.** These seven examples show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for.
+**Same motion grammar; any aesthetic.** These six examples show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for. (Plus the two **[3D / WebXR flagships](#flagships)** above.)
 
 ### Running locally
 
