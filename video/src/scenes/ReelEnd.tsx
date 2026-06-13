@@ -28,10 +28,10 @@ export const ReelEnd: React.FC = () => {
       </div>
       <div style={{height: 3, width: rule, background: bright.cognac, marginTop: 24}} />
 
-      {/* one primary action — high contrast, thumb-sized */}
-      <div style={{marginTop: 46, transform: `scale(${interpolate(btn, [0, 1], [0.9, 1])})`, opacity: btn}}>
-        <div style={{fontFamily: grotesk, fontSize: 44, fontWeight: 700, color: bright.paper, background: bright.ink, padding: '24px 56px', borderRadius: 100, boxShadow: '0 20px 50px rgba(20,12,6,0.3)'}}>
-          ★ Star on GitHub
+      {/* one action — a quiet, editorial outlined pill (not a pushy hard sell) */}
+      <div style={{marginTop: 38, transform: `scale(${interpolate(btn, [0, 1], [0.94, 1])})`, opacity: btn}}>
+        <div style={{fontFamily: grotesk, fontSize: 28, fontWeight: 600, color: bright.ink, background: 'transparent', border: `1.5px solid ${bright.ink}`, padding: '13px 32px', borderRadius: 100}}>
+          <span style={{color: bright.cognac}}>★</span> Star on GitHub
         </div>
       </div>
       <div style={{fontFamily: mono, color: bright.ink, fontSize: 38, fontWeight: 700, letterSpacing: 1, marginTop: 26, opacity: btn}}>

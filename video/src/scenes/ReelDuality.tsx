@@ -63,11 +63,13 @@ const Panel: React.FC<{label: string; kind: 'browser' | 'player'; shift: number;
             <span style={{width: 11, height: 11, borderRadius: 11, background: '#ff5f57'}} />
             <span style={{width: 11, height: 11, borderRadius: 11, background: '#febc2e'}} />
             <span style={{width: 11, height: 11, borderRadius: 11, background: '#28c840'}} />
-            <span style={{flex: 1, marginLeft: 12, height: 22, borderRadius: 11, background: '#0d0f12', fontFamily: mono, fontSize: 14, color: '#8b97a2', display: 'flex', alignItems: 'center', paddingLeft: 14}}>maison-solenne.com</span>
+            <span style={{flex: 1, marginLeft: 12, height: 22, borderRadius: 11, background: '#0d0f12', fontFamily: mono, fontSize: 14, color: '#8b97a2', display: 'flex', alignItems: 'center', paddingLeft: 14}}>bloom.app</span>
           </div>
         )}
         <div style={{height: 412, overflow: 'hidden', position: 'relative'}}>
-          <OffthreadVideo src={staticFile('footage/studio.mp4')} startFrom={0} playbackRate={1.0} muted style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+          {/* programmatic vertical pan — overscan + translateY so the page
+              visibly SCROLLS within the frame even when the clip sits on a pin */}
+          <OffthreadVideo src={staticFile('footage/pop.mp4')} startFrom={0} playbackRate={1.4} muted style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(1.28) translateY(${interpolate(frame, [44, 188], [58, -58], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})}px)`}} />
           <div style={{position: 'absolute', top: 14, left: 16, fontFamily: mono, fontSize: 22, fontWeight: 700, letterSpacing: 3, color: '#fff', background: 'rgba(10,12,15,0.7)', padding: '6px 14px', borderRadius: 6}}>{label}</div>
         </div>
         {/* video scrubber on the bottom */}

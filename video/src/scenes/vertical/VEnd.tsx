@@ -29,8 +29,8 @@ export const VEnd: React.FC = () => {
 
       {/* one primary action — high contrast, thumb-sized */}
       <div style={{marginTop: 64, transform: `scale(${interpolate(btn, [0, 1], [0.9, 1])})`, opacity: btn}}>
-        <div style={{fontFamily: grotesk, fontSize: 60, fontWeight: 700, color: bright.paper, background: bright.ink, padding: '32px 72px', borderRadius: 100, boxShadow: '0 20px 50px rgba(20,12,6,0.3)'}}>
-          ★ Star on GitHub
+        <div style={{fontFamily: grotesk, fontSize: 40, fontWeight: 600, color: bright.ink, background: 'transparent', border: `2px solid ${bright.ink}`, padding: '18px 44px', borderRadius: 100}}>
+          <span style={{color: bright.cognac}}>★</span> Star on GitHub
         </div>
       </div>
       <div style={{fontFamily: mono, color: bright.ink, fontSize: 42, fontWeight: 700, letterSpacing: 0.5, marginTop: 40, opacity: btn, lineHeight: 1.3}}>

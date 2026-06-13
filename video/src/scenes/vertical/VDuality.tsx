@@ -71,11 +71,12 @@ const Panel: React.FC<{label: string; kind: 'browser' | 'player'; shift: number;
             <span style={{width: 15, height: 15, borderRadius: 15, background: '#ff5f57'}} />
             <span style={{width: 15, height: 15, borderRadius: 15, background: '#febc2e'}} />
             <span style={{width: 15, height: 15, borderRadius: 15, background: '#28c840'}} />
-            <span style={{flex: 1, marginLeft: 16, height: 30, borderRadius: 15, background: '#0d0f12', fontFamily: mono, fontSize: 19, color: '#8b97a2', display: 'flex', alignItems: 'center', paddingLeft: 18}}>maison-solenne.com</span>
+            <span style={{flex: 1, marginLeft: 16, height: 30, borderRadius: 15, background: '#0d0f12', fontFamily: mono, fontSize: 19, color: '#8b97a2', display: 'flex', alignItems: 'center', paddingLeft: 18}}>bloom.app</span>
           </div>
         )}
         <div style={{width: CARD_W, height: CARD_H, overflow: 'hidden', position: 'relative'}}>
-          <OffthreadVideo src={staticFile('footage/studio.mp4')} startFrom={0} playbackRate={1.0} muted style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+          {/* programmatic vertical pan so the page visibly SCROLLS even on a pin */}
+          <OffthreadVideo src={staticFile('footage/pop.mp4')} startFrom={0} playbackRate={1.4} muted style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(1.28) translateY(${interpolate(frame, [44, 188], [78, -78], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})}px)`}} />
           <div style={{position: 'absolute', top: 18, left: 20, fontFamily: mono, fontSize: 34, fontWeight: 700, letterSpacing: 3, color: '#fff', background: 'rgba(10,12,15,0.7)', padding: '10px 20px', borderRadius: 8}}>
             {label}
           </div>
