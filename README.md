@@ -13,8 +13,15 @@
   <img src="assets/hero-demo.gif" alt="Cinematic Scroll in motion — pinned chapters, multi-depth parallax, and scroll-driven 3D across five aesthetic worlds from one engine." width="100%">
 </a>
 
-👉 **[Visit the live landing page](https://mustbesimo.github.io/cinematic-scroll-skill/)** — built *with the skill itself*. It adapts to your GitHub theme: dark → **Petroleum Editorial**, light → **Swiss Museum**.
-▶ **[Watch the 30-second demo →](https://mustbesimo.github.io/cinematic-scroll-skill/#how)** — one sentence in, a cinematic scroll site out.
+<h2 align="center">
+  <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">🌐 &nbsp;Live demo — cinematic-scroll-skill.github.io</a>
+</h2>
+<p align="center">
+  Built <em>with the skill itself</em> &nbsp;·&nbsp; adapts to your GitHub theme: dark → <strong>Petroleum Editorial</strong>, light → <strong>Swiss Museum</strong><br>
+  <a href="https://mustbesimo.github.io/cinematic-scroll-skill/#how">▶ Watch the 30-second demo</a> &nbsp;·&nbsp;
+  <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/">⚡ Nexus Immersive (3D / WebXR)</a> &nbsp;·&nbsp;
+  <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/">🎬 3D Flagship</a>
+</p>
 
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">
   <img src="assets/scroll-demo.gif" alt="The scroll grammar in motion — pinned chapters, multi-depth parallax, and a tracking index rail" width="100%">
@@ -195,11 +202,11 @@ Same engine, deliberately clashing aesthetics — five **single, build-free `ind
 <table>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><div style="background:radial-gradient(80% 60% at 40% 60%,#4F3FFF44 0%,transparent 70%),#060812;min-height:200px;display:flex;align-items:center;justify-content:center"><code style="color:#4F3FFF">NEXUS · IMMERSIVE LAB</code></div></a>
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><img src="assets/immersive-preview.png" alt="Nexus Immersive Lab — galaxy particle field behind massive SPATIAL COMPUTING headline on deep-space canvas" width="100%"></a>
     </td>
     <td width="50%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><b>⑧ 3D Immersive / Tier C shaders →</b></a><br>
-      <sub><b>NEXUS · IMMERSIVE LAB</b> — a fictional XR studio built on Tier C procedural shaders (no external model needed): a 15,000-particle galaxy field (custom GLSL vertex + fragment, per-particle phase attributes, pulsing glow), a 60×60 displacement grid (wave equation in vertex shader, indigo→cyan color lerp), and a Lorenz-inspired particle attractor (500 particles updated per frame in JS). WebXR session gate (Enter VR button appears only when `navigator.xr.isSessionSupported` returns true). Context loss handled, rAF gated on visibility + IntersectionObserver, mobile canvas suppressed. Doctor: <b>100/100</b>.</sub>
+      <sub><b>NEXUS · IMMERSIVE LAB</b> — a fictional XR studio built on Tier C procedural shaders (no external model needed): a 15,000-particle galaxy field (custom GLSL vertex + fragment, per-particle phase attributes, pulsing glow), a 60×60 displacement grid (wave equation in vertex shader, indigo→cyan color lerp), and a Lorenz-inspired particle attractor (500 particles updated per frame in JS). WebXR session gate (Enter VR button appears only when <code>navigator.xr.isSessionSupported</code> returns true). Context loss handled, rAF gated on visibility + IntersectionObserver, mobile canvas suppressed. Doctor: <b>100/100</b>.</sub>
     </td>
   </tr>
 </table>
