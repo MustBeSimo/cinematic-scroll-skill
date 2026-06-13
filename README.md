@@ -87,11 +87,6 @@ Beyond the build-free Mode-A worlds, the skill ships two **real-3D** reference s
 
 **The flagship in depth.** [`examples/flagship/`](./examples/flagship/) is one cinematic scroll site, four chapters, four 3D modalities — vanilla Three.js (Mode A) plus React Three Fiber + WebXR (Mode B). The 3D stack decision tree lives in [`references/3d-stack.md`](./references/3d-stack.md) (with [`references/webxr.md`](./references/webxr.md) and asset hand-off in [`ASSETS-3D.md`](./ASSETS-3D.md)).
 
-| | |
-|---|---|
-| <img src="assets/flagship-chapters.jpg" alt="The four movements — Precision in Form, Into the Hall, The Math is the Image, Meet the Figure" width="100%"> | <img src="assets/flagship-dancer.gif" alt="The rigged dancer samba-ing out of the box under a concert spotlight on the ember stage ring" width="100%"> |
-| <sub>The four movements, each with its own air — chapters materialize on arrival.</sub> | <sub>`dancer.glb` — rigged + animated, 0.8 MB, dances out of the box.</sub> |
-
 Both tiers now carry the full experience: the vanilla example ships the **real Draco meshes** (the generated chronometer, the colonnade hall, and the rigged dancer — samba out of the box) plus the FX layer (velocity-reactive rail dust, fake-volumetric shafts, breathing stage rings, FOV kick), degrading to designed procedural geometry offline. The Mode-B twin in the Next.js template (`/flagship` — [`templates/nextjs/FLAGSHIP.md`](./templates/nextjs/FLAGSHIP.md)) adds on top:
 
 - **Generate real 3D assets with one command.** `npm run generate:flagship` runs a two-stage fal.ai pipeline per chapter: an art-directed concept image (`fal-ai/nano-banana-2`), then image→3D (`fal-ai/trellis` by default, `fal-ai/hyper3d/rodin` for high-detail heroes). Each mesh is **auto-compressed in place** (Draco geometry + WebP textures, ~10–13 MB raw → ~1–3 MB) and **auto-normalized** at load to chapter height with its base on the floor — arbitrary generated scales and offsets are safe, including rigged (skinned) models.
