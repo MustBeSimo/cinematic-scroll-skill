@@ -12,7 +12,7 @@ export const R2Agent: React.FC = () => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
-  const bgPan = interpolate(frame, [0, 220], [40, -40], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const bgPan = interpolate(frame, [0, 220], [64, -64], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 
   const card  = spring({frame: frame - 6, fps, config: {damping: 200}});
   const chars = Math.floor(interpolate(frame, [22, 92], [0, PROMPT.length], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}));
@@ -35,11 +35,12 @@ export const R2Agent: React.FC = () => {
           startFrom={0}
           playbackRate={0.6}
           muted
-          style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(1.18) translateY(${bgPan}px)`}}
+          style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(1.24) translateY(${bgPan}px)`}}
         />
       </AbsoluteFill>
-      {/* gradient scrim so the text panel reads clearly */}
-      <AbsoluteFill style={{background: 'linear-gradient(135deg, rgba(245,241,234,0.94) 0%, rgba(245,241,234,0.82) 100%)'}} />
+      {/* gradient scrim — light through the middle band so the renaissance scroll motion
+          stays clearly visible; heavier at top/bottom only where the mono + serif text sit */}
+      <AbsoluteFill style={{background: 'linear-gradient(to bottom, rgba(245,241,234,0.62) 0%, rgba(245,241,234,0.40) 30%, rgba(245,241,234,0.40) 64%, rgba(245,241,234,0.66) 100%)'}} />
 
       {/* content */}
       <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center'}}>
