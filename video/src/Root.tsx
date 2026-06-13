@@ -5,6 +5,7 @@ import {TwoMedia} from './TwoMedia';
 import {Flagship3D} from './Flagship3D';
 import {Doctor} from './Doctor';
 import {Reel} from './Reel';
+import {ReelVertical} from './ReelVertical';
 
 // Five 16:9 compositions (render at --scale=2 for 4K):
 //   Reel       — 60s flagship sizzle: real scroll footage of the live example
@@ -26,6 +27,14 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1920}
         height={1080}
+      />
+      <Composition
+        id="ReelVertical"
+        component={ReelVertical}
+        durationInFrames={1800}
+        fps={30}
+        width={1080}
+        height={1920}
       />
       <Composition
         id="Promo"

@@ -1,22 +1,21 @@
 import React from 'react';
 import {AbsoluteFill, Series, Audio, staticFile, useCurrentFrame, random} from 'remotion';
 import {bright} from './theme';
-import {ReelHook} from './scenes/ReelHook';
-import {ReelPrompt} from './scenes/ReelPrompt';
+import {ReelDuality} from './scenes/ReelDuality';
+import {ReelAgent} from './scenes/ReelAgent';
 import {ReelWorlds} from './scenes/ReelWorlds';
 import {ReelThreeD} from './scenes/ReelThreeD';
-import {ReelTwoMedia} from './scenes/ReelTwoMedia';
+import {ReelDoctor} from './scenes/ReelDoctor';
 import {ReelEnd} from './scenes/ReelEnd';
 
-// Reel — the 60s flagship sizzle (1800 frames @ 30fps). Bright editorial
-// framing (warm cream, serif + grotesk, cognac) wrapped around real, dynamic
-// scroll footage of the live example pages. Proves all four claims in order:
-//   Hook (150)      one engine, every aesthetic
-//   Prompt (210)    one sentence in, a cinematic site out
-//   Worlds (690)    five clashing aesthetics, same engine   ← the core proof
-//   3D + Doctor(360) real 3D, then it grades its own work
-//   TwoMedia (180)  one file → site + this very film
-//   End (210)       install everywhere · MIT
+// Reel — the 60s flagship sizzle (1800 frames @ 30fps), re-edited so the
+// killer thesis leads and every act connects to it:
+//   I  Duality (200)  one JSON → website + this very film          ← the hook
+//   II Agent (220)    it's a SKILL — describe the brand, get the site
+//   III Worlds (720)  4 aesthetics, viewport SCROLLS through them  ← the proof
+//   IV 3D (220)       the same JSON drives the WebGL camera (bridged)
+//   V  Doctor (180)   the skill grades its own taste, blocks < 80 (labeled)
+//   VI End (260)      one CTA: ★ Star on GitHub
 export const Reel: React.FC = () => {
   return (
     <AbsoluteFill style={{backgroundColor: bright.paper}}>
@@ -24,15 +23,14 @@ export const Reel: React.FC = () => {
       <Audio src={staticFile('music.m4a')} volume={0.8} />
 
       <Series>
-        <Series.Sequence durationInFrames={150}><ReelHook /></Series.Sequence>
-        <Series.Sequence durationInFrames={210}><ReelPrompt /></Series.Sequence>
-        <Series.Sequence durationInFrames={690}><ReelWorlds /></Series.Sequence>
-        <Series.Sequence durationInFrames={360}><ReelThreeD /></Series.Sequence>
-        <Series.Sequence durationInFrames={180}><ReelTwoMedia /></Series.Sequence>
-        <Series.Sequence durationInFrames={210}><ReelEnd /></Series.Sequence>
+        <Series.Sequence durationInFrames={200}><ReelDuality /></Series.Sequence>
+        <Series.Sequence durationInFrames={220}><ReelAgent /></Series.Sequence>
+        <Series.Sequence durationInFrames={720}><ReelWorlds /></Series.Sequence>
+        <Series.Sequence durationInFrames={220}><ReelThreeD /></Series.Sequence>
+        <Series.Sequence durationInFrames={180}><ReelDoctor /></Series.Sequence>
+        <Series.Sequence durationInFrames={260}><ReelEnd /></Series.Sequence>
       </Series>
 
-      {/* warm paper grain — editorial texture, very subtle */}
       <PaperGrain />
     </AbsoluteFill>
   );
