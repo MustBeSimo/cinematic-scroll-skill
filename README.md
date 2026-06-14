@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/cinematic-scroll-skill?style=flat-square&logo=npm&label=npm&color=cb3837)](https://www.npmjs.com/package/cinematic-scroll-skill)
 [![Install via skills.sh](https://img.shields.io/badge/install-skills.sh-2563eb?style=flat-square)](https://skills.sh/search?q=cinematic-scroll)
-[![Works with Claude · Cursor · Hermes · Open Claw](https://img.shields.io/badge/works%20with-Claude%20%C2%B7%20Cursor%20%C2%B7%20Hermes-7c5cff?style=flat-square)](#install)
+[![Works with Claude · Cursor · Hermes · Open Claw ](https://img.shields.io/badge/works%20with-Claude%20%C2%B7%20Cursor%20%C2%B7%20Hermes-7c5cff?style=flat-square)](#install)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](./LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/MustBeSimo/cinematic-scroll-skill/ci.yml?style=flat-square&label=quality%20gate&logo=github)](https://github.com/MustBeSimo/cinematic-scroll-skill/actions/workflows/ci.yml)
 [![GitHub stars](https://img.shields.io/github/stars/MustBeSimo/cinematic-scroll-skill?style=flat-square&color=f5b301&label=stars)](https://github.com/MustBeSimo/cinematic-scroll-skill/stargazers)
