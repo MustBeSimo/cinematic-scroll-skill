@@ -47,7 +47,11 @@ Every experience starts from a baseline that works everywhere: static layout, re
 
 ## Version History
 
-### v2.3.4 (Current)
+### v2.3.5 (Current)
+
+- **ClawHub re-audit cleanup (v2.3.4 → Pass, 116 → 110 findings; this pass targets the last 3 mediums):** Added a **credential-safety warning** to the `curl` test snippet in troubleshooting.md (read the key from `$FAL_KEY`, never paste it inline, don't share the command/output, rotate if exposed). Extended the `network:fetch` permission justification to explicitly cover the **runtime third-party CDN asset loads** (GSAP/three.js on jsDelivr; Draco decoder + model-viewer on unpkg; Google Fonts) — addressing the "external fetch lacks manifest justification" flag. Clarified that the "name the cinematic technique" rule is a **developer code-comment convention**, not a user-facing language/locale mandate. Also brought the immersive example into the published set with SRI-pinned GSAP and broadened CDN disclosure.
+
+### v2.3.4
 
 - **Intent/behavior reconciliation (ClawHub follow-up audit):** Removed remaining declared-vs-actual contradictions so the manifest and SKILL.md describe exactly what runs. WebXR/AR and 3D GLB generation are now described as **user-initiated** (feature-gated, template-provided) rather than "opt-in/inactive" — resolving the tool-poisoning flag. The context-isolation boundary now explicitly names its two user-initiated network exceptions (audit-mode URL fetch; pinned third-party CDN assets in generated pages). The 5-phase pipeline is described as **adaptively gated** consistently across SKILL.md (no more "approves each phase" vs "runs internally" contradiction). Corrected example head-comments that claimed "no external JS" / "only Google Fonts" (they progressively enhance with deferred CDN GSAP). Added inline third-party-fetch warnings at the DRACO decoder, `<model-viewer>` loader, and `fal.subscribe` call sites. Added an explicit `activation` block (trigger phrases + negative examples) to manifest.json. Softened absolutist craft language to affirm user override of palette/tone/intensity/language.
 

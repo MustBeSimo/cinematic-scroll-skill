@@ -200,7 +200,7 @@ These apply when a build uses real 3D (Three.js / WebGL / `<model-viewer>` / Web
 These guardrails are referenced in `SKILL.md` and are part of the agent's system prompt. When generating scroll-driven sections, the skill must:
 
 1. Check every output against the Banned Patterns list before delivering.
-2. Name the cinematic technique being used (from the Cinematic Vocabulary table) in the code comments.
+2. Name the cinematic technique being used (from the Cinematic Vocabulary table) in the code comments. (A developer code-comment convention — it does not constrain the page's user-facing language, which follows the user's request.)
 3. Declare the pin duration, stagger offset, and easing curves in the section manifest.
 4. Verify that no two adjacent chapters share a transition type or title treatment.
 5. Include a reduced-motion fallback for every scroll-driven effect.

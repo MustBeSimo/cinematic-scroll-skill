@@ -790,6 +790,11 @@ cat .env.local
 npm run dev
 
 # 3. Test with curl (bypass the app to isolate the issue)
+# ⚠️ CREDENTIAL SAFETY: this reads the key from the $FAL_KEY env var — do NOT paste
+#    the literal key on the command line (it lands in your shell history and process
+#    list). Run in a private shell, don't share the command or its output/logs (the
+#    -d body and headers can echo the key), and remember each call is BILLABLE to your
+#    fal.ai account. Rotate the key at https://fal.ai/dashboard/keys if it's ever exposed.
 curl -X POST https://queue.fal.run/fal-ai/flux-2-pro \
   -H "Authorization: Key $FAL_KEY" \
   -H "Content-Type: application/json" \

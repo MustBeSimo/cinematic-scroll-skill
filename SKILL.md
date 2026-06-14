@@ -1,7 +1,7 @@
 ---
 name: cinematic-scroll
 description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with optional AI-generated visuals via the fal.ai remote API (Mode B — requires your own fal.ai key; makes outbound API calls to fal.ai). Includes an optional audit mode in which the agent analyzes a user-supplied URL using its own browser/fetch access and scores the scroll experience on 4 dimensions (Pacing, Performance, Accessibility, Emotional Arc). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 visual systems, and a transform/opacity performance budget as built-in craft constraints. Advanced capabilities are user-initiated, not absent: WebXR/AR sessions are feature-gated and only start on an explicit user action (an Enter VR/AR button that appears solely when the device reports support), and 3D GLB generation lives in the Mode B Next.js template (`templates/nextjs/scripts/generate-flagship-assets.mjs`, run with your own fal.ai key) — see activation guidelines below.
-version: 2.3.4
+version: 2.3.5
 author: Simone Leonelli
 license: MIT
 metadata:
@@ -11,7 +11,7 @@ metadata:
 permissions:
   - filesystem:read     # read project files to audit and build cinematic layouts
   - filesystem:write    # create and modify HTML, CSS, TypeScript, and asset files
-  - network:fetch       # (a) call fal.ai remote API to generate images/3D GLB assets — optional, user-initiated, requires FAL_KEY; (b) fetch a user-supplied URL in audit mode — optional, user-initiated
+  - network:fetch       # (a) call fal.ai remote API to generate images/3D GLB assets — optional, user-initiated, requires FAL_KEY; (b) fetch a user-supplied URL in audit mode — optional, user-initiated; (c) generated pages load pinned third-party CDN assets at runtime in the browser (GSAP + three.js from cdn.jsdelivr.net; three.js Draco decoder + @google/model-viewer from unpkg.com; Google Fonts) — self-host to avoid; all disclosed in manifest.json → security.thirdPartyNetworkCalls
   - shell:execute       # run npm/node scripts (setup, generate, typecheck, build) and the local page-proof tool (Playwright) for headless page screenshots — all optional, user-initiated
   - env                 # read FAL_KEY / FAL_IMAGE_MODEL for fal.ai generation and CHROME_PATH / PLAYWRIGHT_BROWSERS_PATH to locate a local browser (all optional, user-initiated)
 
@@ -629,8 +629,10 @@ Reference `references/mobile-motion.md` for the recipe and
 `performance-budget.md` Section 3 (Mobile Degradation Matrix).
 
 4. **Name the cinematic technique in code comments.** Every scroll-driven
-   animation must have a comment naming the film technique it implements
-(from `taste-guardrails.md` Section 2).
+   animation should carry a developer comment identifying the film technique it
+   implements (from `taste-guardrails.md` Section 2). This is a code-comment
+   convention for maintainers — it does not dictate the page's user-facing
+   language or locale, which follow the user's request.
 
 5. **Only animate `transform` and `opacity` in hot scroll paths.** Never
    `width`, `height`, `top`, `left`, `filter`, `box-shadow`.
