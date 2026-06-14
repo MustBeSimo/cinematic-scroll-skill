@@ -146,3 +146,12 @@ tools/cinematic-doctor/cinematic-report.json
 assets/reel.mp4
 # Raw capture working dir — canonical render input is video/public/footage/.
 video/footage/
+
+# Generated render outputs — regenerate via `npm run render:*` (source is video/src/).
+# Kept out of git history; the README/site use GIF previews + the live demo, not these.
+assets/doctor.mp4
+assets/flagship-3d.mp4
+video/*/renders/
+
+# page-proof tool output (screenshots + report) — recreated on every run.
+.page-proof/
