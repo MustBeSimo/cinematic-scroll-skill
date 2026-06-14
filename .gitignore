@@ -155,3 +155,7 @@ video/*/renders/
 
 # page-proof tool output (screenshots + report) — recreated on every run.
 .page-proof/
+
+# Social/LinkedIn post captures + posters — local deliverables, regenerate from examples.
+assets/post2-*
+assets/doctor-thumb*
