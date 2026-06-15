@@ -7,6 +7,7 @@ import {Doctor} from './Doctor';
 import {Reel} from './Reel';
 import {ReelVertical} from './ReelVertical';
 import {Reel2} from './Reel2';
+import {Reel3} from './Reel3';
 
 // Six 16:9 compositions (render at --scale=2 for 4K):
 //   Reel       — 60s flagship sizzle (original cut)
@@ -31,6 +32,14 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Reel2"
         component={Reel2}
+        durationInFrames={1800}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="Reel3"
+        component={Reel3}
         durationInFrames={1800}
         fps={30}
         width={1920}
