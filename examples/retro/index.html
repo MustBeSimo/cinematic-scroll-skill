@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>NOVADECK — System 2000 · cinematic-scroll example</title>
+<meta name="description" content="A Y2K retro-futurist console — chrome gradients, electric blue and magenta, glossy bevels and early-2000s tech optimism across six chapters. A Mode-A example for the cinematic-scroll Agent Skill." />
+
+<!-- Open Graph -->
+<meta property="og:title" content="NOVADECK — System 2000" />
+<meta property="og:description" content="Y2K retro-futurism — chrome, electric blue/magenta, glossy bevels. Built with the cinematic-scroll Agent Skill." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#0A0420" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Orbitron (chrome techno display) + Space Grotesk (grotesk UI) + Share Tech Mono (terminal labels) -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<!-- GSAP + ScrollTrigger (free) — powers the "BOOT SEQUENCE" showcase: a
+     SCRUBBED SCAN-LINE SWEEP + a chrome dolly-zoom. Deferred + feature-detected:
+     if the CDN fails, the hand-rolled rAF cinematic engine below still runs. -->
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+
+<style>
+  /* ───────────────────────────────────────────────────────────────
+     cinematic-scroll · NOVADECK — "SYSTEM 2000"
+     Visual system: Y2K Retro-Futurism. Deep ultraviolet space canvas,
+     liquid-chrome gradients, electric cyan + hot magenta, glossy beveled
+     pills, Orbitron chrome display, terminal mono labels. Early-2000s
+     tech optimism — bubble UI, holographic sheen, starfields, grids.
+     All imagery generated with CSS/SVG/canvas. No external photo assets.
+     ─────────────────────────────────────────────────────────────── */
+
+  :root {
+    --bg:       #0A0420;  /* deep ultraviolet */
+    --bg-2:     #140A35;
+    --surface:  #1A1040;
+    --fg:       #EAF2FF;  /* cool white */
+    --fg-dim:   #8C9BD6;
+    --cyan:     #2DE2FF;  /* electric cyan */
+    --magenta:  #FF3DD8;  /* hot magenta */
+    --violet:   #9A6BFF;
+    --lime:     #B6FF3D;
+    --line:     rgba(45,226,255,.16);
+    --line-2:   rgba(255,61,216,.24);
+
+    --display: 'Orbitron', 'Arial Black', sans-serif;
+    --ui:      'Space Grotesk', system-ui, sans-serif;
+    --mono:    'Share Tech Mono', ui-monospace, Menlo, monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:var(--ui); font-weight:400;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    transition:background 1s cubic-bezier(.22,1,.36,1);
+  }
+  a{color:inherit}
+  ::selection{ background:var(--magenta); color:#0A0420; }
+
+  /* ── fixed atmosphere: ultraviolet nebula + perspective grid glow ── */
+  .atmos{
+    position:fixed; inset:0; z-index:-3; pointer-events:none;
+    background:
+      radial-gradient(60% 50% at 80% 0%,  rgba(255,61,216,.22) 0%, transparent 60%),
+      radial-gradient(60% 55% at 12% 100%, rgba(45,226,255,.20) 0%, transparent 60%),
+      radial-gradient(50% 40% at 50% 45%, rgba(154,107,255,.14) 0%, transparent 70%),
+      linear-gradient(170deg, #120634 0%, var(--bg) 45%, #06021A 100%);
+    transition:background 1s cubic-bezier(.22,1,.36,1);
+  }
+  /* starfield — fixed twinkle dots via radial-gradient tiles */
+  .stars{
+    position:fixed; inset:0; z-index:-2; pointer-events:none; opacity:.7;
+    background-image:
+      radial-gradient(1.5px 1.5px at 20% 30%, #fff 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 70% 60%, #cfe8ff 50%, transparent 51%),
+      radial-gradient(1px 1px at 40% 80%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 85% 20%, #ffd4f6 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 55% 12%, #fff 50%, transparent 51%),
+      radial-gradient(1px 1px at 10% 65%, #bdfcff 50%, transparent 51%);
+    background-size:520px 520px, 380px 380px, 290px 290px, 440px 440px, 600px 600px, 340px 340px;
+    animation:twinkle 5s steps(2) infinite;
+  }
+  @keyframes twinkle{ 0%,100%{opacity:.7} 50%{opacity:.45} }
+  /* perspective ground grid — fixed neon floor receding to horizon */
+  .floor{
+    position:fixed; left:-20%; right:-20%; bottom:-10%; height:62vh; z-index:-2; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(45,226,255,.30) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,61,216,.20) 1px, transparent 1px);
+    background-size:64px 64px, 64px 64px;
+    transform:perspective(420px) rotateX(72deg); transform-origin:bottom center;
+    -webkit-mask-image:linear-gradient(transparent, #000 55%);
+    mask-image:linear-gradient(transparent, #000 55%);
+    opacity:.5;
+  }
+  /* CRT scan-line veil */
+  .scan{
+    position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.35;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.0) 0 2px, rgba(0,0,0,.22) 2px 4px);
+    mix-blend-mode:multiply;
+  }
+
+  /* top scroll-progress bar */
+  .scrollbar{
+    position:fixed; top:0; left:0; height:3px; width:0%; z-index:60;
+    background:linear-gradient(90deg, var(--cyan), var(--magenta));
+    box-shadow:0 0 14px rgba(45,226,255,.6);
+  }
+
+  /* ── fixed masthead — chrome bevel bar ────────────────────────── */
+  .masthead{
+    position:fixed; inset:0 0 auto 0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:max(16px,env(safe-area-inset-top)) clamp(18px,4vw,56px) 16px;
+    background:linear-gradient(180deg, rgba(26,16,64,.92), rgba(10,4,32,.82));
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .masthead .mark{ display:flex; align-items:baseline; gap:14px; pointer-events:auto; }
+  .masthead .mark b{
+    font-family:var(--display); font-weight:900; font-size:18px; letter-spacing:.14em;
+    background:linear-gradient(180deg,#fff 0%,#9fd9ff 40%,#2DE2FF 60%,#0a6e8a 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .masthead .mark span{ font-family:var(--mono); font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--magenta); }
+  .masthead nav{ display:flex; gap:clamp(14px,2.4vw,34px); font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; }
+  .masthead nav a{ color:var(--fg-dim); text-decoration:none; transition:color .3s, text-shadow .3s; }
+  .masthead nav a:hover{ color:var(--cyan); text-shadow:0 0 10px var(--cyan); }
+  @media (max-width:680px){ .masthead nav{ display:none; } }
+
+  /* ── progress + index rail ────────────────────────────────────── */
+  .rail{
+    position:fixed; right:clamp(12px,2vw,28px); top:50%; transform:translateY(-50%);
+    z-index:40; display:flex; flex-direction:column; gap:14px;
+    font-family:var(--mono); font-size:11px; color:var(--fg-dim);
+  }
+  .rail .r{ display:flex; align-items:center; gap:10px; justify-content:flex-end; opacity:.4; transition:opacity .35s, color .35s; }
+  .rail .r .num{ letter-spacing:.08em; }
+  .rail .r .ln{ width:20px; height:1px; background:currentColor; transition:width .35s, background .35s, box-shadow .35s; }
+  .rail .r.on{ opacity:1; color:var(--cyan); }
+  .rail .r.on .ln{ width:46px; height:2px; background:var(--cyan); box-shadow:0 0 10px var(--cyan); }
+  @media (max-width:680px){ .rail{ display:none; } }
+
+  /* ── chapter section ──────────────────────────────────────────── */
+  section{ position:relative; min-height:240vh; }
+  .stage{
+    position:sticky; top:0; height:100vh; overflow:hidden;
+    display:grid; grid-template-columns:1fr; align-content:center;
+    padding:0 clamp(18px,5vw,80px);
+    perspective:1400px; perspective-origin:60% 48%;
+  }
+  .figwrap,.copytext,.cuewrap{ transform-style:preserve-3d; }
+  .figwrap .frame{ transform-style:preserve-3d; }
+
+  /* oversized chrome numeral watermark — deepest ghost layer */
+  .roman{
+    position:absolute; z-index:1; font-family:var(--display); font-weight:900;
+    font-size:clamp(12rem,44vw,42rem); line-height:.7; letter-spacing:-.03em;
+    background:linear-gradient(180deg,#fff 0%,#7fc8ff 35%,#2DE2FF 52%,#123a55 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    opacity:.10; white-space:nowrap; pointer-events:none;
+    top:50%; left:46%; transform:translate(-50%,-50%); will-change:transform;
+    -webkit-user-select:none; user-select:none;
+  }
+
+  /* ── holographic device figure — a glossy chrome panel ─────────── */
+  .figwrap{
+    position:absolute; z-index:3; right:clamp(18px,5vw,80px); top:50%;
+    width:clamp(280px,40vw,560px); aspect-ratio:4/5; transform:translateY(-50%);
+    will-change:transform,opacity;
+  }
+  .frame{ position:relative; width:100%; height:100%; }
+  .pic{
+    position:absolute; inset:0; border-radius:26px; overflow:hidden;
+    background:linear-gradient(160deg,#241552 0%,#0E0830 60%,#1A1040 100%);
+    box-shadow:
+      0 36px 80px rgba(8,4,28,.6),
+      0 0 0 1px rgba(45,226,255,.35),
+      inset 0 1px 0 rgba(255,255,255,.25),
+      inset 0 0 40px rgba(154,107,255,.25);
+    transition:transform .25s ease-out;
+  }
+  .pic svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  /* glossy top sheen */
+  .pic::before{
+    content:""; position:absolute; left:0; right:0; top:0; height:42%;
+    background:linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0));
+    border-radius:26px 26px 60% 60%/26px 26px 30% 30%; pointer-events:none; z-index:5;
+  }
+  /* chrome bevel frame */
+  .frame .bezel{
+    position:absolute; inset:-7px; border-radius:32px; z-index:0; pointer-events:none;
+    background:linear-gradient(145deg,#dfe9ff 0%,#7c8fc8 18%,#2a2f55 50%,#9fb4e8 82%,#c7d6ff 100%);
+    box-shadow:0 20px 50px rgba(8,4,28,.5);
+  }
+  .frame .bezel::after{
+    content:""; position:absolute; inset:6px; border-radius:26px;
+    background:#0A0420;
+  }
+  /* magenta status LED */
+  .frame .led{
+    position:absolute; z-index:6; top:16px; right:18px; width:11px; height:11px; border-radius:50%;
+    background:var(--magenta); box-shadow:0 0 12px var(--magenta), inset 0 0 4px #fff;
+    animation:blink 1.6s steps(2) infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:.3} }
+  .figcap{
+    position:absolute; left:0; bottom:-26px; display:flex; justify-content:space-between; width:100%;
+    font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:var(--fg-dim);
+  }
+  .figcap .n{ color:var(--magenta); }
+
+  /* copy / title — chrome grotesk type */
+  .copytext{ position:relative; z-index:6; max-width:min(92vw,1140px); will-change:transform,opacity; }
+  .eyebrow{
+    font-family:var(--mono); font-size:clamp(10px,1vw,12px); letter-spacing:.3em;
+    text-transform:uppercase; color:var(--cyan); margin-bottom:clamp(16px,2.4vw,28px);
+    display:flex; align-items:center; gap:12px; text-shadow:0 0 12px rgba(45,226,255,.5);
+  }
+  .eyebrow::before{ content:""; width:34px; height:2px; background:var(--cyan); display:inline-block; box-shadow:0 0 8px var(--cyan); }
+
+  h2.title{
+    font-family:var(--display); font-weight:900; line-height:.9;
+    letter-spacing:-.005em; text-transform:uppercase;
+    font-size:clamp(2.6rem,10vw,9.5rem);
+    background:linear-gradient(180deg,#ffffff 0%,#cfe6ff 30%,#9fd9ff 48%,#2DE2FF 62%,#155a7a 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 4px 18px rgba(45,226,255,.28));
+  }
+  h2.title .ln{ display:block; overflow:hidden; }
+  h2.title .ln .t{ display:inline-block; will-change:transform; }
+  h2.title .accent{
+    background:linear-gradient(180deg,#ffd9f5 0%,#FF3DD8 55%,#7a1268 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 4px 18px rgba(255,61,216,.32));
+  }
+
+  .lede{
+    margin-top:clamp(22px,2.8vw,36px); max-width:46ch;
+    font-size:clamp(1rem,1.5vw,1.24rem); line-height:1.65;
+    color:var(--fg-dim); font-weight:400;
+  }
+  .lede .reveal{ display:inline; }
+  .meta{
+    margin-top:clamp(18px,2.4vw,30px); font-family:var(--mono); font-size:11px;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--fg-dim);
+  }
+
+  /* CTA — glossy chrome pill */
+  .cta{
+    margin-top:clamp(26px,3vw,40px); display:inline-flex; align-items:center; gap:12px;
+    padding:14px 32px; border:none; border-radius:999px;
+    color:#04121a; font-weight:700;
+    background:linear-gradient(180deg,#bff6ff 0%,#2DE2FF 50%,#0a8fb0 100%);
+    box-shadow:0 10px 30px rgba(45,226,255,.4), inset 0 1px 0 rgba(255,255,255,.7);
+    font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+    text-decoration:none;
+    transition:transform .26s cubic-bezier(.22,1,.36,1), box-shadow .26s, filter .26s;
+  }
+  .cta:hover{ transform:translateY(-2px); filter:brightness(1.08); box-shadow:0 14px 38px rgba(45,226,255,.55), inset 0 1px 0 rgba(255,255,255,.8); }
+
+  /* scroll-cue badge (hero only) */
+  .cuewrap{
+    position:absolute; z-index:7; left:50%; bottom:clamp(26px,5vh,52px); transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:9px; will-change:transform,opacity;
+  }
+  .cue{
+    font-family:var(--mono); font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--cyan);
+    border:1px solid var(--line); border-radius:999px; padding:8px 16px;
+    display:flex; align-items:center; gap:9px;
+    background:rgba(26,16,64,.72); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  }
+  .cue .dot{ width:7px; height:7px; border-radius:50%; background:var(--magenta); box-shadow:0 0 10px var(--magenta); animation:pulse 1.6s ease-in-out infinite; }
+  .cuewrap .bar{ width:2px; height:34px; background:linear-gradient(var(--cyan), transparent); box-shadow:0 0 8px var(--cyan); transform-origin:top; animation:cuebar 2.1s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.3} }
+  @keyframes cuebar{ 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.4)} }
+
+  /* ── footer / colophon ────────────────────────────────────────── */
+  footer{ position:relative; z-index:2; padding:16vh clamp(18px,5vw,80px) 14vh; }
+  footer .vine{ width:130px; height:2px; margin-bottom:30px; background:linear-gradient(90deg, var(--cyan), var(--magenta), transparent); box-shadow:0 0 10px rgba(45,226,255,.4); }
+  footer .big{
+    font-family:var(--display); font-weight:700; text-transform:uppercase;
+    font-size:clamp(1.8rem,7vw,5rem); line-height:.98; letter-spacing:.005em;
+    background:linear-gradient(180deg,#fff 0%,#9fd9ff 45%,#2DE2FF 62%,#155a7a 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  footer .big a{
+    background:linear-gradient(180deg,#ffd9f5,#FF3DD8 60%,#7a1268);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; text-decoration:none;
+  }
+  footer .meta{
+    margin-top:28px; font-family:var(--mono); font-size:12px; letter-spacing:.1em;
+    color:var(--fg-dim); text-transform:uppercase; max-width:62ch; line-height:1.9;
+  }
+  footer .meta a{ color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(45,226,255,.3); }
+
+  /* ── mobile ─────────────────────────────────────────────────────── */
+  @media (max-width:680px){
+    section{ min-height:auto; padding:8vh 0; }
+    .stage{ position:static; height:auto; display:block; padding:0 22px; perspective:none; }
+    .roman{ position:static; opacity:.1; font-size:38vw; line-height:.8; margin:0 0 -4vh -2vw; display:block; }
+    .figwrap{ position:static; width:100%; transform:none; margin:30px 0 40px; aspect-ratio:4/5; opacity:1; max-width:420px; }
+    .copytext{ transform:none; opacity:1; }
+    h2.title{ font-size:14vw; }
+    h2.title .ln .t{ transform:none; opacity:1; }
+    .cuewrap{ position:static; transform:none; margin:30px auto 0; opacity:1; }
+    .reveal{ opacity:1; transform:none; }
+    .floor{ height:46vh; }
+    html.m-on .figwrap, html.m-on .roman{ will-change:transform; }
+  }
+
+  /* ── reduced motion ──────────────────────────────────────────── */
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .cue .dot,.cuewrap .bar,.stars,.frame .led{ animation:none; }
+    section{ min-height:auto; padding:11vh 0; }
+    .stage{ position:static; height:auto; display:block; perspective:none; }
+    .roman{ position:static; transform:none!important; opacity:.1; font-size:clamp(8rem,26vw,18rem); line-height:.8; display:block; margin-bottom:-3vh; }
+    .figwrap{ position:static; width:min(440px,90vw); transform:none!important; margin:30px 0 48px; opacity:1!important; }
+    .copytext{ transform:none!important; opacity:1!important; }
+    h2.title .ln .t{ transform:none!important; opacity:1!important; }
+    .cuewrap{ position:static; transform:none!important; margin-top:30px; opacity:1!important; }
+    .reveal{ opacity:1!important; transform:none!important; }
+  }
+
+  /* ── GSAP SHOWCASE — "BOOT SEQUENCE" ───────────────────────────
+     A pinned viewport: a SCRUBBED SCAN-SWEEP draws a loading bar +
+     a chrome dolly-zoom on the grid backdrop. */
+  section.showcase{ min-height:0; }
+  .show-stage{ position:relative; height:100vh; overflow:hidden; display:grid; place-items:center; }
+  .show-stage .dolly{
+    position:absolute; inset:-12%; z-index:0; transform-origin:50% 58%; will-change:transform;
+    background:
+      radial-gradient(50% 55% at 50% 36%, rgba(255,61,216,.18) 0%, transparent 60%),
+      radial-gradient(70% 60% at 50% 100%, rgba(45,226,255,.20) 0%, transparent 60%),
+      repeating-linear-gradient(0deg, rgba(45,226,255,.10) 0 1px, transparent 1px 54px),
+      repeating-linear-gradient(90deg, rgba(255,61,216,.08) 0 1px, transparent 1px 54px),
+      linear-gradient(180deg, #150A38 0%, var(--bg) 50%, #06021A 100%);
+  }
+  .show-stage .console{
+    position:relative; z-index:2; width:min(78vw,720px);
+    border-radius:18px; padding:30px clamp(20px,4vw,44px);
+    background:linear-gradient(160deg,#241552,#0E0830);
+    box-shadow:0 0 0 1px rgba(45,226,255,.3), 0 40px 90px rgba(8,4,28,.6), inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  .show-stage .console .logo{
+    font-family:var(--display); font-weight:900; letter-spacing:.16em; font-size:clamp(1.4rem,4vw,2.4rem);
+    background:linear-gradient(180deg,#fff,#2DE2FF 60%,#155a7a);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px;
+  }
+  .show-stage .console .sub{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; color:var(--magenta); text-transform:uppercase; margin-bottom:22px; }
+  .show-stage .console .barwrap{ position:relative; height:18px; border-radius:999px; background:#0A0420; box-shadow:inset 0 0 0 1px rgba(45,226,255,.3); overflow:hidden; }
+  .show-stage .console .fill{ position:absolute; inset:2px auto 2px 2px; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--cyan),var(--magenta)); box-shadow:0 0 14px rgba(45,226,255,.6); }
+  .show-stage .console .lines{ margin-top:18px; font-family:var(--mono); font-size:12px; line-height:1.9; color:var(--fg-dim); }
+  .show-stage .console .lines b{ color:var(--lime); }
+  .show-cap{
+    position:absolute; z-index:3; bottom:10vh; left:0; right:0; text-align:center;
+    font-family:var(--mono); color:var(--fg-dim);
+  }
+  .show-cap b{
+    display:block; font-family:var(--display); font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+    background:linear-gradient(180deg,#fff,#2DE2FF 60%,#155a7a);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    font-size:clamp(1.4rem,4vw,2.4rem); margin-bottom:10px;
+  }
+  .show-cap span{ font-size:12px; letter-spacing:.2em; text-transform:uppercase; }
+  @media (max-width:680px){
+    .show-stage{ height:auto; padding:14vh 22px; }
+    .show-stage .dolly{ inset:0; }
+    .show-cap{ position:static; margin-top:30px; }
+  }
+</style>
+</head>
+<body>
+  <!-- Persistent "back to repo" affordance -->
+  <style>
+    .repo-home-pill{position:fixed;left:max(14px,env(safe-area-inset-left));
+      bottom:max(14px,env(safe-area-inset-bottom));z-index:9999;display:inline-flex;
+      align-items:center;gap:8px;padding:9px 14px 9px 12px;border-radius:999px;
+      font:500 12px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.04em;
+      color:var(--cyan);background:rgba(20,10,53,.86);border:1px solid rgba(45,226,255,.28);
+      -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-decoration:none;
+      box-shadow:0 4px 18px rgba(8,4,28,.4);transition:transform .25s cubic-bezier(.22,1,.36,1),background .25s}
+    .repo-home-pill:hover{transform:translateY(-2px);background:rgba(20,10,53,.98)}
+    .repo-home-pill .arw{font-size:14px;line-height:1;transition:transform .25s cubic-bezier(.22,1,.36,1)}
+    .repo-home-pill:hover .arw{transform:translateX(-3px)}
+    @media (prefers-reduced-motion:reduce){.repo-home-pill,.repo-home-pill .arw{transition:none}
+      .repo-home-pill:hover{transform:none}.repo-home-pill:hover .arw{transform:none}}
+  </style>
+  <a class="repo-home-pill" href="https://github.com/MustBeSimo/cinematic-scroll-skill"
+     target="_blank" rel="noopener"
+     aria-label="Back to the cinematic-scroll repository on GitHub">
+    <span class="arw" aria-hidden="true">&larr;</span> cinematic-scroll
+  </a>
+
+<div class="atmos" id="atmos" aria-hidden="true"></div>
+<div class="stars" aria-hidden="true"></div>
+<div class="floor" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+<div class="scrollbar" id="scrollbar" aria-hidden="true"></div>
+
+<header class="masthead">
+  <div class="mark">
+    <b>NOVADECK</b>
+    <span>System · 2000</span>
+  </div>
+  <nav aria-label="Primary">
+    <a href="#power">Power On</a>
+    <a href="#core">The Core</a>
+    <a href="#net">Hypernet</a>
+    <a href="#order">Pre-Order</a>
+  </nav>
+</header>
+
+<nav class="rail" id="rail" aria-label="Chapters"></nav>
+
+<main id="reel"></main>
+
+<footer id="order">
+  <div class="vine"></div>
+  <div class="big">The future booted up.<br>And it <a href="mailto:hello@example.com">wants you online →</a></div>
+  <div class="meta">
+    Built with the <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a> Agent Skill ·
+    NOVADECK is a fictional device — no real products, people, or brands ·
+    one of many possible aesthetics this skill can direct.
+  </div>
+</footer>
+
+<script>
+/* ───────────────────────────────────────────────────────────────
+   Manifest — single source of truth for the NOVADECK demo.
+   Each chapter: id, roman (a big chrome numeral watermark), eyebrow,
+   fig/figLabel, device (which holo-panel SVG to render), title lines,
+   lede, morph (atmosphere it transitions to on enter), cue (hero),
+   cta (final chapter only).
+   ─────────────────────────────────────────────────────────────── */
+const CHAPTERS = [
+  {
+    id:'0-power', roman:'00', eyebrow:'NOVADECK · SYSTEM 2000 // ONLINE',
+    fig:'UNIT 01', figLabel:'NOVADECK · PORTABLE CORE', device:'deck',
+    title:[['POWER',0],['ON',1]],
+    lede:'Press the chrome key and the whole sky lights up. NOVADECK is the pocket terminal the year 2000 promised you — holographic, always-connected, impossibly glossy. The future just finished booting.',
+    morph:'radial-gradient(60% 50% at 80% 0%, rgba(255,61,216,.22) 0%, transparent 60%), radial-gradient(60% 55% at 12% 100%, rgba(45,226,255,.20) 0%, transparent 60%), linear-gradient(170deg, #120634 0%, #0A0420 45%, #06021A 100%)',
+    cue:true
+  },
+  {
+    id:'1-core', roman:'01', eyebrow:'MODULE I · THE CORE',
+    fig:'UNIT 02', figLabel:'QUANTUM CHIP · 2GHz DREAM', device:'chip',
+    title:[['LIQUID',0],['SILICON',1]],
+    lede:'At the heart spins a chip that runs cool as glass and bright as neon. No fans, no noise — just a pulse of light moving through liquid silicon, fast enough to render tomorrow in real time.',
+    morph:'radial-gradient(70% 55% at 18% 6%, rgba(45,226,255,.22) 0%, transparent 60%), radial-gradient(60% 60% at 86% 92%, rgba(154,107,255,.18) 0%, transparent 60%), linear-gradient(180deg, #0E0830 0%, #140A35 50%, #06021A 100%)'
+  },
+  {
+    id:'2-net', roman:'02', eyebrow:'MODULE II · HYPERNET',
+    fig:'UNIT 03', figLabel:'GLOBAL MESH · ALWAYS ON', device:'globe',
+    title:[['JACK INTO',0],['THE GRID',1]],
+    lede:'Every NOVADECK is a node. Spin the holo-globe and watch the mesh light up — friends, feeds, far cities, all one tap away. In the year 2000, the whole planet finally got a dial tone that never drops.',
+    morph:'radial-gradient(60% 55% at 50% 6%, rgba(255,61,216,.20) 0%, transparent 58%), radial-gradient(70% 60% at 16% 94%, rgba(45,226,255,.18) 0%, transparent 60%), linear-gradient(180deg, #140A35 0%, #1A1040 55%, #0A0420 100%)'
+  },
+  {
+    id:'3-play', roman:'03', eyebrow:'MODULE III · MEDIA',
+    fig:'UNIT 04', figLabel:'AUDIO CORE · CHROME WAVE', device:'audio',
+    title:[['SOUND IN',0],['SURROUND',1]],
+    lede:'Drop a disc, stream a station, or let the deck mix for you. The audio core renders every frequency as a ribbon of chrome light — bass you can see, treble that sparkles. Turn it up until the room glows.',
+    morph:'radial-gradient(75% 60% at 84% 8%, rgba(154,107,255,.22) 0%, transparent 60%), radial-gradient(60% 55% at 14% 92%, rgba(45,226,255,.16) 0%, transparent 58%), linear-gradient(170deg, #160A3A 0%, #1A1040 44%, #0A0420 100%)'
+  },
+  {
+    id:'4-spec', roman:'04', eyebrow:'MODULE IV · THE NUMBERS',
+    fig:'UNIT 05', figLabel:'SPEC SHEET · MAXED OUT', device:'specs',
+    title:[['MAXED',0],['EVERYTHING',1]],
+    lede:'128 megs of dream RAM. A screen that folds light. Battery that laughs at midnight. Every spec dialed past the red line, because in the year 2000 we did not do "good enough" — we did dazzling.',
+    morph:'radial-gradient(70% 55% at 18% 8%, rgba(255,61,216,.18) 0%, transparent 58%), radial-gradient(72% 60% at 86% 92%, rgba(45,226,255,.20) 0%, transparent 60%), linear-gradient(180deg, #0E0830 0%, #140A35 50%, #06021A 100%)'
+  },
+  {
+    id:'5-order', roman:'05', eyebrow:'MODULE V · GO LIVE',
+    fig:'UNIT 06', figLabel:'LAUNCH EDITION · CHROME', device:'launch',
+    title:[['RESERVE',0],['YOUR DECK',1]],
+    lede:'The launch edition ships in liquid chrome, numbered, and limited to the first wave online. Drop your address on the wire and we will beam you a slot the moment the gates open. NOVADECK — see you on the grid.',
+    morph:'radial-gradient(60% 50% at 80% 0%, rgba(255,61,216,.22) 0%, transparent 60%), radial-gradient(60% 55% at 12% 100%, rgba(45,226,255,.20) 0%, transparent 60%), linear-gradient(170deg, #120634 0%, #0A0420 45%, #06021A 100%)',
+    cta:'Reserve your unit'
+  },
+];
+
+/* ── Holographic device SVGs — drawn, not photographed ──────────── */
+function deviceSVG(kind){
+  const defs = `
+    <defs>
+      <linearGradient id="chrome-${kind}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/><stop offset="32%" stop-color="#bfe6ff"/>
+        <stop offset="55%" stop-color="#2DE2FF"/><stop offset="100%" stop-color="#0c5e7a"/>
+      </linearGradient>
+      <linearGradient id="mag-${kind}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#FF8BEC"/><stop offset="60%" stop-color="#FF3DD8"/><stop offset="100%" stop-color="#7a1268"/>
+      </linearGradient>
+      <radialGradient id="glow-${kind}" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="rgba(45,226,255,.55)"/><stop offset="100%" stop-color="rgba(45,226,255,0)"/>
+      </radialGradient>
+    </defs>
+    <rect width="400" height="500" fill="none"/>
+    <ellipse cx="200" cy="200" rx="190" ry="200" fill="url(#glow-${kind})" opacity=".5"/>`;
+
+  let body='';
+  if(kind==='deck'){
+    body = `
+      <rect x="96" y="70" width="208" height="360" rx="30" fill="#0E0830" stroke="url(#chrome-${kind})" stroke-width="4"/>
+      <rect x="116" y="96" width="168" height="190" rx="12" fill="#06021A" stroke="rgba(45,226,255,.4)" stroke-width="2"/>
+      <rect x="116" y="96" width="168" height="190" rx="12" fill="url(#glow-${kind})" opacity=".7"/>
+      ${Array.from({length:6},(_,i)=>`<rect x="128" y="${118+i*26}" width="${140-i*16}" height="6" rx="3" fill="${i%2?'#FF3DD8':'#2DE2FF'}" opacity="${.9-i*0.1}"/>`).join('')}
+      <circle cx="200" cy="350" r="36" fill="none" stroke="url(#chrome-${kind})" stroke-width="6"/>
+      <circle cx="200" cy="350" r="20" fill="url(#mag-${kind})"/>
+      <rect x="128" y="404" width="40" height="10" rx="5" fill="#2DE2FF"/>
+      <rect x="232" y="404" width="40" height="10" rx="5" fill="#FF3DD8"/>`;
+  } else if(kind==='chip'){
+    body = `
+      <rect x="120" y="160" width="160" height="160" rx="14" fill="url(#chrome-${kind})"/>
+      <rect x="138" y="178" width="124" height="124" rx="8" fill="#0E0830"/>
+      <rect x="138" y="178" width="124" height="124" rx="8" fill="url(#glow-${kind})"/>
+      ${Array.from({length:8},(_,i)=>`<rect x="${152+i*13}" y="124" width="6" height="36" rx="2" fill="#9fb4e8"/><rect x="${152+i*13}" y="320" width="6" height="36" rx="2" fill="#9fb4e8"/>`).join('')}
+      ${Array.from({length:8},(_,i)=>`<rect x="84" y="${188+i*13}" width="36" height="6" rx="2" fill="#9fb4e8"/><rect x="280" y="${188+i*13}" width="36" height="6" rx="2" fill="#9fb4e8"/>`).join('')}
+      ${Array.from({length:5},(_,i)=>`<rect x="${158+i*22}" y="198" width="84" height="84" rx="6" fill="none" stroke="${i%2?'#FF3DD8':'#2DE2FF'}" stroke-width="1.5" opacity="${.7-i*0.1}" transform="translate(${-i*0},${0})"/>`).join('')}
+      <text x="200" y="248" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="900" font-size="22" fill="url(#mag-${kind})">NVX</text>`;
+  } else if(kind==='globe'){
+    body = `
+      <circle cx="200" cy="240" r="120" fill="#0E0830" stroke="url(#chrome-${kind})" stroke-width="3"/>
+      <circle cx="200" cy="240" r="120" fill="url(#glow-${kind})" opacity=".7"/>
+      ${Array.from({length:5},(_,i)=>{const ry=20+i*26;return `<ellipse cx="200" cy="240" rx="120" ry="${ry}" fill="none" stroke="rgba(45,226,255,.45)" stroke-width="1.4"/>`;}).join('')}
+      ${Array.from({length:6},(_,i)=>{const rx=20+i*20;return `<ellipse cx="200" cy="240" rx="${rx}" ry="120" fill="none" stroke="rgba(255,61,216,.30)" stroke-width="1.2"/>`;}).join('')}
+      ${[[150,180],[250,200],[180,300],[260,280],[210,160],[140,260]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6" fill="#FF3DD8"/><circle cx="${x}" cy="${y}" r="11" fill="none" stroke="#FF3DD8" stroke-width="1.5" opacity=".6"/>`).join('')}
+      <path d="M150,180 L250,200 L180,300 L260,280" fill="none" stroke="#2DE2FF" stroke-width="2" opacity=".8"/>`;
+  } else if(kind==='audio'){
+    body = `
+      <circle cx="200" cy="250" r="130" fill="none" stroke="url(#chrome-${kind})" stroke-width="4"/>
+      <circle cx="200" cy="250" r="105" fill="#0E0830"/>
+      <circle cx="200" cy="250" r="105" fill="url(#glow-${kind})" opacity=".6"/>
+      ${Array.from({length:48},(_,i)=>{const a=(i/48)*Math.PI*2;const len=18+Math.abs(Math.sin(i*1.3))*36;const r1=64,r2=64+len;return `<line x1="${200+Math.cos(a)*r1}" y1="${250+Math.sin(a)*r1}" x2="${200+Math.cos(a)*r2}" y2="${250+Math.sin(a)*r2}" stroke="${i%2?'#FF3DD8':'#2DE2FF'}" stroke-width="3" stroke-linecap="round"/>`;}).join('')}
+      <circle cx="200" cy="250" r="42" fill="url(#mag-${kind})"/>
+      <circle cx="200" cy="250" r="12" fill="#0E0830"/>`;
+  } else if(kind==='specs'){
+    const rows=[['CPU','2.0 GHZ'],['RAM','128 MB'],['SCREEN','HOLO-TFT'],['NET','ALWAYS-ON'],['POWER','40 HR'],['FINISH','CHROME']];
+    body = `
+      <rect x="78" y="92" width="244" height="316" rx="18" fill="#0E0830" stroke="url(#chrome-${kind})" stroke-width="3"/>
+      <rect x="78" y="92" width="244" height="48" rx="18" fill="url(#mag-${kind})"/>
+      <text x="200" y="123" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="900" font-size="18" fill="#0A0420">SPEC SHEET</text>
+      ${rows.map((r,i)=>`<text x="100" y="${178+i*40}" font-family="Share Tech Mono, monospace" font-size="15" fill="#8C9BD6">${r[0]}</text><text x="300" y="${178+i*40}" text-anchor="end" font-family="Orbitron, sans-serif" font-weight="700" font-size="15" fill="${i%2?'#2DE2FF':'#FF3DD8'}">${r[1]}</text><line x1="100" y1="${190+i*40}" x2="300" y2="${190+i*40}" stroke="rgba(45,226,255,.18)" stroke-width="1"/>`).join('')}`;
+  } else { /* launch */
+    body = `
+      <ellipse cx="200" cy="430" rx="110" ry="18" fill="rgba(45,226,255,.18)"/>
+      <rect x="110" y="120" width="180" height="280" rx="26" fill="url(#chrome-${kind})"/>
+      <rect x="126" y="138" width="148" height="244" rx="16" fill="#0E0830"/>
+      <rect x="126" y="138" width="148" height="244" rx="16" fill="url(#glow-${kind})" opacity=".6"/>
+      <text x="200" y="250" text-anchor="middle" font-family="Orbitron, sans-serif" font-weight="900" font-size="30" fill="url(#mag-${kind})">N&#176;1</text>
+      <text x="200" y="288" text-anchor="middle" font-family="Share Tech Mono, monospace" font-size="13" fill="#2DE2FF" letter-spacing="3">LAUNCH</text>
+      <path d="M150,90 L200,60 L250,90 L240,120 L160,120 Z" fill="url(#mag-${kind})"/>
+      <circle cx="200" cy="86" r="9" fill="#fff"/>`;
+  }
+  return `<svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid meet" role="img">${defs}${body}</svg>`;
+}
+
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const smooth=(e0,e1,x)=>{ if(x<=e0)return 0; if(x>=e1)return 1; const t=(x-e0)/(e1-e0); return t*t*(3-2*t); };
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isTouch = matchMedia('(hover: none) and (pointer: coarse)').matches;
+const isMobile = () => innerWidth <= 680;
+
+const reel = document.getElementById('reel');
+const rail = document.getElementById('rail');
+const atmos = document.getElementById('atmos');
+const bar = document.getElementById('scrollbar');
+
+(function build(){
+  for (const ch of CHAPTERS){
+    const sec = document.createElement('section');
+    sec.id = ch.id.replace(/^\d+-/,'');
+    sec.dataset.morph = ch.morph;
+
+    const titleHTML = ch.title.map(([txt,acc]) =>
+      `<span class="ln"><span class="t${acc?' accent':''}">${txt}</span></span>`
+    ).join('');
+
+    sec.innerHTML = `
+      <div class="stage">
+        <div class="roman" data-depth="0.22" aria-hidden="true">${ch.roman}</div>
+        <div class="figwrap" data-depth="0.75">
+          <div class="frame">
+            <span class="bezel" aria-hidden="true"></span>
+            <div class="pic" role="img" aria-label="${ch.figLabel}">${deviceSVG(ch.device)}</div>
+            <span class="led" aria-hidden="true"></span>
+            <div class="figcap"><span class="n">${ch.fig}</span><span>${ch.figLabel}</span></div>
+          </div>
+        </div>
+        <div class="copytext" data-depth="1.0">
+          <div class="eyebrow reveal">${ch.eyebrow}</div>
+          <h2 class="title">${titleHTML}</h2>
+          <p class="lede"><span class="reveal">${ch.lede}</span></p>
+          ${ch.cta
+            ? `<a class="cta reveal" href="mailto:hello@example.com?subject=NOVADECK%20reservation">${ch.cta} →</a>`
+            : `<p class="meta reveal">${ch.fig} · ${ch.figLabel}</p>`}
+        </div>
+        ${ch.cue ? `<div class="cuewrap" data-depth="1.4">
+          <div class="cue"><span class="dot"></span>Scroll to boot</div>
+          <span class="bar"></span>
+        </div>` : ''}
+      </div>`;
+    reel.appendChild(sec);
+
+    const r = document.createElement('div');
+    r.className='r'; r.dataset.id = sec.id;
+    r.innerHTML = `<span class="num">${ch.roman}</span><span class="ln"></span>`;
+    rail.appendChild(r);
+  }
+
+  /* GSAP SHOWCASE — "BOOT SEQUENCE" : scrubbed loading bar + chrome dolly */
+  const show = document.createElement('section');
+  show.className = 'showcase'; show.id = 'boot';
+  show.dataset.morph = 'radial-gradient(120% 100% at 50% 0%, rgba(255,61,216,.16), transparent 60%), linear-gradient(180deg, #0A0420 0%, #150A38 60%, #06021A 100%)';
+  show.innerHTML = `
+    <div class="show-stage">
+      <div class="dolly" aria-hidden="true"></div>
+      <div class="console" aria-hidden="true">
+        <div class="logo">NOVADECK</div>
+        <div class="sub">System 2000 // boot sequence</div>
+        <div class="barwrap"><div class="fill"></div></div>
+        <div class="lines">
+          &gt; core online <b>OK</b><br>
+          &gt; hypernet link <b>OK</b><br>
+          &gt; holo-display calibrated <b>OK</b><br>
+          &gt; welcome to the future_
+        </div>
+      </div>
+      <div class="show-cap">
+        <b>Loading tomorrow</b>
+        <span>Scroll to complete the boot sequence</span>
+      </div>
+    </div>`;
+  /* place BOOT SEQUENCE after the 2nd chapter (after THE CORE) */
+  reel.insertBefore(show, reel.children[2] || null);
+  const sr = document.createElement('div');
+  sr.className = 'r'; sr.dataset.id = 'boot';
+  sr.innerHTML = `<span class="num">&#9881;</span><span class="ln"></span>`;
+  rail.insertBefore(sr, rail.children[2] || null);
+
+  const sections = [...document.querySelectorAll('section')];
+  const rails = [...rail.querySelectorAll('.r')];
+
+  rails.forEach(r => r.addEventListener('click', () => {
+    document.getElementById(r.dataset.id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  }));
+
+  function applyActive(sec){
+    const idx = sections.indexOf(sec);
+    atmos.style.background = sec.dataset.morph;
+    rails.forEach((r,i)=> r.classList.toggle('on', i===idx));
+  }
+  const spy = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if (e.isIntersecting) applyActive(e.target); });
+  },{ rootMargin:'-50% 0px -50% 0px', threshold:0 });
+  sections.forEach(s=>spy.observe(s));
+  applyActive(sections[0]);
+
+  let pTick=false;
+  function progress(){
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = `scaleX(${max>0 ? clamp(scrollY/max,0,1):0})`;
+    pTick=false;
+  }
+  bar.style.width='100%'; bar.style.transformOrigin='left center'; bar.style.transform='scaleX(0)';
+
+  if (reduce){
+    addEventListener('scroll',()=>{ if(!pTick){pTick=true;requestAnimationFrame(progress);} },{passive:true});
+    progress();
+    return;
+  }
+
+  /* mobile — touch-safe lerped parallax + scroll-linked entrance reveals */
+  if (isMobile()){
+    document.documentElement.classList.add('m-on');
+    const EASE='cubic-bezier(.16,1,.3,1)', DUR=800;
+    const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
+      e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
+    } }); },{ rootMargin:'0px 0px -12% 0px', threshold:0 });
+    const reveal=(el,delay)=>{
+      el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
+      el.style.opacity='0'; el.style.transform='translate3d(0,28px,0)'; io.observe(el);
+    };
+    sections.forEach(sec=>{ let i=0;
+      sec.querySelectorAll('h2 .ln .t').forEach(t=> reveal(t,(i++)*80));
+      sec.querySelectorAll('.copytext .reveal').forEach(el=> reveal(el,(i++)*80));
+    });
+    const movers=[];
+    document.querySelectorAll('section').forEach(sec=>{
+      const fig=sec.querySelector('.figwrap'); if(fig) movers.push({el:fig, axis:'y', amp:46});
+      const rom=sec.querySelector('.roman');   if(rom) movers.push({el:rom, axis:'x', amp:60});
+    });
+    let centers=[]; const measure=()=>{ centers=movers.map(m=>{ const r=m.el.getBoundingClientRect(); return r.top+scrollY+r.height/2; }); };
+    measure(); addEventListener('resize', measure, {passive:true});
+    const cur=movers.map(()=>0); let raf=0, until=0;
+    const loop=()=>{ const vh=innerHeight, mid=scrollY+vh/2; let moving=false;
+      movers.forEach((m,i)=>{ const target=clamp(-(mid-centers[i])/vh*m.amp, -m.amp, m.amp);
+        cur[i]+=(target-cur[i])*0.12;
+        m.el.style.transform = m.axis==='y'
+          ? `translate3d(0, ${cur[i].toFixed(2)}px, 0)`
+          : `translate3d(${cur[i].toFixed(2)}px, 0, 0)`;
+        if(Math.abs(target-cur[i])>0.2) moving=true; });
+      raf = (performance.now()<until || moving) ? requestAnimationFrame(loop) : 0; };
+    addEventListener('scroll',()=>{ until=performance.now()+700; if(!raf) raf=requestAnimationFrame(loop);
+      if(!pTick){pTick=true;requestAnimationFrame(progress);} },{passive:true});
+    loop(); progress();
+    return;
+  }
+
+  /* desktop parallax — COMPOSITOR-ONLY cinematic engine (transform + opacity) */
+  let mx=0,my=0;
+  if(!isTouch && !reduce){
+    addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); },{passive:true});
+  }
+
+  let tops=[], heights=[];
+  function measure(){ const y=scrollY; tops=sections.map(s=>s.getBoundingClientRect().top+y); heights=sections.map(s=>s.offsetHeight); }
+  measure();
+  let rTO=0; addEventListener('resize',()=>{ clearTimeout(rTO); rTO=setTimeout(measure,150); },{passive:true});
+
+  let ticking=false;
+  function parallax(){
+    const vh=innerHeight;
+    sections.forEach((sec,i)=>{
+      const top=tops[i]-scrollY;
+      if(top>vh*1.2 || top+heights[i]<-vh*0.2) return;
+      const total=heights[i]+vh;
+      const T=clamp((vh-top)/total,0,1);
+      const enter=smooth(0.06,0.32,T);
+      const exit=1-smooth(0.66,0.90,T);
+      const live=enter*exit;
+      const drift=0.46-T;
+      const onStage = T>0.04 && T<0.96;
+
+      /* DOLLY-IN — the holo device glides toward camera as it enters */
+      const fig=sec.querySelector('.figwrap');
+      if(fig){ const d=+fig.dataset.depth;
+        const z = -130*(1-enter) + drift*120*d;
+        const y = drift*300*d;
+        const sc = 0.92 + 0.08*enter;
+        const ry = drift*9 + (onStage ? mx*3 : 0);
+        const rx = -drift*9 + (onStage ? -my*4 : 0);
+        fig.style.transform =
+          `translateY(calc(-50% + ${y.toFixed(1)}px)) translateZ(${z.toFixed(1)}px) `+
+          `rotateX(${clamp(rx,-4,4).toFixed(2)}deg) rotateY(${clamp(ry,-2,2).toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+        fig.style.opacity=(0.08+0.92*live).toFixed(3);
+      }
+
+      const roman=sec.querySelector('.roman');
+      if(roman){ const d=+roman.dataset.depth;
+        roman.style.transform=
+          `translate(calc(-50% + ${(drift*460*d).toFixed(0)}px),-50%) translateZ(-420px) scale(${(1.05-0.05*enter).toFixed(3)})`;
+      }
+
+      const copy=sec.querySelector('.copytext');
+      if(copy){
+        copy.style.transform=`translateY(${(drift*84).toFixed(1)}px) rotateX(${(drift*5).toFixed(2)}deg)`;
+        copy.style.opacity=(0.06+0.94*live).toFixed(3);
+        /* WORD-STAGGER reveal — title lines rise from a clipping mask */
+        const lines=copy.querySelectorAll('h2 .ln .t'); const n=lines.length;
+        lines.forEach((t,k)=>{
+          const t0=0.06+(k/n)*0.20; const wp=smooth(t0,t0+0.18,T);
+          t.style.transform=`translate3d(0, ${((1-wp)*100).toFixed(1)}%, 0)`;
+          t.style.opacity=(0.15+0.85*wp).toFixed(3);
+        });
+        const rev=copy.querySelectorAll('.reveal');
+        rev.forEach((el,k)=>{ el.style.opacity=(smooth(0.16+k*0.03,0.40+k*0.03,T)*exit).toFixed(3); });
+      }
+
+      const cue=sec.querySelector('.cuewrap');
+      if(cue){ const d=+cue.dataset.depth;
+        cue.style.transform=`translate(-50%, ${(drift*120*d).toFixed(1)}px) translateZ(60px)`;
+        cue.style.opacity=(1-smooth(0.10,0.34,T)).toFixed(3);
+      }
+    });
+    if(!pTick){ progress(); }
+    ticking=false;
+  }
+  function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(parallax); } }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',()=>{ticking=true;requestAnimationFrame(parallax);},{passive:true});
+  if(!isTouch && !reduce) addEventListener('pointermove',onScroll,{passive:true});
+  parallax();
+
+  /* second-order micro-tilt on the holo panel (pointer, non-touch) */
+  if(!isTouch && !reduce){
+    document.querySelectorAll('.frame').forEach(frame=>{
+      const pic=frame.querySelector('.pic');
+      frame.addEventListener('pointermove',ev=>{
+        const r=frame.getBoundingClientRect();
+        const px=(ev.clientX-r.left)/r.width-0.5, py=(ev.clientY-r.top)/r.height-0.5;
+        pic.style.transform=`translateZ(34px) rotateY(${(px*7).toFixed(2)}deg) rotateX(${(-py*5).toFixed(2)}deg)`;
+      });
+      frame.addEventListener('pointerleave',()=>{ pic.style.transform='translateZ(0) rotateY(0) rotateX(0)'; });
+    });
+  }
+
+  /* GSAP SHOWCASE WIRING — scrubbed loading bar + chrome dolly-zoom (BOOT) */
+  (function wireShowcase(tries){
+    if(!window.gsap || !window.ScrollTrigger){
+      if(tries>0) requestAnimationFrame(()=>wireShowcase(tries-1));
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.defaults({ scrub:0.5, fastScrollEnd:true, invalidateOnRefresh:true });
+    const mm = gsap.matchMedia();
+    mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
+      const stage = document.querySelector('#boot .show-stage');
+      if(!stage) return;
+      const dolly = stage.querySelector('.dolly');
+      const fill  = stage.querySelector('.console .fill');
+      const cap   = stage.querySelector('.show-cap');
+      const tl = gsap.timeline({ scrollTrigger:{
+        trigger:'#boot', start:'top top', end:'+=140%', pin:stage, anticipatePin:1 } });
+      tl.fromTo(dolly, { scale:1 },          { scale:1.24, ease:'none' }, 0)
+        .fromTo(fill,  { width:'0%' },        { width:'100%', ease:'none' }, 0)
+        .fromTo(cap,   { opacity:0, y:20 },   { opacity:1, y:0, ease:'power2.out', duration:0.4 }, 0.1);
+      return () => gsap.set([dolly, fill, cap], { clearProps:'all' });
+    });
+  })(120);
+})();
+</script>
+</body>
+</html>

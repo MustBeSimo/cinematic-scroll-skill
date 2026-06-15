@@ -15,7 +15,8 @@ import {ReelCTA}    from './scenes/ReelCTA';
 //
 //   I   Hook    (180f)  the pain/alpha: "AI builds every website. It designs none." → "Taste is."
 //   II  Engine  (180f)  a portable agent skill; prompt → engaged; Claude/Cursor/Hermes/OpenClaw; npx install
-//   III Worlds  (880f)  five distinct aesthetics scrolling: noir·renaissance·luxe·pop·studio
+//   III Worlds  (880f)  the WALL OF WORLDS — one site pulls back into a grid of
+//                       eight aesthetics that extends off-frame → "∞ infinite worlds"
 //   IV  3D      (200f)  the NEXUS WebXR lab → flagship camera ride (real WebGL)
 //   V   Doctor  (180f)  the taste gate — scores 0–100 before it ships
 //   VI  CTA     (180f)  free·MIT·open · install · "Taste is the moat" · links

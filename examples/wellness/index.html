@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>NATURALLY ROOTED — Field Apothecary · cinematic-scroll example</title>
+<meta name="description" content="An organic wellness apothecary — warm sage, clay and cream, slow botanical motion across six chapters. A Mode-A example for the cinematic-scroll Agent Skill." />
+
+<!-- Open Graph -->
+<meta property="og:title" content="NATURALLY ROOTED — Field Apothecary" />
+<meta property="og:description" content="Organic wellness editorial — sage, clay, cream, slow botanical parallax. Built with the cinematic-scroll Agent Skill." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#F3EEE3" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Fraunces (organic serif display) + Jost (soft geometric sans) + JetBrains Mono (labels) -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- GSAP + ScrollTrigger (free) — powers the "RITUAL" showcase: a slow growth
+     (stem draw) + a calm pin-and-drift. Deferred + feature-detected: if the CDN
+     fails, the hand-rolled rAF cinematic engine below still runs. -->
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+
+<style>
+  /* ───────────────────────────────────────────────────────────────
+     cinematic-scroll · NATURALLY ROOTED — "FIELD APOTHECARY"
+     Visual system: Naturalistic Drift / Warm Scrapbook hybrid.
+     Warm earthy canvas — cream paper, sage greens, clay/terracotta.
+     Serif display (Fraunces), soft sans (Jost). Calm, glacial motion.
+     All imagery generated with CSS/SVG: gradient-mesh fields, botanical
+     blobs, layered leaf SVGs, paper grain. No external photo assets.
+     ─────────────────────────────────────────────────────────────── */
+
+  :root {
+    --bg:       #F3EEE3;  /* warm cream paper */
+    --surface:  #FBF8F1;
+    --fg:       #2B2A22;  /* deep bark */
+    --fg-dim:   #6E6B5C;
+    --sage:     #7C8B6B;  /* primary herb green */
+    --sage-2:   #9DAA87;
+    --moss:     #45533C;  /* deep moss */
+    --clay:     #C08457;  /* warm terracotta */
+    --clay-2:   #D9A074;
+    --bloom:    #B66C7E;  /* soft dried-rose accent */
+    --line:     rgba(43,42,34,.12);
+    --line-2:   rgba(43,42,34,.20);
+
+    --display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --ui:      'Jost', system-ui, sans-serif;
+    --mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--fg);
+    font-family:var(--ui); font-weight:400;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    transition:background 1.2s cubic-bezier(.22,1,.36,1);
+  }
+  a{color:inherit}
+  ::selection{ background:var(--sage); color:#fff; }
+
+  /* ── fixed atmosphere: soft botanical gradient mesh + paper grain ── */
+  .atmos{
+    position:fixed; inset:0; z-index:-2; pointer-events:none;
+    background:
+      radial-gradient(70% 55% at 82% 8%,  rgba(192,132,87,.16) 0%, transparent 60%),
+      radial-gradient(64% 60% at 12% 92%, rgba(124,139,107,.20) 0%, transparent 60%),
+      radial-gradient(50% 45% at 50% 50%, rgba(182,108,126,.06) 0%, transparent 70%),
+      linear-gradient(165deg, #F0E9DA 0%, var(--bg) 42%, #EFE6D4 100%);
+    transition:background 1.2s cubic-bezier(.22,1,.36,1);
+  }
+  /* fixed paper grain — fine SVG-noise overlay, very subtle */
+  .grain{
+    position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+    mix-blend-mode:multiply;
+  }
+
+  /* top scroll-progress bar */
+  .scrollbar{
+    position:fixed; top:0; left:0; height:2px; width:0%; z-index:60;
+    background:linear-gradient(90deg, var(--sage), var(--clay));
+    box-shadow:0 0 10px rgba(124,139,107,.4);
+  }
+
+  /* ── fixed masthead ───────────────────────────────────────────── */
+  .masthead{
+    position:fixed; inset:0 0 auto 0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:max(20px,env(safe-area-inset-top)) clamp(18px,4vw,56px) 20px;
+    background:rgba(243,238,227,.80);
+    -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .masthead .mark{ display:flex; align-items:baseline; gap:14px; pointer-events:auto; }
+  .masthead .mark b{ font-family:var(--display); font-weight:500; font-size:19px; letter-spacing:.12em; color:var(--moss); }
+  .masthead .mark span{ font-family:var(--mono); font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--clay); }
+  .masthead nav{ display:flex; gap:clamp(14px,2.4vw,34px); font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; }
+  .masthead nav a{ color:var(--fg-dim); text-decoration:none; transition:color .3s; }
+  .masthead nav a:hover{ color:var(--moss); }
+  @media (max-width:680px){ .masthead nav{ display:none; } }
+
+  /* ── progress + index rail ────────────────────────────────────── */
+  .rail{
+    position:fixed; right:clamp(12px,2vw,28px); top:50%; transform:translateY(-50%);
+    z-index:40; display:flex; flex-direction:column; gap:14px;
+    font-family:var(--mono); font-size:10px; color:var(--fg-dim);
+  }
+  .rail .r{ display:flex; align-items:center; gap:10px; justify-content:flex-end; opacity:.4; transition:opacity .4s, color .4s; }
+  .rail .r .num{ letter-spacing:.12em; }
+  .rail .r .ln{ width:20px; height:1px; background:currentColor; transition:width .4s, background .4s; }
+  .rail .r.on{ opacity:1; color:var(--moss); }
+  .rail .r.on .ln{ width:46px; height:2px; background:var(--clay); }
+  @media (max-width:680px){ .rail{ display:none; } }
+
+  /* ── chapter section ──────────────────────────────────────────── */
+  section{ position:relative; min-height:250vh; }
+  .stage{
+    position:sticky; top:0; height:100vh; overflow:hidden;
+    display:grid; grid-template-columns:1fr; align-content:center;
+    padding:0 clamp(18px,5vw,80px);
+    perspective:1600px; perspective-origin:60% 48%;
+  }
+  .figwrap,.copytext,.cuewrap{ transform-style:preserve-3d; }
+  .figwrap .frame{ transform-style:preserve-3d; }
+
+  /* oversized serif word watermark — deepest ghost layer */
+  .roman{
+    position:absolute; z-index:1; font-family:var(--display); font-weight:300; font-style:italic;
+    font-size:clamp(9rem,30vw,26rem); line-height:.7; letter-spacing:-.02em;
+    color:var(--moss); opacity:.06; white-space:nowrap; pointer-events:none;
+    top:50%; left:46%; transform:translate(-50%,-50%); will-change:transform;
+    -webkit-user-select:none; user-select:none;
+  }
+
+  /* ── botanical figure: a layered SVG "specimen plate" ─────────── */
+  .figwrap{
+    position:absolute; z-index:3; right:clamp(18px,5vw,80px); top:50%;
+    width:clamp(280px,40vw,560px); aspect-ratio:4/5; transform:translateY(-50%);
+    will-change:transform,opacity;
+  }
+  .frame{ position:relative; width:100%; height:100%; }
+  .pic{
+    position:absolute; inset:0; border-radius:280px 280px 18px 18px / 320px 320px 18px 18px;
+    overflow:hidden; background:var(--surface);
+    box-shadow:0 36px 70px rgba(43,42,34,.16), 0 0 0 1px rgba(43,42,34,.06);
+    transition:transform .3s ease-out;
+  }
+  .pic svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  /* soft arch vignette over the specimen */
+  .pic::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(120% 80% at 50% 18%, transparent 50%, rgba(43,42,34,.10) 100%);
+  }
+  /* dried-flower seal */
+  .frame .seal{
+    position:absolute; z-index:4; top:-18px; left:-18px; width:62px; height:62px;
+    border-radius:50%; background:var(--clay); color:var(--surface);
+    display:grid; place-items:center; box-shadow:0 8px 20px rgba(192,132,87,.4);
+    font-family:var(--display); font-style:italic; font-size:13px; transform:rotate(-9deg);
+  }
+  .figcap{
+    position:absolute; left:0; bottom:-26px; display:flex; justify-content:space-between; width:100%;
+    font-family:var(--mono); font-size:10px; letter-spacing:.16em; color:var(--fg-dim);
+  }
+  .figcap .n{ color:var(--clay); }
+
+  /* copy / title — warm serif editorial */
+  .copytext{ position:relative; z-index:6; max-width:min(92vw,1120px); will-change:transform,opacity; }
+  .eyebrow{
+    font-family:var(--mono); font-size:clamp(10px,1vw,12px); letter-spacing:.34em;
+    text-transform:uppercase; color:var(--clay); margin-bottom:clamp(16px,2.4vw,28px);
+    display:flex; align-items:center; gap:12px;
+  }
+  .eyebrow::before{ content:""; width:34px; height:1px; background:var(--clay); display:inline-block; }
+
+  h2.title{
+    font-family:var(--display); font-weight:400; line-height:.94;
+    letter-spacing:-.01em; color:var(--moss);
+    font-size:clamp(2.6rem,9.5vw,8.6rem);
+  }
+  h2.title .ln{ display:block; overflow:hidden; }
+  h2.title .ln .t{ display:inline-block; will-change:transform; }
+  h2.title .accent{ color:var(--clay); font-style:italic; font-weight:300; }
+
+  .lede{
+    margin-top:clamp(22px,2.8vw,36px); max-width:46ch;
+    font-size:clamp(1rem,1.5vw,1.26rem); line-height:1.7;
+    color:var(--fg-dim); font-weight:300;
+  }
+  .lede .reveal{ display:inline; }
+  .meta{
+    margin-top:clamp(18px,2.4vw,30px); font-family:var(--mono); font-size:10px;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--fg-dim);
+  }
+
+  /* CTA — soft clay pill */
+  .cta{
+    margin-top:clamp(26px,3vw,40px); display:inline-flex; align-items:center; gap:12px;
+    padding:14px 30px;
+    border:1.5px solid var(--clay); color:var(--surface); background:var(--clay);
+    border-radius:999px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase;
+    text-decoration:none;
+    transition:background .3s cubic-bezier(.22,1,.36,1), color .3s, transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  .cta:hover{ background:transparent; color:var(--clay); transform:translateY(-2px); }
+
+  /* scroll-cue badge (hero only) */
+  .cuewrap{
+    position:absolute; z-index:7; left:50%; bottom:clamp(26px,5vh,52px); transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:9px; will-change:transform,opacity;
+  }
+  .cue{
+    font-family:var(--mono); font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--fg-dim);
+    border:1px solid var(--line-2); border-radius:999px; padding:8px 16px;
+    display:flex; align-items:center; gap:9px;
+    background:rgba(251,248,241,.82); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  }
+  .cue .dot{ width:6px; height:6px; border-radius:50%; background:var(--sage); box-shadow:0 0 9px var(--sage); animation:pulse 2.4s ease-in-out infinite; }
+  .cuewrap .bar{ width:1px; height:34px; background:linear-gradient(var(--sage), transparent); transform-origin:top; animation:cuebar 2.8s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.3} }
+  @keyframes cuebar{ 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(.4)} }
+
+  /* ── footer / colophon ────────────────────────────────────────── */
+  footer{ position:relative; z-index:2; padding:16vh clamp(18px,5vw,80px) 14vh; }
+  footer .vine{ width:120px; height:1.5px; margin-bottom:30px; background:linear-gradient(90deg, var(--sage), transparent); }
+  footer .big{
+    font-family:var(--display); font-weight:400; line-height:.98;
+    font-size:clamp(2rem,7.5vw,5.4rem); letter-spacing:-.01em; color:var(--moss);
+  }
+  footer .big a{ color:var(--clay); text-decoration:none; font-style:italic; }
+  footer .meta{
+    margin-top:28px; font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    color:var(--fg-dim); text-transform:uppercase; max-width:62ch; line-height:1.9;
+  }
+  footer .meta a{ color:var(--clay); text-decoration:none; border-bottom:1px solid rgba(192,132,87,.3); }
+
+  /* ── mobile ─────────────────────────────────────────────────────── */
+  @media (max-width:680px){
+    section{ min-height:auto; padding:8vh 0; }
+    .stage{ position:static; height:auto; display:block; padding:0 22px; perspective:none; }
+    .roman{ position:static; opacity:.05; font-size:30vw; line-height:.8; margin:0 0 -4vh -2vw; display:block; }
+    .figwrap{ position:static; width:100%; transform:none; margin:24px 0 40px; aspect-ratio:4/5; opacity:1; max-width:420px; }
+    .copytext{ transform:none; opacity:1; }
+    h2.title{ font-size:13vw; }
+    h2.title .ln .t{ transform:none; opacity:1; }
+    .cuewrap{ position:static; transform:none; margin:30px auto 0; opacity:1; }
+    .reveal{ opacity:1; transform:none; }
+    html.m-on .figwrap, html.m-on .roman{ will-change:transform; }
+  }
+
+  /* ── reduced motion ──────────────────────────────────────────── */
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .cue .dot,.cuewrap .bar{ animation:none; }
+    section{ min-height:auto; padding:11vh 0; }
+    .stage{ position:static; height:auto; display:block; perspective:none; }
+    .roman{ position:static; transform:none!important; opacity:.05; font-size:clamp(7rem,22vw,16rem); line-height:.8; display:block; margin-bottom:-3vh; }
+    .figwrap{ position:static; width:min(440px,90vw); transform:none!important; margin:30px 0 48px; opacity:1!important; }
+    .copytext{ transform:none!important; opacity:1!important; }
+    h2.title .ln .t{ transform:none!important; opacity:1!important; }
+    .cuewrap{ position:static; transform:none!important; margin-top:30px; opacity:1!important; }
+    .reveal{ opacity:1!important; transform:none!important; }
+  }
+
+  /* ── GSAP SHOWCASE — "THE RITUAL" ──────────────────────────────
+     A dedicated pinned viewport: a SLOW GROWTH (stem stroke-draw, a
+     dolly-in on the field behind) demonstrating glacial, calming motion. */
+  section.showcase{ min-height:0; }
+  .show-stage{ position:relative; height:100vh; overflow:hidden; display:grid; place-items:center; }
+  .show-stage .dolly{
+    position:absolute; inset:-12%; z-index:0; transform-origin:50% 56%; will-change:transform;
+    background:
+      radial-gradient(50% 60% at 50% 40%, rgba(192,132,87,.12) 0%, transparent 60%),
+      radial-gradient(80% 70% at 50% 100%, rgba(69,83,60,.22) 0%, transparent 60%),
+      repeating-linear-gradient(92deg, rgba(124,139,107,.10) 0 2px, transparent 2px 38px),
+      linear-gradient(180deg, #EFE7D6 0%, var(--bg) 45%, #E7DBC4 100%);
+  }
+  .show-stage .growth{ position:relative; z-index:2; width:min(70vw,560px); height:min(74vh,640px); overflow:visible; }
+  .show-stage .growth .stem{ fill:none; stroke:var(--moss); stroke-width:3; stroke-linecap:round; }
+  .show-stage .growth .leaf{ fill:var(--sage); opacity:.92; }
+  .show-stage .growth .leaf.alt{ fill:var(--sage-2); }
+  .show-stage .growth .pod{ fill:var(--clay); }
+  .show-stage .growth .pod.bloom{ fill:var(--bloom); }
+  .show-cap{
+    position:absolute; z-index:3; bottom:11vh; left:0; right:0; text-align:center;
+    font-family:var(--mono); color:var(--fg-dim);
+  }
+  .show-cap b{
+    display:block; font-family:var(--display); font-weight:400; font-style:italic; letter-spacing:.02em;
+    color:var(--moss); font-size:clamp(1.6rem,4.6vw,2.8rem); margin-bottom:10px;
+  }
+  .show-cap span{ font-size:11px; letter-spacing:.22em; text-transform:uppercase; }
+  @media (max-width:680px){
+    .show-stage{ height:auto; padding:14vh 22px; }
+    .show-stage .dolly{ inset:0; }
+    .show-stage .growth{ width:78vw; height:64vh; }
+    .show-cap{ position:static; margin-top:30px; }
+  }
+</style>
+</head>
+<body>
+  <!-- Persistent "back to repo" affordance -->
+  <style>
+    .repo-home-pill{position:fixed;left:max(14px,env(safe-area-inset-left));
+      bottom:max(14px,env(safe-area-inset-bottom));z-index:9999;display:inline-flex;
+      align-items:center;gap:8px;padding:9px 14px 9px 12px;border-radius:999px;
+      font:500 12px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.04em;
+      color:var(--moss);background:rgba(243,238,227,.88);border:1px solid rgba(43,42,34,.18);
+      -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-decoration:none;
+      box-shadow:0 4px 18px rgba(43,42,34,.10);transition:transform .25s cubic-bezier(.22,1,.36,1),background .25s}
+    .repo-home-pill:hover{transform:translateY(-2px);background:rgba(243,238,227,.98)}
+    .repo-home-pill .arw{font-size:14px;line-height:1;transition:transform .25s cubic-bezier(.22,1,.36,1)}
+    .repo-home-pill:hover .arw{transform:translateX(-3px)}
+    @media (prefers-reduced-motion:reduce){.repo-home-pill,.repo-home-pill .arw{transition:none}
+      .repo-home-pill:hover{transform:none}.repo-home-pill:hover .arw{transform:none}}
+  </style>
+  <a class="repo-home-pill" href="https://github.com/MustBeSimo/cinematic-scroll-skill"
+     target="_blank" rel="noopener"
+     aria-label="Back to the cinematic-scroll repository on GitHub">
+    <span class="arw" aria-hidden="true">&larr;</span> cinematic-scroll
+  </a>
+
+<div class="atmos" id="atmos" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="scrollbar" id="scrollbar" aria-hidden="true"></div>
+
+<header class="masthead">
+  <div class="mark">
+    <b>Naturally Rooted</b>
+    <span>Field · Apothecary</span>
+  </div>
+  <nav aria-label="Primary">
+    <a href="#soil">Soil</a>
+    <a href="#harvest">Harvest</a>
+    <a href="#still">Still Room</a>
+    <a href="#join">Join</a>
+  </nav>
+</header>
+
+<nav class="rail" id="rail" aria-label="Chapters"></nav>
+
+<main id="reel"></main>
+
+<footer id="join">
+  <div class="vine"></div>
+  <div class="big">Rooted in the field.<br>Grown for the <a href="mailto:hello@example.com">skin you live in →</a></div>
+  <div class="meta">
+    Built with the <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a> Agent Skill ·
+    NATURALLY ROOTED is a fictional apothecary — no real products, people, or brands ·
+    one of many possible aesthetics this skill can direct.
+  </div>
+</footer>
+
+<script>
+/* ───────────────────────────────────────────────────────────────
+   Manifest — single source of truth for the NATURALLY ROOTED demo.
+   Each chapter: id, roman (a single italic word watermark), eyebrow,
+   fig/figLabel, specimen (which botanical SVG to render), seal glyph,
+   title lines, lede, morph (atmosphere it transitions to on enter),
+   cue (hero), cta (final chapter only).
+   ─────────────────────────────────────────────────────────────── */
+const CHAPTERS = [
+  {
+    id:'0-soil', roman:'roots', eyebrow:'NATURALLY ROOTED · SEASON MMXXVI',
+    fig:'PLATE I', figLabel:'WHOLE ROOT, FRESH-LIFTED', specimen:'root', seal:'01',
+    title:[['FROM THE',0],['QUIET SOIL',1]],
+    lede:'Everything we make begins below the line of sight — in cool dark loam, where comfrey and burdock pull minerals up through the rain. We do not rush what the ground is still finishing.',
+    morph:'radial-gradient(70% 55% at 82% 8%, rgba(192,132,87,.16) 0%, transparent 60%), radial-gradient(64% 60% at 12% 92%, rgba(124,139,107,.22) 0%, transparent 60%), linear-gradient(165deg, #F0E9DA 0%, #F3EEE3 42%, #EFE6D4 100%)',
+    cue:true
+  },
+  {
+    id:'1-harvest', roman:'bloom', eyebrow:'CHAPTER II · THE HARVEST',
+    fig:'PLATE II', figLabel:'CALENDULA, AT FULL OPEN', specimen:'flower', seal:'02',
+    title:[['GATHERED',0],['BY HAND',1]],
+    lede:'Calendula, yarrow, wild chamomile — cut in the first dry hour after dew, when the oils sit highest in the petal. Small baskets, slow hands, nothing bruised on the way home.',
+    morph:'radial-gradient(80% 60% at 20% 6%, rgba(182,108,126,.16) 0%, transparent 58%), radial-gradient(70% 60% at 86% 90%, rgba(192,132,87,.18) 0%, transparent 60%), linear-gradient(180deg, #F2EAD7 0%, #F4EFE4 50%, #EFE3CF 100%)'
+  },
+  {
+    id:'2-still', roman:'distil', eyebrow:'CHAPTER III · THE STILL ROOM',
+    fig:'PLATE III', figLabel:'COPPER ALEMBIC, LOW HEAT', specimen:'still', seal:'03',
+    title:[['SLOW',0],['EXTRACTION',1]],
+    lede:'In the still room, low copper heat coaxes the volatile oils loose over hours, not minutes. The hydrosol comes off first, soft as breath; the absolute follows, dense with the whole season.',
+    morph:'radial-gradient(60% 55% at 50% 6%, rgba(192,132,87,.18) 0%, transparent 55%), radial-gradient(70% 60% at 16% 94%, rgba(124,139,107,.18) 0%, transparent 60%), linear-gradient(180deg, #EFE6D3 0%, #F2ECDD 55%, #EADCC4 100%)'
+  },
+  {
+    id:'3-blend', roman:'balance', eyebrow:'CHAPTER IV · THE BLEND',
+    fig:'PLATE IV', figLabel:'BOTANICAL OIL, FIRST POUR', specimen:'bottle', seal:'04',
+    title:[['THE',0],['LIVING BLEND',1]],
+    lede:'No fillers, no fog of fragrance — only cold-pressed carrier oils carrying the season forward. Each batch is small enough to know by its scent, and dated by the field it came from.',
+    morph:'radial-gradient(75% 60% at 84% 8%, rgba(157,170,135,.20) 0%, transparent 60%), radial-gradient(60% 55% at 14% 92%, rgba(192,132,87,.14) 0%, transparent 58%), linear-gradient(165deg, #F1EAD8 0%, #F4EFE4 44%, #E9DFCD 100%)'
+  },
+  {
+    id:'4-ritual', roman:'breathe', eyebrow:'CHAPTER V · THE RITUAL',
+    fig:'PLATE V', figLabel:'WARMED IN THE PALMS', specimen:'leaf', seal:'05',
+    title:[['A MINUTE',0],['THAT IS YOURS',1]],
+    lede:'Three drops, warmed between the palms, drawn slow across the face and throat. The ritual is short on purpose — a daily pause that asks for nothing but a breath and your attention.',
+    morph:'radial-gradient(70% 55% at 18% 8%, rgba(182,108,126,.14) 0%, transparent 58%), radial-gradient(72% 60% at 86% 92%, rgba(124,139,107,.20) 0%, transparent 60%), linear-gradient(180deg, #F2EBDA 0%, #F4EFE4 50%, #EDE2CF 100%)'
+  },
+  {
+    id:'5-join', roman:'rooted', eyebrow:'CHAPTER VI · THE INVITATION',
+    fig:'PLATE VI', figLabel:'SEED PACKET, NEXT SEASON', specimen:'seed', seal:'06',
+    title:[['GROW',0],['WITH US',1]],
+    lede:'Join the field list and we will send the season ahead of it — what is going in the ground, what is coming off the still, and the small batches before they are gone. NATURALLY ROOTED, twice a season.',
+    morph:'radial-gradient(80% 60% at 75% 6%, rgba(192,132,87,.18) 0%, transparent 56%), radial-gradient(60% 55% at 22% 94%, rgba(124,139,107,.20) 0%, transparent 58%), linear-gradient(165deg, #F0E9DA 0%, #F3EEE3 42%, #EFE6D4 100%)',
+    cta:'Join the field list'
+  },
+];
+
+/* ── Botanical specimen SVGs — drawn, not photographed ──────────── */
+function specimenSVG(kind){
+  const back = `
+    <defs>
+      <radialGradient id="sg-${kind}" cx="50%" cy="22%" r="80%">
+        <stop offset="0%" stop-color="#FBF8F1"/>
+        <stop offset="55%" stop-color="#EFE7D6"/>
+        <stop offset="100%" stop-color="#E4D8C0"/>
+      </radialGradient>
+      <linearGradient id="lf-${kind}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#9DAA87"/>
+        <stop offset="100%" stop-color="#5E6E4E"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="500" fill="url(#sg-${kind})"/>
+    <g stroke="rgba(43,42,34,.06)" stroke-width="1">
+      ${Array.from({length:9},(_,i)=>`<line x1="0" y1="${i*56+30}" x2="400" y2="${i*56+30}"/>`).join('')}
+    </g>`;
+
+  const leafPath = (x,y,r,fill,rot)=>`<path transform="translate(${x},${y}) rotate(${rot})" d="M0,0 C${r*0.7},${-r*0.5} ${r*0.9},${-r*1.1} 0,${-r*1.7} C${-r*0.9},${-r*1.1} ${-r*0.7},${-r*0.5} 0,0 Z" fill="${fill}"/>`;
+
+  let body = '';
+  if(kind==='root'){
+    body = `
+      <g>
+        <path d="M200,90 C196,180 210,250 200,330 C194,400 175,440 150,470" stroke="#7C5A3A" stroke-width="16" fill="none" stroke-linecap="round"/>
+        <path d="M200,200 C235,235 270,250 305,300" stroke="#7C5A3A" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M200,250 C165,290 130,300 95,345" stroke="#7C5A3A" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M200,330 C220,380 235,410 250,455" stroke="#8C6A46" stroke-width="6" fill="none" stroke-linecap="round"/>
+        ${leafPath(200,90,70,'url(#lf-root)',-6)}
+        ${leafPath(168,96,52,'#8FA078',-34)}
+        ${leafPath(232,96,52,'#8FA078',34)}
+        <circle cx="305" cy="300" r="9" fill="#C08457"/>
+        <circle cx="95" cy="345" r="9" fill="#C08457"/>
+        <circle cx="250" cy="455" r="7" fill="#C08457"/>
+      </g>`;
+  } else if(kind==='flower'){
+    const petals = Array.from({length:14},(_,i)=>{
+      const a = (i/14)*Math.PI*2; const cx=200+Math.cos(a)*4; const cy=210+Math.sin(a)*4;
+      return `<path transform="translate(${cx},${cy}) rotate(${a*180/Math.PI+90})" d="M0,0 C16,-14 16,-72 0,-96 C-16,-72 -16,-14 0,0 Z" fill="${i%2? '#D9A074':'#C08457'}"/>`;
+    }).join('');
+    body = `
+      <g>
+        <path d="M200,260 C204,330 196,400 200,470" stroke="#6E7E58" stroke-width="9" fill="none" stroke-linecap="round"/>
+        ${leafPath(168,360,46,'url(#lf-flower)',-50)}
+        ${leafPath(232,400,46,'url(#lf-flower)',50)}
+        ${petals}
+        <circle cx="200" cy="210" r="46" fill="#A06A3E"/>
+        <circle cx="200" cy="210" r="30" fill="#B87E48"/>
+        ${Array.from({length:24},(_,i)=>{const a=(i/24)*Math.PI*2;return `<circle cx="${200+Math.cos(a)*22}" cy="${210+Math.sin(a)*22}" r="3.4" fill="#6E4A22"/>`;}).join('')}
+      </g>`;
+  } else if(kind==='still'){
+    body = `
+      <g>
+        <ellipse cx="200" cy="392" rx="96" ry="22" fill="#B97A4A"/>
+        <path d="M118,392 C108,300 150,250 200,250 C250,250 292,300 282,392 Z" fill="#C8895A"/>
+        <path d="M118,392 C108,300 150,250 200,250 C250,250 292,300 282,392 Z" fill="none" stroke="#9A6438" stroke-width="3"/>
+        <path d="M200,250 C200,210 224,196 224,168" stroke="#9A6438" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <path d="M224,168 C224,150 280,150 300,180 C320,210 318,260 300,300" stroke="#9A6438" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <ellipse cx="200" cy="250" rx="50" ry="14" fill="#D9A878"/>
+        <path d="M150,330 q50,28 100,0" stroke="#7C8B6B" stroke-width="4" fill="none" opacity=".7"/>
+        <path d="M160,355 q40,22 80,0" stroke="#7C8B6B" stroke-width="4" fill="none" opacity=".5"/>
+        ${Array.from({length:6},(_,i)=>`<path d="M${188+i*5},150 q-6,-22 0,-44" stroke="#9DAA87" stroke-width="2.4" fill="none" opacity="${.5-i*0.05}"/>`).join('')}
+        <rect x="290" y="300" width="22" height="60" rx="6" fill="#7C8B6B"/>
+      </g>`;
+  } else if(kind==='bottle'){
+    body = `
+      <g>
+        <rect x="178" y="120" width="44" height="34" rx="5" fill="#6E7E58"/>
+        <rect x="170" y="150" width="60" height="20" rx="6" fill="#5E6E4E"/>
+        <path d="M168,170 C168,210 150,230 150,290 L150,420 Q150,448 178,448 L222,448 Q250,448 250,420 L250,290 C250,230 232,210 232,170 Z" fill="#3E4A36"/>
+        <path d="M168,170 C168,210 150,230 150,290 L150,420 Q150,448 178,448 L222,448 Q250,448 250,420 L250,290 C250,230 232,210 232,170 Z" fill="none" stroke="#2B331F" stroke-width="2"/>
+        <rect x="162" y="300" width="76" height="118" rx="8" fill="#F4EBD8" opacity=".94"/>
+        <line x1="178" y1="324" x2="222" y2="324" stroke="#7C8B6B" stroke-width="3"/>
+        <line x1="178" y1="342" x2="222" y2="342" stroke="#C08457" stroke-width="3"/>
+        <text x="200" y="378" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="20" fill="#45533C">N&#176;04</text>
+        ${leafPath(150,150,30,'#9DAA87',-40)}
+        ${leafPath(250,150,30,'#9DAA87',40)}
+        <path d="M196,300 C200,250 200,210 200,182" stroke="#C08457" stroke-width="3" fill="none" opacity=".5"/>
+      </g>`;
+  } else if(kind==='leaf'){
+    body = `
+      <g>
+        ${leafPath(200,430,150,'url(#lf-leaf)',0)}
+        <path d="M200,430 C200,360 200,280 200,150" stroke="#45533C" stroke-width="3" fill="none"/>
+        ${Array.from({length:7},(_,i)=>{const y=170+i*36;const w=70-(i*7);return `<path d="M200,${y} C${200-w*0.5},${y-10} ${200-w},${y-18} ${200-w-8},${y-30}" stroke="#45533C" stroke-width="1.8" fill="none" opacity=".7"/><path d="M200,${y} C${200+w*0.5},${y-10} ${200+w},${y-18} ${200+w+8},${y-30}" stroke="#45533C" stroke-width="1.8" fill="none" opacity=".7"/>`;}).join('')}
+        <circle cx="150" cy="250" r="6" fill="#C08457" opacity=".8"/>
+        <circle cx="258" cy="320" r="5" fill="#B66C7E" opacity=".8"/>
+      </g>`;
+  } else { /* seed */
+    body = `
+      <g>
+        <path d="M120,250 Q200,150 280,250 Q200,300 120,250 Z" fill="#D9C9A6"/>
+        <path d="M120,250 Q200,150 280,250 Q200,300 120,250 Z" fill="none" stroke="#B5A074" stroke-width="2"/>
+        <path d="M200,168 L200,288" stroke="#B5A074" stroke-width="2"/>
+        ${Array.from({length:9},(_,i)=>{const a=(i/9-0.5)*1.7;const cx=200+Math.sin(a)*70;const cy=250-Math.cos(a)*14+24;return `<ellipse cx="${cx}" cy="${cy}" rx="7" ry="11" transform="rotate(${a*40} ${cx} ${cy})" fill="#7C5A3A"/>`;}).join('')}
+        ${leafPath(160,360,40,'url(#lf-seed)',-30)}
+        ${leafPath(240,360,40,'url(#lf-seed)',30)}
+        <path d="M200,300 C200,330 200,360 200,392" stroke="#6E7E58" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <circle cx="200" cy="250" r="0"/>
+        <g opacity=".55">${Array.from({length:5},(_,i)=>`<circle cx="${150+i*26}" cy="${430+(i%2)*14}" r="5" fill="#7C5A3A"/>`).join('')}</g>
+      </g>`;
+  }
+  return `<svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img">${back}${body}</svg>`;
+}
+
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const smooth=(e0,e1,x)=>{ if(x<=e0)return 0; if(x>=e1)return 1; const t=(x-e0)/(e1-e0); return t*t*(3-2*t); };
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isTouch = matchMedia('(hover: none) and (pointer: coarse)').matches;
+const isMobile = () => innerWidth <= 680;
+
+const reel = document.getElementById('reel');
+const rail = document.getElementById('rail');
+const atmos = document.getElementById('atmos');
+const bar = document.getElementById('scrollbar');
+
+(function build(){
+  for (const ch of CHAPTERS){
+    const sec = document.createElement('section');
+    sec.id = ch.id.replace(/^\d+-/,'');
+    sec.dataset.morph = ch.morph;
+
+    const titleHTML = ch.title.map(([txt,acc]) =>
+      `<span class="ln"><span class="t${acc?' accent':''}">${txt}</span></span>`
+    ).join('');
+
+    sec.innerHTML = `
+      <div class="stage">
+        <div class="roman" data-depth="0.22" aria-hidden="true">${ch.roman}</div>
+        <div class="figwrap" data-depth="0.75">
+          <div class="frame">
+            <span class="seal" aria-hidden="true">${ch.seal}</span>
+            <div class="pic" role="img" aria-label="${ch.figLabel}">${specimenSVG(ch.specimen)}</div>
+            <div class="figcap"><span class="n">${ch.fig}</span><span>${ch.figLabel}</span></div>
+          </div>
+        </div>
+        <div class="copytext" data-depth="1.0">
+          <div class="eyebrow reveal">${ch.eyebrow}</div>
+          <h2 class="title">${titleHTML}</h2>
+          <p class="lede"><span class="reveal">${ch.lede}</span></p>
+          ${ch.cta
+            ? `<a class="cta reveal" href="mailto:hello@example.com?subject=NATURALLY%20ROOTED%20field%20list">${ch.cta} →</a>`
+            : `<p class="meta reveal">${ch.fig} · ${ch.figLabel}</p>`}
+        </div>
+        ${ch.cue ? `<div class="cuewrap" data-depth="1.4">
+          <div class="cue"><span class="dot"></span>Follow the season down</div>
+          <span class="bar"></span>
+        </div>` : ''}
+      </div>`;
+    reel.appendChild(sec);
+
+    const r = document.createElement('div');
+    r.className='r'; r.dataset.id = sec.id;
+    r.innerHTML = `<span class="num">0${CHAPTERS.indexOf(ch)+1}</span><span class="ln"></span>`;
+    rail.appendChild(r);
+  }
+
+  /* GSAP SHOWCASE — "THE RITUAL" : a slow growth (stem draw) + dolly-in */
+  const show = document.createElement('section');
+  show.className = 'showcase'; show.id = 'grow';
+  show.dataset.morph = 'radial-gradient(120% 100% at 50% 0%, rgba(192,132,87,.14), transparent 60%), linear-gradient(180deg, #F3EEE3 0%, #EBDFC9 70%, #F3EEE3 100%)';
+  show.innerHTML = `
+    <div class="show-stage">
+      <div class="dolly" aria-hidden="true"></div>
+      <svg class="growth" viewBox="0 0 400 460" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path class="stem" d="M200,450 C198,380 206,330 200,270 C195,220 180,190 200,140 C214,108 210,80 200,40"/>
+        <g class="leaves">
+          <path class="leaf" d="M200,330 C150,318 120,330 96,360 C148,372 184,360 200,330 Z"/>
+          <path class="leaf alt" d="M200,300 C250,288 280,300 304,330 C252,342 216,330 200,300 Z"/>
+          <path class="leaf" d="M200,236 C156,226 128,238 106,266 C152,278 186,266 200,236 Z"/>
+          <path class="leaf alt" d="M200,210 C244,200 272,212 294,240 C248,252 214,240 200,210 Z"/>
+          <path class="leaf" d="M200,150 C162,142 138,152 118,176 C158,188 188,176 200,150 Z"/>
+        </g>
+        <g class="pods">
+          <circle class="pod" cx="200" cy="40" r="14"/>
+          <circle class="pod bloom" cx="178" cy="58" r="9"/>
+          <circle class="pod bloom" cx="222" cy="58" r="9"/>
+          <circle class="pod" cx="200" cy="74" r="8"/>
+        </g>
+      </svg>
+      <div class="show-cap">
+        <b>The ritual is patience</b>
+        <span>Nothing here was hurried — and neither should you be</span>
+      </div>
+    </div>`;
+  /* place THE RITUAL after the 5th chapter (before the final invitation) */
+  reel.insertBefore(show, reel.children[5] || null);
+  const sr = document.createElement('div');
+  sr.className = 'r'; sr.dataset.id = 'grow';
+  sr.innerHTML = `<span class="num">&#10047;</span><span class="ln"></span>`;
+  rail.insertBefore(sr, rail.children[5] || null);
+
+  const sections = [...document.querySelectorAll('section')];
+  const rails = [...rail.querySelectorAll('.r')];
+
+  rails.forEach(r => r.addEventListener('click', () => {
+    document.getElementById(r.dataset.id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  }));
+
+  function applyActive(sec){
+    const idx = sections.indexOf(sec);
+    atmos.style.background = sec.dataset.morph;
+    rails.forEach((r,i)=> r.classList.toggle('on', i===idx));
+  }
+  const spy = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if (e.isIntersecting) applyActive(e.target); });
+  },{ rootMargin:'-50% 0px -50% 0px', threshold:0 });
+  sections.forEach(s=>spy.observe(s));
+  applyActive(sections[0]);
+
+  let pTick=false;
+  function progress(){
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.transform = `scaleX(${max>0 ? clamp(scrollY/max,0,1):0})`;
+    pTick=false;
+  }
+  bar.style.width='100%'; bar.style.transformOrigin='left center'; bar.style.transform='scaleX(0)';
+
+  if (reduce){
+    addEventListener('scroll',()=>{ if(!pTick){pTick=true;requestAnimationFrame(progress);} },{passive:true});
+    progress();
+    return;
+  }
+
+  /* mobile — touch-safe lerped parallax + scroll-linked entrance reveals */
+  if (isMobile()){
+    document.documentElement.classList.add('m-on');
+    const EASE='cubic-bezier(.16,1,.3,1)', DUR=900;
+    const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
+      e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
+    } }); },{ rootMargin:'0px 0px -12% 0px', threshold:0 });
+    const reveal=(el,delay)=>{
+      el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
+      el.style.opacity='0'; el.style.transform='translate3d(0,28px,0)'; io.observe(el);
+    };
+    sections.forEach(sec=>{ let i=0;
+      sec.querySelectorAll('h2 .ln .t').forEach(t=> reveal(t,(i++)*90));
+      sec.querySelectorAll('.copytext .reveal').forEach(el=> reveal(el,(i++)*90));
+    });
+    const movers=[];
+    document.querySelectorAll('section').forEach(sec=>{
+      const fig=sec.querySelector('.figwrap'); if(fig) movers.push({el:fig, axis:'y', amp:42});
+      const rom=sec.querySelector('.roman');   if(rom) movers.push({el:rom, axis:'x', amp:56});
+    });
+    let centers=[]; const measure=()=>{ centers=movers.map(m=>{ const r=m.el.getBoundingClientRect(); return r.top+scrollY+r.height/2; }); };
+    measure(); addEventListener('resize', measure, {passive:true});
+    const cur=movers.map(()=>0); let raf=0, until=0;
+    const loop=()=>{ const vh=innerHeight, mid=scrollY+vh/2; let moving=false;
+      movers.forEach((m,i)=>{ const target=clamp(-(mid-centers[i])/vh*m.amp, -m.amp, m.amp);
+        cur[i]+=(target-cur[i])*0.1;
+        m.el.style.transform = m.axis==='y'
+          ? `translate3d(0, ${cur[i].toFixed(2)}px, 0)`
+          : `translate3d(${cur[i].toFixed(2)}px, 0, 0)`;
+        if(Math.abs(target-cur[i])>0.2) moving=true; });
+      raf = (performance.now()<until || moving) ? requestAnimationFrame(loop) : 0; };
+    addEventListener('scroll',()=>{ until=performance.now()+700; if(!raf) raf=requestAnimationFrame(loop);
+      if(!pTick){pTick=true;requestAnimationFrame(progress);} },{passive:true});
+    loop(); progress();
+    return;
+  }
+
+  /* desktop parallax — COMPOSITOR-ONLY cinematic engine (transform + opacity) */
+  let mx=0,my=0;
+  if(!isTouch && !reduce){
+    addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); },{passive:true});
+  }
+
+  let tops=[], heights=[];
+  function measure(){ const y=scrollY; tops=sections.map(s=>s.getBoundingClientRect().top+y); heights=sections.map(s=>s.offsetHeight); }
+  measure();
+  let rTO=0; addEventListener('resize',()=>{ clearTimeout(rTO); rTO=setTimeout(measure,150); },{passive:true});
+
+  let ticking=false;
+  function parallax(){
+    const vh=innerHeight;
+    sections.forEach((sec,i)=>{
+      const top=tops[i]-scrollY;
+      if(top>vh*1.2 || top+heights[i]<-vh*0.2) return;
+      const total=heights[i]+vh;
+      const T=clamp((vh-top)/total,0,1);
+      const enter=smooth(0.06,0.34,T);   /* slower, calmer entrance */
+      const exit=1-smooth(0.66,0.92,T);
+      const live=enter*exit;
+      const drift=0.46-T;
+      const onStage = T>0.04 && T<0.96;
+
+      /* TRACKING SHOT — the specimen plate drifts down with the camera */
+      const fig=sec.querySelector('.figwrap');
+      if(fig){ const d=+fig.dataset.depth;
+        const z = -110*(1-enter) + drift*100*d;
+        const y = drift*260*d;
+        const sc = 0.93 + 0.07*enter;
+        const ry = drift*7 + (onStage ? mx*2 : 0);
+        const rx = -drift*8 + (onStage ? -my*3 : 0);
+        fig.style.transform =
+          `translateY(calc(-50% + ${y.toFixed(1)}px)) translateZ(${z.toFixed(1)}px) `+
+          `rotateX(${clamp(rx,-4,4).toFixed(2)}deg) rotateY(${clamp(ry,-2,2).toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+        fig.style.opacity=(0.08+0.92*live).toFixed(3);
+      }
+
+      const roman=sec.querySelector('.roman');
+      if(roman){ const d=+roman.dataset.depth;
+        roman.style.transform=
+          `translate(calc(-50% + ${(drift*420*d).toFixed(0)}px),-50%) translateZ(-400px) scale(${(1.04-0.04*enter).toFixed(3)})`;
+      }
+
+      const copy=sec.querySelector('.copytext');
+      if(copy){
+        copy.style.transform=`translateY(${(drift*74).toFixed(1)}px) rotateX(${(drift*4).toFixed(2)}deg)`;
+        copy.style.opacity=(0.06+0.94*live).toFixed(3);
+        /* WORD-STAGGER reveal — title lines rise from a clipping mask */
+        const lines=copy.querySelectorAll('h2 .ln .t'); const n=lines.length;
+        lines.forEach((t,k)=>{
+          const t0=0.08+(k/n)*0.22; const wp=smooth(t0,t0+0.20,T);
+          t.style.transform=`translate3d(0, ${((1-wp)*100).toFixed(1)}%, 0)`;
+          t.style.opacity=(0.15+0.85*wp).toFixed(3);
+        });
+        const rev=copy.querySelectorAll('.reveal');
+        rev.forEach((el,k)=>{ el.style.opacity=(smooth(0.18+k*0.03,0.44+k*0.03,T)*exit).toFixed(3); });
+      }
+
+      const cue=sec.querySelector('.cuewrap');
+      if(cue){ const d=+cue.dataset.depth;
+        cue.style.transform=`translate(-50%, ${(drift*110*d).toFixed(1)}px) translateZ(60px)`;
+        cue.style.opacity=(1-smooth(0.10,0.34,T)).toFixed(3);
+      }
+    });
+    if(!pTick){ progress(); }
+    ticking=false;
+  }
+  function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(parallax); } }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',()=>{ticking=true;requestAnimationFrame(parallax);},{passive:true});
+  if(!isTouch && !reduce) addEventListener('pointermove',onScroll,{passive:true});
+  parallax();
+
+  /* second-order micro-tilt on the specimen plate (pointer, non-touch) */
+  if(!isTouch && !reduce){
+    document.querySelectorAll('.frame').forEach(frame=>{
+      const pic=frame.querySelector('.pic');
+      frame.addEventListener('pointermove',ev=>{
+        const r=frame.getBoundingClientRect();
+        const px=(ev.clientX-r.left)/r.width-0.5, py=(ev.clientY-r.top)/r.height-0.5;
+        pic.style.transform=`translateZ(28px) rotateY(${(px*5).toFixed(2)}deg) rotateX(${(-py*4).toFixed(2)}deg)`;
+      });
+      frame.addEventListener('pointerleave',()=>{ pic.style.transform='translateZ(0) rotateY(0) rotateX(0)'; });
+    });
+  }
+
+  /* GSAP SHOWCASE WIRING — slow stem draw + gentle dolly-in (THE RITUAL) */
+  (function wireShowcase(tries){
+    if(!window.gsap || !window.ScrollTrigger){
+      if(tries>0) requestAnimationFrame(()=>wireShowcase(tries-1));
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.defaults({ scrub:0.7, fastScrollEnd:true, invalidateOnRefresh:true });
+    const mm = gsap.matchMedia();
+    mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
+      const stage = document.querySelector('#grow .show-stage');
+      if(!stage) return;
+      const dolly = stage.querySelector('.dolly');
+      const stem  = stage.querySelector('.growth .stem');
+      const leaves= stage.querySelectorAll('.growth .leaf');
+      const pods  = stage.querySelectorAll('.growth .pod');
+      const cap   = stage.querySelector('.show-cap');
+      const len   = stem.getTotalLength();
+      gsap.set(stem, { strokeDasharray:len, strokeDashoffset:len, willChange:'stroke-dashoffset' });
+      gsap.set([...leaves,...pods], { scale:0, transformOrigin:'200px 250px' });
+      const tl = gsap.timeline({ scrollTrigger:{
+        trigger:'#grow', start:'top top', end:'+=150%', pin:stage, anticipatePin:1 } });
+      tl.to(stem,   { strokeDashoffset:0, ease:'none' }, 0)
+        .to(leaves, { scale:1, ease:'power1.out', stagger:0.12, duration:0.5 }, 0.18)
+        .to(pods,   { scale:1, ease:'back.out(1.6)', stagger:0.08, duration:0.4 }, 0.62)
+        .fromTo(dolly,{ scale:1.16 }, { scale:1, ease:'none' }, 0)
+        .fromTo(cap, { opacity:0, y:20 }, { opacity:1, y:0, ease:'power2.out', duration:0.4 }, 0.5);
+      return () => gsap.set([dolly, stem, ...leaves, ...pods, cap], { clearProps:'all' });
+    });
+  })(120);
+})();
+</script>
+</body>
+</html>
