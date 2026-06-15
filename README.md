@@ -10,7 +10,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/MustBeSimo/cinematic-scroll-skill?style=flat-square&color=f5b301&label=stars)](https://github.com/MustBeSimo/cinematic-scroll-skill/stargazers)
 
 <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">
-  <img src="assets/reel2-hero.gif" alt="Cinematic Scroll in motion — the launch reel scrolling through five aesthetic worlds from one engine: VANTASCOPE noir, Renaissance editorial, Maison Solenne luxury, BLOOM Gen-Z pop, and the NEXUS LAB 3D/immersive world." width="100%">
+  <img src="assets/reel3-hero.gif" alt="Cinematic Scroll in motion — the launch reel scrolling through five aesthetic worlds from one engine: VANTASCOPE noir, Renaissance editorial, Maison Solenne luxury, BLOOM Gen-Z pop, and the Maya Torres brutalist studio." width="100%">
 </a>
 
 <h2 align="center">
