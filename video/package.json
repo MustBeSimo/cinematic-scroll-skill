@@ -11,6 +11,8 @@
     "render:reel3": "remotion render src/index.ts Reel3 ../assets/reel3.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
     "render:reel3:4k": "remotion render src/index.ts Reel3 ../assets/reel3-4k.mp4 --codec=h264 --crf=16 --pixel-format=yuv420p --scale=2",
     "poster:reel3": "remotion still src/index.ts Reel3 ../assets/reel3-poster.jpg --frame=620 --scale=2",
+    "render:reel3:vertical": "remotion render src/index.ts Reel3Vertical ../assets/reel3-vertical.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
+    "poster:reel3:vertical": "remotion still src/index.ts Reel3Vertical ../assets/reel3-vertical-poster.jpg --frame=620",
     "poster:reel2": "remotion still src/index.ts Reel2 ../assets/reel2-poster.jpg --frame=480 --scale=2",
     "render:reel:webm": "remotion render src/index.ts Reel ../assets/reel.webm --codec=vp9 --scale=1.5",
     "poster:reel": "remotion still src/index.ts Reel ../assets/reel-poster.jpg --frame=620 --scale=2",
