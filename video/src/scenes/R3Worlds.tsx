@@ -18,7 +18,7 @@ const WORLDS = [
   {id: 'luxe',        index: '03', title: 'MAISON SOLENNE',  name: 'Quiet luxury',     accent: '#A4652F', start: 40},
   {id: 'pop',         index: '04', title: 'BLOOM',           name: 'Gen-Z pop',        accent: '#FF2E93', start: 70},
   {id: 'studio',      index: '05', title: 'MAYA TORRES',     name: 'Brutalist studio', accent: '#2D6BFF', start: 240},
-  {id: 'atelier',     index: '06', title: 'ATELIER NOCTURNE', name: 'Kinetic shader',  accent: '#8E7CFF', start: 250},
+  {id: 'atelier',     index: '06', title: 'ATELIER NOCTURNE', name: 'Kinetic shader',  accent: '#8E7CFF', start: 345},
   {id: 'wellness',    index: '07', title: 'NATURALLY ROOTED', name: 'Organic wellness', accent: '#6F7A57', start: 200},
   {id: 'retro',       index: '08', title: 'NOVADECK',        name: 'Y2K retro-future', accent: '#00B3E6', start: 200},
 ];
