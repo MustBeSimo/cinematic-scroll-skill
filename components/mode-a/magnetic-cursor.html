@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MagneticCursor — cinematic-scroll component</title>
+<!--
+  MagneticCursor — a custom cursor dot that rAF-lerps toward the pointer and snaps
+  toward magnetic targets (real <a>/<button>) on hover. Token-driven (design.md),
+  transform/opacity only, no dependencies.
+  DEGRADE CONTRACT: the effect is gated to (hover:hover) and (pointer:fine); on
+  touch or prefers-reduced-motion the native cursor is shown and the dot is hidden.
+  Targets stay real focusable elements — the dot is pure decoration (aria-hidden).
+-->
+<style>
+  /* --- design tokens (default theme subset from tokens/build/variables.css) --- */
+  :root{
+    --bg:#F7F5F1; --surface:#EFEBE4; --fg:#161310; --fg-dim:#574F45; --accent:#C9A96E;
+    --line:#16131024;
+    --font-display:"Cormorant Garamond",Georgia,serif;
+    --font-body:"EB Garamond",Georgia,"Times New Roman",serif;
+    --font-ui:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --fluid-h1:clamp(2.37rem, 1.8rem + 2.52vw, 3.815rem);
+    --size-caption:.78rem; --size-body-lg:1.125rem;
+    --space-md:16px; --space-lg:24px; --space-4xl:96px;
+    --ease-reveal:cubic-bezier(.16,1,.3,1);
+    --ease-playful:cubic-bezier(.34,1.56,.64,1);
+    --dur-base:500ms;
+    --lh-tight:1.1; --lh-relaxed:1.7;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:var(--lh-relaxed)}
+
+  .stage{min-height:100vh;display:grid;align-content:center;gap:var(--space-lg);
+    padding:var(--space-4xl) clamp(var(--space-lg),6vw,8rem);max-width:62rem;margin-inline:auto}
+  .eyebrow{font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.22em;
+    text-transform:uppercase;color:var(--fg-dim)}
+  .title{font-family:var(--font-display);font-size:var(--fluid-h1);line-height:var(--lh-tight);font-weight:600;max-width:18ch}
+  .summary{font-size:var(--size-body-lg);color:var(--fg-dim);max-width:46ch}
+  .actions{display:flex;flex-wrap:wrap;gap:var(--space-md);margin-top:var(--space-md)}
+  .btn{font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.14em;text-transform:uppercase;
+    padding:var(--space-md) var(--space-lg);border:1px solid var(--line);border-radius:2px;
+    background:var(--surface);color:var(--fg);text-decoration:none;cursor:pointer}
+  .btn[data-variant="solid"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  /* --- custom cursor: a fixed dot translated via transform; never paints layout --- */
+  /* Hidden by default; only the hover+fine media query opts in (touch/RM never see it). */
+  .cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;
+    background:var(--accent);pointer-events:none;z-index:9999;display:none;
+    /* translate set in JS each rAF tick; scale eased on the playful curve for snap */
+    transform:translate3d(-50%,-50%,0) scale(1);
+    transition:opacity var(--dur-base) var(--ease-reveal),
+               background-color var(--dur-base) var(--ease-reveal);
+    will-change:transform;opacity:0}
+
+  @media (hover:hover) and (pointer:fine){
+    /* reveal the dot; hide the native cursor ONLY once the dot has actually painted
+       (.cursor-ready is added by JS in the first frame, so a JS failure never leaves
+       the user with no cursor) */
+    .cursor-ready{cursor:none}
+    .cursor-ready .btn{cursor:none}
+    .cursor{display:block;opacity:1}
+    .cursor.is-snapped{background:var(--fg)}
+  }
+
+  @media (max-width: 768px){
+    .stage{padding:var(--space-4xl) var(--space-lg)}
+    .title{font-size:2rem;max-width:none}
+  }
+
+  /* Touch + reduced-motion fallback: native cursor, no dot, no lerp loop (guard 1.9). */
+  @media (prefers-reduced-motion: reduce){
+    .cursor{display:none}
+    .has-cursor,.has-cursor .btn{cursor:auto}
+  }
+</style>
+</head>
+<body>
+  <!-- Decorative dot — outside <main>, aria-hidden: assistive tech never sees it. -->
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+  <main>
+    <section class="stage" aria-labelledby="mc-title">
+      <p class="eyebrow">Pointer · magnetic</p>
+      <h1 class="title" id="mc-title">The dot trails the pointer, then leans into the target.</h1>
+      <p class="summary">A rAF-lerped cursor that snaps toward any <code>data-magnetic</code> control.
+        Gated to fine pointers; touch and reduced-motion keep the native cursor.</p>
+      <div class="actions">
+        <a class="btn" data-magnetic href="#" data-variant="solid">Read the chapter</a>
+        <button class="btn" data-magnetic type="button">Toggle sound</button>
+        <a class="btn" data-magnetic href="#">View the index</a>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // Bail entirely on coarse pointers / reduced motion — native cursor stays, no loop runs.
+  const fine = matchMedia("(hover:hover) and (pointer:fine)").matches;
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (fine && !calm) {
+    const root = document.documentElement;
+    root.classList.add("has-cursor");
+    const dot = document.getElementById("cursor");
+    const targets = document.querySelectorAll("[data-magnetic]");
+
+    // px = pointer, dx = dot. Lerp dx → px, but only run rAF while there's work to do —
+    // the loop STOPS when settled and is re-armed by wake() on move/scroll/snap.
+    let px = innerWidth / 2, py = innerHeight / 2, dx = px, dy = py, snap = null;
+    const LERP = 0.18, PULL = 0.35;
+    let ticking = false, ready = false;
+    const wake = () => { if (!ticking && !document.hidden) { ticking = true; requestAnimationFrame(frame); } };
+
+    addEventListener("pointermove", (e) => { px = e.clientX; py = e.clientY; wake(); }, { passive: true });
+    addEventListener("scroll", wake, { passive: true });            // realign after wheel/keyboard scroll (pointermove won't fire)
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) wake(); });
+
+    // Hover wiring on real focusable controls — the dot reads them, never replaces them.
+    targets.forEach((t) => {
+      t.addEventListener("pointerenter", () => { snap = t; dot.classList.add("is-snapped"); wake(); });
+      t.addEventListener("pointerleave", () => { snap = null; dot.classList.remove("is-snapped"); wake(); });
+    });
+
+    function frame() {
+      let tx = px, ty = py, scale = 1;
+      if (snap) {
+        const r = snap.getBoundingClientRect();
+        tx = px + (r.left + r.width / 2 - px) * PULL;
+        ty = py + (r.top + r.height / 2 - py) * PULL;
+        scale = 2.4;
+      }
+      dx += (tx - dx) * LERP;
+      dy += (ty - dy) * LERP;
+      dot.style.transform = `translate3d(${dx}px,${dy}px,0) translate(-50%,-50%) scale(${scale})`;
+      if (!ready) { ready = true; root.classList.add("cursor-ready"); } // native cursor hidden only now (dot proven painting)
+      if (Math.hypot(tx - dx, ty - dy) < 0.1) { ticking = false; return; } // settled → stop; wake() re-arms
+      requestAnimationFrame(frame);
+    }
+    wake();
+  }
+</script>
+</body>
+</html>

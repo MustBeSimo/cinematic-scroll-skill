@@ -70,6 +70,11 @@ build/
 next-env.d.ts
 .swc/
 
+# Token build outputs ARE committed — Mode A is zero-build and inlines the
+# generated CSS, so tokens/build/ must override the generic build/ rule above.
+!tokens/build/
+!tokens/build/**
+
 # ----------------------------------------------------------------------------
 # Environment / secrets — NEVER commit fal.ai keys (FAL_KEY)
 # Used by examples/studio/generate.mjs via examples/studio/.env.local

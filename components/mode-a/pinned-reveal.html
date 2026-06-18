@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PinnedReveal — cinematic-scroll component</title>
+<!--
+  PinnedReveal — staggered eyebrow → title → summary reveal as a chapter enters view.
+  Token-driven (design.md), transform/opacity only, reduced-motion safe, no dependencies.
+  Mode A: inline the :root block (or @import tokens/build/variables.css). See components/manifest.json.
+-->
+<style>
+  /* --- design tokens (default theme subset from tokens/build/variables.css) --- */
+  :root{
+    --bg:#F7F5F1; --surface:#EFEBE4; --fg:#161310; --fg-dim:#574F45; --accent:#C9A96E;
+    --line:#16131024;
+    --font-display:"Cormorant Garamond",Georgia,serif;
+    --font-body:"EB Garamond",Georgia,"Times New Roman",serif;
+    --font-ui:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --fluid-h1:clamp(2.37rem, 1.8rem + 2.52vw, 3.815rem);
+    --size-caption:.78rem; --size-body-lg:1.125rem;
+    --space-md:16px; --space-lg:24px; --space-4xl:96px;
+    --ease-reveal:cubic-bezier(.16,1,.3,1);
+    --dur-slow:720ms;
+    --lh-tight:1.1; --lh-relaxed:1.7;
+  }
+  *{box-sizing:border-box;margin:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:var(--lh-relaxed)}
+  .spacer{height:60vh;display:grid;place-items:center;color:var(--fg-dim);font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.2em;text-transform:uppercase}
+
+  .chapter{min-height:100vh;display:grid;align-content:center;gap:var(--space-md);
+    padding:var(--space-4xl) clamp(var(--space-lg),6vw,8rem);max-width:62rem;margin-inline:auto}
+  .eyebrow{font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.22em;
+    text-transform:uppercase;color:var(--fg-dim)}
+  .title{font-family:var(--font-display);font-size:var(--fluid-h1);line-height:var(--lh-tight);font-weight:600;max-width:18ch}
+  .summary{font-size:var(--size-body-lg);color:var(--fg-dim);max-width:46ch}
+  .accent{color:var(--accent)}
+  .rule{height:1px;background:var(--line);border:0;margin-block:var(--space-lg)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  /* --- reveal: transform + opacity only, role easing, staggered --- */
+  .reveal{opacity:0;transform:translateY(40px);
+    transition:opacity var(--dur-slow) var(--ease-reveal),transform var(--dur-slow) var(--ease-reveal)}
+  .is-in .reveal{opacity:1;transform:none}
+  .is-in .reveal:nth-child(2){transition-delay:90ms}
+  .is-in .reveal:nth-child(3){transition-delay:180ms}
+  .is-in .reveal:nth-child(4){transition-delay:260ms}
+
+  /* mobile: tighter gutters, smaller display, motion stays touch-safe (no tilt/parallax here) */
+  @media (max-width: 768px){
+    .chapter{padding:var(--space-4xl) var(--space-lg);gap:var(--space-md)}
+    .title{font-size:2rem;max-width:none}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+  }
+</style>
+</head>
+<body>
+  <div class="spacer">scroll ↓</div>
+
+  <main>
+    <section class="chapter" id="chapter-1" aria-labelledby="ch1-title">
+      <p class="eyebrow reveal">Chapter 01</p>
+      <h2 class="title reveal" id="ch1-title">The reveal lands <span class="accent">on the beat</span>, not before.</h2>
+      <hr class="rule reveal" aria-hidden="true">
+      <p class="summary reveal">Eyebrow, title, and summary arrive in sequence as the chapter enters the
+        viewport — transform and opacity only, on the <code>--ease-reveal</code> curve, finished before the payoff.</p>
+    </section>
+  </main>
+
+  <div class="spacer">end</div>
+
+<script>
+  // Reveal on enter. IntersectionObserver — no scroll handler, no layout thrash.
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+  }, { threshold: 0.35 });
+  document.querySelectorAll(".chapter").forEach((c) => io.observe(c));
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "$description": "Clinical Noir — near-monochrome ash/steel drained world; amber appears only as event. Neo-grotesque, dolly-smooth, inevitable motion. See references/film-archetypes.md §2.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Clinical Noir", "archetype": "references/film-archetypes.md#2-clinical-noir", "depth-layers": 3, "pin-vh": [200, 250] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#2C2C2C" },
+      "surface": { "$value": "#3A3A3A" },
+      "fg":      { "$value": "#D8DDE2" },
+      "fg-dim":  { "$value": "#7A8B99" },
+      "accent":  { "$value": "#C9A96E" },
+      "line":    { "$value": "{core.color.alpha.line-on-dark}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.neo-grotesque}" },
+      "body":    { "$value": "{core.font.neo-grotesque}" },
+      "ui":      { "$value": "{core.font.neo-grotesque}" }
+    },
+    "ease": {
+      "reveal": { "$value": [0.65, 0, 0.35, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "power2.inOut" } } }
+    }
+  }
+}

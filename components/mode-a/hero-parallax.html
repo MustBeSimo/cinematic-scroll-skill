@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HeroParallax — cinematic-scroll component</title>
+<!--
+  HeroParallax — a "tracking shot": 4 depth planes drift at different scroll rates
+  (far 0.16 / back 0.34 / mid 0.62 / near 1.18) so the frame reads as a deep space.
+  rAF-throttled scroll handler (one read + one write per frame) drives translateY via
+  transform only; CSS scroll-timeline takes over where supported (the JS bows out).
+  Title uses the split-line rise reveal. Mobile collapses to <=2 planes; reduced-motion
+  goes fully static. Token-driven (design.md), transform/opacity only, no dependencies.
+  Mode A: inline the :root subset (or @import tokens/build/variables.css). See manifest.json.
+-->
+<style>
+  /* --- design tokens (default theme subset from tokens/build/variables.css) --- */
+  :root{
+    --bg:#F7F5F1; --surface:#EFEBE4; --fg:#161310; --fg-dim:#574F45; --accent:#C9A96E;
+    --line:#16131024;
+    --font-display:"Cormorant Garamond",Georgia,serif;
+    --font-body:"EB Garamond",Georgia,"Times New Roman",serif;
+    --font-ui:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --fluid-h1:clamp(2.37rem, 1.8rem + 2.52vw, 3.815rem);
+    --size-caption:.78rem; --size-body-lg:1.125rem;
+    --space-md:16px; --space-lg:24px; --space-4xl:96px;
+    --ease-reveal:cubic-bezier(.16,1,.3,1);
+    --dur-slow:720ms;
+    --lh-tight:1.1; --lh-relaxed:1.7;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:var(--lh-relaxed)}
+  .spacer{height:70vh;display:grid;place-items:center;color:var(--fg-dim);
+    font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.2em;text-transform:uppercase}
+
+  /* --- stage: a tall scene; planes are pinned-feel via a sticky frame --- */
+  .hero{position:relative;min-height:100vh;overflow:clip}
+  .frame{position:sticky;top:0;height:100vh;overflow:clip;display:grid;place-items:center;isolation:isolate}
+
+  /* depth planes — each only ever translates/scales (compositor-friendly).
+     A single base class; the 4 variants differ only in z-order + content. */
+  .plane{position:absolute;inset:-12% 0;will-change:transform;transform:translate3d(0,0,0)}
+  [data-depth="0.16"]{z-index:1;background:radial-gradient(120% 90% at 50% -10%, var(--surface), var(--bg) 60%)}
+  [data-depth="0.34"]{z-index:2;background:repeating-linear-gradient(115deg, var(--line) 0 1px, transparent 1px 92px)}
+  [data-depth="0.62"]{z-index:3;display:grid;place-items:center}
+  [data-depth="1.18"]{z-index:5;pointer-events:none}
+  .subject{width:min(56vw,30rem);aspect-ratio:4/5;border-radius:2px;
+    background:linear-gradient(160deg, var(--surface), var(--bg));
+    border:1px solid var(--line);box-shadow:0 30px 80px -40px var(--fg)}
+  .chip{position:absolute;left:8%;bottom:14%;padding:var(--space-md) var(--space-lg);
+    background:var(--surface);border:1px solid var(--line);border-radius:2px;
+    font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.22em;
+    text-transform:uppercase;color:var(--fg-dim)}
+
+  /* --- copy sits at depth 1.0 (z above mid plane, below near accent) --- */
+  .copy{position:relative;z-index:4;max-width:62rem;
+    padding:0 clamp(var(--space-lg),6vw,8rem);text-align:left}
+  .eyebrow{font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.22em;
+    text-transform:uppercase;color:var(--fg-dim)}
+  .title{font-family:var(--font-display);font-size:var(--fluid-h1);line-height:var(--lh-tight);
+    font-weight:600;max-width:16ch;margin-top:var(--space-md)}
+  .accent{color:var(--accent)}
+  .summary{font-size:var(--size-body-lg);color:var(--fg-dim);max-width:42ch;margin-top:var(--space-lg)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  /* --- title: split-line rise (transform + opacity only, role easing) --- */
+  .line{display:block;overflow:clip}
+  .line > span{display:inline-block;opacity:0;transform:translateY(110%);
+    transition:opacity var(--dur-slow) var(--ease-reveal),transform var(--dur-slow) var(--ease-reveal)}
+  .is-in .line > span{opacity:1;transform:none}
+  .eyebrow,.summary{opacity:0;transform:translateY(40px);
+    transition:opacity var(--dur-slow) var(--ease-reveal),transform var(--dur-slow) var(--ease-reveal)}
+  .is-in .eyebrow,.is-in .summary{opacity:1;transform:none}
+  .is-in .line:nth-child(2) > span{transition-delay:90ms}
+  .is-in .summary{transition-delay:200ms}
+
+  /* --- CSS scroll-timeline path: where supported the browser drives the parallax
+         and the JS handler stands down (see script). Transform-only keyframes;
+         scroll-linked progress is intentionally 1:1 with scroll, so timing is set
+         once via animation-timing-function rather than per-shorthand. --- */
+  @supports (animation-timeline:scroll()){
+    @media (prefers-reduced-motion:no-preference){
+      .plane{animation-duration:1ms;animation-fill-mode:both;animation-timeline:scroll(root);
+        animation-timing-function:steps(1000,jump-none)}
+      [data-depth="0.16"]{animation-name:drift-far}
+      [data-depth="0.34"]{animation-name:drift-back}
+      [data-depth="0.62"]{animation-name:drift-mid}
+      [data-depth="1.18"]{animation-name:drift-near}
+    }
+  }
+  @keyframes drift-far {to{transform:translate3d(0,-3vh,0)}}
+  @keyframes drift-back{to{transform:translate3d(0,-7vh,0)}}
+  @keyframes drift-mid {to{transform:translate3d(0,-13vh,0)}}
+  @keyframes drift-near{to{transform:translate3d(0,-22vh,0)}}
+
+  /* mobile: collapse to <=2 planes (far + mid), drop atmosphere + accent; smaller display */
+  @media (max-width:768px){
+    .copy{padding:0 var(--space-lg)}
+    .title{font-size:2rem;max-width:none}
+    [data-depth="0.34"],[data-depth="1.18"]{display:none}
+    .subject{width:min(78vw,22rem)}
+  }
+
+  /* reduced motion: everything static — no parallax, no reveal */
+  @media (prefers-reduced-motion:reduce){
+    .plane{transform:none!important;animation:none!important}
+    .line > span,.eyebrow,.summary{opacity:1;transform:none;transition:none}
+  }
+</style>
+</head>
+<body>
+  <div class="spacer">scroll ↓</div>
+
+  <main>
+    <!-- Tracking shot: steady camera, parallax at graded depths. -->
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <div class="frame">
+        <div class="plane" data-depth="0.16" aria-hidden="true"></div>
+        <div class="plane" data-depth="0.34" aria-hidden="true"></div>
+        <div class="plane" data-depth="0.62" aria-hidden="true"><div class="subject"></div></div>
+
+        <div class="copy">
+          <p class="eyebrow">Chapter 01 — Depth</p>
+          <h1 class="title" id="hero-title">
+            <span class="line"><span>Four planes,</span></span>
+            <span class="line"><span>one <span class="accent">tracking shot</span>.</span></span>
+          </h1>
+          <p class="summary">Background, atmosphere, subject and a foreground detail
+            travel at graded rates — the frame reads as a deep space, not a flat image.</p>
+        </div>
+
+        <div class="plane" data-depth="1.18" aria-hidden="true"><span class="chip">Foreground · 1.18×</span></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="spacer">end</div>
+
+<script>
+  // Title reveal on enter — IntersectionObserver, no scroll handler, no thrash.
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+  }, { threshold: 0.4 });
+  io.observe(document.getElementById("hero"));
+
+  // Parallax. Progressive enhancement:
+  //   • CSS scroll-timeline supported + motion allowed → browser drives it; JS stands down.
+  //   • otherwise → rAF-throttled scroll: ONE read + ONE write per frame, transform only.
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  const native = CSS.supports("animation-timeline", "scroll()");
+  const planes = [...document.querySelectorAll(".plane")];
+  const mobile = matchMedia("(max-width: 768px)");
+
+  let ticking = false, lastY = -1;
+  function frame(){
+    ticking = false;
+    if (lastY === scrollY) return;
+    lastY = scrollY;
+    for (const el of planes){
+      if (el.offsetParent === null) continue;            // skip planes hidden on mobile
+      const d = parseFloat(el.dataset.depth);
+      el.style.transform = "translate3d(0," + (-scrollY * d * 0.12) + "px,0)";
+    }
+  }
+  function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(frame); } }
+
+  function sync(){
+    const off = reduce.matches || native;                // native CSS or reduced-motion → no JS
+    window.removeEventListener("scroll", onScroll);
+    if (off){ for (const el of planes) el.style.transform = ""; return; }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    frame();
+  }
+  sync();
+  reduce.addEventListener("change", sync);
+  mobile.addEventListener("change", () => { lastY = -1; sync(); }); // re-run sync (not frame) so JS never writes transforms on the native/reduced path
+</script>
+</body>
+</html>

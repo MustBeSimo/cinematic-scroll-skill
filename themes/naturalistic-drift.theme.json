@@ -1,0 +1,22 @@
+{
+  "$description": "Naturalistic Drift — lived-in slightly-desaturated palette following light, not drama; minimal organic motion, gradual fades. Editorial serif. See references/film-archetypes.md §7.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Naturalistic Drift", "archetype": "references/film-archetypes.md#7-naturalistic-drift", "depth-layers": 3, "pin-vh": [200, 280] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#DAD8CE" },
+      "surface": { "$value": "#EAE8E0" },
+      "fg":      { "$value": "#2F332E" },
+      "fg-dim":  { "$value": "#54604F" },
+      "accent":  { "$value": "#5E7050" },
+      "line":    { "$value": "{core.color.alpha.line-on-light}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.editorial-serif}" },
+      "body":    { "$value": "{core.font.editorial-serif}" },
+      "ui":      { "$value": "{core.font.sans}" }
+    },
+    "ease": {
+      "reveal":  { "$value": [0.37, 0, 0.63, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "sine.inOut" } } }
+    }
+  }
+}

@@ -205,12 +205,22 @@ if (prefersReducedMotion) {
 Cinematic on mobile means motion that is *coupled to the scroll* — things move
 **while** the finger drags — done touch-safe and smooth. Rules:
 
-- **Use JS, never CSS scroll-timelines.** On iOS Safari,
-  `CSS.supports('animation-timeline: view()')` returns `true` but the timeline
-  **does not actually drive** — animations sit frozen at their start frame.
-  Drive scroll-coupled motion from JS instead: a `requestAnimationFrame` loop
-  reading `scrollY` (Mode A), or framer-motion's `useScroll`/`useSpring`
-  (Mode B). Never rely on `animation-timeline` for mobile scroll coupling.
+- **CSS scroll-timelines: version-aware, JS as the safe default.** Native CSS
+  scroll-driven animations (`animation-timeline: scroll()/view()`) are now
+  Baseline on **Safari 26+, Chrome/Edge 115+, Opera** (Firefox behind a flag).
+  But **older iOS Safari (≤18)** reports `CSS.supports('animation-timeline: view()')`
+  as `true` while the timeline **does not actually drive** — animations sit frozen
+  at their start frame. So: feature-detect *and* version-gate. Where you must
+  support older iOS, drive scroll-coupled motion from JS — a `requestAnimationFrame`
+  loop reading `scrollY` (Mode A) or framer-motion `useScroll`/`useSpring` (Mode B);
+  this remains the safest cross-version default. Use the CSS path as a progressive
+  enhancement behind `@supports (animation-timeline: scroll())`, never as the only
+  path on mobile.
+- **`content-visibility: auto`** on offscreen chapters (with
+  `contain-intrinsic-size` to reserve layout) — Baseline since 2025-09; skips
+  rendering work for chapters not near the viewport, a large initial-render win on
+  long pinned pages. Do **not** apply it to above-the-fold/LCP content (it can
+  delay first paint of what's already visible).
 - **Cache offsets — no per-frame layout reads.** Read each mover's position
   once on init and on resize. Never call `getBoundingClientRect` inside the
   rAF loop or scroll handler (see Section 1, Scroll Handler Rules).

@@ -29,6 +29,22 @@ jobs:
       - name: Doctor self-test
         run: node tools/cinematic-doctor/cli.mjs --selftest
 
+      # Design-contract invariants (all zero-dependency — pure node + git).
+      - name: Design-token contract
+        run: node tools/check-tokens.mjs
+      - name: Theme contract (11 systems)
+        run: node tools/check-themes.mjs
+      - name: Docs ↔ reality (dead links + stale strings)
+        run: node tools/check-links.mjs
+      - name: Consistency (version / secrets / token determinism)
+        run: node tools/check-consistency.mjs
+      - name: Skill pointer stubs in sync (.codex / .cursor)
+        run: node tools/skill-sync.mjs --check
+      - name: Component library (doctor ≥80 each)
+        run: for f in components/mode-a/*.html; do node tools/cinematic-doctor/cli.mjs "$f" --min 80 --quiet || exit 1; done
+      - name: Evals (golden fixtures + trigger-set shape)
+        run: node evals/run.mjs
+
       # Sweep every web build in the repo (landing pages + examples). Video
       # compositions and test fixtures are skipped automatically. Default
       # threshold is 80; a build under the bar exits non-zero and blocks merge.

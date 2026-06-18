@@ -1,0 +1,52 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Semantic (role) tokens — the cross-system contract every visual system and component speaks. Values here are the DEFAULT (neutral editorial) theme; each themes/*.theme.json (Phase 3) overrides this same key set with its system's palette + signature ease. Examples and the component library reference ONLY these role tokens (never core primitives directly), so a system swap is one theme file. References use DTCG alias syntax: \"{group.path.token}\".",
+  "semantic": {
+    "color": {
+      "$type": "color",
+      "$description": "REQUIRED role keys — every theme MUST define all of these (enforced by tools/check-tokens.mjs and the theme-contract in Phase 3).",
+      "bg":      { "$value": "{core.color.neutral.50}",  "$description": "Page / chapter ground." },
+      "surface": { "$value": "{core.color.neutral.100}", "$description": "Raised panels, cards, captions ground." },
+      "fg":      { "$value": "{core.color.neutral.900}", "$description": "Primary text — must clear WCAG AA on bg." },
+      "fg-dim":  { "$value": "{core.color.neutral.600}", "$description": "Labels, captions, secondary copy." },
+      "accent":  { "$value": "{core.color.brand.amber}", "$description": "The single restrained accent — interactive + narrative punctuation." },
+      "line":    { "$value": "{core.color.alpha.line-on-light}", "$description": "Hairlines, rules, dividers." }
+    },
+    "font": {
+      "$type": "fontFamily",
+      "display": { "$value": "{core.font.display-serif}", "$description": "Headlines / chapter titles." },
+      "body":    { "$value": "{core.font.serif}",         "$description": "Reading copy." },
+      "ui":      { "$value": "{core.font.sans}",          "$description": "Eyebrows, labels, nav, metadata." }
+    },
+    "type": {
+      "$description": "Default reading + display sizing roles.",
+      "title":    { "$type": "dimension", "$value": "{core.size.h1}" },
+      "subtitle": { "$type": "dimension", "$value": "{core.size.h4}" },
+      "body":     { "$type": "dimension", "$value": "{core.size.body-lg}" },
+      "caption":  { "$type": "dimension", "$value": "{core.size.caption}" },
+      "lh-display": { "$type": "number", "$value": "{core.lineHeight.tight}" },
+      "lh-body":    { "$type": "number", "$value": "{core.lineHeight.relaxed}" }
+    },
+    "ease": {
+      "$type": "cubicBezier",
+      "$description": "Role-keyed easing. Components reference these, not raw curves, so a theme can re-voice its motion (e.g. a 'playful' system swaps reveal for an overshoot) without touching component code.",
+      "reveal": { "$value": "{motion.ease.reveal}" },
+      "exit":   { "$value": "{motion.ease.exit}" },
+      "playful":{ "$value": "{motion.ease.playful}" },
+      "cut":    { "$value": "{motion.ease.cut}" }
+    },
+    "duration": {
+      "$type": "duration",
+      "title":      { "$value": "{motion.duration.slow}" },
+      "transition": { "$value": "{motion.duration.base}" },
+      "micro":      { "$value": "{motion.duration.fast}" }
+    },
+    "space": {
+      "$type": "dimension",
+      "$description": "Layout rhythm roles mapped to the core 8px scale.",
+      "gutter":     { "$value": "{core.space.lg}" },
+      "section-y":  { "$value": "{core.space.4xl}" },
+      "stack":      { "$value": "{core.space.md}" }
+    }
+  }
+}

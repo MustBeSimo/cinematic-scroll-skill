@@ -192,8 +192,9 @@ CLI reference: [github.com/openclaw/clawhub → docs/cli.md](https://github.com/
 | Mode A (vanilla HTML) | ✅ All platforms | Self-contained, no build required |
 | Mode B (Next.js template) | ✅ All platforms | Requires Node.js locally |
 | AI image generation | ⚠️ Opt-in | Requires fal.ai account and API key |
-| 7 visual systems | ✅ All platforms | See `references/film-archetypes.md` |
-| 5 live examples | ✅ Reference only | Cannot be directly modified via skill invocation |
+| 11 visual systems | ✅ All platforms | See `references/film-archetypes.md` + `themes/` |
+| DTCG design tokens | ✅ All platforms | `design.md` + `tokens/`; zero-dep build pipeline |
+| 10 live examples | ✅ Reference only | Cannot be directly modified via skill invocation |
 | Custom CSS-only render | ✅ All platforms | Default fallback if no images provided |
 
 ---
@@ -227,7 +228,7 @@ Ensure the skill folder includes all of these files:
 - `manifest.json` ← platform metadata
 - `README.md` ← user documentation
 - `references/` ← visual system library
-- `examples/` ← 5 live demo sites
+- `examples/` ← 10 live demo sites
 
 If any are missing, the platform will reject the skill.
 
@@ -257,12 +258,13 @@ This is normal if you haven't provided an `fal.ai` API key. The system falls bac
 
 | Skill version | Release | Notes |
 |---|---|---|
-| **v2.1.0 (current)** | 2026-06-02 | Current release: mobile-ready touch-safe scroll-coupled motion, deferred-GSAP showcase beats in the examples, and reconciled distribution packaging |
+| **v2.3.5 (current)** | 2026-06 | DTCG design-token contract (`design.md` + `tokens/`), zero-dep token build pipeline, 11 machine-readable visual-system themes, security-audit fixes |
+| **v2.1.0** | 2026-06-02 | Mobile-ready touch-safe scroll-coupled motion, deferred-GSAP showcase beats in the examples, and reconciled distribution packaging |
 | **v2.0.0** | Prior | Contract baseline; 5-phase pipeline, taste constraints, 7 visual systems — superseded by v2.1.0 |
 | **v0.1.2** | 2026-06-01 | Prior public release; corrected README GSAP documentation and softened platform verification claims |
 | **v0.1.1** | 2026-06-01 | Initial open-source release; 5 live examples, all platforms supported |
 
-**Current recommendation:** Use v2.1.0 for all new installations.
+**Current recommendation:** Use v2.3.5 for all new installations.
 
 ---
 

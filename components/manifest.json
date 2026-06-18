@@ -1,0 +1,396 @@
+{
+  "$description": "Named component grammar for the cinematic-scroll skill. Each component is token-driven (design.md), ships in both modes, and carries an inline degrade contract. Doctor-verified (Mode A scores >=80).",
+  "version": 1,
+  "tokenContract": "design.md",
+  "components": [
+    {
+      "name": "PinnedReveal",
+      "slug": "pinned-reveal",
+      "purpose": "Staggered eyebrow → title → summary reveal as a chapter enters view — the long-take title arrival, on the --ease-reveal curve.",
+      "modes": [
+        "mode-a",
+        "mode-b"
+      ],
+      "tokensConsumed": [
+        "--bg",
+        "--fg",
+        "--fg-dim",
+        "--accent",
+        "--line",
+        "--font-display",
+        "--font-body",
+        "--font-ui",
+        "--fluid-h1",
+        "--ease-reveal",
+        "--dur-slow",
+        "--space-4xl",
+        "--space-lg"
+      ],
+      "guardrails": [
+        "§1.6 transform/opacity only",
+        "§4.1 custom easing (no ease/linear)",
+        "§1.9 reduced-motion safe",
+        "a11y: :focus-visible + <main> landmark",
+        "mobile breakpoint"
+      ],
+      "files": {
+        "modeA": "components/mode-a/pinned-reveal.html",
+        "modeB": "components/mode-b/pinned-reveal.tsx"
+      }
+    },
+    {
+      "name": "HeroParallax",
+      "slug": "hero-parallax",
+      "purpose": "A hero \"tracking shot\" whose graded depth planes (far/back/mid/near) translate at different scroll rates so the frame reads as deep space, with a split-line title reveal — rAF-throttled parallax (or CSS scroll-timeline) that collapses to <=2 layers on mobile and goes fully static under reduced motion.",
+      "modes": [
+        "mode-a",
+        "mode-b"
+      ],
+      "tokensConsumed": [
+        "--bg",
+        "--surface",
+        "--fg",
+        "--fg-dim",
+        "--accent",
+        "--line",
+        "--font-display",
+        "--font-body",
+        "--font-ui",
+        "--fluid-h1",
+        "--size-caption",
+        "--size-body-lg",
+        "--space-md",
+        "--space-lg",
+        "--space-4xl",
+        "--ease-reveal",
+        "--dur-slow",
+        "--lh-tight",
+        "--lh-relaxed"
+      ],
+      "guardrails": [
+        "§1.4 — no parallax on body copy; only background/decorative planes drift, the copy sits static at depth 1.0",
+        "§1.5 — never setState in a scroll handler; Mode B scrubs via ScrollTrigger and Mode A writes transform directly, never through React state",
+        "§1.6 — animate transform + opacity only; planes use translate3d/yPercent, title uses translateY + opacity, no width/height/top/left/filter",
+        "§1.7 — never more than 7 depth layers; max 4 desktop, collapsed to <=2 on mobile",
+        "§1.8 — never attach an unthrottled scroll listener; Mode A is rAF-throttled (one read + one write per frame) with a CSS scroll-timeline fast path, Mode B uses ScrollTrigger scrub",
+        "§1.9 / reduced-motion — prefers-reduced-motion:reduce disables all parallax and reveal and shows the static composition; no 3D tilt is used so touch is inherently safe",
+        "§4.3 — depth multipliers never repeat: 0.16 / 0.34 / 0.62 / 1.18 are graded and non-rhythmic",
+        "§4.7 — depth layers earn their place; the mobile collapse drops the atmosphere + foreground-accent planes that add no value at small sizes",
+        "§4.8 — typography breathes: --lh-tight 1.1 for display, max two families (display + ui)"
+      ],
+      "files": {
+        "modeA": "components/mode-a/hero-parallax.html",
+        "modeB": "components/mode-b/hero-parallax.tsx"
+      }
+    },
+    {
+      "name": "DepthFigure",
+      "slug": "depth-figure",
+      "purpose": "A foreground image card held in depth — rAF-throttled scroll parallax plus a gentle pointer tilt (small rotateX/rotateY) gated to hover + fine-pointer and disabled on touch / reduced-motion, with an alt-bearing img and a soft token shadow that degrade to a still, composed card.",
+      "modes": [
+        "mode-a",
+        "mode-b"
+      ],
+      "tokensConsumed": [
+        "--bg",
+        "--surface",
+        "--fg",
+        "--fg-dim",
+        "--accent",
+        "--line",
+        "--shadow-soft",
+        "--font-body",
+        "--font-ui",
+        "--size-caption",
+        "--size-body-lg",
+        "--space-md",
+        "--space-lg",
+        "--space-4xl",
+        "--radius-lg",
+        "--ease-reveal",
+        "--ease-playful",
+        "--dur-slow",
+        "--dur-fast",
+        "--lh-relaxed"
+      ],
+      "guardrails": [
+        "§1.9 — No 3D rotation (rotateX/rotateY/perspective tilt) on touch devices or under prefers-reduced-motion: tilt is gated behind @media (hover:hover) and (pointer:fine) in CSS and a matching matchMedia()/gsap.matchMedia() check in JS, so touch never gets 3D rotation; mobile keeps the touch-safe scroll parallax + entrance reveal alive (not a dead page).",
+        "§1.11 / §4 (taste / anti-convergence) — two distinct named eases (--ease-reveal decel for entrance + tilt-track, --ease-playful overshoot for tilt settle); no 'transition: all'; no literal ease/linear/ease-in-out.",
+        "Performance budget — transform + opacity only in every hot path (entrance, parallax, tilt); scroll work is rAF-throttled to one read + one write per frame (Mode A) / ScrollTrigger scrub (Mode B); will-change:transform only inside the fine-pointer branch; no width/height/top/left/filter/blur animation.",
+        "A11y — <main> landmark, aria-labelledby on the section, :focus-visible outline, <img> carries descriptive alt + width/height for layout stability.",
+        "Reduced-motion — @media (prefers-reduced-motion: reduce) (Mode A) / gsap.matchMedia no-preference branch (Mode B) disables entrance, parallax and tilt, leaving a still composed card."
+      ],
+      "files": {
+        "modeA": "components/mode-a/depth-figure.html",
+        "modeB": "components/mode-b/depth-figure.tsx"
+      }
+    },
+    {
+      "name": "TiltCard",
+      "slug": "tilt-card",
+      "purpose": "A card that tilts up to ~8 degrees in 3D toward the pointer with an opacity-only specular sheen — gated to hover + fine-pointer, disabled on touch and reduced-motion, and easing back flat on leave.",
+      "modes": [
+        "mode-a",
+        "mode-b"
+      ],
+      "tokensConsumed": [
+        "--bg",
+        "--surface",
+        "--fg",
+        "--fg-dim",
+        "--accent",
+        "--line",
+        "--font-display",
+        "--font-body",
+        "--font-ui",
+        "--size-caption",
+        "--size-body-lg",
+        "--size-h4",
+        "--space-md",
+        "--space-lg",
+        "--space-xl",
+        "--space-4xl",
+        "--radius-lg",
+        "--ease-reveal",
+        "--ease-playful",
+        "--dur-base",
+        "--dur-micro",
+        "--lh-tight",
+        "--lh-relaxed"
+      ],
+      "guardrails": [
+        "1.6 transform/opacity only in the hot path — JS writes only CSS custom props consumed by transform: perspective()/rotateX/rotateY and the sheen's opacity; no width/height/top/left/filter, no transition:all",
+        "1.8 pointermove is rAF-throttled (one DOM write per frame in Mode A; GSAP quickTo internal rAF in Mode B) — never updates from a raw listener",
+        "1.9 3D rotation gated behind @media (hover:hover) and (pointer:fine), disabled on touch (pointer:coarse / ontouchstart) and under prefers-reduced-motion, with a stable flat-card fallback",
+        "1.11 role-varied easing — live tracking has no transition, the leave-settle uses --ease-playful / back.out(1.4) overshoot, the sheen fades on --ease-reveal",
+        "4.1 intentional custom cubic-bezier curves only (--ease-playful/--ease-reveal); no ease/linear/ease-in-out in any motion path",
+        "a11y floor — <main> landmark, aria-labelledby on the section, :focus-visible outline, prefers-reduced-motion branch in both CSS and JS"
+      ],
+      "files": {
+        "modeA": "components/mode-a/tilt-card.html",
+        "modeB": "components/mode-b/tilt-card.tsx"
+      }
+    },
+    {
+      "name": "MorphBackground",
+      "slug": "morph-background",
+      "purpose": "A scroll chapter whose background morphs between a warm and a cool palette by crossfading two stacked full-bleed gradient layers via opacity — never animating background-color — while a fixed foreground palette keeps content AA-readable from top to floor.",
+      "modes": [
+        "mode-a",
+        "mode-b"
+      ],
+      "tokensConsumed": [
+        "--bg",
+        "--surface",
+        "--fg",
+        "--fg-dim",
+        "--accent",
+        "--line",
+        "--font-display",
+        "--font-body",
+        "--font-ui",
+        "--fluid-h1",
+        "--size-caption",
+        "--size-body-lg",
+        "--space-md",
+        "--space-lg",
+        "--space-4xl",
+        "--ease-reveal",
+        "--dur-slow",
+        "--lh-tight",
+        "--lh-relaxed",
+        "--morph"
+      ],
+      "guardrails": [
+        "§1.1 no filter/blur animation — crossfade is opacity-only, no filter touched",
+        "§1.5 no setState in a scroll handler — Mode B writes one style.setProperty, never React state",
+        "§1.6 never animate width/height/top/left/margin/padding/background-color — only opacity animates; two gradient layers crossfade",
+        "§1.8 scroll listener is rAF-throttled (ticking guard), passive, with a CSS scroll-timeline native path on top",
+        "§1.9 no 3D rotation on touch — component has no tilt/pointer-3D at all, so nothing to gate",
+        "§1.11 / §4.1 no default easing — all motion uses var(--ease-reveal) / power3.out, never ease/linear/ease-in-out",
+        "§4.5 vary title treatment — eyebrow + summary rise (translate) while the title uses a clip/mask reveal",
+        "§4.6 palette temperature shifts across the chapter (warm before → cool after), not one temperature throughout",
+        "Reduced motion (§1.9 distinct state) — @media reduce + matchMedia freeze layer-b at opacity 0 and disable entrance motion, leaving a stable composed frame",
+        "AA contrast held — foreground palette is fixed and a constant scrim keeps type off the brightest gradient peaks"
+      ],
+      "files": {
+        "modeA": "components/mode-a/morph-background.html",
+        "modeB": "components/mode-b/morph-background.tsx"
+      }
+    },
+    {
+      "name": "HorizontalGallery",
+      "slug": "horizontal-gallery",
+      "purpose": "A sticky section that converts vertical scroll progress into horizontal translateX of a keyboard-focusable card track on desktop, degrading to native horizontal overflow scroll (no pinning) on touch and under reduced-motion.",
+      "modes": [
+        "mode-a",
+        "mode-b"
+      ],
+      "tokensConsumed": [
+        "--bg",
+        "--surface",
+        "--fg",
+        "--fg-dim",
+        "--accent",
+        "--line",
+        "--font-display",
+        "--font-body",
+        "--font-ui",
+        "--fluid-h1",
+        "--size-caption",
+        "--size-body-lg",
+        "--space-md",
+        "--space-lg",
+        "--space-4xl",
+        "--ease-reveal",
+        "--dur-slow",
+        "--dur-base",
+        "--lh-tight",
+        "--lh-relaxed"
+      ],
+      "guardrails": [
+        "1.1 — no filter/blur animation anywhere; the only animated properties are transform and opacity",
+        "1.2 — no scroll-jacking of short content: on touch the pin is dropped and the track becomes a native overflow scroller",
+        "1.3 — single pinned section with a clear release viewport (spacers before/after), never a stacked pin chain",
+        "1.5 — no setState inside the scroll path; Mode A uses a rAF tick + raw style.transform, Mode B uses GSAP ScrollTrigger scrub (no React state)",
+        "1.6 — never animates width/height/top/left/margin/padding; horizontal travel is translate3d only",
+        "1.8 — scroll handler is rAF-throttled (single in-flight frame) and passive; preferred path is CSS animation-timeline with zero per-frame JS",
+        "1.9 — no 3D rotation / tilt at all, so nothing to gate; touch and reduced-motion get a static non-motion native scroller",
+        "1.10 — motion is purely scroll/user-driven, never autoplaying",
+        "5.3 — prefers-reduced-motion branch disables the pin and the scrub entirely, leaving a usable horizontal scroller"
+      ],
+      "files": {
+        "modeA": "components/mode-a/horizontal-gallery.html",
+        "modeB": "components/mode-b/horizontal-gallery.tsx"
+      }
+    },
+    {
+      "name": "ScrubVideo",
+      "slug": "scrub-video",
+      "purpose": "A scroll-scrubbed &lt;video&gt; whose currentTime is driven by scroll progress (rAF, requestVideoFrameCallback when available) inside a pinned stage, degrading on iOS/touch to a poster still (with an image-sequence canvas as the documented touch upgrade).",
+      "modes": [
+        "mode-a",
+        "mode-b"
+      ],
+      "tokensConsumed": [
+        "--bg",
+        "--surface",
+        "--fg",
+        "--fg-dim",
+        "--accent",
+        "--font-display",
+        "--font-body",
+        "--font-ui",
+        "--fluid-h1",
+        "--size-caption",
+        "--space-md",
+        "--space-lg",
+        "--ease-reveal",
+        "--ease-exit",
+        "--dur-slow",
+        "--lh-tight",
+        "--lh-relaxed"
+      ],
+      "guardrails": [
+        "§1.1 — no filter/blur/brightness animation in the scroll hot path (only opacity cross-fade + currentTime seek)",
+        "§1.5 — no setState/React state mutation inside the scroll handler; raw currentTime write via ref",
+        "§1.6 — no width/height/top/left/margin/padding animation; transform + opacity + currentTime only, no 'transition: all'",
+        "§1.8 — scroll listener is rAF/requestVideoFrameCallback-throttled with a ticking guard, passive: true",
+        "§1.9 — no 3D rotation; touch + prefers-reduced-motion both disable the scrub and rest on a stable poster",
+        "§1.10 — video never autoplays; motion is user-scroll-driven only (muted/playsinline/no autoplay attr)",
+        "§1.11 / §4.1 — two distinct curves used (--ease-reveal for entrance, --ease-exit for the poster cross-fade), no default ease/linear",
+        "§5.2-analog — first-class non-scrub fallback (poster still; documented image-sequence canvas upgrade) for iOS/touch where the effect is unsupported"
+      ],
+      "files": {
+        "modeA": "components/mode-a/scrub-video.html",
+        "modeB": "components/mode-b/scrub-video.tsx"
+      }
+    },
+    {
+      "name": "KineticHeadline",
+      "slug": "kinetic-headline",
+      "purpose": "A heading that splits into per-word, per-line spans which stagger in on transform + opacity as it enters view (split-line-rise vocabulary), reading as one accessible aria-label while the visual spans are aria-hidden, and collapsing to the plain heading under reduced motion.",
+      "modes": [
+        "mode-a",
+        "mode-b"
+      ],
+      "tokensConsumed": [
+        "--bg",
+        "--surface",
+        "--fg",
+        "--fg-dim",
+        "--accent",
+        "--line",
+        "--font-display",
+        "--font-body",
+        "--font-ui",
+        "--fluid-h1",
+        "--size-caption",
+        "--size-body-lg",
+        "--space-md",
+        "--space-lg",
+        "--space-4xl",
+        "--ease-reveal",
+        "--dur-slow",
+        "--lh-tight",
+        "--lh-relaxed"
+      ],
+      "guardrails": [
+        "§1.6 — animates transform (translateY/yPercent) + opacity only; never width/height/top/left/margin/padding/filter, no transition:all",
+        "§1.9 — no 3D rotation/tilt anywhere; nothing to disable on touch, and prefers-reduced-motion collapses to the static plain heading (the only all-static state)",
+        "§3.5 — title reveal runs on --dur-slow (720ms), within the title-reveal duration band",
+        "§3.6 — per-word stagger of 70ms (--i * 70ms / stagger:0.07) kept to a ~5-step wave so early words don't finish before late ones start",
+        "§4.1 / §1.11 — uses the role-specific --ease-reveal cubic-bezier(.16,1,.3,1) (GSAP expo.out), never ease/linear/ease-in-out",
+        "§4.5 — implements the split-line-rise / word-stagger title treatment (each line's words rise from translateY behind a line-mask)",
+        "§4.8 — display type at line-height 1.1 (--lh-tight); a single display family, no third typeface",
+        "§1.5 — Mode B never calls setState in a scroll path; reveal is fired once by ScrollTrigger; Mode A flips a class via IntersectionObserver (no scroll handler)"
+      ],
+      "files": {
+        "modeA": "components/mode-a/kinetic-headline.html",
+        "modeB": "components/mode-b/kinetic-headline.tsx"
+      }
+    },
+    {
+      "name": "MagneticCursor",
+      "slug": "magnetic-cursor",
+      "purpose": "A custom cursor dot that rAF-lerps toward the pointer and snaps toward real focusable magnetic targets on hover, gated to fine pointers and disabled (native cursor restored) on touch and reduced-motion.",
+      "modes": [
+        "mode-a",
+        "mode-b"
+      ],
+      "tokensConsumed": [
+        "--bg",
+        "--surface",
+        "--fg",
+        "--fg-dim",
+        "--accent",
+        "--line",
+        "--font-display",
+        "--font-body",
+        "--font-ui",
+        "--fluid-h1",
+        "--size-caption",
+        "--size-body-lg",
+        "--space-md",
+        "--space-lg",
+        "--space-4xl",
+        "--ease-reveal",
+        "--ease-playful",
+        "--dur-base",
+        "--lh-tight",
+        "--lh-relaxed"
+      ],
+      "guardrails": [
+        "1.5 — no setState inside the move/animation loop; the dot is mutated via direct transform / GSAP quickTo, never React state",
+        "1.6 — animates transform + opacity (and color) only; never width/height/top/left/margin/padding/filter",
+        "1.8 — a single rAF/gsap.ticker drives the lerp; pointermove only records coords (passive), no per-event layout work or unthrottled listener",
+        "1.9 — magnetic pointer effect is gated behind (hover:hover) and (pointer:fine), disabled under prefers-reduced-motion and on touch, with the native cursor as the stable non-motion fallback",
+        "1.11 — distinct easing roles: --ease-reveal for the dot's color/opacity fade vs --ease-playful / back.out for the snap scale (no single curve everywhere)"
+      ],
+      "files": {
+        "modeA": "components/mode-a/magnetic-cursor.html",
+        "modeB": "components/mode-b/magnetic-cursor.tsx"
+      }
+    }
+  ]
+}

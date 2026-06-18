@@ -1,0 +1,22 @@
+{
+  "$description": "Temporal Monument — chiaroscuro blacks, cold steel highlights, tungsten practicals; deepest layer stack, variable relentless momentum. Gotham display. See references/film-archetypes.md §4.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Temporal Monument", "archetype": "references/film-archetypes.md#4-temporal-monument", "depth-layers": 7, "pin-vh": [120, 250] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#0A0A0A" },
+      "surface": { "$value": "#15161A" },
+      "fg":      { "$value": "#C8D8E8" },
+      "fg-dim":  { "$value": "#7E8A98" },
+      "accent":  { "$value": "#E8C97A" },
+      "line":    { "$value": "{core.color.alpha.line-on-dark}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.gotham}" },
+      "body":    { "$value": "{core.font.neo-grotesque}" },
+      "ui":      { "$value": "{core.font.gotham}" }
+    },
+    "ease": {
+      "reveal":  { "$value": [0.76, 0, 0.24, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "power3.inOut" } } }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$description": "Brutalist Kinetic — raw concrete grays, one safety-orange accent, monospace everything, hard mechanical motion. NET-NEW system. See references/film-archetypes.md §8.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Brutalist Kinetic", "archetype": "references/film-archetypes.md#8-brutalist-kinetic", "depth-layers": 2, "pin-vh": [160, 220] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#D9D7D0" },
+      "surface": { "$value": "#C7C5BD" },
+      "fg":      { "$value": "#141414" },
+      "fg-dim":  { "$value": "#56544E" },
+      "accent":  { "$value": "#FF4D00" },
+      "line":    { "$value": "{core.color.alpha.line-on-light}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.mono}" },
+      "body":    { "$value": "{core.font.mono}" },
+      "ui":      { "$value": "{core.font.mono}" }
+    },
+    "ease": {
+      "reveal":  { "$value": [0.83, 0, 0.17, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "expo.inOut" } } }
+    }
+  }
+}

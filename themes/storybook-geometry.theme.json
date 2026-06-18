@@ -1,0 +1,22 @@
+{
+  "$description": "Storybook Geometry — pastel hard-edged colour fields, centered symmetry, snap-quick lateral motion. Geometric display. See references/film-archetypes.md §3.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Storybook Geometry", "archetype": "references/film-archetypes.md#3-storybook-geometry", "depth-layers": 3, "pin-vh": [150, 180] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#F4E4BC" },
+      "surface": { "$value": "#FBF3DD" },
+      "fg":      { "$value": "#2E2A24" },
+      "fg-dim":  { "$value": "#6E6450" },
+      "accent":  { "$value": "#D4738C" },
+      "line":    { "$value": "{core.color.alpha.line-on-light}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.geometric}" },
+      "body":    { "$value": "{core.font.sans}" },
+      "ui":      { "$value": "{core.font.geometric}" }
+    },
+    "ease": {
+      "reveal":  { "$value": [0.22, 1, 0.36, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "power4.out" } } }
+    }
+  }
+}

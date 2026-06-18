@@ -31,18 +31,21 @@ Both are compositor-only. Nothing else animates during scroll.
 
 ## 2. The Safari gotcha (read this first)
 
-**Never rely on CSS `animation-timeline: view()` / `scroll()` for mobile scroll
-coupling.** On iOS Safari, the feature *reports as supported*:
+**Version-gate CSS `animation-timeline: view()` / `scroll()` on mobile — JS is the
+safe default.** Native CSS scroll-driven animations now work on **Safari 26+** and
+Chrome/Opera 115+. But on **older iOS Safari (≤18)** the feature *reports as
+supported* yet doesn't drive:
 
 ```js
-CSS.supports('animation-timeline: view()') // => true on iOS Safari
+CSS.supports('animation-timeline: view()') // => true even on old iOS Safari
 ```
 
-…but the timeline **does not actually advance** — the animation sits frozen at
-its start keyframe while you scroll. A `@supports (animation-timeline: view())`
-gate will happily activate dead code. Feature-detection lies here.
+…there the timeline **does not actually advance** — the animation sits frozen at
+its start keyframe while you scroll, so a bare `@supports` gate activates dead code.
+Feature-detection alone lies on those versions.
 
-**Always drive mobile scroll coupling from JavaScript:**
+**For the broadest support, drive mobile scroll coupling from JavaScript** (and
+layer the CSS path on top only as a progressive enhancement for Safari 26+/Chrome):
 
 - **Mode A (vanilla):** a `requestAnimationFrame` loop reading `window.scrollY`.
 - **Mode B (React):** framer-motion's `useScroll` → `useTransform` → `useSpring`.

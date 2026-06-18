@@ -1,0 +1,22 @@
+{
+  "$description": "Botanical Editorial — warm paper, deep leaf-green accent, editorial serif, gentle organic reveals. NET-NEW system. See references/film-archetypes.md §10.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Botanical Editorial", "archetype": "references/film-archetypes.md#10-botanical-editorial", "depth-layers": 3, "pin-vh": [200, 260] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#F3F1E7" },
+      "surface": { "$value": "#FAF8EE" },
+      "fg":      { "$value": "#23291F" },
+      "fg-dim":  { "$value": "#5E6B53" },
+      "accent":  { "$value": "#4A6B3A" },
+      "line":    { "$value": "{core.color.alpha.line-on-light}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.editorial-serif}" },
+      "body":    { "$value": "{core.font.editorial-serif}" },
+      "ui":      { "$value": "{core.font.sans}" }
+    },
+    "ease": {
+      "reveal":  { "$value": [0.4, 0, 0.2, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "sine.inOut" } } }
+    }
+  }
+}

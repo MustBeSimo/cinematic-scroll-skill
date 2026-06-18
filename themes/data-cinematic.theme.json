@@ -1,0 +1,22 @@
+{
+  "$description": "Data Cinematic — deep navy data-viz ground, signal-green accent, grotesk + mono, precise glowing reveals. NET-NEW system. See references/film-archetypes.md §11.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Data Cinematic", "archetype": "references/film-archetypes.md#11-data-cinematic", "depth-layers": 4, "pin-vh": [200, 280] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#0A0F1E" },
+      "surface": { "$value": "#121A30" },
+      "fg":      { "$value": "#DCE6F5" },
+      "fg-dim":  { "$value": "#7C89A6" },
+      "accent":  { "$value": "#4FE0B0" },
+      "line":    { "$value": "{core.color.alpha.line-on-dark}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.grotesk}" },
+      "body":    { "$value": "{core.font.sans}" },
+      "ui":      { "$value": "{core.font.mono}" }
+    },
+    "ease": {
+      "reveal":  { "$value": [0.7, 0, 0.3, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "power2.inOut" } } }
+    }
+  }
+}

@@ -32,7 +32,7 @@ Built by [Simone Leonelli](https://w230.net) · [simone@w230.net](mailto:simone@
 
 ## ✦ Cinematic taste is now a number you can gate on
 
-Cinematic Scroll isn't a prompt pack — it's a **craft contract**: plan the motion, build the scene, compile it to **web *and* video**, then run a **doctor** that catches cinematic slop before it ships. **`cinematic-doctor`** scores any build **0–100** across taste, performance, a11y, mobile, and 3D — and exits non-zero below threshold, so quality is **CI-blockable**, not a vibe.
+Cinematic Scroll isn't a prompt pack — it's a **craft contract**: plan the motion, build the scene, compile it to **web *and* video**, then run a **doctor** that catches cinematic slop before it ships. **`cinematic-doctor`** scores any build **0–100** across taste, performance, a11y, mobile, **tokens**, and 3D — and exits non-zero below threshold, so quality is **CI-blockable**, not a vibe.
 
 ```bash
 npm run doctor -- examples/noir/index.html
@@ -52,6 +52,24 @@ The doctor **exits non-zero below 80**, so you can wire it into CI and block bui
 ```bash
 npm run proof -- examples/noir/index.html
 ```
+
+## ✦ Design system: one token contract → 11 systems → a component library
+
+The look is the user's, but it's no longer improvised. A machine-readable **design contract** now drives every build:
+
+- **[`design.md`](./design.md) + [`tokens/`](./tokens/)** — W3C DTCG design tokens (color, type, spacing, radii, and first-class **motion** tokens: the signature easing curves and §3 pacing rules as *data*). A zero-dependency pipeline emits CSS vars + typed TS; Mode A stays zero-build.
+- **11 visual systems as one-file themes** ([`themes/`](./themes/)) — Symmetric Monument, Clinical Noir, Storybook Geometry, Temporal Monument, Atmospheric Sublime, Warm Scrapbook, Naturalistic Drift, Brutalist Kinetic, Liquid Chrome, Botanical Editorial, Data Cinematic. Pick a look = swap one theme file; every theme is WCAG-AA contrast-checked.
+- **A named component library** ([`components/`](./components/) · [`component-grammar.md`](./references/component-grammar.md)) — HeroParallax, PinnedReveal, DepthFigure, TiltCard, MorphBackground, HorizontalGallery, ScrubVideo, KineticHeadline, MagneticCursor — token-driven, both modes (Mode A `.html` + Mode B `.tsx`), each doctor-verified.
+
+```bash
+npm run tokens:check && npm run themes:check          # the contract is sound (tokens + 11 themes)
+npm run verify -- components/mode-a/hero-parallax.html # one command: contract + doctor + runtime
+npm test                                              # every gate — the same set CI runs
+```
+
+### ✦ Reviewed & hardened
+
+This release went through an **adversarial self-review** — independent passes over every component, gate script, token, and doc. It surfaced **50 issues**; all critical/high and every doc/data inaccuracy are fixed and re-verified, the rest tracked. Full ledger: **[`REVIEW.md`](./REVIEW.md)**.
 
 <a id="flagships"></a>
 ### ⚡ Two 3D / WebXR flagships — real WebGL, both doctor 100/100
@@ -299,6 +317,12 @@ Full walkthrough: [`examples/GETTING_STARTED.md`](./examples/GETTING_STARTED.md)
 cinematic-scroll-skill/
 ├── SKILL.md                  # the agent contract (Mode A + Mode B). For Claude, not humans.
 ├── README.md                 # you are here
+├── design.md                 # ✦ the design contract — token roles, motion, banned patterns
+├── tokens/                   # ✦ DTCG design tokens (core · motion · semantic) + build/ (emitted CSS/TS)
+├── themes/                   # ✦ 11 visual systems as one-file theme overlays
+├── components/               # ✦ named component library — Mode A .html + Mode B .tsx + manifest.json
+├── evals/                    # ✦ triggering set + golden-output evals + runner
+├── REVIEW.md                 # ✦ adversarial self-review ledger (50 findings + status)
 ├── COMPATIBILITY.md          # platform installation & verification (Claude, Cursor, Hermes, OpenClaw)
 ├── LICENSE                   # MIT
 ├── manifest.json             # skill metadata (free)
@@ -308,8 +332,9 @@ cinematic-scroll-skill/
 ├── scroll-choreography.json  # the declarative choreography schema + example
 ├── FRAME.md                  # brand spec for video agents (the frame translation)
 ├── taste-guardrails.md       # banned patterns, cinematic vocabulary, pacing rules
-├── references/               # scroll patterns · film archetypes · perf budget · 3d-stack · webxr
-├── tools/cinematic-doctor/   # ✦ the 0–100 quality gate (taste·perf·a11y·mobile·3D, CI-blockable)
+├── references/               # scroll patterns · film archetypes · component grammar · design tokens · perf · 3d · webxr
+├── tools/cinematic-doctor/   # ✦ the 0–100 quality gate (taste·perf·a11y·mobile·tokens·3D, CI-blockable)
+├── tools/                    # ✦ check-tokens · check-themes · check-links · check-consistency · build-tokens · verify · skill-sync
 ├── video/                    # PIPELINE.md (HyperFrames × Remotion) + the film projects
 │   ├── src/                  # Remotion: Promo · TwoMedia · Flagship3D · Doctor
 │   ├── ship-in-5/            # HyperFrames: the 60s launch guide

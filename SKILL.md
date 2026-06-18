@@ -1,6 +1,6 @@
 ---
 name: cinematic-scroll
-description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with optional AI-generated visuals via the fal.ai remote API (Mode B — requires your own fal.ai key; makes outbound API calls to fal.ai). Includes an optional audit mode in which the agent analyzes a user-supplied URL using its own browser/fetch access and scores the scroll experience on 4 dimensions (Pacing, Performance, Accessibility, Emotional Arc). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 7 visual systems, and a transform/opacity performance budget as built-in craft constraints. Advanced capabilities are user-initiated, not absent: WebXR/AR sessions are feature-gated and only start on an explicit user action (an Enter VR/AR button that appears solely when the device reports support), and 3D GLB generation lives in the Mode B Next.js template (`templates/nextjs/scripts/generate-flagship-assets.mjs`, run with your own fal.ai key) — see activation guidelines below.
+description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with optional AI-generated visuals via the fal.ai remote API (Mode B — requires your own fal.ai key; makes outbound API calls to fal.ai). Includes an optional audit mode in which the agent analyzes a user-supplied URL using its own browser/fetch access and scores the scroll experience on 4 dimensions (Pacing, Performance, Accessibility, Emotional Arc). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 11 visual systems, and a transform/opacity performance budget as built-in craft constraints. Advanced capabilities are user-initiated, not absent: WebXR/AR sessions are feature-gated and only start on an explicit user action (an Enter VR/AR button that appears solely when the device reports support), and 3D GLB generation lives in the Mode B Next.js template (`templates/nextjs/scripts/generate-flagship-assets.mjs`, run with your own fal.ai key) — see activation guidelines below.
 version: 2.3.5
 author: Simone Leonelli
 license: MIT
@@ -71,11 +71,24 @@ Read this section first; read the rest as the route demands. Three rules:
 | Request shape | Do this | Read first |
 |---|---|---|
 | "a scroll section / hero / one-pager" | **Mode A**: one self-contained `.html` (GSAP + ScrollTrigger via pinned CDN + SRI). Start from the closest `examples/*` page. | Phase 4 Mode A rules · `taste-guardrails.md` |
-| "a release site / product launch / multi-chapter story" | **Mode B**: copy `templates/nextjs/` verbatim, then art-direct. | Phase 4 Mode B rules · `templates/nextjs/README` |
+| "a release site / product launch / multi-chapter story" | **Mode B**: copy `templates/nextjs/` verbatim, then art-direct. | Phase 4 Mode B rules · `templates/nextjs/FLAGSHIP.md` |
 | "3D / WebGL / WebXR / 'like the flagship'" | Mode A → adapt `examples/flagship/` (vanilla three, manifest-driven GLBs, FX layer). Mode B → the `/flagship` route (`templates/nextjs/FLAGSHIP.md`). Generate real meshes: `npm run generate:flagship -- --apply` (needs `FAL_KEY`). | `references/3d-stack.md` · `ASSETS-3D.md` |
 | "a launch film / video of the site" | Compile the same choreography to video: `node compile-choreography.mjs scene.json --target video`, or author HyperFrames/Remotion directly in `video/`. | `FRAME.md` · `video/PIPELINE.md` |
-| "audit / review / improve my page" | Run the doctor first, fix what it flags, re-run. | `tools/cinematic-doctor/README.md` |
+| "score / review an existing URL's scroll experience" | **Audit mode**: analyze the user-supplied URL (only sites they own or are authorized to test) and score Pacing / Performance / Accessibility / Emotional Arc, then emit a remediation plan. | `audit-mode.md` |
+| "audit / improve a page I'm building" | Run the doctor first, fix what it flags, re-run; pair with the verify orchestrator. | `tools/cinematic-doctor/README.md` · `tools/verify/README.md` |
 | "Awwwards-tier / image distortion / kinetic type / custom cursor / preloader / page transitions" | The five second-generation techniques, each with its degrade contract; all five live in `examples/atelier/`. | `references/awwwards-techniques.md` |
+
+**1b · Speak the design contract.** Before emitting any CSS/TS, resolve every
+color, type size, spacing value, easing curve, and pin height through a token —
+never a literal. The readable map is [`design.md`](design.md); the machine source
+is [`tokens/`](tokens/) (DTCG: `core` primitives, `motion`, `semantic` roles).
+Components/chapters reference semantic role vars only (`--bg`, `--accent`,
+`--ease-reveal`); a visual-system swap is one `themes/*.theme.json`. Verify the
+contract with `npm run tokens:check`. Full reference: `references/design-tokens.md`.
+Reusable, doctor-verified building blocks (HeroParallax, PinnedReveal, DepthFigure,
+TiltCard, MorphBackground, HorizontalGallery, ScrubVideo, KineticHeadline,
+MagneticCursor) live in `references/component-grammar.md` + `components/` (Mode A
+html + Mode B tsx) — start from these instead of writing motion from scratch.
 
 **2 · Match the gating to the ask.** The 5-phase pipeline below produces an
 artifact per phase. When the user wants the *process* (or the brief is genuinely
@@ -93,7 +106,7 @@ node tools/cinematic-doctor/cli.mjs <your-page>.html   # 0–100; exits non-zero
 ```
 
 Fix what it flags and re-run until it passes — the same gate CI enforces. The
-doctor scores taste, performance, a11y, mobile, and 3D; its findings reference
+doctor scores taste, performance, a11y, mobile, tokens, and 3D; its findings reference
 the exact guardrail sections to read. For Mode B also run `npm run typecheck`
 and `npm run build` in the project.
 
@@ -129,6 +142,17 @@ reviewing dailies, against `taste-guardrails.md`:
 Anything you would screenshot-and-complain-about as a user, fix and re-prove.
 A build is done when the doctor passes, proof exits 0, AND the shots would
 survive an art director's review.
+
+**Verification map** — four surfaces, each answers a different question:
+
+| Question | Use | Command |
+|---|---|---|
+| Is an *existing URL's* scroll experience any good? | `audit-mode.md` (4-dimension score + remediation) | agent-driven |
+| Does *my static build* clear the craft bar? | `cinematic-doctor` (taste/perf/a11y/mobile/tokens/3D) | `npm run doctor -- <file>` |
+| Does it *run* without errors / jank? | `page-proof` (headless run, console, shots, fps) | `npm run proof -- <file>` |
+| Prove a whole phase at once (contract + doctor + runtime + Mode B) | `verify-build` orchestrator | `npm run verify -- <target>` |
+
+The contract itself: `npm run tokens:check · themes:check · links:check · evals:run`, or all gates via `npm test`.
 
 ---
 
@@ -238,47 +262,7 @@ the visual system, and establish the motion personality.
 
 ### Output: `cinematic-audit.md`
 
-```markdown
-# Cinematic Audit — [Project Name]
-
-## Brand Motion Personality
-[3-5 adjectives, e.g., "precise, clinical, data-driven, restrained"]
-
-## Emotional Arc
-- **Opening (0-20%):** [emotion, e.g., "awe at scale"]
-- **Discovery (20-50%):** [emotion, e.g., "curiosity, information hunger"]
-- **Turning Point (50%):** [emotion, e.g., "realization of complexity"]
-- **Climax (50-80%):** [emotion, e.g., "confidence, trust"]
-- **Resolution (80-100%):** [emotion, e.g., "clarity, call to action"]
-
-## Audience Analysis
-- Primary device: [desktop/mobile/tablet split]
-- Technical sophistication: [low/medium/high]
-- Expected attention span: [short <2min / medium 2-5min / long >5min]
-
-## Device Context
-- Primary viewport: [e.g., 1440px desktop, 390px mobile]
-- Performance tier: [flagship/mid-range/budget/mixed]
-
-## Accessibility Requirements
-- WCAG target: [AA/AAA]
-- Reduced-motion support: [required/preferred]
-
-## Visual System
-- **Primary:** [e.g., Clinical Noir — clinical precision, data-driven]
-- **Accent (optional):** [e.g., Symmetric Monument for the authority moment]
-- **Rationale:** [why this system matches the brand]
-
-## Color Temperature Progression
-[Chapter-by-chapter temperature plan: warm → cool → neutral → warm]
-
-## Typography Strategy
-- Display: [font family, sizing approach]
-- Body: [font family, sizing approach]
-- Source: [from film-archetypes.md Section X]
-```
-
----
+→ Full template: [`references/artifact-templates.md`](references/artifact-templates.md). Copy the **cinematic-audit.md** section and fill every field.
 
 ## Phase 2: Motion Storyboard
 
@@ -329,70 +313,7 @@ treatment twice in a row.
 
 ### Output: `motion-storyboard.md`
 
-```markdown
-# Motion Storyboard — [Project Name]
-
-## Chapter Map
-
-| # | ID | Pattern | Pin Duration | Transition | Title Reveal |
-|---|---|---|---|---|---|
-| 1 | hero | Pinned Hero | 250vh | Crane shot down | Mask reveal |
-| 2 | problem | Sticky Narrative | 200vh | Fade through black | Word stagger |
-| 3 | solution | Chaptered Release | 300vh | Whip pan right | Letter-spacing scrub |
-| 4 | ... | ... | ... | ... | ... |
-
-## Chapter Details
-
-### Chapter 1: [ID] — [Pattern from scroll-patterns.md Section X]
-**Pin duration:** [X]vh
-**Pattern reference:** `references/scroll-patterns.md` Section [X]
-**Depth layers:**
-| Layer | Depth | Role | Content |
-|---|---|---|---|
-| 0 | 0.15 | Atmospheric far | [description] |
-| 1 | 0.30 | Mid-far | [description] |
-| ... | ... | ... | ... |
-**Title reveal:** [technique from taste-guardrails.md Section 4.5]
-**Transition to next:** [film technique from taste-guardrails.md Section 2]
-**Mobile degradation:** [plan from performance-budget.md Section 3]
-**Color temperature:** [warm/cool/neutral]
-
-[Repeat for each chapter]
-
-## Transition Map
-
-| From | To | Type | Film Technique | Duration (scroll) |
-|---|---|---|---|---|
-| ch1 | ch2 | [type] | [e.g., Crane shot] | [X]vh |
-| ... | ... | ... | ... | ... |
-
-## Timing / Pacing Spec
-
-- Default rhythm: 1.2s scroll per 100vh (`taste-guardrails.md` Section 3.1)
-- Total experience scroll distance: [X]vh
-- Estimated scroll time at normal speed: [X] seconds
-- Title reveal duration per chapter: 30-40% of pin range (Section 3.5)
-- Stagger offset: 5-8% per element, max 5 elements before overlap (Section 3.6)
-- Snap dead zone: never within 10vh of pin start/end (Section 3.7)
-- Motion density limit: max 3 simultaneous motion types per 50vh window (Section 3.8)
-
-## Mobile Degradation Plan
-
-[Per-chapter summary of mobile strategy, referencing performance-budget.md
-Section 3 tier degradation]
-
-## Anti-Convergence Checklist
-
-- [ ] No adjacent chapters share the same pattern
-- [ ] No adjacent chapters share the same transition type
-- [ ] No adjacent chapters share the same title reveal style
-- [ ] No depth multiplier is repeated between adjacent chapters
-- [ ] Color temperature alternates between chapters
-- [ ] All pins are 150-400vh
-- [ ] All pins have 80vh breathing room between them
-```
-
----
+→ Full template: [`references/artifact-templates.md`](references/artifact-templates.md). Copy the **motion-storyboard.md** section and fill every field.
 
 ## Phase 3: Technical Spec
 
@@ -504,96 +425,7 @@ WebXR session setup, comfort/safety, and AR quick-look: `references/webxr.md`.
 
 ### Output: `technical-spec.md`
 
-```markdown
-# Technical Spec — [Project Name]
-
-## 3D / Shader Stack Tier
-
-- **Tier:** [A (GSAP/CSS only) / B (Three + GLB) / C (Three + shaders) / D (+ WebXR)]
-- **Narrative need (justifies the tier):** [named need, or "none — Tier A" ]
-- **Pinned versions:** [e.g., three@0.160.0 exact; @react-three/fiber ^8.15; @google/model-viewer ^3.5]
-- **Per-chapter:** [which chapters are 3D and at which tier; the rest are Tier A]
-- Source: `references/3d-stack.md` (selection + caps), `references/webxr.md` (Tier D)
-
-## Package Selection
-
-| Package | Version | Purpose |
-|---|---|---|
-| gsap | ^3.13 | Core animation engine |
-| lenis | ^1.3.23 | Smooth scroll (alternative: GSAP ScrollSmoother) |
-| choreo-3d | latest | Pinning orchestration, ScrollLayer, ScrollChoreography |
-| @gsap/react | latest | useGSAP hook for React integration |
-| next | ^15 | Framework (Mode B only) |
-| three | 0.160.0 | Renderer — **exact pin** (Tier B/C/D only) |
-| @google/model-viewer | ^3.5 | AR quick-look web component (Tier B/D only) |
-
-## Component Architecture
-
-[Diagram or list of components and their responsibilities]
-
-## Animation Timeline Specs
-
-### Chapter 1: [ID]
-```javascript
-// GSAP ScrollTrigger configuration
-ScrollTrigger.create({
-  trigger: '#ch1',
-  start: 'top top',
-  end: '+=250vh',
-  pin: true,
-  scrub: 0.5,
-  snap: { /* ... */ },
-});
-```
-**Scroll-scrub values:** [list]
-**Easing functions:** [per-role assignment]
-**Layer animation details:** [per-layer transform specs]
-
-[Repeat for each chapter]
-
-## Performance Budget Allocation
-
-| Resource | Budget | Actual | Status |
-|---|---|---|---|
-| Compositor layers (desktop) | 10 max | [X] | OK/RISK |
-| Compositor layers (mobile) | 4 max | [X] | OK/RISK |
-| Images per chapter | 3 max | [X] | OK/RISK |
-| Total image weight | 500KB/ch | [X] | OK/RISK |
-| Font families | 2 max | [X] | OK/RISK |
-| Animation JS | 100KB gz | [X] | OK/RISK |
-
-## Asset Requirements
-
-| Chapter | Asset | Type | Spec | Prompt/Source |
-|---|---|---|---|---|
-| 1 | hero-bg | image | 1920x1080 WebP | [prompt or URL] |
-| ... | ... | ... | ... | ... |
-
-## Mobile Degradation Implementation
-
-[Per-chapter mobile strategy with specific code approach]
-
-## Performance Risks & Mitigations
-
-| Risk | Severity | Mitigation |
-|---|---|---|
-| [e.g., 8 layers in ch3] | High | Reduce to 5, use opacity faking |
-| ... | ... | ... |
-
-## GSAP Defaults
-
-```javascript
-ScrollTrigger.defaults({
-  markers: false,
-  scrub: 0.5,
-  invalidateOnRefresh: true,
-  fastScrollEnd: true,
-  preventOverlaps: true,
-});
-```
-```
-
----
+→ Full template: [`references/artifact-templates.md`](references/artifact-templates.md). Copy the **technical-spec.md** section and fill every field.
 
 ## Phase 4: Build
 
@@ -762,8 +594,10 @@ a bug, not a style choice.
 
 6. **All runtime 3D asset paths come from a manifest** — never hardcode model,
    USDZ, or poster paths in code. Read them from
-   `examples/flagship/assets-3d/manifest.json` (shape: `version`, `basePath`,
-   `chapters.{id}.{model, usdz, poster, scale, cameraNodes, clips, ar}`).
+   `examples/flagship/assets-3d/manifest.json` (shape: `version` (2), `basePath`,
+   `chapters.{id}.{label, runtime, iosAr, fallbackPoster, height, lift, spin,
+   pivot, cameraNodes, shader, scale, animations, stripRootMotion}` — `runtime`
+   is the glb path or `"procedural"`, `iosAr` the optional `.usdz`).
 
 7. **XR (Tier D) is feature-gated.** Check `navigator.xr` and
    `await navigator.xr.isSessionSupported('immersive-vr' | 'immersive-ar')`
@@ -849,7 +683,7 @@ and final quality gate.
    ```
 
    It statically scores the build 0–100 across taste, performance, a11y, mobile,
-   and (when 3D is detected) 3D categories, prints a scorecard, writes
+   tokens, and (when 3D is detected) 3D categories, prints a scorecard, writes
    `cinematic-report.json`, and **exits non-zero below the default threshold of
    80** — so it is CI-blockable / pre-commit-hook ready. Treat a failing score as
    a list of concrete fixes to apply, then re-run until it passes. Do not call
@@ -857,78 +691,7 @@ and final quality gate.
 
 ### Output: `polish-report.md`
 
-```markdown
-# Polish Report — [Project Name]
-
-## Performance Audit
-
-### Scroll Jank Measurement
-- Test device: [e.g., MacBook Pro M3]
-- Recording duration: 10 seconds
-- Frames dropped: [X] / [total] ([X]%)
-- Status: [PASS / FAIL] (target: < 5%)
-
-### Lighthouse Scores
-| Metric | Score | Target | Status |
-|---|---|---|---|
-| Performance | [X] | > 90 | OK/FAIL |
-| Accessibility | [X] | > 95 | OK/FAIL |
-| Best Practices | [X] | > 90 | OK/FAIL |
-| SEO | [X] | > 90 | OK/FAIL |
-
-### Layer Count
-- Desktop: [X] layers (budget: 10) — OK/FAIL
-- Mobile: [X] layers (budget: 4) — OK/FAIL
-
-## Accessibility Checklist
-
-- [ ] All images have alt text
-- [ ] Focus states on all interactive elements
-- [ ] Keyboard navigation works
-- [ ] aria-label on visual nav controls
-- [ ] Color contrast ≥ 4.5:1 for body text
-- [ ] Reduced-motion: content visible and usable
-- [ ] Screen reader compatible
-
-## Mobile Test Results
-
-| Device | OS | Browser | Result |
-|---|---|---|---|
-| iPhone 15 Pro | iOS 17 | Safari | PASS/FAIL |
-| iPhone 12 | iOS 17 | Safari | PASS/FAIL |
-| iPhone SE | iOS 17 | Safari | PASS/FAIL |
-| Samsung S24 | Android 14 | Chrome | PASS/FAIL |
-| Pixel 6 | Android 14 | Chrome | PASS/FAIL |
-
-## Banned Patterns Check
-
-- [ ] No filter animation during scroll
-- [ ] No layout property animation (width/height/top/left)
-- [ ] No setState in scroll handlers
-- [ ] No >7 layers per chapter
-- [ ] No same easing for every animation
-- [ ] No same transition type between adjacent chapters
-
-## Emotional Arc Verification
-
-| Scroll Position | Expected Emotion | Actual | Match |
-|---|---|---|---|
-| 0-20% | [from audit] | [observed] | Y/N |
-| 20-50% | [from audit] | [observed] | Y/N |
-| 50% | [from audit] | [observed] | Y/N |
-| 50-80% | [from audit] | [observed] | Y/N |
-| 80-100% | [from audit] | [observed] | Y/N |
-
-## Final Fixes Applied
-
-[List any fixes applied during the polish phase]
-
-## Ship Recommendation
-
-[GO / NO-GO with reasoning]
-```
-
----
+→ Full template: [`references/artifact-templates.md`](references/artifact-templates.md). Copy the **polish-report.md** section and fill every field.
 
 # Mandatory Motion + Craft Requirements
 
@@ -1227,7 +990,10 @@ cinematic-scroll-skill/
 ├── taste-guardrails.md           # Quality enforcement system (11 banned patterns,
 │                                 #   cinematic vocabulary, pacing rules,
 │                                 #   anti-convergence principles)
-├── manifest.json                 # Skill manifest (v2.1.0)
+├── design.md                     # Design contract (token roles, motion, banned patterns)
+├── tokens/                        # DTCG design tokens (core / motion / semantic) + build/
+├── themes/                        # 11 per-visual-system theme overlays
+├── manifest.json                 # Skill manifest (v2.3.5)
 ├── MODELS.md                     # fal.ai model menu and cost table
 ├── README.md                     # Human-facing overview
 ├── LICENSE                       # MIT
@@ -1235,12 +1001,13 @@ cinematic-scroll-skill/
 │   ├── scroll-patterns.md        # 12 proven scroll patterns (Sections 1-12),
 │   │                             #   each with use case, depth config, transition,
 │   │                             #   mobile strategy, performance budget
-│   ├── film-archetypes.md        # 7 visual systems (Sections 1-7):
+│   ├── film-archetypes.md        # 11 visual systems (Sections 1-11):
 │   │                             #   Symmetric Monument, Clinical Noir,
 │   │                             #   Storybook Geometry, Temporal Monument,
 │   │                             #   Atmospheric Sublime, Warm Scrapbook,
-│   │                             #   Naturalistic Drift — each with scroll
-│   │                             #   behavior, color, pacing, type, depth, transitions
+│   │                             #   Naturalistic Drift, Brutalist Kinetic,
+│   │                             #   Liquid Chrome, Botanical Editorial,
+│   │                             #   Data Cinematic — each → a themes/*.theme.json
 │   ├── performance-budget.md     # 60fps production contract:
 │   │                             #   frame budget, permitted/forbidden properties,
 │   │                             #   will-change strategy, mobile degradation matrix

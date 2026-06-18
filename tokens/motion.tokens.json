@@ -1,0 +1,73 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "First-class MOTION tokens. These promote taste-guardrails.md §3 (Pacing Rules) and §4.1 (signature easing curves) from prose into machine-checkable data, so the cinematic-doctor token-conformance check (Phase 8) and the Mode A/Mode B emitters (Phase 2) consume one source of truth. Easing curves are exact from taste-guardrails §4.1. GSAP equivalents are carried under $extensions for Mode B.",
+  "motion": {
+    "ease": {
+      "$type": "cubicBezier",
+      "$description": "The four signature curves. Default CSS easings (ease/ease-in-out/linear) are BANNED (taste-guardrails §4.1) — always reference one of these by role.",
+      "reveal": {
+        "$value": [0.16, 1, 0.3, 1],
+        "$description": "Dramatic deceleration — the 'reveal' feel. Hero entrances, title arrivals.",
+        "$extensions": { "skill.cinematic-scroll": { "gsap": "expo.out", "role": "hero-entrance" } }
+      },
+      "exit": {
+        "$value": [0.7, 0, 0.84, 0],
+        "$description": "Clean acceleration — the 'handoff' feel. Chapter exits.",
+        "$extensions": { "skill.cinematic-scroll": { "gsap": "expo.in", "role": "chapter-exit" } }
+      },
+      "playful": {
+        "$value": [0.34, 1.56, 0.64, 1],
+        "$description": "Overshoot — the 'playful' feel. Micro-interactions, hand-placed pops.",
+        "$extensions": { "skill.cinematic-scroll": { "gsap": "back.out(1.7)", "role": "micro-interaction" } }
+      },
+      "cut": {
+        "$value": [0.87, 0, 0.13, 1],
+        "$description": "Heavy, deliberate — the 'chapter cut' feel. Whole-scene transitions.",
+        "$extensions": { "skill.cinematic-scroll": { "gsap": "power4.inOut", "role": "transition" } }
+      }
+    },
+
+    "duration": {
+      "$type": "duration",
+      "$description": "Timed (non-scroll-scrubbed) animation durations. Scroll-driven motion is governed by motion.pacing, not these.",
+      "instant": { "$value": { "value": 120, "unit": "ms" } },
+      "fast":    { "$value": { "value": 300, "unit": "ms" } },
+      "base":    { "$value": { "value": 500, "unit": "ms" } },
+      "slow":    { "$value": { "value": 720, "unit": "ms" } },
+      "glacial": { "$value": { "value": 1200, "unit": "ms" } }
+    },
+
+    "stagger": {
+      "$type": "number",
+      "$description": "Per-element stagger as a fraction of pin progress (taste-guardrails §3.6: 5-8%, max 5 elements before overlap).",
+      "tight":   { "$value": 0.04 },
+      "base":    { "$value": 0.06 },
+      "wide":    { "$value": 0.12 },
+      "max-elements": { "$value": 5 }
+    },
+
+    "pacing": {
+      "$type": "number",
+      "$description": "Scroll-pacing constants from taste-guardrails.md §3, expressed as numbers. Units noted per token. Mode A/B and the doctor read these as the canonical pin-range and rhythm budget.",
+      "pin-min-vh":        { "$value": 150, "$description": "Minimum pin height in vh (§3.2). Below this a pin reads as a glitch." },
+      "pin-max-vh":        { "$value": 400, "$description": "Maximum pin height in vh (§3.3). Beyond this users think the page froze; split with breathing room." },
+      "breathing-vh":      { "$value": 80,  "$description": "Minimum free-scroll between pinned chapters (§3.4) — the 'cut'." },
+      "title-reveal-start":{ "$value": 0.30, "$description": "Title choreography occupies 30-40% of pin range (§3.5); start fraction." },
+      "title-reveal-end":  { "$value": 0.40, "$description": "Upper bound of the title-reveal window; payoff lives in the final ~30%." },
+      "snap-dead-zone-vh": { "$value": 10,  "$description": "Never snap within 10vh of a pin boundary (§3.7)." },
+      "density-max":       { "$value": 3,   "$description": "Max simultaneous motion types per 50vh window (§3.8)." },
+      "rhythm-sec-per-100vh": { "$value": 1.2, "$description": "Baseline scroll time: 1.2s per 100vh of content (§3.1)." }
+    },
+
+    "depth": {
+      "$type": "number",
+      "$description": "Parallax scroll-rate multipliers (0 = fixed, 1 = scrolls with page). A reference ladder — taste-guardrails §4.3 forbids repeating the same multiplier across adjacent chapters, so themes/components vary these intentionally.",
+      "far":   { "$value": 0.05 },
+      "back":  { "$value": 0.15 },
+      "mid":   { "$value": 0.5 },
+      "near":  { "$value": 0.8 },
+      "front": { "$value": 0.9 },
+      "max-layers": { "$value": 7, "$description": "taste-guardrails §1.7: never more than 7 depth layers per chapter." }
+    }
+  }
+}
