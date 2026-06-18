@@ -4,7 +4,10 @@ Everything is built. This is the shortest path from "polished files on disk" to
 "live + launched + seen." ~2 hours of real work, spread across one week.
 
 The landing page is already swapped: `index.html` is now the cinematic page (the old
-one is saved as `index.legacy.html`). `index.v2.html` is now identical to `index.html`.
+one is saved as `index.legacy.html`). NOTE: `index.v2.html` is an **earlier iteration**
+that has since diverged from `index.html` (different size/content) — it is **not** a
+copy. Treat both `index.v2.html` and `index.legacy.html` as superseded backups; delete
+them only deliberately (see cleanup below), knowing you lose those older snapshots.
 
 ---
 

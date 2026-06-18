@@ -195,6 +195,114 @@ A **documentary or editorial publication** wanting **credible observation** shou
 
 ---
 
+## 8. Brutalist Kinetic
+
+*Visual language inspired by raw concrete, exposed structure, and unapologetic mechanical motion*
+
+### Scroll Behavior
+Hard, declarative, anti-decorative. Elements arrive like stamped machine parts — no easing into place, they *land*. The scroll feels like operating heavy equipment: deliberate, weighty, with audible-looking impacts. Grids are exposed, not hidden; the structure is the ornament.
+
+### Color Philosophy
+Raw concrete grays with a single safety-orange warning accent. Base in `#D9D7D0` / `#C7C5BD`, ink at `#141414`, and `#FF4D00` used the way a hazard stripe is used — sparing, functional, loud. No gradients, no soft shadows; color blocks butt together at hard edges.
+
+### Pacing Signature
+Mechanical and even. Mid-length pins (160-220vh) with hard `expo.inOut` snaps — motion accelerates and arrests abruptly, never glides. Stagger is tight and machine-regular.
+
+### Typographic Voice
+Monospace throughout — display, body, and UI. Titles are large, left-aligned, often with visible baseline grids or coordinate labels. Type reads like a spec sheet that happens to be beautiful.
+
+### Depth Strategy
+2 layers, almost flat. Depth comes from hard drop-offsets and overlap, not parallax drift. The flatness is ideological: this system refuses illusion.
+
+### Transition Style
+Cut-and-stamp. The next chapter slams in on a hard cut with a 1-2px positional jolt that settles instantly — the visual equivalent of a press closing.
+
+### Applied Example
+A **developer tool** wanting **engineering honesty** should reference this. A **streetwear or industrial-design brand** wanting **raw confidence** should reference this.
+
+---
+
+## 9. Liquid Chrome
+
+*Visual language inspired by molten metal, iridescent surfaces, and continuous morphing*
+
+### Scroll Behavior
+Everything flows. Surfaces ripple, reflect, and re-form as you scroll — there are no hard edges, only liquid transitions between states. Best paired with a WebGL distortion layer (Tier B+), but degrades to smooth CSS transforms.
+
+### Color Philosophy
+Near-black iridescent ground (`#0C0E12` / `#161A22`) with chrome-cyan (`#7DF9FF`) highlights that read like light catching metal. Accents glow against the dark; the palette is cold, reflective, expensive.
+
+### Pacing Signature
+Long, smooth, continuous (220-320vh). `power3.out` reveals — fast in, long settle, like mercury finding its level. No snaps; the whole site feels like one continuous pour.
+
+### Typographic Voice
+Grotesk display and body (Space Grotesk), spaced confidently. Type can carry a subtle chrome gradient on hero titles, sharp sans for UI.
+
+### Depth Strategy
+5 layers with reflective intent — a background environment, a morphing midground subject, and foreground specular highlights that move counter to scroll, simulating reflection.
+
+### Transition Style
+Liquid morph. The outgoing composition melts/warps into the incoming one via a shared shader or a `clip-path`/blob morph — never a cut, never a fade.
+
+### Applied Example
+A **crypto/fintech or audio-hardware brand** wanting **premium futurism** should reference this. A **fashion label** wanting **cold glamour** should reference this.
+
+---
+
+## 10. Botanical Editorial
+
+*Visual language inspired by pressed-paper publishing, botanical illustration, and patient editorial rhythm*
+
+### Scroll Behavior
+Calm, page-like, considered. The scroll reads like turning the leaves of a beautifully set book — generous margins, asymmetric editorial columns, imagery that breathes. Motion is gentle and organic, never mechanical.
+
+### Color Philosophy
+Warm paper (`#F3F1E7` / `#FAF8EE`) with a deep leaf-green accent (`#4A6B3A`) and near-black ink. The palette is grown, not designed: muted greens, soft earth, the warmth of uncoated stock.
+
+### Pacing Signature
+Patient (200-260vh). `sine.inOut` reveals — soft, symmetrical, unhurried. Wide breathing room between chapters; the rhythm respects reading, not spectacle.
+
+### Typographic Voice
+Editorial serif for display *and* body (Crimson Text), with a clean sans for labels. Large drop-cap-friendly headings, generous leading, narrow measure for readability.
+
+### Depth Strategy
+3 shallow layers — a soft paper texture, the editorial content plane, and lightly drifting botanical illustrations at 0.3-0.4x that feel pressed onto the page.
+
+### Transition Style
+Soft page-turn fade with a faint paper grain that holds through the cut, like the next spread settling.
+
+### Applied Example
+A **publication, tea/wellness brand, or independent press** wanting **literary warmth** should reference this. A **sustainable goods brand** wanting **considered authenticity** should reference this.
+
+---
+
+## 11. Data Cinematic
+
+*Visual language inspired by dramatized data visualization, mission-control interfaces, and glowing precision*
+
+### Scroll Behavior
+Information as spectacle. Numbers count up, charts draw themselves, coordinates lock on — but choreographed cinematically, with dramatic timing rather than dashboard flatness. The scroll feels like a briefing in a darkened control room.
+
+### Color Philosophy
+Deep navy ground (`#0A0F1E` / `#121A30`) with a signal-green accent (`#4FE0B0`) that glows like a live readout. Cool, precise, high-contrast; the dark lets the data luminesce.
+
+### Pacing Signature
+Precise and deliberate (200-280vh). `power2.inOut` reveals — even, confident, "this is the data." Numbers and lines animate on scroll progress, never auto-loop.
+
+### Typographic Voice
+Grotesk display for headlines, clean sans for body, **monospace for figures and labels** — the mono signals "this is measured." Tabular numerals, tight tracking.
+
+### Depth Strategy
+4 layers — a subtle grid/constellation background, the data plane, annotation callouts, and a foreground HUD frame. Parallax is restrained; precision over drift.
+
+### Transition Style
+Lock-on wipe. The next chapter's frame draws in like a targeting reticle acquiring focus, with the accent tracing the new boundary.
+
+### Applied Example
+An **analytics/observability platform, space or defense-tech brand** wanting **authoritative drama** should reference this. A **research org** wanting **data with gravity** should reference this.
+
+---
+
 ## Inspiration References
 
 Each system above was developed through observation of distinct visual grammars in cinema and design. If you want to deepen your understanding of a system:
@@ -206,6 +314,12 @@ Each system above was developed through observation of distinct visual grammars 
 - **Atmospheric Sublime**: study landscape cinematography, light diffusion, and patient reveal
 - **Warm Scrapbook**: study intimate illustration, collage, and conversational visual language
 - **Naturalistic Drift**: study observational photography, unscripted cinematography, and subtle motion
+- **Brutalist Kinetic**: study Brutalist architecture, technical spec sheets, and industrial signage
+- **Liquid Chrome**: study metalwork photography, fluid simulation, and reflective product renders
+- **Botanical Editorial**: study fine-press publishing, botanical plates, and editorial grid systems
+- **Data Cinematic**: study mission-control interfaces, scientific visualization, and title-sequence motion graphics
+
+Each `themes/<system>.theme.json` makes the system above machine-readable (palette, type, signature easing) so a build resolves it deterministically — see [`themes/theme-contract.md`](../themes/theme-contract.md).
 
 None of these systems imitates any single living artist or filmmaker. Each synthesizes visual principles that have emerged in various creative fields. Use them as starting points for your own visual language, always adapted to your specific brief.
 

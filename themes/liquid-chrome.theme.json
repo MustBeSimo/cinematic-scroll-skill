@@ -1,0 +1,22 @@
+{
+  "$description": "Liquid Chrome — near-black iridescent ground, chrome-cyan accent, smooth metallic morphs and WebGL distortion. NET-NEW system. See references/film-archetypes.md §9.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Liquid Chrome", "archetype": "references/film-archetypes.md#9-liquid-chrome", "depth-layers": 5, "pin-vh": [220, 320] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#0C0E12" },
+      "surface": { "$value": "#161A22" },
+      "fg":      { "$value": "#E8ECF2" },
+      "fg-dim":  { "$value": "#8893A6" },
+      "accent":  { "$value": "#7DF9FF" },
+      "line":    { "$value": "{core.color.alpha.line-on-dark}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.grotesk}" },
+      "body":    { "$value": "{core.font.grotesk}" },
+      "ui":      { "$value": "{core.font.sans}" }
+    },
+    "ease": {
+      "reveal":  { "$value": [0.22, 1, 0.36, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "power4.out" } } }
+    }
+  }
+}

@@ -17,10 +17,16 @@ story page, an editorial microsite, or a release/launch/drop page.
 source of truth. Read it in full before building. This file is only a pointer; do
 not duplicate SKILL.md content.
 
+The design contract (resolve every value through a token, never a literal):
+[`../../../design.md`](../../../design.md) + [`../../../tokens/`](../../../tokens/);
+11 visual systems as machine themes in [`../../../themes/`](../../../themes/).
+
 Deep references (`../../../references/`):
 
 - [`scroll-patterns.md`](../../../references/scroll-patterns.md) — 12 proven scroll patterns
-- [`film-archetypes.md`](../../../references/film-archetypes.md) — 7 visual systems / film archetypes
+- [`film-archetypes.md`](../../../references/film-archetypes.md) — 11 visual systems / film archetypes
+- [`component-grammar.md`](../../../references/component-grammar.md) — named, token-driven components (Mode A + Mode B)
+- [`design-tokens.md`](../../../references/design-tokens.md) — the DTCG token reference
 - [`performance-budget.md`](../../../references/performance-budget.md) — transform/opacity budget + pre-launch checklist
 - [`mobile-motion.md`](../../../references/mobile-motion.md) — mobile motion + reduced-motion degradation
 

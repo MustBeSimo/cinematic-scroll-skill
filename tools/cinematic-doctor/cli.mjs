@@ -2,8 +2,8 @@
 /* ============================================================================
    cinematic-doctor — an executable quality gate for cinematic-scroll builds.
 
-   Scores an HTML build 0-100 across five categories (taste, performance, a11y,
-   mobile, 3D), prints a scorecard, writes cinematic-report.json, and exits
+   Scores an HTML build 0-100 across six categories (taste, performance, a11y,
+   mobile, tokens, 3D), prints a scorecard, writes cinematic-report.json, and exits
    non-zero below threshold so it can sit in CI / a pre-commit hook.
 
    Usage:
@@ -30,11 +30,12 @@ import { analyze as taste } from './checks/taste.mjs';
 import { analyze as performance } from './checks/performance.mjs';
 import { analyze as a11y } from './checks/a11y.mjs';
 import { analyze as mobile } from './checks/mobile.mjs';
+import { analyze as tokens } from './checks/tokens.mjs';
 import { analyze as threed } from './checks/threed.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_MIN = 80;
-const CHECKS = [taste, performance, a11y, mobile, threed];
+const CHECKS = [taste, performance, a11y, mobile, tokens, threed];
 
 /** Run all checks against one HTML string, returning the aggregate. */
 export function scoreHtml(raw, file = '<input>') {
@@ -114,7 +115,7 @@ const HELP = `cinematic-doctor — quality gate for cinematic-scroll builds
   node tools/cinematic-doctor/cli.mjs <path-to-html-or-dir> [--min N] [--json] [--quiet]
   node tools/cinematic-doctor/cli.mjs --selftest
 
-Categories: taste(30) performance(25) a11y(20) mobile(15) threed(10, N/A unless 3D detected).
+Categories: taste(30) performance(25) a11y(20) mobile(15) tokens(12) threed(10, N/A unless 3D detected).
 Weights re-normalize over applied categories. Default threshold ${DEFAULT_MIN} (override --min).
 Exit 0 if total >= threshold, else 1. Writes cinematic-report.json next to the CLI.`;
 

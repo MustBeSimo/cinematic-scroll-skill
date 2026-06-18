@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MorphBackground — cinematic-scroll component</title>
+<!--
+  MorphBackground — a chapter whose background morphs between two palettes as it scrolls.
+  Cinematic technique: palette-temperature shift (taste-guardrails §4.6) via a Match cut —
+  two stacked full-bleed GRADIENT layers crossfaded by OPACITY (never animate background-color).
+  Progress is driven by a rAF-throttled scroll handler writing one custom prop (--morph).
+  Where supported, CSS scroll-driven animation-timeline takes over (the rAF stays as fallback).
+  Token-driven, transform/opacity only, AA-readable throughout, reduced-motion safe, no deps.
+  Mode A: inline the :root block (or @import tokens/build/variables.css). See components/manifest.json.
+-->
+<style>
+  /* --- design tokens (default theme subset from tokens/build/variables.css) --- */
+  :root{
+    --bg:#F7F5F1; --surface:#EFEBE4; --fg:#161310; --fg-dim:#574F45; --accent:#C9A96E;
+    --line:#16131024;
+    --font-display:"Cormorant Garamond",Georgia,serif;
+    --font-body:"EB Garamond",Georgia,"Times New Roman",serif;
+    --font-ui:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --fluid-h1:clamp(2.37rem, 1.8rem + 2.52vw, 3.815rem);
+    --size-caption:.78rem; --size-body-lg:1.125rem;
+    --space-md:16px; --space-lg:24px; --space-4xl:96px;
+    --ease-reveal:cubic-bezier(.16,1,.3,1);
+    --dur-slow:720ms;
+    --lh-tight:1.1; --lh-relaxed:1.7;
+    /* morph progress 0→1, written by rAF; both endpoints stay light so --fg holds AA */
+    --morph:0;
+  }
+  *{box-sizing:border-box;margin:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:var(--lh-relaxed)}
+  .spacer{height:60vh;display:grid;place-items:center;color:var(--fg-dim);
+    font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.2em;text-transform:uppercase}
+
+  /* The morph stage: a tall section that owns its own crossfading backdrop. */
+  .morph{position:relative;isolation:isolate;min-height:200vh;
+    padding:var(--space-4xl) clamp(var(--space-lg),6vw,8rem)}
+
+  /* TWO stacked full-bleed gradient layers. Layer A is the warm "before",
+     Layer B the cool "after". We crossfade B in by OPACITY — color values never animate. */
+  .layer{position:fixed;inset:0;z-index:-2;pointer-events:none;will-change:opacity}
+  .layer-a{background:radial-gradient(120% 120% at 18% 12%, var(--surface), var(--bg) 70%)}
+  .layer-b{z-index:-1;opacity:var(--morph);
+    background:radial-gradient(120% 120% at 82% 88%, #DDE6EC, #EAF0F4 72%)}
+  /* a faint constant scrim keeps display type off the brightest gradient peaks → AA holds */
+  .scrim{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(180deg, #F7F5F100, #F7F5F11A)}
+
+  .chapter{display:grid;align-content:center;gap:var(--space-md);min-height:100vh;
+    max-width:62rem;margin-inline:auto}
+  .eyebrow{font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.22em;
+    text-transform:uppercase;color:var(--fg-dim)}
+  .title{font-family:var(--font-display);font-size:var(--fluid-h1);line-height:var(--lh-tight);
+    font-weight:600;max-width:18ch}
+  .summary{font-size:var(--size-body-lg);color:var(--fg-dim);max-width:46ch}
+  .accent{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  /* Entrance vocabulary — varied per element (taste-guardrails §4.5), transform+opacity only.
+     Eyebrow: translate rise. Title: clip/mask reveal. Summary: translate rise (delayed). */
+  .reveal{opacity:0;transform:translateY(40px);
+    transition:opacity var(--dur-slow) var(--ease-reveal),transform var(--dur-slow) var(--ease-reveal)}
+  .mask{opacity:0;clip-path:inset(0 0 100% 0);transform:translateY(24px);
+    transition:opacity var(--dur-slow) var(--ease-reveal),
+               transform var(--dur-slow) var(--ease-reveal),
+               clip-path var(--dur-slow) var(--ease-reveal)}
+  .is-in .reveal{opacity:1;transform:none}
+  .is-in .mask{opacity:1;transform:none;clip-path:inset(0 0 0 0)}
+  .is-in .reveal:nth-child(3){transition-delay:160ms}
+
+  /* Progressive enhancement: where CSS scroll-driven timelines exist, drive --morph
+     natively and let the rAF handler stand down. The rAF path is the universal fallback. */
+  @supports (animation-timeline: view()){
+    @property --morph{syntax:"<number>";inherits:true;initial-value:0}
+    .layer-b{animation:morph-fade linear both;animation-timeline:view();animation-range:cover 15% cover 85%}
+    @keyframes morph-fade{from{--morph:0}to{--morph:1}}
+  }
+
+  /* mobile: tighter gutters, smaller display; the crossfade is compositor-only so it stays touch-safe */
+  @media (max-width: 768px){
+    .morph{padding:var(--space-4xl) var(--space-lg)}
+    .title{font-size:2rem;max-width:none}
+  }
+
+  /* reduced motion: freeze the morph at its calm "before" state, drop all entrance motion */
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .layer{will-change:auto}
+    .layer-b{opacity:0;animation:none}
+    .reveal,.mask{opacity:1;transform:none;clip-path:none;transition:none}
+  }
+</style>
+</head>
+<body>
+  <div class="spacer">scroll ↓</div>
+
+  <main>
+    <section class="morph" id="chapter-1" aria-labelledby="ch1-title">
+      <!-- two full-bleed gradient layers + scrim; crossfaded by opacity, never by color -->
+      <div class="layer layer-a" aria-hidden="true"></div>
+      <div class="layer layer-b" aria-hidden="true"></div>
+      <div class="scrim" aria-hidden="true"></div>
+
+      <div class="chapter">
+        <p class="eyebrow reveal">Chapter 02 — Atmosphere</p>
+        <h2 class="title mask" id="ch1-title">The room cools <span class="accent">as you descend</span> — the words never dim.</h2>
+        <p class="summary reveal">Two stacked gradients crossfade by opacity as the section scrolls past;
+          the foreground palette is fixed, so contrast stays AA from warm top to cool floor.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="spacer">end</div>
+
+<script>
+  // MorphBackground — rAF-throttled scroll → one custom prop (--morph: 0→1).
+  // Native CSS scroll-timeline (above) supersedes this where supported; this is the fallback.
+  // No setState, no layout writes, no unthrottled scroll listener (guardrails §1.5/§1.6/§1.8).
+  const prefersReduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const supportsTimeline = CSS.supports?.("animation-timeline: view()");
+
+  if (!prefersReduced && !supportsTimeline) {
+    const stage = document.getElementById("chapter-1");
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const r = stage.getBoundingClientRect();
+      const vh = innerHeight;
+      // Remap raw travel to the CSS path's `cover 15% → cover 85%` window so the JS
+      // fallback and the native scroll-timeline morph in sync (raw is ~0.33 at r.top=0
+      // because the stage is ~2vh tall — without this the morph starts a third done).
+      const raw = (vh - r.top) / (vh + r.height);
+      const p = Math.min(1, Math.max(0, (raw - 0.15) / 0.70));
+      stage.style.setProperty("--morph", p.toFixed(4));
+    };
+
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", onScroll, { passive: true });
+    update();
+  }
+
+  // Entrance reveal on enter — IntersectionObserver, no scroll handler, no layout thrash.
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+  }, { threshold: 0.35 });
+  document.querySelectorAll(".chapter").forEach((c) => io.observe(c));
+</script>
+</body>
+</html>

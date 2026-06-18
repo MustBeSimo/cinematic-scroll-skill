@@ -1,0 +1,27 @@
+{
+  "$description": "Triggering eval set for the cinematic-scroll skill. Each case is a user query and whether the skill SHOULD activate. Run with an LLM judge (e.g. skill-creator run_loop) against the frontmatter description: recall = positives that fire; precision = near-miss negatives that correctly DON'T. Negatives are deliberate look-alikes that share keywords (scroll, 3D, page) but are out of scope.",
+  "metric": { "recall_target": 0.9, "precision_target": 0.9 },
+  "cases": [
+    { "query": "Build me a scroll-driven product launch page with pinned chapters", "should_trigger": true },
+    { "query": "I want a cinematic hero with multi-layer parallax as you scroll", "should_trigger": true },
+    { "query": "Make a Shopify-Editions-style release site for our new product", "should_trigger": true },
+    { "query": "An editorial microsite where the background morphs between scenes on scroll", "should_trigger": true },
+    { "query": "Add 3D tilt cards that react to the cursor", "should_trigger": true },
+    { "query": "A scroll-scrubbed video hero like the Apple AirPods page", "should_trigger": true },
+    { "query": "Kinetic headline that reveals word-by-word as it enters view", "should_trigger": true },
+    { "query": "Give me an awwwards-tier scroll experience for our brand story", "should_trigger": true },
+    { "query": "A depth-parallax storytelling page with chaptered reveals", "should_trigger": true },
+    { "query": "Audit and score the scroll experience of my own landing page at this URL", "should_trigger": true },
+
+    { "query": "Build a hover dropdown navigation menu", "should_trigger": false },
+    { "query": "Write a print stylesheet for our invoices", "should_trigger": false },
+    { "query": "Make a multiplayer Three.js browser game", "should_trigger": false },
+    { "query": "Set up a static markdown blog", "should_trigger": false },
+    { "query": "Build a CRUD admin dashboard with tables and filters", "should_trigger": false },
+    { "query": "Add a contact form with validation and email sending", "should_trigger": false },
+    { "query": "Create a REST API endpoint for user signup", "should_trigger": false },
+    { "query": "Style a sortable data table", "should_trigger": false },
+    { "query": "Audit competitor example.com (a site I don't own) and scrape its layout", "should_trigger": false },
+    { "query": "Implement an e-commerce checkout flow with Stripe", "should_trigger": false }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "$description": "Golden-output evals. buildSpecs are prompts an agent should be able to satisfy (run them with an agent, then point the runner at the built file via --target to score it against the spec). goldenFixtures are committed reference outputs whose quality is asserted deterministically on every run (these double as regression anchors).",
+  "buildSpecs": [
+    {
+      "id": "mode-a-pinned-chapter",
+      "prompt": "Build a single Mode A pinned chapter with a staggered title reveal in the Clinical Noir visual system.",
+      "mode": "A",
+      "assert": { "doctorMin": 85, "mustContain": ["prefers-reduced-motion", "var(--ease", "var(--bg"], "mustNotMatch": ["filter:\\s*blur\\(", "transition:\\s*all", "cubic-bezier\\([^)]*\\)\\s*;?\\s*}?\\s*\\.[a-z]"] }
+    },
+    {
+      "id": "mode-b-release-page",
+      "prompt": "Scaffold a Mode B Editions-style release page from templates/nextjs and art-direct it in the Temporal Monument system.",
+      "mode": "B",
+      "assert": { "modeB": true, "note": "run npm run typecheck && npm run build in the project" }
+    },
+    {
+      "id": "anti-pattern-trap",
+      "prompt": "Make the hero blur in on scroll by animating a CSS blur filter.",
+      "mode": "A",
+      "expect": "guardrail-redirect",
+      "assert": { "mustNotMatch": ["filter:\\s*blur\\([^)]*\\)\\s*;[^}]*transition", "transition:[^;]*filter"], "note": "the build must REFUSE filter animation and crossfade stacked layers instead (taste-guardrails §1.1)" }
+    }
+  ],
+  "goldenFixtures": [
+    { "file": "components/mode-a/pinned-reveal.html", "doctorMin": 90, "mustContain": ["prefers-reduced-motion", "var(--ease-reveal"], "mustNotMatch": ["filter:\\s*blur\\(", "transition:\\s*all"] },
+    { "file": "components/mode-a/hero-parallax.html", "doctorMin": 85, "mustContain": ["prefers-reduced-motion", "transform"], "mustNotMatch": ["filter:\\s*blur\\(", "transition:\\s*all"] },
+    { "file": "components/mode-a/tilt-card.html", "doctorMin": 90, "mustContain": ["hover", "prefers-reduced-motion"], "mustNotMatch": ["transition:\\s*all"] },
+    { "file": "components/mode-a/scrub-video.html", "doctorMin": 90, "mustContain": ["poster", "prefers-reduced-motion"], "mustNotMatch": ["transition:\\s*all"] },
+    { "file": "components/mode-a/kinetic-headline.html", "doctorMin": 90, "mustContain": ["prefers-reduced-motion", "var(--ease"], "mustNotMatch": ["transition:\\s*all"] },
+    { "file": "components/mode-a/magnetic-cursor.html", "doctorMin": 90, "mustContain": ["pointer:", "prefers-reduced-motion"], "mustNotMatch": ["transition:\\s*all"] }
+  ]
+}

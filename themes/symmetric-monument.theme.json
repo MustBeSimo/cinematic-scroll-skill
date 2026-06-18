@@ -1,0 +1,22 @@
+{
+  "$description": "Symmetric Monument — desaturated classical palette with a single arterial-red accent; geometric caps, glacial metronomic motion. See references/film-archetypes.md §1.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Symmetric Monument", "archetype": "references/film-archetypes.md#1-symmetric-monument", "depth-layers": 5, "pin-vh": [300, 400] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#E8E0D4" },
+      "surface": { "$value": "#F0EAE0" },
+      "fg":      { "$value": "#2A2622" },
+      "fg-dim":  { "$value": "#6B6155" },
+      "accent":  { "$value": "#C41E3A" },
+      "line":    { "$value": "{core.color.alpha.line-on-light}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.geometric}" },
+      "body":    { "$value": "{core.font.neo-grotesque}" },
+      "ui":      { "$value": "{core.font.geometric}" }
+    },
+    "ease": {
+      "reveal": { "$value": [0.45, 0, 0.55, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "power1.inOut" } } }
+    }
+  }
+}

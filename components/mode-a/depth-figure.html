@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DepthFigure — cinematic-scroll component</title>
+<!--
+  DepthFigure — a foreground image card held in depth. Two motions, layered:
+    1) scroll parallax — the image drifts inside its card as the card crosses the
+       viewport (rAF-throttled: ONE read + ONE write per frame, transform only);
+    2) pointer tilt — a gentle rotateX/rotateY toward the cursor, settling with a
+       playful ease on leave.
+  Tilt fires ONLY for a precise pointer that can hover, and never on touch or under
+  reduced motion (no 3D rotation on touch — taste-guardrails §1.9). Both motions
+  degrade to a still, composed card; the <img> always carries alt + a soft token
+  shadow. Token-driven (design.md), transform/opacity only, no dependencies.
+  Mode A: inline the :root subset (or @import tokens/build/variables.css). See manifest.json.
+-->
+<style>
+  /* --- design tokens (default theme subset from tokens/build/variables.css) --- */
+  :root{
+    --bg:#F7F5F1; --surface:#EFEBE4; --fg:#161310; --fg-dim:#574F45; --accent:#C9A96E;
+    --line:#16131024;
+    --shadow-soft:0 24px 60px -28px #16131066; /* ink at low alpha — same convention as --line */
+    --font-body:"EB Garamond",Georgia,"Times New Roman",serif;
+    --font-ui:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --size-caption:.78rem; --size-body-lg:1.125rem;
+    --space-md:16px; --space-lg:24px; --space-4xl:96px;
+    --radius-lg:16px;
+    --ease-reveal:cubic-bezier(.16,1,.3,1);    /* decel — entrance + tilt-track */
+    --ease-playful:cubic-bezier(.34,1.56,.64,1); /* overshoot — tilt settle on leave */
+    --dur-slow:720ms; --dur-fast:300ms;
+    --lh-relaxed:1.7;
+  }
+  *{box-sizing:border-box;margin:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:var(--lh-relaxed)}
+  .spacer{height:70vh;display:grid;place-items:center;color:var(--fg-dim);
+    font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.2em;text-transform:uppercase}
+
+  .stage{min-height:100vh;display:grid;align-content:center;justify-items:center;
+    gap:var(--space-lg);padding:var(--space-4xl) var(--space-lg)}
+  .eyebrow{font-family:var(--font-ui);font-size:var(--size-caption);letter-spacing:.22em;
+    text-transform:uppercase;color:var(--fg-dim);text-align:center}
+
+  /* perspective lives on the wrapper so the inner card tilts in real 3D depth */
+  .figure{perspective:900px;width:min(78vw,28rem)}
+  .figure__card{position:relative;border-radius:var(--radius-lg);background:var(--surface);
+    box-shadow:var(--shadow-soft);overflow:hidden;transform-style:preserve-3d;
+    /* composed & still by default — tilt vars resolve to 0 until a fine pointer drives them.
+       --ease-tilt swaps to the playful overshoot on pointerleave (set from JS). */
+    transform:rotateX(var(--ry,0deg)) rotateY(var(--rx,0deg)) translateZ(0);
+    transition:transform var(--dur-fast) var(--ease-tilt,var(--ease-reveal))}
+  .figure__img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;
+    /* the image floats slightly forward of the card → parallax reads as depth */
+    transform:translateY(var(--py,0px)) translateZ(1px)}
+  .caption{font-size:var(--size-body-lg);color:var(--fg-dim);max-width:34ch;text-align:center}
+  .accent{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+  /* enter reveal — opacity + transform only, decel ease */
+  .figure{opacity:0;transform:translateY(40px);
+    transition:opacity var(--dur-slow) var(--ease-reveal),transform var(--dur-slow) var(--ease-reveal)}
+  .is-in .figure{opacity:1;transform:none}
+
+  /* mobile: larger card, no tilt (touch-safe §1.9); scroll parallax stays alive */
+  @media (max-width:768px){
+    .stage{padding:var(--space-4xl) var(--space-md);gap:var(--space-md)}
+    .figure{width:min(88vw,24rem)}
+  }
+
+  /* tilt ONLY where a precise pointer can hover — never on touch (§1.9) */
+  @media (hover:hover) and (pointer:fine){
+    .figure__card{will-change:transform}
+  }
+
+  /* reduced motion: everything static — no parallax, no tilt, no reveal */
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .figure{opacity:1;transform:none;transition:none}
+    .figure__card,.figure__img{transform:none;transition:none}
+  }
+</style>
+</head>
+<body>
+  <div class="spacer">scroll ↓</div>
+
+  <main>
+    <section class="stage" aria-labelledby="df-title">
+      <p class="eyebrow" id="df-title">Plate 04 — held in depth</p>
+      <div class="figure" data-depth>
+        <div class="figure__card">
+          <img class="figure__img"
+               src="https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?q=80&amp;w=1000"
+               alt="A brass chronometer resting on raw linen, lit from a single low window."
+               width="1000" height="1250">
+        </div>
+      </div>
+      <p class="caption">It drifts on scroll and tilts <span class="accent">toward the cursor</span> —
+        a hand's-breadth of depth, gone the moment you touch.</p>
+    </section>
+  </main>
+
+  <div class="spacer">end</div>
+
+<script>
+  // 1) Enter reveal — IntersectionObserver, no scroll handler for the entrance.
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) {
+      e.target.closest("section").classList.add("is-in");
+      io.unobserve(e.target);
+    }
+  }, { threshold: 0.35 });
+  document.querySelectorAll("[data-depth]").forEach((f) => io.observe(f));
+
+  // Gates. Tilt excludes touch (§1.9); all motion stands down under reduced-motion.
+  const motionOK = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const fine = matchMedia("(hover:hover) and (pointer:fine)").matches;
+  const figures = [...document.querySelectorAll("[data-depth]")];
+
+  if (motionOK) {
+    // 2) Scroll parallax — rAF-throttled, transform-only, never per-event work.
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(() => {
+        const vh = innerHeight;
+        for (const f of figures) {
+          const r = f.getBoundingClientRect();
+          const p = (r.top + r.height / 2 - vh / 2) / vh; // -0.5..0.5 across the viewport
+          f.querySelector(".figure__img").style.setProperty("--py", (p * -18).toFixed(1) + "px");
+        }
+        ticking = false;
+      });
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    // 3) Pointer tilt — ONLY for fine pointers (no 3D rotation on touch — §1.9).
+    if (fine) {
+      for (const f of figures) {
+        const card = f.querySelector(".figure__card");
+        f.addEventListener("pointermove", (ev) => {
+          card.style.setProperty("--ease-tilt", "var(--ease-reveal)"); // track: decel
+          const r = f.getBoundingClientRect();
+          const dx = (ev.clientX - r.left) / r.width - 0.5;  // -0.5..0.5
+          const dy = (ev.clientY - r.top) / r.height - 0.5;
+          card.style.setProperty("--rx", (dx * 8).toFixed(2) + "deg");
+          card.style.setProperty("--ry", (dy * -8).toFixed(2) + "deg");
+        });
+        f.addEventListener("pointerleave", () => {
+          card.style.setProperty("--ease-tilt", "var(--ease-playful)"); // settle: overshoot
+          card.style.setProperty("--rx", "0deg");
+          card.style.setProperty("--ry", "0deg");
+        });
+      }
+    }
+  }
+</script>
+</body>
+</html>

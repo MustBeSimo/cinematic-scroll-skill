@@ -85,8 +85,19 @@ preloader's phase B — so exit and entrance share one grammar.
   phase B instead of the preloader.
 - Respect modified clicks (cmd/ctrl/shift/middle) and external/anchor links —
   never intercept those. Reduced motion: no wipe, instant navigation.
-- With the View Transitions API available, prefer it for same-document moves;
-  the overlay remains the cross-page fallback.
+- With the View Transitions API available, prefer it — the manual overlay is the
+  fallback. It is the modern way to do cinematic page/state transitions:
+  - **Same-document** (state/route swaps, Mode B): `document.startViewTransition(() => updateDOM())`.
+    Baseline across modern browsers; the browser crossfades old→new automatically.
+  - **Cross-document MPA** (multi-page, e.g. plain Mode A pages): opt in with
+    `@view-transition { navigation: auto; }` in CSS — the browser tweens between
+    full page loads, no JS.
+  - **Shared-element continuity**: give the element on both views the same
+    `view-transition-name` (e.g. a product image that flies from grid → detail).
+  - **Always** wrap in `prefers-reduced-motion`: skip `startViewTransition` (call
+    the DOM update directly) and set `::view-transition-* { animation: none }`.
+  - Style the transition via `::view-transition-old(name)` / `-new(name)` with a
+    role easing token; keep it transform/opacity only.
 
 ---
 

@@ -1,0 +1,22 @@
+{
+  "$description": "Warm Scrapbook — found summer palette, affectionate imperfection; quick conversational motion with hand-placed overshoot. Serif display + friendly sans. See references/film-archetypes.md §6.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Warm Scrapbook", "archetype": "references/film-archetypes.md#6-warm-scrapbook", "depth-layers": 3, "pin-vh": [150, 200] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#F5F0E8" },
+      "surface": { "$value": "#FBF7F0" },
+      "fg":      { "$value": "#3A322C" },
+      "fg-dim":  { "$value": "#7A6F63" },
+      "accent":  { "$value": "#E8927C" },
+      "line":    { "$value": "{core.color.alpha.line-on-light}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.display-serif}" },
+      "body":    { "$value": "{core.font.sans}" },
+      "ui":      { "$value": "{core.font.sans}" }
+    },
+    "ease": {
+      "reveal":  { "$value": [0.34, 1.4, 0.64, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "back.out(1.2)" } } }
+    }
+  }
+}

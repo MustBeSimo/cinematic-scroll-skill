@@ -1,0 +1,22 @@
+{
+  "$description": "Atmospheric Sublime — warm-dust/cold-steel duality, vast negative space, glacial-then-sudden reveals from haze. Thin neo-grotesque. See references/film-archetypes.md §5.",
+  "$extensions": { "skill.cinematic-scroll": { "system": "Atmospheric Sublime", "archetype": "references/film-archetypes.md#5-atmospheric-sublime", "depth-layers": 4, "pin-vh": [280, 350] } },
+  "semantic": {
+    "color": {
+      "bg":      { "$value": "#1E2328" },
+      "surface": { "$value": "#2A2F35" },
+      "fg":      { "$value": "#D4C5A9" },
+      "fg-dim":  { "$value": "#8BA4B4" },
+      "accent":  { "$value": "#B8956A" },
+      "line":    { "$value": "{core.color.alpha.line-on-dark}" }
+    },
+    "font": {
+      "display": { "$value": "{core.font.neo-grotesque}" },
+      "body":    { "$value": "{core.font.neo-grotesque}" },
+      "ui":      { "$value": "{core.font.sans}" }
+    },
+    "ease": {
+      "reveal":  { "$value": [0.33, 1, 0.68, 1], "$extensions": { "skill.cinematic-scroll": { "gsap": "power2.out" } } }
+    }
+  }
+}

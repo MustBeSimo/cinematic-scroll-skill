@@ -1,0 +1,149 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Core (primitive) tokens for the cinematic-scroll skill. Brand-agnostic raw values: a neutral ramp, dimensional scales, type sizes, and font fallback stacks. Visual-system brand colors live in themes/*.theme.json (Phase 3); the cross-system role contract lives in semantic.tokens.json. Format: W3C Design Tokens (DTCG), $value/$type. Color uses the hex shorthand; dimension/duration use the {value,unit} object form; cubicBezier uses the [x1,y1,x2,y2] array form.",
+  "core": {
+    "color": {
+      "$type": "color",
+      "neutral": {
+        "$description": "Warm-leaning grayscale ramp. Cinematic palettes tend warm; pure #000/#fff are intentionally avoided for fg/bg except as ramp endpoints.",
+        "0":   { "$value": "#FFFFFF" },
+        "50":  { "$value": "#F7F5F1" },
+        "100": { "$value": "#EFEBE4" },
+        "200": { "$value": "#DED8CC" },
+        "300": { "$value": "#C3BBAB" },
+        "400": { "$value": "#9B9384" },
+        "500": { "$value": "#766F62" },
+        "600": { "$value": "#574F45" },
+        "700": { "$value": "#3D372F" },
+        "800": { "$value": "#272320" },
+        "900": { "$value": "#161310" },
+        "950": { "$value": "#0B0A08" },
+        "1000": { "$value": "#000000" }
+      },
+      "brand": {
+        "$description": "Default accents available to the neutral/editorial default theme. Per-system accents are defined in each theme file.",
+        "amber":  { "$value": "#C9A96E", "$description": "Restrained cinematic accent (Clinical Noir interactive amber) — the default-theme accent." },
+        "cognac": { "$value": "#9A6A3C" },
+        "signal": { "$value": "#C41E3A", "$description": "Arterial red — narrative punctuation; never decorative." }
+      },
+      "alpha": {
+        "$description": "Hairline / scrim tokens with baked alpha (8-digit hex).",
+        "line-on-light": { "$value": "#16131024" },
+        "line-on-dark":  { "$value": "#F7F5F124" },
+        "scrim":         { "$value": "#0B0A08A6" }
+      }
+    },
+
+    "space": {
+      "$type": "dimension",
+      "$description": "8px-based spacing scale. Use these for padding, gaps, and layout rhythm — never raw px.",
+      "3xs": { "$value": { "value": 2, "unit": "px" } },
+      "2xs": { "$value": { "value": 4, "unit": "px" } },
+      "xs":  { "$value": { "value": 8, "unit": "px" } },
+      "sm":  { "$value": { "value": 12, "unit": "px" } },
+      "md":  { "$value": { "value": 16, "unit": "px" } },
+      "lg":  { "$value": { "value": 24, "unit": "px" } },
+      "xl":  { "$value": { "value": 32, "unit": "px" } },
+      "2xl": { "$value": { "value": 48, "unit": "px" } },
+      "3xl": { "$value": { "value": 64, "unit": "px" } },
+      "4xl": { "$value": { "value": 96, "unit": "px" } },
+      "5xl": { "$value": { "value": 128, "unit": "px" } }
+    },
+
+    "radius": {
+      "$type": "dimension",
+      "none": { "$value": { "value": 0, "unit": "px" } },
+      "sm":   { "$value": { "value": 4, "unit": "px" } },
+      "md":   { "$value": { "value": 8, "unit": "px" } },
+      "lg":   { "$value": { "value": 16, "unit": "px" } },
+      "xl":   { "$value": { "value": 24, "unit": "px" } },
+      "full": { "$value": { "value": 9999, "unit": "px" } }
+    },
+
+    "size": {
+      "$type": "dimension",
+      "$description": "Discrete type sizes in rem (modular scale, ratio ~1.25 / major third). Phase 2 derives fluid clamp() pairs from min/max of these. Display sizes intended for scroll headlines.",
+      "caption":  { "$value": { "value": 0.78, "unit": "rem" } },
+      "small":    { "$value": { "value": 0.875, "unit": "rem" } },
+      "body":     { "$value": { "value": 1, "unit": "rem" } },
+      "body-lg":  { "$value": { "value": 1.125, "unit": "rem" } },
+      "h6":       { "$value": { "value": 1.25, "unit": "rem" } },
+      "h5":       { "$value": { "value": 1.5, "unit": "rem" } },
+      "h4":       { "$value": { "value": 1.953, "unit": "rem" } },
+      "h3":       { "$value": { "value": 2.441, "unit": "rem" } },
+      "h2":       { "$value": { "value": 3.052, "unit": "rem" } },
+      "h1":       { "$value": { "value": 3.815, "unit": "rem" } },
+      "display":  { "$value": { "value": 5.96, "unit": "rem" } },
+      "display-xl": { "$value": { "value": 7.45, "unit": "rem" } }
+    },
+
+    "scale": {
+      "$type": "number",
+      "$description": "Modular type-scale ratios available to themes. Default uses major-third; monuments use a more dramatic ratio.",
+      "minor-third":  { "$value": 1.2 },
+      "major-third":  { "$value": 1.25 },
+      "perfect-fourth": { "$value": 1.333 },
+      "golden":       { "$value": 1.618 }
+    },
+
+    "lineHeight": {
+      "$type": "number",
+      "tight":   { "$value": 1.1, "$description": "Display type minimum (taste-guardrails §4.8)." },
+      "snug":    { "$value": 1.3 },
+      "normal":  { "$value": 1.5, "$description": "Body type minimum (taste-guardrails §4.8)." },
+      "relaxed": { "$value": 1.7 },
+      "loose":   { "$value": 1.8 }
+    },
+
+    "fontWeight": {
+      "$type": "fontWeight",
+      "thin":     { "$value": 200 },
+      "light":    { "$value": 300 },
+      "regular":  { "$value": 400 },
+      "medium":   { "$value": 500 },
+      "semibold": { "$value": 600 },
+      "bold":     { "$value": 700 }
+    },
+
+    "tracking": {
+      "$type": "dimension",
+      "$description": "Letter-spacing tokens (em). Tight for confident sans titles, wide for monumental caps.",
+      "tightest": { "$value": { "value": -0.03, "unit": "em" } },
+      "tight":    { "$value": { "value": -0.02, "unit": "em" } },
+      "normal":   { "$value": { "value": 0, "unit": "em" } },
+      "wide":     { "$value": { "value": 0.08, "unit": "em" } },
+      "widest":   { "$value": { "value": 0.2, "unit": "em" } }
+    },
+
+    "font": {
+      "$type": "fontFamily",
+      "$description": "Fallback stacks. Commercial faces (Futura/Gotham/Helvetica Neue) named first with safe fallbacks; themes pick which stack maps to display/body/ui.",
+      "sans":         { "$value": ["Inter", "system-ui", "-apple-system", "Segoe UI", "sans-serif"] },
+      "grotesk":      { "$value": ["Space Grotesk", "Inter", "system-ui", "sans-serif"] },
+      "geometric":    { "$value": ["Futura", "Jost", "Century Gothic", "system-ui", "sans-serif"] },
+      "neo-grotesque":{ "$value": ["Helvetica Neue", "Helvetica", "Inter", "Arial", "sans-serif"] },
+      "gotham":       { "$value": ["Gotham", "Montserrat", "Inter", "sans-serif"] },
+      "serif":        { "$value": ["EB Garamond", "Georgia", "Times New Roman", "serif"] },
+      "display-serif":{ "$value": ["Cormorant Garamond", "Georgia", "serif"] },
+      "editorial-serif": { "$value": ["Crimson Text", "Georgia", "serif"] },
+      "mono":         { "$value": ["Space Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"] }
+    },
+
+    "breakpoint": {
+      "$type": "dimension",
+      "sm": { "$value": { "value": 640, "unit": "px" } },
+      "md": { "$value": { "value": 768, "unit": "px" } },
+      "lg": { "$value": { "value": 1024, "unit": "px" } },
+      "xl": { "$value": { "value": 1280, "unit": "px" } }
+    },
+
+    "z": {
+      "$type": "number",
+      "base":    { "$value": 0 },
+      "raised":  { "$value": 10 },
+      "sticky":  { "$value": 100 },
+      "overlay": { "$value": 1000 },
+      "modal":   { "$value": 10000 }
+    }
+  }
+}

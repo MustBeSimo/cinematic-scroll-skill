@@ -18,6 +18,7 @@ export const WEIGHTS = {
   performance: 25,
   a11y: 20,
   mobile: 15,
+  tokens: 12,
   threed: 10,
 };
 
