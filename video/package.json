@@ -33,7 +33,7 @@
     "poster:doctor": "remotion still src/index.ts Doctor ../assets/doctor-poster.jpg --frame=330 --scale=2"
   },
   "dependencies": {
-    "@remotion/cli": "^4.0.0",
+    "@remotion/cli": "^4.0.481",
     "@remotion/google-fonts": "^4.0.0",
     "gsap": "^3.15.0",
     "react": "^18.3.1",
