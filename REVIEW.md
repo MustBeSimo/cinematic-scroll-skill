@@ -13,19 +13,18 @@ with `npm test`.
 | Severity | Found | Fixed | Deferred |
 |---|---|---|---|
 | critical | 3 | 3 | 0 |
-| high | 12 | 10 | 2 |
+| high | 12 | 12 | 0 |
 | medium | 20 | 11 | 9 |
 | low | 15 | 2 | 13 |
-| **total** | **50** | **26** | **24** |
+| **total** | **50** | **28** | **22** |
 
-All **critical** findings and **10 of 12 high** are fixed, plus every doc/data inaccuracy and
-several gate-robustness gaps. The 2 deferred highs are both `horizontal-gallery` enhancements
-(keyboard focus scroll-into-view; matching the CSS-scroll-timeline travel to the pin distance) —
-the component degrades to native horizontal overflow scroll, so they're polish, not breakage.
+All **critical** and **high** findings are fixed (the 2 `horizontal-gallery` a11y items —
+keyboard focus scroll-into-view and a pin-scoped `view-timeline` matching the rAF scrub — were
+the last highs, now resolved), plus every doc/data inaccuracy and several gate-robustness gaps.
 Remaining deferred items are **medium/low component polish** — tracked, none affecting the
 contract, the gates, or the doctor scores (the library still scores 96–99).
 
-## Fixed (26)
+## Fixed (28)
 
 | Sev | Finding | Where |
 |---|---|---|
@@ -35,6 +34,8 @@ contract, the gates, or the doctor scores (the library still scores 96–99).
 | high | magnetic-cursor: rAF lerp loop runs forever and never stops; pointermove listener never removed | `components/mode-a/magnetic-cursor.html` |
 | high | hero-parallax: viewport-change handler writes JS transforms even when native CSS timeline owns the parallax, fighting the compositor | `components/mode-a/hero-parallax.html` |
 | high | morph-background: JS fallback progress math is mis-scaled vs the CSS scroll-timeline path — morph is ~1/3 complete before scrolling begins | `components/mode-a/morph-background.html` |
+| high | horizontal-gallery: CSS scroll-timeline path uses a hardcoded --travel default of 60vw and animation-timeline:scroll(root block) that does not match the 340vh pin distance | `components/mode-a/horizontal-gallery.html` |
+| high | horizontal-gallery: card track is keyboard-focusable via <a> but on the desktop pin path there is NO scroll-into-view when a card receives focus — Tab moves focus off-screen | `components/mode-a/horizontal-gallery.html` |
 | high | check-themes silently skips WCAG contrast when bg/fg are token aliases or 3-digit hex → AA gate is a no-op for those themes (false PASS) | `tools/check-themes.mjs` |
 | high | token-conformance (doctor) misses rgb()/hsl()/named-color literals and a single var() launders an all-literal page → perfect 100 score for off-contract CSS | `tools/cinematic-doctor/checks/tokens.mjs` |
 | high | check-tokens verifies only motion.ease.* curves, never the semantic.ease.* role tokens components actually consume → wrong-curve role alias passes | `tools/check-tokens.mjs` |
@@ -56,14 +57,12 @@ contract, the gates, or the doctor scores (the library still scores 96–99).
 | low | design.md §1 routing table puts var(--ease-cut) under 'Motion primitives' | `design.md` |
 | low | SKILL.md verify section lists doctor categories without 'tokens' (internally inconsistent with its own verification map and the checks dir) | `SKILL.md` |
 
-## Deferred — tracked follow-ons (24)
+## Deferred — tracked follow-ons (22)
 
 Medium/low polish; safe to ship without, fix incrementally.
 
 | Sev | Finding | Where |
 |---|---|---|
-| high | horizontal-gallery: CSS scroll-timeline path uses a hardcoded --travel default of 60vw and animation-timeline:scroll(root block) that does not match the 340vh pin distance | `components/mode-a/horizontal-gallery.html` |
-| high | horizontal-gallery: card track is keyboard-focusable via <a> but on the desktop pin path there is NO scroll-into-view when a card receives focus — Tab moves focus off-screen | `components/mode-a/horizontal-gallery.html` |
 | medium | hero-parallax: reduced-motion CSS forces transform:none!important but JS clear path can still be bypassed; also matchMedia change can re-enable JS without honoring native | `components/mode-a/hero-parallax.html` |
 | medium | scrub-video: poster <img> and <video> share class .frame with object-fit:cover but the poster src is a 16x9 EMPTY svg — no real fallback image ships, and on touch the visual is blank | `components/mode-a/scrub-video.html` |
 | medium | scrub-video: video.currentTime seek scheduled via requestVideoFrameCallback never fires when the video is not playing — scrub can stall | `components/mode-a/scrub-video.html` |

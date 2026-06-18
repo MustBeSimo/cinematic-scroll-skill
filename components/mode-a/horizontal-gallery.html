@@ -50,9 +50,14 @@
   .card__body{font-size:var(--size-caption);color:var(--fg-dim);max-width:34ch}
   :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
-  /* --- progressive enhancement: native CSS scroll-timeline drives X with zero JS where supported --- */
-  @supports (animation-timeline: scroll()){
-    .gallery.cssTL .track{transition:none;animation:track-x linear both;animation-timeline:scroll(root block)}
+  /* --- progressive enhancement: native CSS scroll-timeline drives X with zero JS where supported.
+         Scoped to the gallery via a view-timeline with `contain 0%→100%`, which spans exactly the
+         pinned phase (gallery top at viewport top → gallery bottom at viewport bottom) — the SAME
+         range the rAF fallback scrubs, so both paths move the track identically. --- */
+  @supports (animation-timeline: view()){
+    .gallery.cssTL{view-timeline:--gal block}
+    .gallery.cssTL .track{transition:none;animation:track-x linear both;
+      animation-timeline:--gal;animation-range:contain 0% contain 100%}
     @keyframes track-x{to{transform:translate3d(calc(-1 * var(--travel,60vw)),0,0)}}
   }
 
@@ -107,10 +112,24 @@
     const track = gallery.querySelector(".track");
     if (!gallery || !track) return;
 
-    // Prefer native CSS scroll-timeline where supported — zero JS per frame.
-    const hasTL = CSS.supports("animation-timeline", "scroll()");
+    // Prefer the native CSS view-timeline where supported — zero JS per frame.
+    const hasTL = CSS.supports("animation-timeline", "view()");
 
     function travel(){ return Math.max(0, track.scrollWidth - track.clientWidth); }
+
+    // a11y: when a card is Tab-focused on the desktop pin path it may be translated off-screen.
+    // Scroll the window so its scrub-progress brings the focused card into view (works for BOTH
+    // the rAF and view-timeline paths, since both are driven by window scroll). Native scroller
+    // (mobile / reduced-motion) handles its own focus scrolling, so skip there.
+    track.addEventListener("focusin", (e) => {
+      const card = e.target.closest(".card");
+      if (!card || reduce.matches || !desktop.matches) return;
+      const t = travel();
+      const span = gallery.offsetHeight - window.innerHeight;
+      if (t <= 0 || span <= 0) return;
+      const p = Math.min(1, Math.max(0, card.offsetLeft / t));   // progress that puts the card at the track's left edge
+      window.scrollTo({ top: Math.round(gallery.offsetTop + p * span), behavior: "auto" });
+    });
 
     // CSS-timeline path: hand the distance to the keyframe via a custom prop, then let the compositor run it.
     function enableCssTimeline(){
