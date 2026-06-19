@@ -71,3 +71,24 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Runtime smoke — its own job because it needs a browser (the gate suite above stays
+  # zero-dependency). ubuntu-latest ships Google Chrome; proof:components auto-detects it
+  # and SKIPS cleanly if absent, so this never becomes a flaky blocker. Catches runtime
+  # errors in the self-contained components that the static doctor can't see.
+  runtime-proof:
+    name: page-proof (component runtime smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install (playwright-core)
+        run: npm install --no-audit --no-fund
+      - name: Runtime-proof the components (browser-gated)
+        run: |
+          CHROME_PATH="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium-browser || command -v chromium || true)"
+          export CHROME_PATH
+          echo "Using CHROME_PATH=${CHROME_PATH:-<none — step will skip>}"
+          npm run proof:components

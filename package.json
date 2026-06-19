@@ -55,7 +55,8 @@
     "build:tokens": "node tools/build-tokens/build.mjs",
     "build:themes": "for f in themes/*.theme.json; do node tools/build-tokens/build.mjs --theme \"$f\"; done",
     "prepack": "rm -rf templates/nextjs/node_modules",
-    "proof": "node tools/page-proof/proof.mjs"
+    "proof": "node tools/page-proof/proof.mjs",
+    "proof:components": "node tools/page-proof/proof-components.mjs"
   },
   "keywords": [
     "claude",
