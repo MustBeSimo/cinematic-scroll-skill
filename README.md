@@ -24,6 +24,8 @@
 
 **A free, MIT-licensed *craft skill* that gives any coding agent — Claude, Cursor, Hermes, OpenClaw — the taste to build cinematic, scroll-driven websites.** Describe the aesthetic — palette, mood, references — and get a visual system, motion storyboard, pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. **The motion is the constant · the look is yours · the agent is your choice.** It's a skill, not a plugin — the craft travels with you across every agent.
 
+> **New in v2.4.0 — a machine-readable design system under the hood.** A DTCG **token contract** (`design.md` + `tokens/`), **11 visual systems** as one-file themes, and a **9-component library** (Mode A `.html` + Mode B `.tsx`) make output deterministic and gated, not improvised — hardened by an adversarial self-review ([`REVIEW.md`](./REVIEW.md)). See **[Design system](#-design-system-one-token-contract--11-systems--a-component-library)** below.
+
 > **Free for any use, personal or commercial (MIT).** Actively developed — built from production work and shipped open source. [Issues](https://github.com/MustBeSimo/cinematic-scroll-skill/issues), PRs, and [showcase submissions](https://github.com/MustBeSimo/cinematic-scroll-skill/issues/new?title=Showcase:%20) welcome — I collect what people build.
 
 Built by [Simone Leonelli](https://w230.net) · [simone@w230.net](mailto:simone@w230.net)
