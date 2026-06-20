@@ -2,7 +2,7 @@
 /**
  * check-consistency.mjs — Phase 12 invariant: catch drift that the per-phase gates don't.
  *
- *   1. VERSION SYNC      package.json.version === manifest.json.version
+ *   1. VERSION SYNC      package.json.version === manifest.json.version === SKILL.md frontmatter
  *   2. SECRET SCAN       no tracked *.env.local (only *.example may be tracked)
  *   3. KEY PATHS         the foundation files the docs promise actually exist
  *   4. TOKEN DETERMINISM committed tokens/build/variables.css matches a fresh build
@@ -17,10 +17,15 @@ import { dirname, join } from "node:path";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const errors = [];
 
-// 1. version sync
+// 1. version sync — package.json, manifest.json, AND the SKILL.md frontmatter (the
+//    canonical version a skill registry like ClawHub reads). All three must agree.
 const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 const man = JSON.parse(readFileSync(join(ROOT, "manifest.json"), "utf8"));
 if (pkg.version !== man.version) errors.push(`version drift: package.json ${pkg.version} ≠ manifest.json ${man.version}`);
+const skillFm = readFileSync(join(ROOT, "SKILL.md"), "utf8").split(/^---\s*$/m)[1] || "";
+const skillVer = (skillFm.match(/^version:\s*(.+?)\s*$/m) || [])[1];
+if (!skillVer) errors.push("SKILL.md frontmatter has no `version:` field");
+else if (skillVer !== pkg.version) errors.push(`version drift: SKILL.md frontmatter ${skillVer} ≠ package.json ${pkg.version}`);
 
 // 2. secret scan (tracked .env.local) — git required; skip with notice if absent
 const ls = spawnSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" });
@@ -53,5 +58,5 @@ if (errors.length) {
   for (const e of errors) console.error(`  - ${e}`);
   process.exit(1);
 }
-console.log(`✓ check-consistency: version ${pkg.version} in sync, no tracked secrets, foundation paths present, token build deterministic.`);
+console.log(`✓ check-consistency: version ${pkg.version} in sync (package.json · manifest.json · SKILL.md), no tracked secrets, foundation paths present, token build deterministic.`);
 process.exit(0);
