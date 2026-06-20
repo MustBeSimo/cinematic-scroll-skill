@@ -88,6 +88,6 @@
     "node": ">=18"
   },
   "devDependencies": {
-    "playwright-core": "^1.60.0"
+    "playwright-core": "1.60.0"
   }
 }
