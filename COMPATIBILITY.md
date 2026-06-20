@@ -146,8 +146,9 @@ GIF/video/GLB marketing assets (~hundreds of MB):
 ```bash
 # 1. stage a clean export of the skill contract
 EXPORT=$(mktemp -d)
-git archive HEAD SKILL.md manifest.json LICENSE taste-guardrails.md FRAME.md \
-  ASSETS-3D.md MODELS.md references/ tools/ examples/PROMPTS.md \
+git archive HEAD SKILL.md design.md manifest.json LICENSE taste-guardrails.md \
+  FRAME.md ASSETS-3D.md MODELS.md tokens/ themes/ components/ evals/ \
+  references/ tools/ examples/PROMPTS.md \
   compile-choreography.mjs scroll-choreography.json | tar -x -C "$EXPORT"
 
 # 2. authenticate (GitHub account ≥ 1 week old) and publish
