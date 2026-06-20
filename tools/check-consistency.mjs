@@ -44,6 +44,15 @@ for (const p of ["design.md", "tokens/core.tokens.json", "tokens/motion.tokens.j
   if (!existsSync(join(ROOT, p))) errors.push(`promised path missing: ${p}`);
 }
 
+// 3b. installer payload must ship the design system — npx install would otherwise
+//     deliver a skill missing the v2.4.0 surfaces SKILL.md routes to.
+const installer = readFileSync(join(ROOT, "bin/install.mjs"), "utf8");
+for (const surface of ["design.md", "tokens", "themes", "components"]) {
+  if (!new RegExp(`['"]${surface.replace(".", "\\.")}['"]`).test(installer)) {
+    errors.push(`installer (bin/install.mjs) PAYLOAD is missing '${surface}' — npx install would ship an incomplete skill`);
+  }
+}
+
 // 4. token build determinism — committed output must equal a fresh build
 const before = existsSync(join(ROOT, "tokens/build/variables.css")) ? readFileSync(join(ROOT, "tokens/build/variables.css"), "utf8") : null;
 const build = spawnSync(process.execPath, [join(ROOT, "tools/build-tokens/build.mjs")], { cwd: ROOT, encoding: "utf8" });

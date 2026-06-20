@@ -25,6 +25,13 @@ const SKILL_NAME = 'cinematic-scroll';
    landing page (index.html) and its assets/ are intentionally excluded. */
 const PAYLOAD = [
   'SKILL.md',
+  // The v2.4.0 design system — SKILL.md routes to these, so the install is
+  // incomplete without them. Must stay in sync with package.json "files".
+  'design.md',
+  'tokens',
+  'themes',
+  'components',
+  'evals',
   'manifest.json',
   'manifest.md',
   'taste-guardrails.md',
