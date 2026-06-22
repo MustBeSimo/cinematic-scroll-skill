@@ -197,7 +197,10 @@ There is **no fixed set of styles**. Every site below is real and scrollable, bu
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/data-cinematic/"><img src="examples/data-cinematic/hero.jpg" alt="Signal — data cinematic theme" width="100%"></a><br>
       <sub><b>Signal</b> · Data Cinematic — "Data with gravity."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/data-cinematic/">live ↗</a> · <a href="./examples/data-cinematic/">source</a></sub>
     </td>
-    <td width="33%" valign="top">&nbsp;</td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/digital-wealth/"><img src="examples/digital-wealth/poster.jpg" alt="AUREUS — dark crypto-portfolio site with a live liquid-chrome WebGL hero" width="100%"></a><br>
+      <sub><b>Aureus</b> · Fintech — "Digital wealth, a live liquid-chrome WebGL hero."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/digital-wealth/">live ↗</a> · <a href="./examples/digital-wealth/">source</a></sub>
+    </td>
   </tr>
 </table>
 
