@@ -117,25 +117,89 @@ The skill's most impactful builds, shown first: **real-3D** reference sites — 
 
 There is **no fixed set of styles**. Every site below is real and scrollable, built from the *same* motion grammar + token contract, then art-directed into a different world — hand-crafted looks and one-file themes side by side. Swap a theme file or describe a new brief, and the engine builds any aesthetic. These are starting points, not the limit.
 
-| Style | Brand | Live demo |
-|---|---|---|
-| Renaissance editorial | **Classic Touch** — "Oil-painting heroes, gold↔oxblood." | [`examples/renaissance/`](./examples/renaissance/) |
-| Brutalist studio | **Maya Torres** — "Giant grotesk, scroll-driven 3D." | [`examples/studio/`](./examples/studio/) |
-| Signal-clean sci-fi | **Vantascope** — "Warm-white canvas, crimson signal." | [`examples/noir/`](./examples/noir/) |
-| Quiet luxury | **Maison Solenne** — "Ivory + sand, vast negative space." | [`examples/luxe/`](./examples/luxe/) |
-| Gen-Z pop | **Bloom** — "Candy-pink + lime, fast parallax." | [`examples/pop/`](./examples/pop/) |
-| Awwwards techniques | **Atelier Nocturne** — "Shader distortion, kinetic type." | [`examples/atelier/`](./examples/atelier/) |
-| Symmetric Monument | **Meridian** — "The art of standing still." | [`examples/symmetric-monument/`](./examples/symmetric-monument/) |
-| Clinical Noir | **Vanta Labs** — "Clarity, in the dark." | [`examples/clinical-noir/`](./examples/clinical-noir/) |
-| Storybook Geometry | **Polly & Plot** — "Stories with edges." | [`examples/storybook-geometry/`](./examples/storybook-geometry/) |
-| Temporal Monument | **Obsidian** — "Time, made monumental." | [`examples/temporal-monument/`](./examples/temporal-monument/) |
-| Atmospheric Sublime | **Farsight** — "Distance is the point." | [`examples/atmospheric-sublime/`](./examples/atmospheric-sublime/) |
-| Warm Scrapbook | **Keepsake** — "Summers you can hold." | [`examples/warm-scrapbook/`](./examples/warm-scrapbook/) |
-| Naturalistic Drift | **Drift** — "Move at the pace of light." | [`examples/naturalistic-drift/`](./examples/naturalistic-drift/) |
-| Brutalist Kinetic | **Concrete / Orange** — "Built, not decorated." | [`examples/brutalist-kinetic/`](./examples/brutalist-kinetic/) |
-| Liquid Chrome | **Chroma** — "Premium, in motion." | [`examples/liquid-chrome/`](./examples/liquid-chrome/) |
-| Botanical Editorial | **Verdant Press** — "Printed, pressed, patient." | [`examples/botanical-editorial/`](./examples/botanical-editorial/) |
-| Data Cinematic | **Signal** — "Data with gravity." | [`examples/data-cinematic/`](./examples/data-cinematic/) |
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/"><img src="assets/scroll-demo.gif" alt="Renaissance editorial — warm classical scroll loop" width="100%"></a><br>
+      <sub><b>Classic Touch</b> · Renaissance editorial — "Oil-painting heroes, gold↔oxblood."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/">live ↗</a> · <a href="./examples/renaissance/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/"><img src="assets/studio-scroll-demo_v2.gif" alt="Brutalist studio — monochrome scroll loop with 3D motion" width="100%"></a><br>
+      <sub><b>Maya Torres</b> · Brutalist studio — "Giant grotesk, scroll-driven 3D."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/">live ↗</a> · <a href="./examples/studio/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/"><img src="assets/noir-scroll-demo.gif" alt="Vantascope — clean editorial sci-fi, crimson signal" width="100%"></a><br>
+      <sub><b>Vantascope</b> · Signal-clean sci-fi — "Warm-white canvas, crimson signal."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/">live ↗</a> · <a href="./examples/noir/">source</a></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/luxe/"><img src="assets/luxe-scroll-demo.gif" alt="Quiet luxury — ivory and sand still-life loop" width="100%"></a><br>
+      <sub><b>Maison Solenne</b> · Quiet luxury — "Ivory + sand, vast negative space."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/luxe/">live ↗</a> · <a href="./examples/luxe/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/pop/"><img src="assets/pop-scroll-demo.gif" alt="Gen-Z pop — neon gradient and glassy UI loop" width="100%"></a><br>
+      <sub><b>Bloom</b> · Gen-Z pop — "Candy-pink + lime, fast parallax."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/pop/">live ↗</a> · <a href="./examples/pop/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/atelier/"><img src="assets/atelier-scroll-demo.gif" alt="Atelier Nocturne — kinetic typography, shader-distorted imagery" width="100%"></a><br>
+      <sub><b>Atelier Nocturne</b> · Awwwards techniques — "Shader distortion, kinetic type."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/atelier/">live ↗</a> · <a href="./examples/atelier/">source</a></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/symmetric-monument/"><img src="examples/symmetric-monument/hero.jpg" alt="Meridian — symmetric monument theme" width="100%"></a><br>
+      <sub><b>Meridian</b> · Symmetric Monument — "The art of standing still."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/symmetric-monument/">live ↗</a> · <a href="./examples/symmetric-monument/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/clinical-noir/"><img src="examples/clinical-noir/hero.jpg" alt="Vanta Labs — clinical noir theme" width="100%"></a><br>
+      <sub><b>Vanta Labs</b> · Clinical Noir — "Clarity, in the dark."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/clinical-noir/">live ↗</a> · <a href="./examples/clinical-noir/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/storybook-geometry/"><img src="examples/storybook-geometry/hero.jpg" alt="Polly & Plot — storybook geometry theme" width="100%"></a><br>
+      <sub><b>Polly &amp; Plot</b> · Storybook Geometry — "Stories with edges."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/storybook-geometry/">live ↗</a> · <a href="./examples/storybook-geometry/">source</a></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/temporal-monument/"><img src="examples/temporal-monument/hero.jpg" alt="Obsidian — temporal monument theme" width="100%"></a><br>
+      <sub><b>Obsidian</b> · Temporal Monument — "Time, made monumental."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/temporal-monument/">live ↗</a> · <a href="./examples/temporal-monument/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/atmospheric-sublime/"><img src="examples/atmospheric-sublime/hero.jpg" alt="Farsight — atmospheric sublime theme" width="100%"></a><br>
+      <sub><b>Farsight</b> · Atmospheric Sublime — "Distance is the point."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/atmospheric-sublime/">live ↗</a> · <a href="./examples/atmospheric-sublime/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/warm-scrapbook/"><img src="examples/warm-scrapbook/hero.jpg" alt="Keepsake — warm scrapbook theme" width="100%"></a><br>
+      <sub><b>Keepsake</b> · Warm Scrapbook — "Summers you can hold."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/warm-scrapbook/">live ↗</a> · <a href="./examples/warm-scrapbook/">source</a></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/naturalistic-drift/"><img src="examples/naturalistic-drift/hero.jpg" alt="Drift — naturalistic drift theme" width="100%"></a><br>
+      <sub><b>Drift</b> · Naturalistic Drift — "Move at the pace of light."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/naturalistic-drift/">live ↗</a> · <a href="./examples/naturalistic-drift/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/brutalist-kinetic/"><img src="examples/brutalist-kinetic/hero.jpg" alt="Concrete / Orange — brutalist kinetic theme" width="100%"></a><br>
+      <sub><b>Concrete / Orange</b> · Brutalist Kinetic — "Built, not decorated."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/brutalist-kinetic/">live ↗</a> · <a href="./examples/brutalist-kinetic/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/liquid-chrome/"><img src="examples/liquid-chrome/hero.jpg" alt="Chroma — liquid chrome theme" width="100%"></a><br>
+      <sub><b>Chroma</b> · Liquid Chrome — "Premium, in motion."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/liquid-chrome/">live ↗</a> · <a href="./examples/liquid-chrome/">source</a></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/botanical-editorial/"><img src="examples/botanical-editorial/hero.jpg" alt="Verdant Press — botanical editorial theme" width="100%"></a><br>
+      <sub><b>Verdant Press</b> · Botanical Editorial — "Printed, pressed, patient."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/botanical-editorial/">live ↗</a> · <a href="./examples/botanical-editorial/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/data-cinematic/"><img src="examples/data-cinematic/hero.jpg" alt="Signal — data cinematic theme" width="100%"></a><br>
+      <sub><b>Signal</b> · Data Cinematic — "Data with gravity."<br><a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/data-cinematic/">live ↗</a> · <a href="./examples/data-cinematic/">source</a></sub>
+    </td>
+    <td width="33%" valign="top">&nbsp;</td>
+  </tr>
+</table>
 
 ### ✦ Reviewed & hardened
 
