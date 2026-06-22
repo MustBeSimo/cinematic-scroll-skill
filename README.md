@@ -24,7 +24,7 @@
 
 **A free, MIT-licensed *craft skill* that gives any coding agent — Claude, Cursor, Hermes, OpenClaw — the taste to build cinematic, scroll-driven websites.** Describe the aesthetic — palette, mood, references — and get a visual system, motion storyboard, pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. **The motion is the constant · the look is yours · the agent is your choice.** It's a skill, not a plugin — the craft travels with you across every agent.
 
-> **New in v2.4.0 — a machine-readable design system under the hood.** A DTCG **token contract** (`design.md` + `tokens/`), **11 visual systems** as one-file themes, and a **9-component library** (Mode A `.html` + Mode B `.tsx`) make output deterministic and gated, not improvised — hardened by an adversarial self-review ([`REVIEW.md`](./REVIEW.md)). See **[Design system](#-design-system-one-token-contract--11-systems--a-component-library)** below.
+> **New in v2.4.0 — a machine-readable design system under the hood.** A DTCG **token contract** (`design.md` + `tokens/`), **visual systems** as one-file themes (swap one, or author your own), and a **9-component library** (Mode A `.html` + Mode B `.tsx`) make output deterministic and gated, not improvised — hardened by an adversarial self-review ([`REVIEW.md`](./REVIEW.md)). See **[Design system](#-design-system-one-token-contract--a-living-system--a-component-library)** below.
 
 > **Free for any use, personal or commercial (MIT).** Actively developed — built from production work and shipped open source. [Issues](https://github.com/MustBeSimo/cinematic-scroll-skill/issues), PRs, and [showcase submissions](https://github.com/MustBeSimo/cinematic-scroll-skill/issues/new?title=Showcase:%20) welcome — I collect what people build.
 
@@ -55,12 +55,12 @@ The doctor **exits non-zero below 80**, so you can wire it into CI and block bui
 npm run proof -- examples/noir/index.html
 ```
 
-## ✦ Design system: one token contract → 11 systems → a component library
+## ✦ Design system: one token contract → a living system → a component library
 
 The look is the user's, but it's no longer improvised. A machine-readable **design contract** now drives every build:
 
 - **[`design.md`](./design.md) + [`tokens/`](./tokens/)** — W3C DTCG design tokens (color, type, spacing, radii, and first-class **motion** tokens: the signature easing curves and §3 pacing rules as *data*). A zero-dependency pipeline emits CSS vars + typed TS; Mode A stays zero-build.
-- **11 visual systems as one-file themes** ([`themes/`](./themes/)) — Symmetric Monument, Clinical Noir, Storybook Geometry, Temporal Monument, Atmospheric Sublime, Warm Scrapbook, Naturalistic Drift, Brutalist Kinetic, Liquid Chrome, Botanical Editorial, Data Cinematic. Pick a look = swap one theme file; every theme is WCAG-AA contrast-checked.
+- **Visual systems as one-file themes** ([`themes/`](./themes/)) — ready-made looks (Symmetric Monument, Clinical Noir, Storybook Geometry, Temporal Monument, Atmospheric Sublime, Warm Scrapbook, Naturalistic Drift, Brutalist Kinetic, Liquid Chrome, Botanical Editorial, Data Cinematic), each WCAG-AA contrast-checked — and any new look is one more theme file. Pick a look = swap one file.
 - **A named component library** ([`components/`](./components/) · [`component-grammar.md`](./references/component-grammar.md)) — HeroParallax, PinnedReveal, DepthFigure, TiltCard, MorphBackground, HorizontalGallery, ScrubVideo, KineticHeadline, MagneticCursor — token-driven, both modes (Mode A `.html` + Mode B `.tsx`), each doctor-verified.
 
 ```bash
@@ -69,32 +69,10 @@ npm run verify -- components/mode-a/hero-parallax.html # one command: contract +
 npm test                                              # every gate — the same set CI runs
 ```
 
-### ✦ Eleven worlds — a glimpse, not a ceiling
-
-These eleven are **starting points, not the set** — each a real, scrollable brand site, distinct imagery and voice, all built from the *same* token contract + component grammar (hero imagery from the skill's own fal.ai pipeline). Swap one theme file; everything re-skins. Describe a new brief and you get a new world — the engine builds any aesthetic, not a fixed eleven.
-
-| # | System | Brand | Live demo |
-|---|---|---|---|
-| 01 | Symmetric Monument | **Meridian** — "The art of standing still." | [`examples/symmetric-monument/`](./examples/symmetric-monument/) |
-| 02 | Clinical Noir | **Vanta Labs** — "Clarity, in the dark." | [`examples/clinical-noir/`](./examples/clinical-noir/) |
-| 03 | Storybook Geometry | **Polly & Plot** — "Stories with edges." | [`examples/storybook-geometry/`](./examples/storybook-geometry/) |
-| 04 | Temporal Monument | **Obsidian** — "Time, made monumental." | [`examples/temporal-monument/`](./examples/temporal-monument/) |
-| 05 | Atmospheric Sublime | **Farsight** — "Distance is the point." | [`examples/atmospheric-sublime/`](./examples/atmospheric-sublime/) |
-| 06 | Warm Scrapbook | **Keepsake** — "Summers you can hold." | [`examples/warm-scrapbook/`](./examples/warm-scrapbook/) |
-| 07 | Naturalistic Drift | **Drift** — "Move at the pace of light." | [`examples/naturalistic-drift/`](./examples/naturalistic-drift/) |
-| 08 | Brutalist Kinetic | **Concrete / Orange** — "Built, not decorated." | [`examples/brutalist-kinetic/`](./examples/brutalist-kinetic/) |
-| 09 | Liquid Chrome | **Chroma** — "Premium, in motion." | [`examples/liquid-chrome/`](./examples/liquid-chrome/) |
-| 10 | Botanical Editorial | **Verdant Press** — "Printed, pressed, patient." | [`examples/botanical-editorial/`](./examples/botanical-editorial/) |
-| 11 | Data Cinematic | **Signal** — "Data with gravity." | [`examples/data-cinematic/`](./examples/data-cinematic/) |
-
-### ✦ Reviewed & hardened
-
-This release went through an **adversarial self-review** — independent passes over every component, gate script, token, and doc. It surfaced **50 issues**; all critical/high and every doc/data inaccuracy are fixed and re-verified, the rest tracked. Full ledger: **[`REVIEW.md`](./REVIEW.md)**.
-
 <a id="flagships"></a>
-### ⚡ Four real-3D flagships — real WebGL, doctor 94–100
+### ⚡ Real-3D flagships — start here (real WebGL, doctor 94–100)
 
-Beyond the build-free Mode-A worlds, the skill ships four **real-3D** reference sites — no two sharing a technique (an asset-driven WebXR colonnade, a procedural particle galaxy, a raymarched volumetric sky, and a refractive glass monolith). Open any live:
+The skill's most impactful builds, shown first: **real-3D** reference sites — scroll-driven three.js, no two sharing a technique (an asset-driven WebXR colonnade, a procedural particle galaxy, a raymarched volumetric sky, and a refractive glass monolith). Each handles context-loss, caps devicePixelRatio, gates its loop on visibility, and falls back to a permanent poster — never a blank canvas. Open any live:
 
 <table>
   <tr>
@@ -134,6 +112,34 @@ Beyond the build-free Mode-A worlds, the skill ships four **real-3D** reference 
     </td>
   </tr>
 </table>
+
+### ✦ The worlds — a glimpse, not a ceiling
+
+There is **no fixed set of styles**. Every site below is real and scrollable, built from the *same* motion grammar + token contract, then art-directed into a different world — hand-crafted looks and one-file themes side by side. Swap a theme file or describe a new brief, and the engine builds any aesthetic. These are starting points, not the limit.
+
+| Style | Brand | Live demo |
+|---|---|---|
+| Renaissance editorial | **Classic Touch** — "Oil-painting heroes, gold↔oxblood." | [`examples/renaissance/`](./examples/renaissance/) |
+| Brutalist studio | **Maya Torres** — "Giant grotesk, scroll-driven 3D." | [`examples/studio/`](./examples/studio/) |
+| Signal-clean sci-fi | **Vantascope** — "Warm-white canvas, crimson signal." | [`examples/noir/`](./examples/noir/) |
+| Quiet luxury | **Maison Solenne** — "Ivory + sand, vast negative space." | [`examples/luxe/`](./examples/luxe/) |
+| Gen-Z pop | **Bloom** — "Candy-pink + lime, fast parallax." | [`examples/pop/`](./examples/pop/) |
+| Awwwards techniques | **Atelier Nocturne** — "Shader distortion, kinetic type." | [`examples/atelier/`](./examples/atelier/) |
+| Symmetric Monument | **Meridian** — "The art of standing still." | [`examples/symmetric-monument/`](./examples/symmetric-monument/) |
+| Clinical Noir | **Vanta Labs** — "Clarity, in the dark." | [`examples/clinical-noir/`](./examples/clinical-noir/) |
+| Storybook Geometry | **Polly & Plot** — "Stories with edges." | [`examples/storybook-geometry/`](./examples/storybook-geometry/) |
+| Temporal Monument | **Obsidian** — "Time, made monumental." | [`examples/temporal-monument/`](./examples/temporal-monument/) |
+| Atmospheric Sublime | **Farsight** — "Distance is the point." | [`examples/atmospheric-sublime/`](./examples/atmospheric-sublime/) |
+| Warm Scrapbook | **Keepsake** — "Summers you can hold." | [`examples/warm-scrapbook/`](./examples/warm-scrapbook/) |
+| Naturalistic Drift | **Drift** — "Move at the pace of light." | [`examples/naturalistic-drift/`](./examples/naturalistic-drift/) |
+| Brutalist Kinetic | **Concrete / Orange** — "Built, not decorated." | [`examples/brutalist-kinetic/`](./examples/brutalist-kinetic/) |
+| Liquid Chrome | **Chroma** — "Premium, in motion." | [`examples/liquid-chrome/`](./examples/liquid-chrome/) |
+| Botanical Editorial | **Verdant Press** — "Printed, pressed, patient." | [`examples/botanical-editorial/`](./examples/botanical-editorial/) |
+| Data Cinematic | **Signal** — "Data with gravity." | [`examples/data-cinematic/`](./examples/data-cinematic/) |
+
+### ✦ Reviewed & hardened
+
+This release went through an **adversarial self-review** — independent passes over every component, gate script, token, and doc. It surfaced **50 issues**; all critical/high and every doc/data inaccuracy are fixed and re-verified, the rest tracked. Full ledger: **[`REVIEW.md`](./REVIEW.md)**.
 
 **The flagship in depth.** [`examples/flagship/`](./examples/flagship/) is one cinematic scroll site, four chapters, four 3D modalities — vanilla Three.js (Mode A) plus React Three Fiber + WebXR (Mode B). The 3D stack decision tree lives in [`references/3d-stack.md`](./references/3d-stack.md) (with [`references/webxr.md`](./references/webxr.md) and asset hand-off in [`ASSETS-3D.md`](./ASSETS-3D.md)).
 
@@ -196,9 +202,9 @@ After installing, describe what you want to build in chat — see [`examples/PRO
 
 ---
 
-## Live examples — five scrollable worlds, one grammar
+## Live examples — a few worlds, in depth
 
-Same engine, deliberately clashing aesthetics — five **single, build-free `index.html` files** (GitHub-Pages-native) running the skill's **Mode A** grammar: vanilla JS on `requestAnimationFrame` with optional GSAP/ScrollTrigger enhancements. All five retain a dependency-free core; Noir, Luxe, and Pop progressively enhance one showcase beat with deferred GSAP + ScrollTrigger (loaded from CDN with vanilla fallback). All five render fully with **zero image files** (CSS-only placeholders that upgrade when you add stills). Proof the look is a variable, not a default.
+A closer look at some of the worlds from the gallery above — **single, build-free `index.html` files** (GitHub-Pages-native) running the skill's **Mode A** grammar: vanilla JS on `requestAnimationFrame` with optional GSAP/ScrollTrigger enhancements, dependency-free core, progressively enhanced showcase beats (deferred GSAP + ScrollTrigger from CDN with vanilla fallback). They render fully with **zero image files** (CSS-only placeholders that upgrade when you add stills). Proof the look is a variable, not a default — and not a fixed set.
 
 <table>
   <tr>
@@ -261,7 +267,7 @@ Same engine, deliberately clashing aesthetics — five **single, build-free `ind
   </tr>
 </table>
 
-**Same motion grammar; any aesthetic.** These six examples show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for. (Plus the four **[real-3D flagships](#flagships)** above.)
+**Same motion grammar; any aesthetic.** The worlds above are different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. The styling is infinite; the cinematic *motion* is the constant, and the *look* is whatever you ask for. (See the full gallery and the **[real-3D flagships](#flagships)** — both above.)
 
 ### Running locally
 
@@ -357,7 +363,7 @@ cinematic-scroll-skill/
 ├── README.md                 # you are here
 ├── design.md                 # ✦ the design contract — token roles, motion, banned patterns
 ├── tokens/                   # ✦ DTCG design tokens (core · motion · semantic) + build/ (emitted CSS/TS)
-├── themes/                   # ✦ 11 visual systems as one-file theme overlays
+├── themes/                   # ✦ visual systems as one-file theme overlays (author more)
 ├── components/               # ✦ named component library — Mode A .html + Mode B .tsx + manifest.json
 ├── evals/                    # ✦ triggering set + golden-output evals + runner
 ├── REVIEW.md                 # ✦ adversarial self-review ledger (50 findings + status)
