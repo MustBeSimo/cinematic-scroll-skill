@@ -19,7 +19,7 @@
 <p align="center">
   Built <em>with the skill itself</em> &nbsp;·&nbsp; adapts to your GitHub theme: dark → <strong>Petroleum Editorial</strong>, light → <strong>Swiss Museum</strong><br>
   <a href="https://mustbesimo.github.io/cinematic-scroll-skill/#how">▶ Watch the 30-second demo</a> &nbsp;·&nbsp;
-  <a href="#flagships">⚡ Two 3D / WebXR flagships, live ↓</a>
+  <a href="#flagships">⚡ Four real-3D flagships, live ↓</a>
 </p>
 
 **A free, MIT-licensed *craft skill* that gives any coding agent — Claude, Cursor, Hermes, OpenClaw — the taste to build cinematic, scroll-driven websites.** Describe the aesthetic — palette, mood, references — and get a visual system, motion storyboard, pinned chapters, multi-depth parallax, 3D tilt, and full release pages art-directed to match. **The motion is the constant · the look is yours · the agent is your choice.** It's a skill, not a plugin — the craft travels with you across every agent.
@@ -69,14 +69,32 @@ npm run verify -- components/mode-a/hero-parallax.html # one command: contract +
 npm test                                              # every gate — the same set CI runs
 ```
 
+### ✦ Eleven worlds — a glimpse, not a ceiling
+
+These eleven are **starting points, not the set** — each a real, scrollable brand site, distinct imagery and voice, all built from the *same* token contract + component grammar (hero imagery from the skill's own fal.ai pipeline). Swap one theme file; everything re-skins. Describe a new brief and you get a new world — the engine builds any aesthetic, not a fixed eleven.
+
+| # | System | Brand | Live demo |
+|---|---|---|---|
+| 01 | Symmetric Monument | **Meridian** — "The art of standing still." | [`examples/symmetric-monument/`](./examples/symmetric-monument/) |
+| 02 | Clinical Noir | **Vanta Labs** — "Clarity, in the dark." | [`examples/clinical-noir/`](./examples/clinical-noir/) |
+| 03 | Storybook Geometry | **Polly & Plot** — "Stories with edges." | [`examples/storybook-geometry/`](./examples/storybook-geometry/) |
+| 04 | Temporal Monument | **Obsidian** — "Time, made monumental." | [`examples/temporal-monument/`](./examples/temporal-monument/) |
+| 05 | Atmospheric Sublime | **Farsight** — "Distance is the point." | [`examples/atmospheric-sublime/`](./examples/atmospheric-sublime/) |
+| 06 | Warm Scrapbook | **Keepsake** — "Summers you can hold." | [`examples/warm-scrapbook/`](./examples/warm-scrapbook/) |
+| 07 | Naturalistic Drift | **Drift** — "Move at the pace of light." | [`examples/naturalistic-drift/`](./examples/naturalistic-drift/) |
+| 08 | Brutalist Kinetic | **Concrete / Orange** — "Built, not decorated." | [`examples/brutalist-kinetic/`](./examples/brutalist-kinetic/) |
+| 09 | Liquid Chrome | **Chroma** — "Premium, in motion." | [`examples/liquid-chrome/`](./examples/liquid-chrome/) |
+| 10 | Botanical Editorial | **Verdant Press** — "Printed, pressed, patient." | [`examples/botanical-editorial/`](./examples/botanical-editorial/) |
+| 11 | Data Cinematic | **Signal** — "Data with gravity." | [`examples/data-cinematic/`](./examples/data-cinematic/) |
+
 ### ✦ Reviewed & hardened
 
 This release went through an **adversarial self-review** — independent passes over every component, gate script, token, and doc. It surfaced **50 issues**; all critical/high and every doc/data inaccuracy are fixed and re-verified, the rest tracked. Full ledger: **[`REVIEW.md`](./REVIEW.md)**.
 
 <a id="flagships"></a>
-### ⚡ Two 3D / WebXR flagships — real WebGL, both doctor 100/100
+### ⚡ Four real-3D flagships — real WebGL, doctor 94–100
 
-Beyond the build-free Mode-A worlds, the skill ships two **real-3D** reference sites. Open either live:
+Beyond the build-free Mode-A worlds, the skill ships four **real-3D** reference sites — no two sharing a technique (an asset-driven WebXR colonnade, a procedural particle galaxy, a raymarched volumetric sky, and a refractive glass monolith). Open any live:
 
 <table>
   <tr>
@@ -95,6 +113,24 @@ Beyond the build-free Mode-A worlds, the skill ships two **real-3D** reference s
     <td width="50%" valign="top">
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><b>⚡ Nexus Immersive — Spatial Computing →</b></a><br>
       <sub><b>Tier C procedural shaders</b> — no external model needed. A 15,000-particle galaxy field (custom GLSL vertex + fragment, per-particle phase), a 60×60 wave-equation displacement grid (indigo→cyan lerp), and a Lorenz-inspired attractor. A WebXR session gate shows <i>Enter VR</i> only when <code>navigator.xr.isSessionSupported</code> returns true; context-loss handled, rAF gated on visibility + IntersectionObserver, mobile canvas suppressed.<br><br><code>three.js</code> · <code>GLSL</code> · <code>WebXR</code> — source in <a href="./examples/immersive/">examples/immersive</a>.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/volumetric-aether/"><img src="examples/volumetric-aether/poster.jpg" alt="Aether — a raymarched volumetric cloudscape at dawn, the camera flying down through golden cloud under a low sun." width="100%"></a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/crystalline-monolith/"><img src="examples/crystalline-monolith/poster.jpg" alt="Obsidian — a refractive faceted glass monolith with a glowing violet core, orbited by a field of glinting shards." width="100%"></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/volumetric-aether/"><b>☁ Aether — Make Weather →</b></a><br>
+      <sub><b>Tier C raymarched shader</b> — a fullscreen volumetric cloudscape, zero assets. Every pixel marches an fbm density field with a second light-march toward the sun (self-shadowing + god-rays); scroll flies the camera <i>down through</i> the weather as the palette morphs dawn → cosmic. devicePixelRatio capped, loop gated on visibility, CSS-sky fallback when WebGL is absent.<br><br><code>three.js</code> · <code>raymarching</code> · <code>GLSL</code> · <code>no assets</code> — source in <a href="./examples/volumetric-aether/">examples/volumetric-aether</a>.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/crystalline-monolith/"><b>△ Obsidian — Refract It →</b></a><br>
+      <sub><b>Tier B transmission glass</b> — a faceted monolith of real <code>MeshPhysicalMaterial</code> (transmission, IOR 1.5, thickness, iridescence) lit by a procedural PMREM environment, ACES tone mapping and a bloom pass. Scroll cranes the camera around it while 60 orbiting shards and sweeping lights keep the facets alive; context-loss handled, CSS-gem fallback.<br><br><code>three.js</code> · <code>transmission</code> · <code>PMREM</code> · <code>bloom</code> — source in <a href="./examples/crystalline-monolith/">examples/crystalline-monolith</a>.</sub>
     </td>
   </tr>
 </table>
@@ -225,7 +261,7 @@ Same engine, deliberately clashing aesthetics — five **single, build-free `ind
   </tr>
 </table>
 
-**Same motion grammar; any aesthetic.** These six examples show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for. (Plus the two **[3D / WebXR flagships](#flagships)** above.)
+**Same motion grammar; any aesthetic.** These six examples show different visual directions the skill can art-direct — change the copy, palette, and references, and the same engine produces any world you describe. This isn't an exhaustive list of *styles* (the styling is infinite). It's a proof that the cinematic *motion* is the constant, and the *look* is whatever you ask for. (Plus the four **[real-3D flagships](#flagships)** above.)
 
 ### Running locally
 

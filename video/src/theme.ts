@@ -1,17 +1,18 @@
-// Bright editorial palette — warm cream, ink, cognac. The Reel's framing
-// (hook, prompt, labels, two-media, end) uses this for a fresh, premium,
-// "advertisy" tone; the live-world footage supplies the colour.
+// Electric-blue framing palette — vivid royal blue, warm-white ink, cyan accent
+// (Nous/Hermes aesthetic). The Reel's framing (hook, prompt, labels, end) uses
+// this; the live-world footage supplies its own colour. Field names kept (paper/
+// ink/cognac) so every scene re-skins from this one swap.
 export const bright = {
-  paper: '#F3EBDB',
-  paperDeep: '#EBE0CD',
-  card: '#FCF7ED',
-  ink: '#241B12',
-  inkSoft: '#7C6A52',
-  cognac: '#A4652F',
-  brass: '#B6892F',
-  oxblood: '#8A382E',
-  sage: '#6F7A57',
-  line: 'rgba(80,58,34,0.20)',
+  paper: '#1E26EB',                  // electric royal blue (was cream)
+  paperDeep: '#1620C8',
+  card: '#151C78',                   // deep-navy panel (white ink reads on it)
+  ink: '#F3F0E8',                    // warm-white text on blue
+  inkSoft: '#A8AFEF',                // periwinkle dim
+  cognac: '#7CE7FF',                 // electric-cyan accent / emphasis
+  brass: '#C7CCFF',
+  oxblood: '#5ED6C6',                // teal pop (hook "none") — fits the electric-blue palette
+  sage: '#86E9FF',
+  line: 'rgba(243,240,232,0.22)',    // light hairline on blue
 } as const;
 
 // Noir / Petroleum palette — matches the social card + the noir live example.

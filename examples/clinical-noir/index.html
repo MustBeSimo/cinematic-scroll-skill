@@ -1,0 +1,232 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VANTA LABS — clinical-noir · cinematic-scroll v2.4.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&display=swap" rel="stylesheet">
+<style>
+/* ── design tokens (theme: clinical-noir) ── */
+:root {
+  --accent: #C9A96E;
+  --bg: #2C2C2C;
+  --fg: #D8DDE2;
+  --fg-dim: #7A8B99;
+  --line: #F7F5F124;
+  --surface: #3A3A3A;
+  --dur-micro: 300ms;
+  --dur-title: 720ms;
+  --dur-transition: 500ms;
+  --ease-cut: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-playful: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-reveal: cubic-bezier(0.65, 0, 0.35, 1);
+  --font-body: "Helvetica Neue", Helvetica, Inter, Arial, sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, Inter, Arial, sans-serif;
+  --font-ui: "Helvetica Neue", Helvetica, Inter, Arial, sans-serif;
+  --gutter: 24px;
+  --section-y: 96px;
+  --stack: 16px;
+  --type-body: 1.125rem;
+  --type-caption: 0.78rem;
+  --type-lh-body: 1.7;
+  --type-lh-display: 1.1;
+  --type-subtitle: 1.953rem;
+  --type-title: 3.815rem;
+  --bp-lg: 1024px;
+  --bp-md: 768px;
+  --bp-sm: 640px;
+  --bp-xl: 1280px;
+  --alpha-line-on-dark: #F7F5F124;
+  --alpha-line-on-light: #16131024;
+  --alpha-scrim: #0B0A08A6;
+  --brand-amber: #C9A96E;
+  --brand-cognac: #9A6A3C;
+  --brand-signal: #C41E3A;
+  --neutral-0: #FFFFFF;
+  --neutral-100: #EFEBE4;
+  --neutral-1000: #000000;
+  --neutral-200: #DED8CC;
+  --neutral-300: #C3BBAB;
+  --neutral-400: #9B9384;
+  --neutral-50: #F7F5F1;
+  --neutral-500: #766F62;
+  --neutral-600: #574F45;
+  --neutral-700: #3D372F;
+  --neutral-800: #272320;
+  --neutral-900: #161310;
+  --neutral-950: #0B0A08;
+  --font-stack-display-serif: "Cormorant Garamond", Georgia, serif;
+  --font-stack-editorial-serif: "Crimson Text", Georgia, serif;
+  --font-stack-geometric: Futura, Jost, "Century Gothic", system-ui, sans-serif;
+  --font-stack-gotham: Gotham, Montserrat, Inter, sans-serif;
+  --font-stack-grotesk: "Space Grotesk", Inter, system-ui, sans-serif;
+  --font-stack-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-stack-neo-grotesque: "Helvetica Neue", Helvetica, Inter, Arial, sans-serif;
+  --font-stack-sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-stack-serif: "EB Garamond", Georgia, "Times New Roman", serif;
+  --weight-bold: 700;
+  --weight-light: 300;
+  --weight-medium: 500;
+  --weight-regular: 400;
+  --weight-semibold: 600;
+  --weight-thin: 200;
+  --lh-loose: 1.8;
+  --lh-normal: 1.5;
+  --lh-relaxed: 1.7;
+  --lh-snug: 1.3;
+  --lh-tight: 1.1;
+  --radius-full: 9999px;
+  --radius-lg: 16px;
+  --radius-md: 8px;
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-xl: 24px;
+  --scale-golden: 1.618;
+  --scale-major-third: 1.25;
+  --scale-minor-third: 1.2;
+  --scale-perfect-fourth: 1.333;
+  --size-body: 1rem;
+  --size-body-lg: 1.125rem;
+  --size-caption: 0.78rem;
+  --size-display: 5.96rem;
+  --size-display-xl: 7.45rem;
+  --size-h1: 3.815rem;
+  --size-h2: 3.052rem;
+  --size-h3: 2.441rem;
+  --size-h4: 1.953rem;
+  --size-h5: 1.5rem;
+  --size-h6: 1.25rem;
+  --size-small: 0.875rem;
+  --space-2xl: 48px;
+  --space-2xs: 4px;
+  --space-3xl: 64px;
+  --space-3xs: 2px;
+  --space-4xl: 96px;
+  --space-5xl: 128px;
+  --space-lg: 24px;
+  --space-md: 16px;
+  --space-sm: 12px;
+  --space-xl: 32px;
+  --space-xs: 8px;
+  --tracking-normal: 0em;
+  --tracking-tight: -0.02em;
+  --tracking-tightest: -0.03em;
+  --tracking-wide: 0.08em;
+  --tracking-widest: 0.2em;
+  --z-base: 0;
+  --z-modal: 10000;
+  --z-overlay: 1000;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --depth-back: 0.15;
+  --depth-far: 0.05;
+  --depth-front: 0.9;
+  --depth-max-layers: 7;
+  --depth-mid: 0.5;
+  --depth-near: 0.8;
+  --dur-base: 500ms;
+  --dur-fast: 300ms;
+  --dur-glacial: 1200ms;
+  --dur-instant: 120ms;
+  --dur-slow: 720ms;
+  --pacing-breathing-vh: 80;
+  --pacing-density-max: 3;
+  --pacing-pin-max-vh: 400;
+  --pacing-pin-min-vh: 150;
+  --pacing-rhythm-sec-per-100vh: 1.2;
+  --pacing-snap-dead-zone-vh: 10;
+  --pacing-title-reveal-end: 0.4;
+  --pacing-title-reveal-start: 0.3;
+  --stagger-base: 0.06;
+  --stagger-max-elements: 5;
+  --stagger-tight: 0.04;
+  --stagger-wide: 0.12;
+  --fluid-h2: clamp(1.8922rem, 1.4384rem + 2.017vw, 3.052rem);
+  --fluid-h1: clamp(2.3653rem, 1.798rem + 2.5212vw, 3.815rem);
+  --fluid-display: clamp(3.6952rem, 2.809rem + 3.9388vw, 5.96rem);
+  --fluid-display-xl: clamp(4.619rem, 3.5112rem + 4.9235vw, 7.45rem);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body,Georgia,serif);line-height:var(--lh-relaxed,1.6);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.eyebrow{font-family:var(--font-ui,Inter,sans-serif);font-size:var(--size-caption,.8rem);letter-spacing:.28em;text-transform:uppercase;color:var(--fg-dim,#666)}
+h1,h2,h3{font-family:var(--font-display,Georgia,serif);line-height:var(--lh-tight,1.08);font-weight:700}
+.accent{color:var(--accent)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 6vw}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:22px 6vw;mix-blend-mode:difference;color:#fff}
+nav .mark{font-family:var(--font-ui,Inter,sans-serif);font-weight:700;letter-spacing:.18em;font-size:.92rem}
+nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-spacing:.12em;opacity:.8;text-transform:uppercase}
+/* hero */
+.hero{position:relative;height:100vh;display:flex;align-items:flex-end;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:118%;object-fit:cover;will-change:transform}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 28%,transparent) 0%,transparent 32%,color-mix(in srgb,var(--bg) 86%,transparent) 100%)}
+.hero-inner{position:relative;z-index:1;padding-bottom:9vh}
+.hero .eyebrow{color:var(--accent);margin-bottom:1.4rem}
+.hero h1{font-size:var(--fluid-h1,clamp(3rem,8vw,7rem));letter-spacing:-.02em;white-space:pre-line;color:var(--fg);text-shadow:0 2px 40px color-mix(in srgb,var(--bg) 60%,transparent)}
+.scroll-cue{margin-top:2.6rem;font-family:var(--font-ui,Inter,sans-serif);font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--fg-dim,#888)}
+/* statement */
+.statement{padding:24vh 6vw;text-align:center}
+.statement h2{font-size:clamp(2rem,4.6vw,4rem);max-width:18ch;margin:0 auto;letter-spacing:-.01em}
+.statement .rule{width:64px;height:3px;background:var(--accent);margin:3rem auto 0}
+/* chapters */
+.chapter{display:grid;grid-template-columns:1.05fr .95fr;gap:6vw;align-items:center;padding:14vh 6vw;max-width:1320px;margin:0 auto}
+.chapter:nth-child(even){direction:rtl}.chapter:nth-child(even)>*{direction:ltr}
+.chap-media{border-radius:var(--radius-lg,14px);overflow:hidden;aspect-ratio:4/5;box-shadow:0 40px 90px color-mix(in srgb,var(--fg) 22%,transparent)}
+.chap-media img{width:100%;height:112%;object-fit:cover;will-change:transform}
+.chap-copy h2{font-size:clamp(1.8rem,3.4vw,3rem);margin:1rem 0 1.2rem}
+.chap-copy p{font-size:var(--size-body-lg,1.15rem);color:var(--fg-dim,#666);max-width:42ch}
+/* features */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4rem;padding:16vh 6vw;max-width:1320px;margin:0 auto}
+.feat-rule{width:40px;height:3px;background:var(--accent);margin-bottom:1.6rem}
+.feat h3{font-size:1.6rem;margin-bottom:.7rem}
+.feat p{color:var(--fg-dim,#666)}
+/* cta */
+.cta{min-height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 6vw;border-top:1px solid var(--line,rgba(0,0,0,.1))}
+.cta h2{font-size:clamp(2.4rem,6vw,5.5rem);letter-spacing:-.02em;max-width:16ch}
+.cta .mark{margin-top:3rem;font-family:var(--font-ui,Inter,sans-serif);letter-spacing:.22em;font-size:.9rem;color:var(--fg-dim,#888)}
+/* reveal */
+.reveal{opacity:0;transform:translateY(46px);transition:opacity var(--dur-slow,.8s) var(--ease-reveal,cubic-bezier(.16,1,.3,1)),transform var(--dur-slow,.8s) var(--ease-reveal,cubic-bezier(.16,1,.3,1))}
+.reveal.in{opacity:1;transform:none}
+@media (max-width:820px){.chapter,.features{grid-template-columns:1fr}.chapter:nth-child(even){direction:ltr}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}*{scroll-behavior:auto}}
+</style></head>
+<body>
+<nav><div class="mark">VANTA LABS</div><div class="menu">Precision Systems</div></nav>
+<header class="hero">
+  <div class="hero-bg" data-parallax><img src="hero.jpg" alt="VANTA LABS hero"></div>
+  <div class="hero-inner wrap">
+    <div class="eyebrow">Precision Systems</div>
+    <h1>Clarity, in
+the dark.</h1>
+    <div class="scroll-cue">Scroll ↓</div>
+  </div>
+</header>
+<section class="statement reveal"><h2>The best instruments disappear. You only notice the result.</h2><div class="rule"></div></section>
+
+    <section class="chapter reveal">
+      <div class="chap-media" data-parallax><img src="hero.jpg" alt="" loading="lazy"></div>
+      <div class="chap-copy">
+        <div class="eyebrow">01 — Signal</div>
+        <h2>Noise removed</h2>
+        <p>Cold light, exact tolerances, zero ornament. What remains is only what works.</p>
+      </div>
+    </section>
+    <section class="chapter reveal">
+      <div class="chap-media" data-parallax><img src="hero.jpg" alt="" loading="lazy"></div>
+      <div class="chap-copy">
+        <div class="eyebrow">02 — Method</div>
+        <h2>Measured, not guessed</h2>
+        <p>Every surface is a decision. Every shadow is intentional.</p>
+      </div>
+    </section>
+<section class="features"><div class="feat reveal"><div class="feat-rule"></div><h3>Precision</h3><p>Engineered to the micron.</p></div><div class="feat reveal"><div class="feat-rule"></div><h3>Control</h3><p>Nothing left to chance.</p></div><div class="feat reveal"><div class="feat-rule"></div><h3>Focus</h3><p>One light. One subject.</p></div></section>
+<section class="cta reveal"><h2>See it clearly.</h2><div class="mark">VANTA LABS · built with cinematic-scroll</div></section>
+<script>
+  const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.18});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const px=[...document.querySelectorAll('[data-parallax] img')];
+  let ticking=false;
+  function frame(){ticking=false;const vh=innerHeight;px.forEach(img=>{const r=img.parentElement.getBoundingClientRect();const p=(r.top+r.height/2-vh/2)/vh;img.style.transform='translateY('+(p*-7)+'%)';});}
+  addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(frame);}},{passive:true});frame();
+</script>
+</body></html>

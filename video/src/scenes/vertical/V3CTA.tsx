@@ -26,20 +26,20 @@ export const V3CTA: React.FC = () => {
         FREE · MIT · OPEN ON PURPOSE
       </div>
 
-      <div style={{opacity: gen, fontFamily: mono, color: bright.inkSoft, fontSize: 42, letterSpacing: 1}}>
-        Generation is getting cheap.
+      <div style={{opacity: gen, fontFamily: mono, color: bright.ink, fontSize: 62, fontWeight: 500, letterSpacing: 1, lineHeight: 1.2}}>
+        Generation is<br />getting cheap.
       </div>
-      <div style={{opacity: moat, transform: `translateY(${moatY}px)`, fontFamily: grotesk, color: bright.ink, fontSize: 168, fontWeight: 700, letterSpacing: -4, lineHeight: 0.98, marginTop: 12}}>
-        Taste is the <span style={{color: bright.cognac}}>moat.</span>
+      <div style={{opacity: moat, transform: `translateY(${moatY}px)`, fontFamily: grotesk, color: bright.ink, fontSize: 168, fontWeight: 700, letterSpacing: -4, lineHeight: 0.98, marginTop: 16}}>
+        Taste is the <span style={{color: bright.cognac}}>edge.</span>
       </div>
 
       {/* install — two channels, stacked */}
       <div style={{opacity: cmds, display: 'flex', flexDirection: 'column', gap: 16, marginTop: 48, alignItems: 'center'}}>
-        <span style={{fontFamily: mono, fontSize: 36, background: '#1b140d', color: '#F3EBDB', borderRadius: 11, padding: '16px 26px'}}>
-          <span style={{color: '#7C6A52'}}>$ </span>npx cinematic-scroll-skill
+        <span style={{fontFamily: mono, fontSize: 36, background: '#F1EEE4', color: '#1E26EB', borderRadius: 11, padding: '16px 26px'}}>
+          <span style={{color: '#8A90D8'}}>$ </span>npx cinematic-scroll-skill
         </span>
-        <span style={{fontFamily: mono, fontSize: 36, background: '#1b140d', color: '#F3EBDB', borderRadius: 11, padding: '16px 26px'}}>
-          <span style={{color: '#7C6A52'}}>$ </span>clawhub install cinematic-scroll
+        <span style={{fontFamily: mono, fontSize: 36, background: '#F1EEE4', color: '#1E26EB', borderRadius: 11, padding: '16px 26px'}}>
+          <span style={{color: '#8A90D8'}}>$ </span>clawhub install cinematic-scroll
         </span>
       </div>
 

@@ -26,20 +26,20 @@ export const ReelCTA: React.FC = () => {
         FREE · MIT · OPEN ON PURPOSE
       </div>
 
-      <div style={{opacity: gen, fontFamily: mono, color: bright.inkSoft, fontSize: 34, letterSpacing: 2}}>
+      <div style={{opacity: gen, fontFamily: mono, color: bright.ink, fontSize: 56, fontWeight: 500, letterSpacing: 1}}>
         Generation is getting cheap.
       </div>
-      <div style={{opacity: moat, transform: `translateY(${moatY}px)`, fontFamily: grotesk, color: bright.ink, fontSize: 132, fontWeight: 700, letterSpacing: -3, lineHeight: 1, marginTop: 6}}>
-        Taste is the <span style={{color: bright.cognac}}>moat.</span>
+      <div style={{opacity: moat, transform: `translateY(${moatY}px)`, fontFamily: grotesk, color: bright.ink, fontSize: 132, fontWeight: 700, letterSpacing: -3, lineHeight: 1, marginTop: 10}}>
+        Taste is the <span style={{color: bright.cognac}}>edge.</span>
       </div>
 
       {/* install — two channels */}
       <div style={{opacity: cmds, display: 'flex', gap: 16, marginTop: 40, flexWrap: 'wrap', justifyContent: 'center'}}>
-        <span style={{fontFamily: mono, fontSize: 26, background: '#1b140d', color: '#F3EBDB', borderRadius: 9, padding: '12px 20px'}}>
-          <span style={{color: '#7C6A52'}}>$ </span>npx cinematic-scroll-skill
+        <span style={{fontFamily: mono, fontSize: 26, background: '#F1EEE4', color: '#1E26EB', borderRadius: 9, padding: '12px 20px'}}>
+          <span style={{color: '#8A90D8'}}>$ </span>npx cinematic-scroll-skill
         </span>
-        <span style={{fontFamily: mono, fontSize: 26, background: '#1b140d', color: '#F3EBDB', borderRadius: 9, padding: '12px 20px'}}>
-          <span style={{color: '#7C6A52'}}>$ </span>clawhub install cinematic-scroll
+        <span style={{fontFamily: mono, fontSize: 26, background: '#F1EEE4', color: '#1E26EB', borderRadius: 9, padding: '12px 20px'}}>
+          <span style={{color: '#8A90D8'}}>$ </span>clawhub install cinematic-scroll
         </span>
       </div>
 

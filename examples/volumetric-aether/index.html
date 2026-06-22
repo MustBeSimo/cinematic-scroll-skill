@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AETHER — Volumetric Atmosphere Engine</title>
+<meta name="description" content="A raymarched volumetric cloudscape that the scroll flies through. Tier-C WebGL, zero assets — the visual is the math." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- THIRD-PARTY CDN: Three.js r165 ES module, loaded via importmap from cdn.jsdelivr.net.
+     Self-host three.module.js + add SRI if your deployment policy restricts third-party
+     origins. The page degrades to a static CSS sky if the module or WebGL is unavailable. -->
+<script type="importmap">
+{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"}}
+</script>
+
+<!-- GSAP + ScrollTrigger — deferred, SRI-pinned. Vanilla rAF fallback if the CDN is blocked. -->
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+
+<style>
+  /* ── Design tokens (centralised; everything else references these roles) ── */
+  :root {
+    --bg:        #06080f;
+    --bg-deep:   #03040a;
+    --fg:        #eef1fb;
+    --fg-soft:   rgba(238,241,251,0.62);
+    --fg-faint:  rgba(238,241,251,0.34);
+    --accent:    #ffb877;   /* dawn ember */
+    --accent-2:  #7fd4ff;   /* high-altitude cyan */
+    --accent-3:  #c79bff;   /* cosmic violet */
+    --line:      rgba(238,241,251,0.14);
+    --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-slow:   cubic-bezier(0.65, 0, 0.35, 1);
+    --pin:       300vh;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg-deep);
+    color: var(--fg);
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg-deep); }
+
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent-2); outline-offset: 4px; border-radius: 2px; }
+
+  /* ── Fixed volumetric canvas ── */
+  #aether-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    display: block;
+  }
+
+  /* Static fallback sky — shown when WebGL unavailable (CSS-only, never a blank canvas) */
+  .sky-fallback {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    display: none;
+    background:
+      radial-gradient(120% 80% at 50% 12%, var(--accent) 0%, rgba(255,184,119,0) 38%),
+      radial-gradient(90% 60% at 20% 90%, var(--accent-3) 0%, rgba(199,155,255,0) 45%),
+      linear-gradient(180deg, #0a1226 0%, var(--bg) 60%, var(--bg-deep) 100%);
+  }
+  .no-webgl #aether-canvas { display: none; }
+  .no-webgl .sky-fallback { display: block; }
+
+  /* readability veil that strengthens over text blocks */
+  .veil {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    /* Darken only where the LEFT-aligned copy sits (left + bottom) so text reads over
+       bright cloud, while the sky + sun stay bold and untouched. */
+    background:
+      linear-gradient(90deg, rgba(3,4,10,0.40) 0%, rgba(3,4,10,0.12) 44%, transparent 72%),
+      linear-gradient(180deg, rgba(3,4,10,0.16) 0%, transparent 24%, transparent 56%, rgba(3,4,10,0.40) 100%),
+      radial-gradient(140% 100% at 60% 40%, transparent 62%, rgba(3,4,10,0.22) 100%);
+  }
+
+  /* ── Progress HUD (sandbox/iframe aid) ── */
+  .hud {
+    position: fixed;
+    top: clamp(14px, 2vh, 22px);
+    right: clamp(14px, 2vw, 26px);
+    z-index: 30;
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(9px, 0.9vw, 11px);
+    letter-spacing: 0.16em;
+    color: var(--fg-faint);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hud-bar { width: 76px; height: 2px; background: var(--line); position: relative; overflow: hidden; }
+  .hud-bar span { position: absolute; inset: 0; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+
+  /* ── Top nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 25;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(18px, 2.6vh, 30px) clamp(20px, 5vw, 64px);
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(10px, 1vw, 12px);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    mix-blend-mode: difference;
+  }
+  nav .brand { font-weight: 700; }
+  nav .nav-links { display: flex; gap: clamp(14px, 2vw, 30px); }
+  nav .nav-links a { text-decoration: none; color: var(--fg-soft); transition: color 0.3s var(--ease-reveal); }
+  @media (hover: hover) { nav .nav-links a:hover { color: var(--fg); } }
+  @media (max-width: 640px) { nav .nav-links { display: none; } }
+
+  /* ── Content layer ── */
+  main { position: relative; z-index: 2; }
+
+  section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(80px, 12vh, 160px) clamp(24px, 7vw, 120px);
+  }
+
+  .eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(10px, 0.95vw, 12px);
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: clamp(18px, 2.4vh, 28px);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .eyebrow::before { content: ""; width: clamp(24px, 4vw, 56px); height: 1px; background: currentColor; }
+
+  /* ── Hero ── */
+  #hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(80px,12vh,160px) clamp(24px,7vw,120px) clamp(70px,12vh,150px); }
+  /* dedicated scrim behind the hero copy → guaranteed legibility over bright cloud */
+  #hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgba(3,4,10,0.7) 0%, rgba(3,4,10,0.5) 34%, rgba(3,4,10,0.2) 56%, transparent 76%); }
+  #hero > * { position: relative; }
+  .hero-title {
+    font-size: clamp(4rem, 17vw, 18rem);
+    font-weight: 300;
+    line-height: 0.86;
+    letter-spacing: -0.04em;
+    font-optical-sizing: auto;
+    /* tight per-glyph shadow gives local contrast for thin serif strokes over bright sky */
+    text-shadow: 0 1px 2px rgba(3,4,10,0.55), 0 2px 24px rgba(3,4,10,0.6);
+  }
+  .hero-title .char { display: inline-block; will-change: transform, opacity; }
+  .hero-sub {
+    max-width: 40ch;
+    margin-top: clamp(24px, 3.4vh, 44px);
+    font-size: clamp(1.05rem, 1.7vw, 1.5rem);
+    color: var(--fg-soft);
+    font-weight: 300;
+  }
+  .hero-meta {
+    margin-top: clamp(34px, 5vh, 64px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(20px, 4vw, 60px);
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(9px, 0.85vw, 11px);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+  }
+  .hero-meta b { display: block; color: var(--fg); font-weight: 700; font-size: 1.5em; letter-spacing: 0; margin-top: 6px; }
+  .scroll-cue {
+    position: absolute;
+    left: clamp(24px, 7vw, 120px);
+    bottom: clamp(28px, 4vh, 48px);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--fg-faint);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .scroll-cue i { display: block; width: 1px; height: 38px; background: linear-gradient(var(--accent), transparent); animation: cue 2.4s var(--ease-slow) infinite; transform-origin: top; }
+  @keyframes cue { 0%,100% { transform: scaleY(0.25); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+
+  /* ── Editorial chapters ── */
+  .chapter-title {
+    font-size: clamp(2.6rem, 8vw, 8rem);
+    font-weight: 300;
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    max-width: 16ch;
+    text-shadow: 0 2px 50px rgba(3,4,10,0.5), 0 1px 12px rgba(3,4,10,0.4);
+  }
+  .hero-sub, .lede { text-shadow: 0 1px 24px rgba(3,4,10,0.45); }
+  .reveal-line { display: block; overflow: hidden; }
+  .reveal-line > span { display: block; will-change: transform; }
+
+  .lede {
+    max-width: 46ch;
+    margin-top: clamp(28px, 4vh, 52px);
+    font-size: clamp(1.15rem, 1.9vw, 1.7rem);
+    color: var(--fg-soft);
+  }
+  .lede em { color: var(--accent-2); font-style: italic; }
+
+  /* layered figure: numbers + caption that parallax independently */
+  .layer-stack { position: relative; margin-top: clamp(40px, 6vh, 90px); }
+  .big-index {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(6rem, 26vw, 22rem);
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--line);
+    font-weight: 700;
+    will-change: transform;
+  }
+  .layer-caption {
+    position: absolute;
+    bottom: clamp(8px, 2vh, 24px);
+    right: 0;
+    max-width: 30ch;
+    text-align: right;
+    font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+    color: var(--fg-soft);
+    will-change: transform;
+  }
+  @media (max-width: 700px) { .layer-caption { position: static; text-align: left; margin-top: 18px; max-width: none; } }
+
+  /* spec grid */
+  .specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: clamp(40px, 6vh, 80px); }
+  .spec { background: var(--bg); padding: clamp(26px, 3.4vw, 44px); }
+  .spec .k { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-2); }
+  .spec .v { font-size: clamp(1.4rem, 2.6vw, 2.3rem); margin-top: 14px; line-height: 1.1; }
+  .spec .d { font-size: clamp(0.92rem, 1.3vw, 1.05rem); color: var(--fg-soft); margin-top: 12px; }
+
+  /* ── CTA ── */
+  #cta { text-align: center; align-items: center; }
+  .cta-title { font-size: clamp(2.8rem, 10vw, 11rem); font-weight: 300; line-height: 0.9; letter-spacing: -0.03em; }
+  .cta-cmd {
+    margin-top: clamp(34px, 5vh, 60px);
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    background: rgba(238,241,251,0.05);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: clamp(16px, 2.4vh, 24px) clamp(22px, 4vw, 40px);
+    display: inline-block;
+  }
+  .cta-cmd b { color: var(--accent); font-weight: 700; }
+  .cta-link { margin-top: 22px; font-family: 'Space Mono', monospace; font-size: clamp(11px, 1.1vw, 14px); letter-spacing: 0.16em; color: var(--accent-2); text-decoration: none; }
+
+  footer {
+    position: relative; z-index: 2;
+    padding: clamp(50px, 9vh, 110px) clamp(24px, 7vw, 120px);
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(10px, 0.9vw, 12px);
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-faint);
+  }
+  footer .f-logo { font-family: 'Fraunces', serif; font-size: clamp(1.4rem, 4vw, 2.6rem); letter-spacing: -0.02em; color: var(--fg); text-transform: none; }
+
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    section { padding: clamp(90px, 14vh, 140px) 24px; }
+    .layer-caption { color: var(--fg-soft); }
+  }
+
+  /* ── Reduced motion: static single frame, all content visible ── */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    .hero-title .char, .reveal-line > span { transform: none !important; opacity: 1 !important; }
+    .scroll-cue i { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="aether-canvas" aria-hidden="true"></canvas>
+<div class="sky-fallback" aria-hidden="true"></div>
+<div class="veil" aria-hidden="true"></div>
+
+<div class="hud" aria-hidden="true"><span>Altitude</span><div class="hud-bar"><span id="hud-fill"></span></div></div>
+
+<nav>
+  <div class="brand">AETHER°</div>
+  <div class="nav-links">
+    <a href="#density">Density</a>
+    <a href="#light">Scattering</a>
+    <a href="#engine">Engine</a>
+    <a href="#cta">Access</a>
+  </div>
+</nav>
+
+<main>
+  <header id="hero">
+    <p class="eyebrow">Volumetric atmosphere engine</p>
+    <h1 class="hero-title" id="hero-title" aria-label="Aether">Aether</h1>
+    <p class="hero-sub">A sky you can fall through. Sixty samples of light per pixel, marched in real time — no model, no texture, only math becoming weather.</p>
+    <div class="hero-meta">
+      <div>Render <b>Raymarched</b></div>
+      <div>Assets <b>Zero</b></div>
+      <div>Stack <b>Tier C</b></div>
+    </div>
+    <div class="scroll-cue"><i></i><span>Descend</span></div>
+  </header>
+
+  <section id="density">
+    <p class="eyebrow">01 — Density</p>
+    <h2 class="chapter-title">
+      <span class="reveal-line"><span>Cloud is not a</span></span>
+      <span class="reveal-line"><span>picture. It is a</span></span>
+      <span class="reveal-line"><span>probability.</span></span>
+    </h2>
+    <p class="lede">Every pixel casts a ray and walks it forward, sampling fractional Brownian noise at each step. Where the field is dense, light is <em>absorbed</em>; where it thins, the void shows through. The form is computed, never drawn.</p>
+    <div class="layer-stack">
+      <div class="big-index">01</div>
+      <p class="layer-caption">Five octaves of value noise, advected by a slow wind vector that the scroll itself accelerates.</p>
+    </div>
+  </section>
+
+  <section id="light">
+    <p class="eyebrow">02 — Scattering</p>
+    <h2 class="chapter-title">
+      <span class="reveal-line"><span>The sun is a</span></span>
+      <span class="reveal-line"><span>second march,</span></span>
+      <span class="reveal-line"><span>inward.</span></span>
+    </h2>
+    <p class="lede">At each sample we step a short ray toward the sun and accumulate occlusion. Thin edges glow; deep cores fall to shadow. That single trick — <em>light marching through density</em> — is the entire difference between fog and a sky at dawn.</p>
+    <div class="layer-stack">
+      <div class="big-index">02</div>
+      <p class="layer-caption">Henyey–Greenstein phase weighting pushes a warm forward-scatter halo around the light disk.</p>
+    </div>
+  </section>
+
+  <section id="engine">
+    <p class="eyebrow">03 — Engine</p>
+    <h2 class="chapter-title">
+      <span class="reveal-line"><span>One contract.</span></span>
+      <span class="reveal-line"><span>Infinite weather.</span></span>
+    </h2>
+    <p class="lede">The same scroll choreography drives camera, wind, and palette. Swap three uniforms and dawn becomes a cosmic storm — <em>the look is a variable, not a build</em>.</p>
+    <div class="specs">
+      <div class="spec"><div class="k">Technique</div><div class="v">Volumetric raymarch</div><div class="d">Per-pixel ray walk through an fbm density field, ~56 steps, 6-step light sub-march.</div></div>
+      <div class="spec"><div class="k">Budget</div><div class="v">Single context</div><div class="d">One WebGL renderer, devicePixelRatio capped, rAF gated on visibility.</div></div>
+      <div class="spec"><div class="k">Degrade</div><div class="v">CSS sky</div><div class="d">No WebGL → a static gradient atmosphere. Reduced-motion → one still frame.</div></div>
+      <div class="spec"><div class="k">Assets</div><div class="v">None shipped</div><div class="d">Zero textures, zero meshes. The cloud exists only while the GPU computes it.</div></div>
+    </div>
+  </section>
+
+  <section id="cta">
+    <p class="eyebrow">Build the sky</p>
+    <h2 class="cta-title">Make weather.</h2>
+    <div class="cta-cmd"><b>$</b> npx cinematic-scroll-skill</div>
+    <a class="cta-link" href="https://clawhub.ai/mustbesimo/cinematic-scroll">clawhub.ai/mustbesimo/cinematic-scroll</a>
+  </section>
+</main>
+
+<footer>
+  <div>
+    <div class="f-logo">Aether°</div>
+    <div style="margin-top:10px">Volumetric · Tier C · Zero assets</div>
+  </div>
+  <div style="text-align:right">
+    <div>Built with the cinematic-scroll skill</div>
+    <div style="margin-top:8px">By Simone Leonelli · simoneleonelli.com</div>
+  </div>
+</footer>
+
+<script type="module">
+  import * as THREE from 'three';
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const canvas = document.getElementById('aether-canvas');
+
+  // ── WebGL feature-detect → permanent CSS fallback, never a blank canvas ──
+  function webglOK() {
+    try {
+      const c = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+    } catch (e) { return false; }
+  }
+
+  let renderer, scene, camera, material, mesh, raf = 0, onScreen = true, running = false;
+  const clock = { t: 0 };
+  let scroll = 0;            // 0..1 normalized page progress (drives camera + palette)
+  let targetScroll = 0;
+
+  if (!webglOK()) {
+    document.body.classList.add('no-webgl');
+  } else {
+    try { initThree(); } catch (e) { console.warn('Aether: WebGL init failed, using CSS sky', e); document.body.classList.add('no-webgl'); }
+  }
+
+  function initThree() {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
+    // Raymarching is fill-rate bound — keep DPR conservative (lower on phones).
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.6));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    scene = new THREE.Scene();
+    camera = new THREE.Camera();   // fullscreen-quad pass needs no projection
+
+    const STEPS = isMobile ? 38 : 52;
+    const LIGHT_STEPS = isMobile ? 4 : 5;
+
+    material = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime:   { value: 0 },
+        uScroll: { value: 0 },
+        uRes:    { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+        uMouse:  { value: new THREE.Vector2(0, 0) },
+        // palette morph targets (dawn → high cyan → cosmic violet)
+        uColA:   { value: new THREE.Color('#ffb877') },
+        uColB:   { value: new THREE.Color('#7fd4ff') },
+        uColC:   { value: new THREE.Color('#c79bff') },
+        uSky:    { value: new THREE.Color('#06080f') },
+      },
+      vertexShader: /* glsl */`
+        varying vec2 vUv;
+        void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }
+      `,
+      fragmentShader: /* glsl */`
+        precision highp float;
+        varying vec2 vUv;
+        uniform float uTime, uScroll;
+        uniform vec2 uRes, uMouse;
+        uniform vec3 uColA, uColB, uColC, uSky;
+
+        const int STEPS = ${STEPS};
+        const int LSTEPS = ${LIGHT_STEPS};
+
+        // hash / value noise / fbm
+        float hash(vec3 p){ p = fract(p*0.3183099 + 0.1); p *= 17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }
+        float vnoise(vec3 x){
+          vec3 i = floor(x); vec3 f = fract(x); f = f*f*(3.0-2.0*f);
+          return mix(mix(mix(hash(i+vec3(0,0,0)),hash(i+vec3(1,0,0)),f.x),
+                         mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),
+                     mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),
+                         mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);
+        }
+        float fbm(vec3 p){
+          float a = 0.5, s = 0.0; mat3 m = mat3(0.0,0.8,0.6,-0.8,0.36,-0.48,-0.6,-0.48,0.64);
+          for(int i=0;i<5;i++){ s += a*vnoise(p); p = m*p*2.02; a *= 0.5; }
+          return s;
+        }
+
+        // cloud density field, advected by a wind the scroll accelerates
+        float density(vec3 p){
+          float wind = uTime*0.12 + uScroll*2.4;
+          p.x += wind; p.z += wind*0.35;
+          float base = fbm(p*0.5);
+          float detail = vnoise(p*2.4) * 0.22;        // cheap high-freq wisps (not a 2nd fbm)
+          // a cloud DECK that sits below the camera: dense low, clear sky above — so we
+          // read billowing tops against open sky instead of flying through uniform soup.
+          float deck = smoothstep(1.7, -0.4, p.y + 0.1);
+          // the threshold carves real negative space (gaps of sky) → defined, dramatic forms
+          float d = (base + detail - 0.5) * deck;
+          return clamp(d*2.4, 0.0, 1.0);
+        }
+
+        void main(){
+          vec2 uv = (gl_FragCoord.xy - 0.5*uRes.xy) / uRes.y;
+          // camera is ALWAYS flying forward (uTime) and descends as you scroll —
+          // constant travel gives the clouds real parallax even before you scroll
+          float fly = uTime*0.7 + uScroll*9.0;
+          vec3 ro = vec3(sin(uTime*0.13)*0.8, 1.5 - uScroll*1.6, -4.0 + fly);
+          vec3 rd = normalize(vec3(uv + uMouse*0.05, 1.15));
+          // gentle banking roll
+          float roll = sin(uTime*0.1)*0.07;
+          mat2 rr = mat2(cos(roll), -sin(roll), sin(roll), cos(roll));
+          rd.xy = rr * rd.xy;
+          // downward tilt deepens with scroll (the descent)
+          float tlt = -0.1 - uScroll*0.16;
+          mat2 rot = mat2(cos(tlt), -sin(tlt), sin(tlt), cos(tlt));
+          rd.yz = rot * rd.yz;
+
+          // keep the sun high in view so dawn light reads; it sinks slightly on descent
+          vec3 sunDir = normalize(vec3(0.22, 0.34 - uScroll*0.34, 0.9));
+
+          vec4 sum = vec4(0.0);          // rgb + transmittance accumulation
+          float t = 0.0;
+          for(int i=0;i<STEPS;i++){
+            if(sum.a > 0.99) break;
+            vec3 pos = ro + rd*(t + 0.6);
+            float den = density(pos);
+            if(den > 0.01){
+              // light march toward sun → sharp self-shadowing (drives the warm/cool contrast)
+              float lt = 0.0;
+              for(int j=1;j<=LSTEPS;j++){ lt += density(pos + sunDir*float(j)*0.30); }
+              float sh = exp(-lt*1.5);
+              // forward-scatter halo (cheap Henyey–Greenstein): hot bloom toward the light
+              float mu = max(dot(rd, sunDir), 0.0);
+              float ph = 0.5 + 1.15*pow(mu, 6.0);
+              vec3 sunlit = mix(uColA, vec3(1.0, 0.86, 0.58), 0.22);   // hot golden top
+              vec3 shade  = vec3(0.08, 0.12, 0.30);                    // deep cool shadow
+              vec3 lit = mix(shade, sunlit, sh) * (0.5 + ph);
+              float a = den * 0.66;                       // dense, present
+              sum.rgb += (1.0 - sum.a) * lit * a;
+              sum.a   += (1.0 - sum.a) * a;
+            }
+            t += 0.15 + t*0.012;
+          }
+
+          // sky: deep indigo zenith → warm horizon band → bright sun
+          float h = clamp(rd.y*0.5 + 0.5, 0.0, 1.0);
+          vec3 zenith  = mix(vec3(0.02,0.04,0.11), mix(uColC*0.34, vec3(0.04,0.06,0.16), uScroll), 0.6);
+          vec3 horizon = mix(uColA*0.5, uColB*0.4, uScroll);
+          vec3 sky = mix(horizon, zenith, pow(h, 0.8));
+          float mu2 = max(dot(rd, sunDir), 0.0);
+          float disk = pow(mu2, 600.0);
+          float glow = pow(mu2, 4.0)*0.55 + pow(mu2, 30.0)*0.9;
+          sky += uColA*glow + vec3(1.0, 0.9, 0.72)*disk*2.6;
+
+          vec3 col = sky*(1.0 - sum.a) + sum.rgb;
+          // god-ray shafts toward the sun through thin cloud
+          float shaft = pow(mu2, 3.5) * (1.0 - sum.a*0.5);
+          col += uColA * shaft * 0.6;
+          // tone: filmic + an S-curve for punch; exposure kept lower so white UI text
+          // reads over the cloud everywhere (bold ≠ blown-out)
+          col = col / (col + vec3(0.92));
+          col = pow(col, vec3(0.86));
+          col = mix(col, col*col*(3.0-2.0*col), 0.55);
+          float vig = smoothstep(1.65, 0.18, length(uv));
+          col *= 0.78 + 0.22*vig;
+          gl_FragColor = vec4(col, 1.0);
+        }
+      `,
+    });
+
+    mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+    scene.add(mesh);
+
+    window.addEventListener('resize', onResize, { passive: true });
+    if (!isMobile && !reduced) window.addEventListener('pointermove', onPointer, { passive: true });
+    canvas.addEventListener('webglcontextlost', onContextLost, false);
+    canvas.addEventListener('webglcontextrestored', onContextRestored, false);
+
+    // gate rAF on visibility + on-screen
+    document.addEventListener('visibilitychange', updateRun);
+    const io = new IntersectionObserver((ents) => { onScreen = ents[0].isIntersecting; updateRun(); }, { threshold: 0 });
+    io.observe(canvas);
+
+    renderUniforms();
+    if (reduced) { renderer.render(scene, camera); }   // single static frame, no loop
+    else { running = true; loop(); }
+  }
+
+  function renderUniforms() {
+    if (!material) return;
+    material.uniforms.uScroll.value = scroll;
+    material.uniforms.uTime.value = clock.t;
+  }
+
+  function loop() {
+    raf = requestAnimationFrame(loop);
+    if (!running) return;
+    clock.t += 0.016;
+    // ease scroll toward target for buttery camera motion
+    scroll += (targetScroll - scroll) * 0.06;
+    renderUniforms();
+    renderer.render(scene, camera);
+  }
+
+  function updateRun() {
+    const vis = document.visibilityState === 'visible' && onScreen;
+    if (reduced) { running = false; return; }
+    if (vis && !running) { running = true; if (!raf) loop(); }
+    else if (!vis) { running = false; }
+  }
+
+  function onResize() {
+    if (!renderer) return;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    material.uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
+    if (reduced) renderer.render(scene, camera);
+  }
+  let mx = 0, my = 0;
+  function onPointer(e) {
+    const nx = (e.clientX / window.innerWidth) * 2 - 1;
+    const ny = (e.clientY / window.innerHeight) * 2 - 1;
+    mx += (nx - mx) * 0.1; my += (ny - my) * 0.1;
+    material.uniforms.uMouse.value.set(mx, -my);
+  }
+  function onContextLost(e) { e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
+  function onContextRestored() { try { initThree(); } catch (err) { document.body.classList.add('no-webgl'); } }
+
+  // ── Scroll → normalized progress (works with or without GSAP) ──
+  function pageProgress() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+  }
+  const hudFill = document.getElementById('hud-fill');
+  function onScroll() {
+    targetScroll = pageProgress();
+    if (hudFill) hudFill.style.transform = 'scaleX(' + targetScroll.toFixed(3) + ')';
+    if (reduced && material) { scroll = targetScroll; renderUniforms(); renderer.render(scene, camera); }
+  }
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => { onScroll(); ticking = false; });
+  }, { passive: true });
+  onScroll();
+
+  // ── DOM choreography (GSAP if present; otherwise IntersectionObserver) ──
+  function initDOM() {
+    // Hero title: per-character mask-up reveal — a "title card rises into frame" (dolly-in).
+    const title = document.getElementById('hero-title');
+    const text = title.getAttribute('aria-label') || title.textContent;
+    title.innerHTML = '';
+    [...text].forEach((ch) => {
+      const wrap = document.createElement('span');
+      wrap.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:bottom';
+      const inner = document.createElement('span');
+      inner.className = 'char';
+      inner.textContent = ch;
+      wrap.appendChild(inner);
+      title.appendChild(wrap);
+    });
+    const chars = title.querySelectorAll('.char');
+
+    if (reduced) { chars.forEach((c) => (c.style.transform = 'none')); return; }
+
+    if (window.gsap) {
+      const gsap = window.gsap;
+      if (window.ScrollTrigger) gsap.registerPlugin(window.ScrollTrigger);
+      gsap.set(chars, { yPercent: 115 });
+      gsap.to(chars, { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.045, delay: 0.15 });
+
+      // Chapter line reveals — "tracking shot": lines slide up as each section enters.
+      document.querySelectorAll('.reveal-line > span').forEach((el) => {
+        gsap.set(el, { yPercent: 110 });
+        gsap.to(el, {
+          yPercent: 0, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%' },
+        });
+      });
+      // Independent depth parallax on the oversized index + caption (multi-plane).
+      document.querySelectorAll('.big-index').forEach((el) => {
+        gsap.to(el, { yPercent: -22, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 0.5 } });
+      });
+      document.querySelectorAll('.layer-caption').forEach((el) => {
+        gsap.to(el, { yPercent: 40, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 0.7 } });
+      });
+      gsap.utils.toArray('.eyebrow, .lede, .spec, .cta-title, .cta-cmd').forEach((el) => {
+        gsap.from(el, { opacity: 0, y: 36, duration: 0.9, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 90%' } });
+      });
+    } else {
+      // Vanilla fallback — identical grammar, zero dependency.
+      chars.forEach((c, i) => { c.style.transition = `transform 0.9s ${i * 0.04}s var(--ease-reveal)`; c.style.transform = 'translateY(115%)'; requestAnimationFrame(() => (c.style.transform = 'translateY(0)')); });
+      const io = new IntersectionObserver((ents) => ents.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.querySelectorAll('.reveal-line > span').forEach((s, i) => { s.style.transition = `transform 0.9s ${i * 0.08}s var(--ease-reveal)`; s.style.transform = 'translateY(0)'; });
+        e.target.style.opacity = 1; e.target.classList.add('in');
+        io.unobserve(e.target);
+      }), { threshold: 0.2 });
+      document.querySelectorAll('section').forEach((s) => {
+        s.querySelectorAll('.reveal-line > span').forEach((sp) => (sp.style.transform = 'translateY(110%)'));
+        io.observe(s);
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', () => setTimeout(initDOM, 60));
+  else setTimeout(initDOM, 60);
+</script>
+</body>
+</html>

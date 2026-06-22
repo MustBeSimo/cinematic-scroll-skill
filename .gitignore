@@ -164,3 +164,19 @@ video/*/renders/
 # Social/LinkedIn post captures + posters — local deliverables, regenerate from examples.
 assets/post2-*
 assets/doctor-thumb*
+
+# promo asset workspace (generated)
+.promo/
+
+# Capture/render intermediates that feed the Remotion comps (hq-capture.mjs + the
+# per-theme/3D scroll renders). Large + fully regenerable; the comps reference them
+# only at render time. Final promo deliverables live in assets/ and ARE committed.
+video/public/footage/
+
+# Third-party reference clips downloaded for inspiration (e.g. via ssstwitter) — never ship.
+**/ssstwitter.com_*
+*.refclip.mp4
+
+# Ad-hoc inspect/clip helper scripts created during capture/debugging
+_inspect.mjs
+_clip.mjs

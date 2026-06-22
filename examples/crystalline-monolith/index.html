@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>OBSIDIAN — Crystalline Monolith</title>
+<meta name="description" content="A refractive faceted glass monolith you orbit by scrolling. Real Three.js transmission, procedural environment, ACES tone mapping — Tier B, zero shipped assets." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<!-- THIRD-PARTY CDN: Three.js r165 + its jsm addons (PMREM-free env, RoomEnvironment, bloom),
+     via importmap from cdn.jsdelivr.net. Self-host + SRI if your policy restricts origins.
+     Degrades to a CSS gemstone if WebGL/addons are unavailable — never a blank canvas. -->
+<script type="importmap">
+{"imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+}}
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+
+<style>
+  :root {
+    --bg:        #0a0a0c;
+    --bg-deep:   #050506;
+    --panel:     #101014;
+    --fg:        #f4f3f6;
+    --fg-soft:   rgba(244,243,246,0.6);
+    --fg-faint:  rgba(244,243,246,0.32);
+    --accent:    #b9a0ff;   /* amethyst */
+    --accent-2:  #5ad2c0;   /* prism teal */
+    --accent-3:  #ff8fb0;   /* refracted rose */
+    --line:      rgba(244,243,246,0.12);
+    --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-cue:    cubic-bezier(0.65, 0, 0.35, 1);
+    --pin: 320vh;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg-deep);
+    color: var(--fg);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  ::selection { background: var(--accent); color: var(--bg-deep); }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent-2); outline-offset: 4px; border-radius: 2px; }
+
+  #stage-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; display: block; }
+
+  /* CSS gemstone fallback — never a blank canvas */
+  .gem-fallback {
+    position: fixed; inset: 0; z-index: 0; display: none;
+    background:
+      radial-gradient(60% 50% at 50% 44%, rgba(185,160,255,0.5) 0%, rgba(185,160,255,0) 60%),
+      radial-gradient(40% 40% at 62% 60%, rgba(90,210,192,0.4) 0%, rgba(90,210,192,0) 55%),
+      radial-gradient(40% 40% at 38% 38%, rgba(255,143,176,0.35) 0%, rgba(255,143,176,0) 55%),
+      var(--bg);
+  }
+  .gem-fallback::after {
+    content: ""; position: absolute; left: 50%; top: 44%; width: min(34vw,360px); height: min(34vw,360px);
+    transform: translate(-50%,-50%) rotate(45deg);
+    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(185,160,255,0.06));
+    clip-path: polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 30px 120px rgba(185,160,255,0.3);
+  }
+  .no-webgl #stage-canvas { display: none; }
+  .no-webgl .gem-fallback { display: block; }
+
+  .grade { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(120% 100% at 50% 30%, transparent 40%, rgba(5,5,6,0.62) 100%); }
+
+  .hud {
+    position: fixed; top: clamp(14px,2vh,22px); right: clamp(14px,2vw,26px); z-index: 30;
+    font-family: 'Space Mono', monospace; font-size: clamp(9px,0.9vw,11px); letter-spacing: 0.16em;
+    color: var(--fg-faint); text-transform: uppercase; display: flex; align-items: center; gap: 10px;
+  }
+  .hud-bar { width: 76px; height: 2px; background: var(--line); position: relative; overflow: hidden; }
+  .hud-bar span { position: absolute; inset: 0; width: 100%; background: var(--accent-2); transform: scaleX(0); transform-origin: left; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 25; display: flex; justify-content: space-between; align-items: center;
+    padding: clamp(18px,2.6vh,30px) clamp(20px,5vw,64px);
+    font-family: 'Space Mono', monospace; font-size: clamp(10px,1vw,12px); letter-spacing: 0.2em; text-transform: uppercase;
+    mix-blend-mode: difference;
+  }
+  nav .brand { font-weight: 700; }
+  nav .nav-links { display: flex; gap: clamp(14px,2vw,30px); }
+  nav .nav-links a { text-decoration: none; color: var(--fg-soft); transition: color 0.3s var(--ease-reveal); }
+  @media (hover: hover) { nav .nav-links a:hover { color: var(--fg); } }
+  @media (max-width: 640px) { nav .nav-links { display: none; } }
+
+  main { position: relative; z-index: 2; }
+  section { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: clamp(80px,12vh,160px) clamp(24px,7vw,120px); }
+
+  .eyebrow {
+    font-family: 'Space Mono', monospace; font-size: clamp(10px,0.95vw,12px); letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--accent-2); margin-bottom: clamp(18px,2.4vh,28px); display: flex; align-items: center; gap: 14px;
+  }
+  .eyebrow::before { content: ""; width: clamp(24px,4vw,56px); height: 1px; background: currentColor; }
+
+  /* Hero — monolith centred behind, type framing it left/right */
+  #hero { min-height: 100vh; justify-content: center; }
+  .hero-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .hero-title { font-size: clamp(3.6rem,15vw,16rem); font-weight: 900; line-height: 0.82; letter-spacing: -0.05em; }
+  .hero-title .word { display: inline-block; overflow: hidden; vertical-align: bottom; }
+  .hero-title .word > span { display: inline-block; will-change: transform; }
+  .hero-sub { max-width: 38ch; margin-top: clamp(24px,3.4vh,40px); font-size: clamp(1.05rem,1.7vw,1.45rem); color: var(--fg-soft); }
+  .hero-meta { margin-top: clamp(34px,5vh,60px); display: flex; flex-wrap: wrap; gap: clamp(20px,4vw,56px); font-family: 'Space Mono', monospace; font-size: clamp(9px,0.85vw,11px); letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-faint); }
+  .hero-meta b { display: block; color: var(--fg); font-weight: 700; font-size: 1.5em; letter-spacing: 0; margin-top: 6px; }
+
+  .scroll-cue { position: absolute; left: clamp(24px,7vw,120px); bottom: clamp(28px,4vh,48px); font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-faint); display: flex; align-items: center; gap: 10px; }
+  .scroll-cue i { display: block; width: 1px; height: 38px; background: linear-gradient(var(--accent-2), transparent); animation: cue 2.4s var(--ease-cue) infinite; transform-origin: top; }
+  @keyframes cue { 0%,100% { transform: scaleY(0.25); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+
+  .chapter-title { font-size: clamp(2.4rem,7.5vw,7.5rem); font-weight: 700; line-height: 0.96; letter-spacing: -0.03em; max-width: 16ch; }
+  .reveal-line { display: block; overflow: hidden; }
+  .reveal-line > span { display: block; will-change: transform; }
+  .lede { max-width: 46ch; margin-top: clamp(28px,4vh,52px); font-size: clamp(1.15rem,1.9vw,1.6rem); color: var(--fg-soft); }
+  .lede em { color: var(--accent); font-style: normal; }
+
+  /* facet spec cards */
+  .facets { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: clamp(40px,6vh,80px); }
+  .facet { background: var(--panel); padding: clamp(26px,3.4vw,44px); }
+  .facet .k { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
+  .facet .v { font-size: clamp(1.4rem,2.6vw,2.2rem); margin-top: 14px; font-weight: 500; line-height: 1.1; }
+  .facet .d { font-size: clamp(0.92rem,1.3vw,1.05rem); color: var(--fg-soft); margin-top: 12px; }
+
+  /* a row of "cut" chips that the scroll wipes in */
+  .cuts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(34px,5vh,60px); }
+  .cut { font-family: 'Space Mono', monospace; font-size: clamp(10px,1vw,12px); letter-spacing: 0.14em; text-transform: uppercase; padding: 12px 18px; border: 1px solid var(--line); border-radius: 100px; color: var(--fg-soft); }
+
+  #cta { text-align: center; align-items: center; }
+  .cta-title { font-size: clamp(2.8rem,10vw,11rem); font-weight: 900; line-height: 0.86; letter-spacing: -0.04em; }
+  .cta-cmd { margin-top: clamp(34px,5vh,60px); font-family: 'Space Mono', monospace; font-size: clamp(1rem,2vw,1.5rem); background: rgba(244,243,246,0.05); border: 1px solid var(--line); border-radius: 10px; padding: clamp(16px,2.4vh,24px) clamp(22px,4vw,40px); display: inline-block; }
+  .cta-cmd b { color: var(--accent-2); font-weight: 700; }
+  .cta-link { margin-top: 22px; font-family: 'Space Mono', monospace; font-size: clamp(11px,1.1vw,14px); letter-spacing: 0.16em; color: var(--accent); text-decoration: none; }
+
+  footer { position: relative; z-index: 2; padding: clamp(50px,9vh,110px) clamp(24px,7vw,120px); border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 24px; font-family: 'Space Mono', monospace; font-size: clamp(10px,0.9vw,12px); letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-faint); }
+  footer .f-logo { font-family: 'Inter Tight', sans-serif; font-weight: 900; font-size: clamp(1.4rem,4vw,2.6rem); letter-spacing: -0.03em; color: var(--fg); text-transform: none; }
+
+  @media (max-width: 768px) { section { padding: clamp(90px,14vh,140px) 24px; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    .hero-title .word > span, .reveal-line > span { transform: none !important; opacity: 1 !important; }
+    .scroll-cue i { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stage-canvas" aria-hidden="true"></canvas>
+<div class="gem-fallback" aria-hidden="true"></div>
+<div class="grade" aria-hidden="true"></div>
+
+<div class="hud" aria-hidden="true"><span>Rotation</span><div class="hud-bar"><span id="hud-fill"></span></div></div>
+
+<nav>
+  <div class="brand">OBSIDIAN△</div>
+  <div class="nav-links">
+    <a href="#refract">Refraction</a>
+    <a href="#cut">Cut</a>
+    <a href="#engine">Engine</a>
+    <a href="#cta">Acquire</a>
+  </div>
+</nav>
+
+<main>
+  <header id="hero">
+    <div class="hero-grid">
+      <p class="eyebrow">Crystalline monolith</p>
+      <h1 class="hero-title" aria-label="Obsidian"><span class="word"><span>OBSID</span></span><span class="word"><span>IAN</span></span></h1>
+      <p class="hero-sub">One block of computed glass. Real transmission, real refraction — the scene behind it bends through the body as you turn it.</p>
+      <div class="hero-meta">
+        <div>Material <b>Transmission</b></div>
+        <div>Environment <b>Procedural</b></div>
+        <div>Stack <b>Tier B</b></div>
+      </div>
+    </div>
+    <div class="scroll-cue"><i></i><span>Rotate</span></div>
+  </header>
+
+  <section id="refract">
+    <p class="eyebrow">01 — Refraction</p>
+    <h2 class="chapter-title">
+      <span class="reveal-line"><span>Light enters.</span></span>
+      <span class="reveal-line"><span>It does not leave</span></span>
+      <span class="reveal-line"><span>the way it came.</span></span>
+    </h2>
+    <p class="lede">A physical material with an index of refraction near <em>1.5</em> samples the framebuffer behind the mesh and bends it through the volume — so the type, the glow, the whole stage pours through the crystal and comes out the far side recoloured.</p>
+    <div class="cuts">
+      <span class="cut">IOR 1.5</span><span class="cut">Thickness · absorption</span><span class="cut">Chromatic edge</span><span class="cut">Clearcoat sheen</span>
+    </div>
+  </section>
+
+  <section id="cut">
+    <p class="eyebrow">02 — Cut</p>
+    <h2 class="chapter-title">
+      <span class="reveal-line"><span>Facets are</span></span>
+      <span class="reveal-line"><span>just opinions</span></span>
+      <span class="reveal-line"><span>about a normal.</span></span>
+    </h2>
+    <p class="lede">The body is a flat-shaded icosahedral solid — every face owns one normal, so light snaps between planes instead of smearing. Scroll drives a slow morph that breathes the cut between sharp and faceted, <em>geometry as choreography</em>.</p>
+    <div class="facets">
+      <div class="facet"><div class="k">Geometry</div><div class="v">Faceted solid</div><div class="d">Procedural icosahedron, flat normals, displaced on scroll — generated in-browser, nothing shipped.</div></div>
+      <div class="facet"><div class="k">Environment</div><div class="v">Room PMREM</div><div class="d">A pre-filtered procedural environment gives reflections and the light the glass refracts.</div></div>
+    </div>
+  </section>
+
+  <section id="engine">
+    <p class="eyebrow">03 — Engine</p>
+    <h2 class="chapter-title">
+      <span class="reveal-line"><span>Orbit is the</span></span>
+      <span class="reveal-line"><span>interface.</span></span>
+    </h2>
+    <p class="lede">Scroll is the camera rig: it cranes around the monolith, tilts, and pushes in for the close. ACES tone mapping and an optional bloom pass carry the highlights — <em>a product film with no video file</em>.</p>
+    <div class="facets">
+      <div class="facet"><div class="k">Tone</div><div class="v">ACES filmic</div><div class="d">Filmic curve + sRGB output so highlights roll off instead of clipping to white.</div></div>
+      <div class="facet"><div class="k">Budget</div><div class="v">Single context</div><div class="d">One renderer, devicePixelRatio capped, loop gated on visibility + on-screen.</div></div>
+      <div class="facet"><div class="k">Degrade</div><div class="v">CSS gem</div><div class="d">No WebGL or no addons → a static faceted gemstone. Reduced-motion → one still frame.</div></div>
+    </div>
+  </section>
+
+  <section id="cta">
+    <p class="eyebrow">Cut your own</p>
+    <h2 class="cta-title">Refract it.</h2>
+    <div class="cta-cmd"><b>$</b> npx cinematic-scroll-skill</div>
+    <a class="cta-link" href="https://clawhub.ai/mustbesimo/cinematic-scroll">clawhub.ai/mustbesimo/cinematic-scroll</a>
+  </section>
+</main>
+
+<footer>
+  <div>
+    <div class="f-logo">Obsidian△</div>
+    <div style="margin-top:10px">Refractive · Tier B · Zero shipped assets</div>
+  </div>
+  <div style="text-align:right">
+    <div>Built with the cinematic-scroll skill</div>
+    <div style="margin-top:8px">By Simone Leonelli · simoneleonelli.com</div>
+  </div>
+</footer>
+
+<script type="module">
+  import * as THREE from 'three';
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const canvas = document.getElementById('stage-canvas');
+
+  function webglOK() {
+    try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); }
+    catch (e) { return false; }
+  }
+
+  let renderer, scene, camera, crystal, baseGeo, raf = 0, running = false, onScreen = true;
+  let shardGroup, key, rim, fill;   // orbiting glints + sweeping lights
+  let composer = null;          // optional bloom
+  let envRT = null, pmrem = null;
+  let t = 0, scroll = 0, targetScroll = 0;
+  let mx = 0, my = 0, tmx = 0, tmy = 0;
+
+  if (!webglOK()) {
+    document.body.classList.add('no-webgl');
+  } else {
+    initThree().catch((e) => { console.warn('Obsidian: init failed, using CSS gem', e); teardown(); document.body.classList.add('no-webgl'); });
+  }
+
+  async function initThree() {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: false, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color('#0a0a0c');
+
+    camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 7);
+
+    // ── Procedural environment (reflections + the light the glass refracts) ──
+    try {
+      const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+      pmrem = new THREE.PMREMGenerator(renderer);
+      const room = new RoomEnvironment();
+      envRT = pmrem.fromScene(room, 0.04);
+      scene.environment = envRT.texture;
+      room.dispose?.();
+    } catch (e) {
+      // Fallback environment: a tiny gradient cube so transmission still has something to bend.
+      const cube = makeGradientEnv();
+      scene.environment = cube;
+    }
+
+    // coloured key + rim lights add chromatic life to the facets; they orbit in the
+    // loop so reflections sweep continuously across the glass.
+    key  = new THREE.PointLight('#b9a0ff', 80, 50); key.position.set(5, 6, 6); scene.add(key);
+    rim  = new THREE.PointLight('#5ad2c0', 60, 50); rim.position.set(-6, -3, 4); scene.add(rim);
+    fill = new THREE.PointLight('#ff8fb0', 42, 50); fill.position.set(0, -6, -6); scene.add(fill);
+    scene.add(new THREE.AmbientLight('#20202a', 1.0));
+
+    // ── The monolith: faceted refractive glass ──
+    baseGeo = new THREE.IcosahedronGeometry(2.1, 1);
+    const geo = baseGeo.toNonIndexed();
+    geo.computeVertexNormals();
+    const mat = new THREE.MeshPhysicalMaterial({
+      color: '#ffffff',
+      metalness: 0,
+      roughness: 0.04,
+      transmission: 1,
+      thickness: 2.4,
+      ior: 1.5,
+      attenuationColor: new THREE.Color('#b9a0ff'),
+      attenuationDistance: 3.2,
+      clearcoat: 1,
+      clearcoatRoughness: 0.08,
+      iridescence: 0.5,
+      iridescenceIOR: 1.4,
+      flatShading: true,
+      envMapIntensity: 1.4,
+    });
+    crystal = new THREE.Mesh(geo, mat);
+    scene.add(crystal);
+
+    // a faint inner core (emissive) so the center never reads dead-black
+    const core = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.7, 0),
+      new THREE.MeshBasicMaterial({ color: '#6b5bd0' })
+    );
+    crystal.add(core);
+
+    // ── Orbiting glint field — 60 small faceted shards that spin + bob around the
+    //    monolith. They catch the bloom and fill the frame with constant 3D motion. ──
+    shardGroup = new THREE.Group();
+    const shardGeo = new THREE.OctahedronGeometry(0.085, 0);   // one geo, shared
+    const palette = ['#b9a0ff', '#5ad2c0', '#ff8fb0', '#f4f3f6'];
+    // deterministic pseudo-random so resize/restore don't reshuffle the field
+    let s = 9241;
+    const rnd = () => { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; };
+    for (let i = 0; i < 60; i++) {
+      const col = palette[i % palette.length];
+      const m = new THREE.Mesh(shardGeo, new THREE.MeshStandardMaterial({
+        color: col, emissive: col, emissiveIntensity: 1.8, metalness: 0.7, roughness: 0.25,
+      }));
+      const r = 3.2 + rnd() * 3.0;
+      const a = rnd() * Math.PI * 2;
+      const y0 = (rnd() - 0.5) * 5.0;
+      m.position.set(Math.cos(a) * r, y0, Math.sin(a) * r);
+      m.userData = { r, a, y0, spin: 0.5 + rnd(), bob: 0.5 + rnd() * 1.5, ph: rnd() * 6.28 };
+      m.scale.setScalar(0.5 + rnd() * 1.1);
+      shardGroup.add(m);
+    }
+    scene.add(shardGroup);
+
+    // ── Optional bloom (guarded; page is complete without it) ──
+    if (!isMobile && !reduced) {
+      try {
+        const { EffectComposer } = await import('three/addons/postprocessing/EffectComposer.js');
+        const { RenderPass } = await import('three/addons/postprocessing/RenderPass.js');
+        const { UnrealBloomPass } = await import('three/addons/postprocessing/UnrealBloomPass.js');
+        composer = new EffectComposer(renderer);
+        composer.addPass(new RenderPass(scene, camera));
+        composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.85, 0.8, 0.82));
+      } catch (e) { composer = null; }
+    }
+
+    window.addEventListener('resize', onResize, { passive: true });
+    if (!isMobile && !reduced) window.addEventListener('pointermove', onPointer, { passive: true });
+    canvas.addEventListener('webglcontextlost', onContextLost, false);
+    canvas.addEventListener('webglcontextrestored', onContextRestored, false);
+    document.addEventListener('visibilitychange', updateRun);
+    const io = new IntersectionObserver((ents) => { onScreen = ents[0].isIntersecting; updateRun(); }, { threshold: 0 });
+    io.observe(canvas);
+
+    applyScroll();
+    if (reduced) { renderFrame(); }      // single static frame
+    else { running = true; loop(); }
+  }
+
+  function makeGradientEnv() {
+    const size = 64;
+    const data = new Uint8Array(size * size * 4);
+    for (let i = 0; i < size * size; i++) {
+      const y = Math.floor(i / size) / size;
+      data[i*4+0] = 40 + y * 150; data[i*4+1] = 30 + y * 120; data[i*4+2] = 70 + y * 160; data[i*4+3] = 255;
+    }
+    const tex = new THREE.DataTexture(data, size, size); tex.needsUpdate = true;
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    return tex;
+  }
+
+  // Morph the facets between sharp & breathing, driven by scroll + time. We capture each
+  // vertex's unit direction ONCE, then re-derive radius every frame from that pristine basis
+  // so repeated displacement can't drift the geometry outward.
+  let unit = null;
+  function morphStable() {
+    if (!crystal) return;
+    if (!unit) {
+      // capture normalized direction of each vertex once
+      const base = crystal.geometry.attributes.position.array;
+      unit = new Float32Array(base.length);
+      for (let i = 0; i < base.length; i += 3) {
+        const x = base[i], y = base[i+1], z = base[i+2];
+        const len = Math.hypot(x, y, z) || 1;
+        unit[i] = x/len; unit[i+1] = y/len; unit[i+2] = z/len;
+      }
+    }
+    const arr = crystal.geometry.attributes.position.array;
+    const amp = 0.16 + scroll * 0.4 + Math.sin(t * 0.5) * 0.05;   // breathes harder
+    for (let i = 0; i < arr.length; i += 3) {
+      const ux = unit[i], uy = unit[i+1], uz = unit[i+2];
+      const n = Math.sin(ux*2.6 + t*0.9) * Math.cos(uy*2.3 - t*0.7) * Math.sin(uz*2.4 + t*0.5);
+      const r = 2.1 + n * amp;
+      arr[i] = ux*r; arr[i+1] = uy*r; arr[i+2] = uz*r;
+    }
+    crystal.geometry.attributes.position.needsUpdate = true;
+    crystal.geometry.computeVertexNormals();
+  }
+
+  function applyScroll() {
+    if (!crystal) return;
+    // scroll cranes the camera around + pushes in for the close-up; a slow time drift
+    // keeps the rig alive even when the page isn't being scrolled.
+    const ang = scroll * Math.PI * 1.6 + tmx * 0.5 + Math.sin(t * 0.07) * 0.22;
+    const radius = 7 - scroll * 2.6 + Math.sin(t * 0.11) * 0.25;
+    const height = Math.sin(scroll * Math.PI) * 1.6 - tmy * 0.8 + Math.cos(t * 0.09) * 0.2;
+    camera.position.set(Math.sin(ang) * radius, height, Math.cos(ang) * radius);
+    camera.lookAt(0, 0, 0);
+  }
+
+  function renderFrame() {
+    if (composer) composer.render(); else renderer.render(scene, camera);
+  }
+
+  function loop() {
+    raf = requestAnimationFrame(loop);
+    if (!running) return;
+    t += 0.016;
+    scroll += (targetScroll - scroll) * 0.06;
+    tmx += (mx - tmx) * 0.05; tmy += (my - tmy) * 0.05;
+    // the monolith turns continuously
+    crystal.rotation.y += 0.004;
+    crystal.rotation.x = Math.sin(t * 0.25) * 0.16;
+    crystal.rotation.z = Math.cos(t * 0.18) * 0.08;
+    // lights orbit → reflections sweep across the facets
+    key.position.set(Math.cos(t * 0.4) * 6.5, 5.5, Math.sin(t * 0.4) * 6.5);
+    rim.position.set(Math.cos(t * 0.4 + 2.4) * -6.5, -3, Math.sin(t * 0.4 + 2.4) * 5);
+    fill.position.set(Math.sin(t * 0.3) * 4, -6, Math.cos(t * 0.3) * -6);
+    // orbiting glint field
+    shardGroup.rotation.y = t * 0.12;
+    shardGroup.rotation.x = Math.sin(t * 0.08) * 0.2;
+    for (let i = 0; i < shardGroup.children.length; i++) {
+      const m = shardGroup.children[i], u = m.userData;
+      m.rotation.x += 0.02 * u.spin; m.rotation.y += 0.03 * u.spin;
+      m.position.y = u.y0 + Math.sin(t * 0.6 * u.bob + u.ph) * 0.4;
+    }
+    morphStable();
+    applyScroll();
+    renderFrame();
+  }
+
+  function updateRun() {
+    const vis = document.visibilityState === 'visible' && onScreen;
+    if (reduced) { running = false; return; }
+    if (vis && !running) { running = true; if (!raf) loop(); }
+    else if (!vis) { running = false; }
+  }
+
+  function onResize() {
+    if (!renderer) return;
+    camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    if (composer) composer.setSize(window.innerWidth, window.innerHeight);
+    if (reduced) renderFrame();
+  }
+  function onPointer(e) { mx = (e.clientX / window.innerWidth) * 2 - 1; my = (e.clientY / window.innerHeight) * 2 - 1; }
+  function onContextLost(e) { e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
+  function onContextRestored() { teardown(); initThree().catch(() => document.body.classList.add('no-webgl')); }
+
+  function teardown() {
+    cancelAnimationFrame(raf); raf = 0; running = false;
+    try {
+      scene && scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose()); } });
+      envRT && envRT.dispose(); pmrem && pmrem.dispose();
+      renderer && renderer.dispose();
+    } catch (e) {}
+    unit = null;
+  }
+
+  // ── Scroll progress ──
+  function pageProgress() { const max = document.documentElement.scrollHeight - window.innerHeight; return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0; }
+  const hudFill = document.getElementById('hud-fill');
+  function onScroll() {
+    targetScroll = pageProgress();
+    if (hudFill) hudFill.style.transform = 'scaleX(' + targetScroll.toFixed(3) + ')';
+    if (reduced && crystal) { scroll = targetScroll; applyScroll(); morphStable(); renderFrame(); }
+  }
+  let ticking = false;
+  window.addEventListener('scroll', () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { onScroll(); ticking = false; }); }, { passive: true });
+  onScroll();
+
+  // ── DOM choreography ──
+  function initDOM() {
+    if (window.gsap) {
+      const gsap = window.gsap;
+      if (window.ScrollTrigger) gsap.registerPlugin(window.ScrollTrigger);
+      // Hero words rise — "title rises into the cut" (crane-up).
+      gsap.set('.hero-title .word > span', { yPercent: 115 });
+      gsap.to('.hero-title .word > span', { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.08, delay: 0.15 });
+      if (reduced) gsap.set('.hero-title .word > span', { yPercent: 0, clearProps: 'transform' });
+
+      document.querySelectorAll('.reveal-line > span').forEach((el) => {
+        gsap.set(el, { yPercent: 110 });
+        gsap.to(el, { yPercent: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } });
+      });
+      gsap.utils.toArray('.eyebrow, .lede, .facet, .cut, .cta-title, .cta-cmd').forEach((el) => {
+        gsap.from(el, { opacity: 0, y: 36, duration: 0.9, ease: 'power2.out', scrollTrigger: { trigger: el, start: 'top 90%' } });
+      });
+    } else {
+      const io = new IntersectionObserver((ents) => ents.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.querySelectorAll('.reveal-line > span, .hero-title .word > span').forEach((s, i) => { s.style.transition = `transform 0.9s ${i*0.08}s var(--ease-reveal)`; s.style.transform = 'translateY(0)'; });
+        e.target.style.opacity = 1; io.unobserve(e.target);
+      }), { threshold: 0.18 });
+      document.querySelectorAll('section, #hero').forEach((s) => {
+        s.querySelectorAll('.reveal-line > span, .hero-title .word > span').forEach((sp) => (sp.style.transform = 'translateY(110%)'));
+        io.observe(s);
+      });
+    }
+  }
+  if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', () => setTimeout(initDOM, 60));
+  else setTimeout(initDOM, 60);
+</script>
+</body>
+</html>

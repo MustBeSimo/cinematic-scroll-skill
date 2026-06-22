@@ -27,11 +27,11 @@ export const R2Doctor: React.FC = () => {
       <AbsoluteFill style={{background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 40%)', pointerEvents: 'none'}} />
       <AbsoluteFill style={{background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 25%)', pointerEvents: 'none'}} />
 
-      {/* bridge overlay */}
-      <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', textAlign: 'center', opacity: bridge * bridgeOut}}>
-        <div style={{fontFamily: mono, color: '#7FE9DA', fontSize: 28, letterSpacing: 7}}>AND IT GRADES ITSELF</div>
-        <div style={{fontFamily: grotesk, color: '#fff', fontSize: 78, fontWeight: 700, letterSpacing: -1, marginTop: 8}}>
-          Taste, as a <span style={{color: '#E8484F'}}>number you can gate on.</span>
+      {/* bridge overlay — sits in the lower third, BELOW the score bars so nothing overlaps */}
+      <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', textAlign: 'center', paddingBottom: 178, opacity: bridge * bridgeOut}}>
+        <div style={{fontFamily: mono, color: '#7FE9DA', fontSize: 26, letterSpacing: 7}}>AND IT GRADES ITSELF</div>
+        <div style={{fontFamily: grotesk, color: '#fff', fontSize: 64, fontWeight: 700, letterSpacing: -1, marginTop: 10}}>
+          Taste, as a <span style={{color: '#7388FF'}}>number you can gate on.</span>
         </div>
       </AbsoluteFill>
 
@@ -39,7 +39,7 @@ export const R2Doctor: React.FC = () => {
       <div style={{position: 'absolute', left: 80, top: 78, opacity: cap}}>
         <div style={{fontFamily: mono, color: '#7FE9DA', fontSize: 26, fontWeight: 700, letterSpacing: 4}}>CINEMATIC-DOCTOR</div>
         <div style={{fontFamily: grotesk, color: '#fff', fontSize: 38, fontWeight: 600, marginTop: 6}}>
-          auto-runs on every build · <span style={{color: '#E8484F'}}>below 80 fails CI</span>
+          auto-runs on every build · <span style={{color: '#7388FF'}}>below 80 fails CI</span>
         </div>
       </div>
     </AbsoluteFill>

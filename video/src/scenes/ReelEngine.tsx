@@ -55,8 +55,8 @@ export const ReelEngine: React.FC = () => {
       </div>
 
       {/* install one-liner */}
-      <div style={{opacity: install, marginTop: 30, fontFamily: mono, fontSize: 30, color: bright.ink, background: '#1b140d', borderRadius: 10, padding: '14px 24px'}}>
-        <span style={{color: '#7C6A52'}}>$ </span><span style={{color: '#F3EBDB'}}>npx cinematic-scroll-skill</span>
+      <div style={{opacity: install, marginTop: 30, fontFamily: mono, fontSize: 30, background: '#F1EEE4', borderRadius: 10, padding: '14px 24px'}}>
+        <span style={{color: '#8A90D8'}}>$ </span><span style={{color: '#1E26EB'}}>npx cinematic-scroll-skill</span>
       </div>
 
       <div style={{opacity: kicker, marginTop: 30, fontFamily: serif, fontStyle: 'italic', color: bright.ink, fontSize: 52, fontWeight: 600}}>

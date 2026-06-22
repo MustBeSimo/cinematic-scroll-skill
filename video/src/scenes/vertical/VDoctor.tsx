@@ -45,7 +45,7 @@ const Clip: React.FC = () => {
       {/* who / what / why above */}
       <div style={{textAlign: 'center', marginBottom: 52, opacity: cap}}>
         <div style={{fontFamily: mono, color: '#7FE9DA', fontSize: 40, fontWeight: 700, letterSpacing: 4}}>CINEMATIC-DOCTOR</div>
-        <div style={{fontFamily: grotesk, color: '#fff', fontSize: 50, fontWeight: 600, marginTop: 14}}>auto-runs on every build<br /><span style={{color: '#E8484F'}}>below 80 fails CI</span></div>
+        <div style={{fontFamily: grotesk, color: '#fff', fontSize: 50, fontWeight: 600, marginTop: 14}}>auto-runs on every build<br /><span style={{color: '#7388FF'}}>below 80 fails CI</span></div>
       </div>
 
       <div style={{width: CARD_W, height: CARD_H, borderRadius: 16, overflow: 'hidden', position: 'relative', boxShadow: '0 30px 80px rgba(0,0,0,0.6)'}}>

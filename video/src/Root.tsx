@@ -9,6 +9,11 @@ import {ReelVertical} from './ReelVertical';
 import {Reel2} from './Reel2';
 import {Reel3} from './Reel3';
 import {Reel3Vertical} from './Reel3Vertical';
+import {ElevenWorlds} from './scenes/ElevenWorlds';
+import {ReelV24} from './ReelV24';
+import {ReelV24Vertical} from './ReelV24Vertical';
+import {Showcase, SHOWCASE_DUR} from './Showcase';
+import {Hype, HYPE_DUR} from './Hype';
 
 // Six 16:9 compositions (render at --scale=2 for 4K):
 //   Reel       — 60s flagship sizzle (original cut)
@@ -53,6 +58,46 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
+      />
+      <Composition
+        id="ElevenWorlds"
+        component={ElevenWorlds}
+        durationInFrames={480}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="ReelV24"
+        component={ReelV24}
+        durationInFrames={1200}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="ReelV24Vertical"
+        component={ReelV24Vertical}
+        durationInFrames={1200}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="Showcase"
+        component={Showcase}
+        durationInFrames={SHOWCASE_DUR}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="Hype"
+        component={Hype}
+        durationInFrames={HYPE_DUR}
+        fps={30}
+        width={1920}
+        height={1080}
       />
       <Composition
         id="ReelVertical"

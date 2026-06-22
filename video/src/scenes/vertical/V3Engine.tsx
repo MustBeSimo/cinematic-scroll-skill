@@ -56,8 +56,8 @@ export const V3Engine: React.FC = () => {
       </div>
 
       {/* install one-liner */}
-      <div style={{opacity: install, marginTop: 36, fontFamily: mono, fontSize: 42, color: bright.ink, background: '#1b140d', borderRadius: 12, padding: '18px 30px'}}>
-        <span style={{color: '#7C6A52'}}>$ </span><span style={{color: '#F3EBDB'}}>npx cinematic-scroll-skill</span>
+      <div style={{opacity: install, marginTop: 36, fontFamily: mono, fontSize: 42, background: '#F1EEE4', borderRadius: 12, padding: '18px 30px'}}>
+        <span style={{color: '#8A90D8'}}>$ </span><span style={{color: '#1E26EB'}}>npx cinematic-scroll-skill</span>
       </div>
 
       <div style={{opacity: kicker, marginTop: 44, fontFamily: serif, fontStyle: 'italic', color: bright.ink, fontSize: 68, fontWeight: 600, textAlign: 'center', lineHeight: 1.1}}>
