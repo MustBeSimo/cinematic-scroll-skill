@@ -1,7 +1,9 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>SIGNAL — data-cinematic · cinematic-scroll v2.4.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&display=swap" rel="stylesheet">
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
 <style>
 /* ── design tokens (theme: data-cinematic) ── */
 :root {
@@ -147,86 +149,225 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--fg);font-family:var(--font-body,Georgia,serif);line-height:var(--lh-relaxed,1.6);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--accent);color:var(--bg)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:2px}
 .eyebrow{font-family:var(--font-ui,Inter,sans-serif);font-size:var(--size-caption,.8rem);letter-spacing:.28em;text-transform:uppercase;color:var(--fg-dim,#666)}
-h1,h2,h3{font-family:var(--font-display,Georgia,serif);line-height:var(--lh-tight,1.08);font-weight:700}
+h1,h2,h3{font-family:var(--font-display,Georgia,serif);line-height:var(--lh-tight,1.04);font-weight:700}
 .accent{color:var(--accent)}
-.wrap{max-width:1200px;margin:0 auto;padding:0 6vw}
+.wrap{max-width:1240px;margin:0 auto;padding:0 6vw}
+/* kinetic type — each word rides up out of a clipped line */
+.ln{display:block;overflow:hidden;padding-bottom:.04em}
+.wd{display:inline-block;will-change:transform}
+/* scroll-progress bar */
+.progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:50;background:transparent}
+.progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;background:var(--accent);will-change:transform}
 /* nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:22px 6vw;mix-blend-mode:difference;color:#fff}
+nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:22px 6vw;mix-blend-mode:difference;color:#fff}
 nav .mark{font-family:var(--font-ui,Inter,sans-serif);font-weight:700;letter-spacing:.18em;font-size:.92rem}
-nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-spacing:.12em;opacity:.8;text-transform:uppercase}
-/* hero */
-.hero{position:relative;height:100vh;display:flex;align-items:flex-end;overflow:hidden}
-.hero-bg{position:absolute;inset:0;z-index:0}
-.hero-bg img{width:100%;height:118%;object-fit:cover;will-change:transform}
-.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 28%,transparent) 0%,transparent 32%,color-mix(in srgb,var(--bg) 86%,transparent) 100%)}
-.hero-inner{position:relative;z-index:1;padding-bottom:9vh}
-.hero .eyebrow{color:var(--accent);margin-bottom:1.4rem}
-.hero h1{font-size:var(--fluid-h1,clamp(3rem,8vw,7rem));letter-spacing:-.02em;white-space:pre-line;color:var(--fg);text-shadow:0 2px 40px color-mix(in srgb,var(--bg) 60%,transparent)}
-.scroll-cue{margin-top:2.6rem;font-family:var(--font-ui,Inter,sans-serif);font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--fg-dim,#888)}
-/* statement */
-.statement{padding:24vh 6vw;text-align:center}
-.statement h2{font-size:clamp(2rem,4.6vw,4rem);max-width:18ch;margin:0 auto;letter-spacing:-.01em}
-.statement .rule{width:64px;height:3px;background:var(--accent);margin:3rem auto 0}
-/* chapters */
-.chapter{display:grid;grid-template-columns:1.05fr .95fr;gap:6vw;align-items:center;padding:14vh 6vw;max-width:1320px;margin:0 auto}
+nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-spacing:.12em;opacity:.85;text-transform:uppercase}
+@media(max-width:640px){nav .menu{display:none}}
+/* hero — pinned, scrubbed, multi-depth */
+.hero{position:relative;height:100vh}
+.hero-pin{position:relative;height:100vh;overflow:hidden;perspective:1400px}
+.hero-tilt{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+.hero-bg{position:absolute;inset:-6%}
+.hero-bg img{width:100%;height:100%;object-fit:cover;transform:scale(1.04);will-change:transform}
+.hero-grade{position:absolute;inset:0;opacity:.55;will-change:opacity;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 30%,transparent) 0%,transparent 30%,color-mix(in srgb,var(--bg) 55%,transparent) 70%,var(--bg) 100%)}
+.hero-vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(130% 100% at 50% 38%,transparent 55%,color-mix(in srgb,var(--bg) 70%,transparent) 100%)}
+.hero-inner{position:absolute;left:0;right:0;bottom:9vh;z-index:2;will-change:transform,opacity}
+.hero .eyebrow{color:var(--accent);margin-bottom:1.5rem;display:block}
+.hero h1{font-size:var(--fluid-h1,clamp(3rem,9vw,8rem));letter-spacing:-.025em;color:var(--fg);text-shadow:0 2px 50px color-mix(in srgb,var(--bg) 55%,transparent)}
+.scroll-cue{margin-top:2.4rem;font-family:var(--font-ui,Inter,sans-serif);font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--fg-dim,#888);display:flex;align-items:center;gap:.8rem}
+.scroll-cue i{display:block;width:1px;height:34px;background:linear-gradient(var(--accent),transparent);animation:cue 2.2s var(--ease-reveal,cubic-bezier(.65,0,.35,1)) infinite;transform-origin:top}
+@keyframes cue{0%,100%{transform:scaleY(.3);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+/* statement — big line, per-word reveal */
+.statement{min-height:92vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:18vh 6vw}
+.statement h2{font-size:clamp(2.1rem,5.4vw,4.8rem);max-width:20ch;letter-spacing:-.015em}
+.statement .rule{width:80px;height:3px;background:var(--accent);margin-top:3rem;transform:scaleX(0);transform-origin:0 50%;will-change:transform}
+/* chapters — clip-wipe media, ghost number, tilt */
+.chapter{position:relative;display:grid;grid-template-columns:1.02fr .98fr;gap:6vw;align-items:center;padding:16vh 6vw;max-width:1340px;margin:0 auto;perspective:1200px}
 .chapter:nth-child(even){direction:rtl}.chapter:nth-child(even)>*{direction:ltr}
-.chap-media{border-radius:var(--radius-lg,14px);overflow:hidden;aspect-ratio:4/5;box-shadow:0 40px 90px color-mix(in srgb,var(--fg) 22%,transparent)}
-.chap-media img{width:100%;height:112%;object-fit:cover;will-change:transform}
-.chap-copy h2{font-size:clamp(1.8rem,3.4vw,3rem);margin:1rem 0 1.2rem}
-.chap-copy p{font-size:var(--size-body-lg,1.15rem);color:var(--fg-dim,#666);max-width:42ch}
+.chap-media{position:relative;border-radius:var(--radius-lg,14px);overflow:hidden;aspect-ratio:4/5;transform-style:preserve-3d;will-change:transform;box-shadow:0 50px 110px color-mix(in srgb,var(--fg) 26%,transparent)}
+.chap-media img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);will-change:transform}
+.chap-copy{position:relative}
+.chap-num{position:absolute;top:-12vh;right:0;font-family:var(--font-ui,Inter,sans-serif);font-weight:700;font-size:clamp(7rem,16vw,15rem);line-height:.8;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--fg) 16%,transparent);pointer-events:none;will-change:transform;z-index:-1}
+.chap-copy h2{font-size:clamp(1.9rem,3.6vw,3.2rem);margin:1rem 0 1.3rem}
+.chap-copy p{font-size:var(--size-body-lg,1.18rem);color:var(--fg-dim,#666);max-width:42ch}
 /* features */
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4rem;padding:16vh 6vw;max-width:1320px;margin:0 auto}
-.feat-rule{width:40px;height:3px;background:var(--accent);margin-bottom:1.6rem}
-.feat h3{font-size:1.6rem;margin-bottom:.7rem}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:2.6rem;padding:14vh 6vw 16vh;max-width:1340px;margin:0 auto}
+.feat-rule{width:44px;height:3px;background:var(--accent);margin-bottom:1.6rem;transform:scaleX(0);transform-origin:0 50%;will-change:transform}
+.feat h3{font-size:1.65rem;margin-bottom:.7rem}
 .feat p{color:var(--fg-dim,#666)}
 /* cta */
-.cta{min-height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 6vw;border-top:1px solid var(--line,rgba(0,0,0,.1))}
-.cta h2{font-size:clamp(2.4rem,6vw,5.5rem);letter-spacing:-.02em;max-width:16ch}
+.cta{min-height:86vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 6vw;border-top:1px solid var(--line,rgba(0,0,0,.12))}
+.cta h2{font-size:clamp(2.6rem,7vw,6rem);letter-spacing:-.025em;max-width:16ch}
 .cta .mark{margin-top:3rem;font-family:var(--font-ui,Inter,sans-serif);letter-spacing:.22em;font-size:.9rem;color:var(--fg-dim,#888)}
-/* reveal */
-.reveal{opacity:0;transform:translateY(46px);transition:opacity var(--dur-slow,.8s) var(--ease-reveal,cubic-bezier(.16,1,.3,1)),transform var(--dur-slow,.8s) var(--ease-reveal,cubic-bezier(.16,1,.3,1))}
-.reveal.in{opacity:1;transform:none}
-@media (max-width:820px){.chapter,.features{grid-template-columns:1fr}.chapter:nth-child(even){direction:ltr}}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}*{scroll-behavior:auto}}
+/* film grain */
+.grain{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.05;mix-blend-mode:overlay}
+@media (max-width:820px){.chapter,.features{grid-template-columns:1fr}.chapter:nth-child(even){direction:ltr}.chap-num{top:-9vh}}
+/* progressive enhancement: with no JS / reduced-motion everything is visible + still */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .wd{transform:none!important}
+  .statement .rule,.feat-rule,.progress span{transform:scaleX(1)!important}
+  .hero-tilt,.chap-media{transform:none!important}
+  .scroll-cue i{animation:none}
+}
 </style></head>
 <body>
+<div class="progress" aria-hidden="true"><span></span></div>
 <nav><div class="mark">SIGNAL</div><div class="menu">Observability, Dramatized</div></nav>
-<header class="hero">
-  <div class="hero-bg" data-parallax><img src="hero.jpg" alt="SIGNAL hero"></div>
-  <div class="hero-inner wrap">
-    <div class="eyebrow">Observability, Dramatized</div>
-    <h1>Data with
-gravity.</h1>
-    <div class="scroll-cue">Scroll ↓</div>
+<header class="hero" data-scene>
+  <div class="hero-pin">
+    <div class="hero-tilt"><div class="hero-bg"><img src="hero.jpg" alt="SIGNAL — Observability, Dramatized"></div></div>
+    <div class="hero-grade"></div>
+    <div class="hero-vig"></div>
+    <div class="hero-inner wrap">
+      <span class="eyebrow">Observability, Dramatized</span>
+      <h1 class="kinetic"><span class="ln"><span class="ln-i"><span class="wd">Data</span> <span class="wd">with</span></span></span><span class="ln"><span class="ln-i"><span class="wd">gravity.</span></span></span></h1>
+      <div class="scroll-cue"><i></i>Scroll</div>
+    </div>
   </div>
 </header>
-<section class="statement reveal"><h2>A briefing in a darkened room — numbers that mean something.</h2><div class="rule"></div></section>
+<main>
+<section class="statement" data-scene><h2 class="kinetic"><span class="ln"><span class="ln-i"><span class="wd">A</span> <span class="wd">briefing</span> <span class="wd">in</span> <span class="wd">a</span> <span class="wd">darkened</span> <span class="wd">room</span> <span class="wd">—</span> <span class="wd">numbers</span> <span class="wd">that</span> <span class="wd">mean</span> <span class="wd">something.</span></span></span></h2><div class="rule"></div></section>
 
-    <section class="chapter reveal">
-      <div class="chap-media" data-parallax><img src="hero.jpg" alt="" loading="lazy"></div>
+    <section class="chapter" data-scene>
+      <div class="chap-media tilt" data-skew><img src="hero.jpg" alt="" loading="lazy"></div>
       <div class="chap-copy">
-        <div class="eyebrow">01 — Readout</div>
-        <h2>Information as spectacle</h2>
+        <div class="chap-num" aria-hidden="true">01</div>
+        <div class="eyebrow accent">01 — Readout</div>
+        <h2 class="kinetic"><span class="ln"><span class="ln-i"><span class="wd">Information</span> <span class="wd">as</span> <span class="wd">spectacle</span></span></span></h2>
         <p>Charts that draw themselves; figures that lock on. Mission-control, cinematic.</p>
       </div>
     </section>
-    <section class="chapter reveal">
-      <div class="chap-media" data-parallax><img src="hero.jpg" alt="" loading="lazy"></div>
+    <section class="chapter" data-scene>
+      <div class="chap-media tilt" data-skew><img src="hero.jpg" alt="" loading="lazy"></div>
       <div class="chap-copy">
-        <div class="eyebrow">02 — Precision</div>
-        <h2>Measured drama</h2>
+        <div class="chap-num" aria-hidden="true">02</div>
+        <div class="eyebrow accent">02 — Precision</div>
+        <h2 class="kinetic"><span class="ln"><span class="ln-i"><span class="wd">Measured</span> <span class="wd">drama</span></span></span></h2>
         <p>Deep navy, signal-green glow, tabular certainty.</p>
       </div>
     </section>
-<section class="features"><div class="feat reveal"><div class="feat-rule"></div><h3>Precise</h3><p>Measured to the figure.</p></div><div class="feat reveal"><div class="feat-rule"></div><h3>Luminous</h3><p>Data that glows.</p></div><div class="feat reveal"><div class="feat-rule"></div><h3>Authoritative</h3><p>Drama with rigour.</p></div></section>
-<section class="cta reveal"><h2>Make the data matter.</h2><div class="mark">SIGNAL · built with cinematic-scroll</div></section>
+<section class="features" data-scene><div class="feat"><div class="feat-rule"></div><h3>Precise</h3><p>Measured to the figure.</p></div><div class="feat"><div class="feat-rule"></div><h3>Luminous</h3><p>Data that glows.</p></div><div class="feat"><div class="feat-rule"></div><h3>Authoritative</h3><p>Drama with rigour.</p></div></section>
+<section class="cta" data-scene><h2 class="kinetic"><span class="ln"><span class="ln-i"><span class="wd">Make</span> <span class="wd">the</span> <span class="wd">data</span> <span class="wd">matter.</span></span></span></h2><div class="mark">SIGNAL · built with cinematic-scroll</div></section>
+</main>
+<footer style="padding:6vh 6vw;border-top:1px solid var(--line,rgba(0,0,0,.12));font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim,#888);display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+  <span>SIGNAL</span><span>One contract · infinite worlds · cinematic-scroll</span>
+</footer>
+<svg class="grain" width="100%" height="100%" aria-hidden="true"><filter id="gn"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#gn)"/></svg>
 <script>
-  const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.18});
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-  const px=[...document.querySelectorAll('[data-parallax] img')];
-  let ticking=false;
-  function frame(){ticking=false;const vh=innerHeight;px.forEach(img=>{const r=img.parentElement.getBoundingClientRect();const p=(r.top+r.height/2-vh/2)/vh;img.style.transform='translateY('+(p*-7)+'%)';});}
-  addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(frame);}},{passive:true});frame();
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var touch  = matchMedia('(hover: none)').matches;
+  var canPin = !touch && innerWidth > 820;
+
+  // ── reduced-motion: nothing animates, everything already visible (CSS handles it) ──
+  if (reduce) return;
+
+  function start(){
+    if (window.gsap && window.ScrollTrigger) return cinematic();
+    return fallback();           // CDN blocked → vanilla reveals + parallax
+  }
+
+  // ── full cinematic engine (GSAP + ScrollTrigger) ──────────────────────────────
+  function cinematic(){
+    var gsap = window.gsap; gsap.registerPlugin(window.ScrollTrigger);
+    var ST = window.ScrollTrigger;
+    ST.defaults({ scrub: 0.6 });
+
+    // scroll-progress bar
+    gsap.to('.progress span', { scaleX: 1, ease: 'none',
+      scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0.25 } });
+
+    // HERO — Ken-Burns push-in + grade deepen + copy lift, pinned (desktop only)
+    var heroBg = document.querySelector('.hero-bg img');
+    if (canPin) {
+      var htl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=85%', pin: '.hero-pin', scrub: 0.6, anticipatePin: 1 } });
+      htl.to(heroBg, { scale: 1.2, ease: 'none', duration: 1 }, 0)
+         .to('.hero-grade', { opacity: 1, ease: 'none', duration: 1 }, 0)
+         // copy lifts out and is fully gone by ~38% of the pin — long before the statement enters
+         .to('.hero-inner', { yPercent: -46, opacity: 0, ease: 'power1.in', duration: 0.34 }, 0.04);
+    } else {
+      gsap.to(heroBg, { scale: 1.18, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 0.6 } });
+    }
+    // hero title intro on load
+    gsap.from('.hero h1 .wd', { yPercent: 118, duration: 1.1, ease: 'power4.out', stagger: 0.06, delay: 0.15 });
+    gsap.from('.hero .eyebrow', { opacity: 0, yPercent: 60, duration: 1, ease: 'power3.out', delay: 0.05 });
+    gsap.from('.scroll-cue', { opacity: 0, duration: 1, delay: 0.9 });
+
+    // STATEMENT — words rise, accent rule draws
+    gsap.from('.statement .wd', { yPercent: 118, duration: 0.95, ease: 'power3.out', stagger: 0.035,
+      scrollTrigger: { trigger: '.statement', start: 'top 72%', toggleActions: 'play none none none' } });
+    gsap.fromTo('.statement .rule', { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: 'power2.out',
+      scrollTrigger: { trigger: '.statement', start: 'top 62%' } });
+
+    // CHAPTERS — clip-wipe media, scrubbed image scale, ghost-number parallax, kinetic copy
+    gsap.utils.toArray('.chapter').forEach(function(ch){
+      var media = ch.querySelector('.chap-media');
+      var img = ch.querySelector('.chap-media img');
+      var num = ch.querySelector('.chap-num');
+      gsap.fromTo(media, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, ease: 'power3.out',
+        scrollTrigger: { trigger: ch, start: 'top 78%' } });
+      gsap.fromTo(img, { scale: 1.28 }, { scale: 1.0, ease: 'none',
+        scrollTrigger: { trigger: ch, start: 'top bottom', end: 'bottom top', scrub: 0.7 } });
+      gsap.from(ch.querySelectorAll('.chap-copy .wd'), { yPercent: 118, duration: 0.9, ease: 'power3.out', stagger: 0.03,
+        scrollTrigger: { trigger: ch, start: 'top 72%' } });
+      gsap.from(ch.querySelectorAll('.eyebrow, .chap-copy p'), { opacity: 0, y: 26, duration: 0.9, ease: 'power2.out', stagger: 0.1,
+        scrollTrigger: { trigger: ch, start: 'top 70%' } });
+      if (num) gsap.fromTo(num, { yPercent: 28 }, { yPercent: -34, ease: 'none',
+        scrollTrigger: { trigger: ch, start: 'top bottom', end: 'bottom top', scrub: 0.8 } });
+    });
+
+    // FEATURES — staggered rise + rule draw
+    gsap.from('.feat', { y: 64, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.12,
+      scrollTrigger: { trigger: '.features', start: 'top 80%' } });
+    gsap.fromTo('.feat-rule', { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power2.out', stagger: 0.12,
+      scrollTrigger: { trigger: '.features', start: 'top 80%' } });
+
+    // CTA — big line reveal
+    gsap.from('.cta .wd', { yPercent: 118, duration: 1.1, ease: 'power4.out', stagger: 0.04,
+      scrollTrigger: { trigger: '.cta', start: 'top 76%' } });
+
+    // ── rAF: 3D tilt (pointer) + velocity skew, owns .tilt/.hero-tilt transforms ──
+    var tiltEls = [].slice.call(document.querySelectorAll('.tilt, .hero-tilt'));
+    var px = 0, py = 0, tx = 0, ty = 0, vel = 0, tvel = 0, lastY = scrollY;
+    if (!touch) addEventListener('pointermove', function(e){ px = (e.clientX / innerWidth) * 2 - 1; py = (e.clientY / innerHeight) * 2 - 1; }, { passive: true });
+    ST.create({ onUpdate: function(self){ tvel = Math.max(-9, Math.min(9, self.getVelocity() / -260)); } });
+    function loop(){
+      tx += (px - tx) * 0.06; ty += (py - ty) * 0.06; vel += (tvel - vel) * 0.12; tvel *= 0.9;
+      for (var i = 0; i < tiltEls.length; i++){
+        var el = tiltEls[i], hero = el.classList.contains('hero-tilt');
+        var rx = (hero ? -ty * 2.2 : -ty * 1.4), ry = (hero ? tx * 2.6 : tx * 1.8);
+        el.style.transform = 'rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) skewY(' + (el.classList.contains('hero-tilt') ? 0 : vel).toFixed(2) + 'deg)';
+      }
+      requestAnimationFrame(loop);
+    }
+    if (!touch) requestAnimationFrame(loop);
+    addEventListener('load', function(){ ST.refresh(); });
+  }
+
+  // ── graceful fallback (no GSAP): IO reveals + light rAF parallax ────────────────
+  function fallback(){
+    document.querySelectorAll('.wd').forEach(function(w){ w.style.transform = 'translateY(118%)'; });
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting) return;
+      e.target.querySelectorAll('.wd').forEach(function(w,i){ w.style.transition = 'transform .9s ' + (i*0.03) + 's cubic-bezier(.16,1,.3,1)'; w.style.transform = 'none'; });
+      var r = e.target.querySelector('.rule, .feat-rule'); if(r){ r.style.transition='transform 1s ease'; r.style.transform='scaleX(1)'; }
+      io.unobserve(e.target);
+    }); }, { threshold: 0.2 });
+    document.querySelectorAll('[data-scene], .feat').forEach(function(s){ io.observe(s); });
+    var imgs = [].slice.call(document.querySelectorAll('.hero-bg img, .chap-media img'));
+    var prog = document.querySelector('.progress span'), tick = false;
+    function frame(){ tick = false; var vh = innerHeight, max = document.documentElement.scrollHeight - vh;
+      if (prog) prog.style.transform = 'scaleX(' + (max>0?scrollY/max:0).toFixed(3) + ')';
+      imgs.forEach(function(img){ var r = img.parentElement.getBoundingClientRect(); var p = (r.top + r.height/2 - vh/2)/vh; img.style.transform = 'scale(1.06) translateY(' + (p*-6).toFixed(2) + '%)'; });
+    }
+    addEventListener('scroll', function(){ if(!tick){ tick=true; requestAnimationFrame(frame); } }, { passive: true }); frame();
+  }
+
+  if (document.readyState === 'loading') addEventListener('DOMContentLoaded', function(){ setTimeout(start, 0); });
+  else start();
+})();
 </script>
 </body></html>
