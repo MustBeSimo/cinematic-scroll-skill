@@ -75,75 +75,42 @@ npm test                                              # every gate — the same 
 
 The skill's most impactful builds, shown first: **real-3D** reference sites — scroll-driven three.js, no two sharing a technique (an asset-driven WebXR colonnade, a procedural particle galaxy, a raymarched volumetric sky, a refractive glass monolith, and scroll-scrubbed camera **flythroughs** through a sculpture gallery, an overgrown atrium, and a liquid-chrome vault). Each handles context-loss, caps devicePixelRatio, gates its loop on visibility, and falls back to a permanent poster — never a blank canvas. Open any live:
 
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/"><img src="assets/flagship-ride.gif" alt="The 3D Flagship — a scroll-driven React Three Fiber camera rail travelling through four 3D movements: the generated watch on its stage ring, the instanced hall, the GLSL field, and the spotlit dancer. Captured from the live route." width="100%"></a>
-    </td>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><img src="assets/immersive-preview.png" alt="Nexus Immersive Lab — a 15,000-particle galaxy field behind a massive SPATIAL COMPUTING headline on a deep-space canvas." width="100%"></a>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/"><b>🎬 3D Flagship — Four Movements →</b></a><br>
-      <sub><b>React Three Fiber + WebXR</b>, captured from the live route. A scroll-driven camera rail through four 3D modalities (Object · World · Field · Figure): a fal.ai-generated hero artifact on its stage ring → an instanced colonnade hall → a pure-GLSL field → a rigged dancer samba-ing under a concert spotlight. Velocity-reactive rail dust, aurora curtains, volumetric shafts, bloom.<br><br><code>three.js</code> · <code>R3F</code> · <code>WebXR</code> · <code>Draco/WebP</code> · <code>fal.ai</code> — vanilla twin in <a href="./examples/flagship/">examples/flagship</a>.</sub>
-    </td>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><b>⚡ Nexus Immersive — Spatial Computing →</b></a><br>
-      <sub><b>Tier C procedural shaders</b> — no external model needed. A 15,000-particle galaxy field (custom GLSL vertex + fragment, per-particle phase), a 60×60 wave-equation displacement grid (indigo→cyan lerp), and a Lorenz-inspired attractor. A WebXR session gate shows <i>Enter VR</i> only when <code>navigator.xr.isSessionSupported</code> returns true; context-loss handled, rAF gated on visibility + IntersectionObserver, mobile canvas suppressed.<br><br><code>three.js</code> · <code>GLSL</code> · <code>WebXR</code> — source in <a href="./examples/immersive/">examples/immersive</a>.</sub>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/volumetric-aether/"><img src="examples/volumetric-aether/poster.jpg" alt="Aether — a raymarched volumetric cloudscape at dawn, the camera flying down through golden cloud under a low sun." width="100%"></a>
-    </td>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/crystalline-monolith/"><img src="examples/crystalline-monolith/poster.jpg" alt="Obsidian — a refractive faceted glass monolith with a glowing violet core, orbited by a field of glinting shards." width="100%"></a>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/volumetric-aether/"><b>☁ Aether — Make Weather →</b></a><br>
-      <sub><b>Tier C raymarched shader</b> — a fullscreen volumetric cloudscape, zero assets. Every pixel marches an fbm density field with a second light-march toward the sun (self-shadowing + god-rays); scroll flies the camera <i>down through</i> the weather as the palette morphs dawn → cosmic. devicePixelRatio capped, loop gated on visibility, CSS-sky fallback when WebGL is absent.<br><br><code>three.js</code> · <code>raymarching</code> · <code>GLSL</code> · <code>no assets</code> — source in <a href="./examples/volumetric-aether/">examples/volumetric-aether</a>.</sub>
-    </td>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/crystalline-monolith/"><b>△ Obsidian — Refract It →</b></a><br>
-      <sub><b>Tier B transmission glass</b> — a faceted monolith of real <code>MeshPhysicalMaterial</code> (transmission, IOR 1.5, thickness, iridescence) lit by a procedural PMREM environment, ACES tone mapping and a bloom pass. Scroll cranes the camera around it while 60 orbiting shards and sweeping lights keep the facets alive; context-loss handled, CSS-gem fallback.<br><br><code>three.js</code> · <code>transmission</code> · <code>PMREM</code> · <code>bloom</code> — source in <a href="./examples/crystalline-monolith/">examples/crystalline-monolith</a>.</sub>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/gallery-flythrough/"><img src="examples/gallery-flythrough/poster.jpg" alt="Atelier Marne — a 3D museum hall, the camera walking past spotlit gold sculptures on plinths of shadow." width="100%"></a>
-    </td>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/jungle-flythrough/"><img src="examples/jungle-flythrough/poster.jpg" alt="Verdant — flying through an overgrown concrete atrium with floating green foliage." width="100%"></a>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/gallery-flythrough/"><b>🏛 Atelier Marne — A gallery you walk →</b></a><br>
-      <sub><b>Scroll-scrubbed 3D walk</b> — the camera tracks down a museum hall past spotlit, slowly turning sculptures on plinths of shadow. Real depth and parallax, rendered live every frame — not layered images.<br><br><code>three.js</code> · <code>scroll-camera</code> · <code>real depth</code> — source in <a href="./examples/gallery-flythrough/">examples/gallery-flythrough</a>.</sub>
-    </td>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/jungle-flythrough/"><b>🌿 Verdant — Into the bloom →</b></a><br>
-      <sub><b>Scroll-scrubbed 3D walk</b> — sterile concrete reclaimed by nature; scroll flies you through an atrium as instanced foliage drifts past in layered 3D, the room ahead rendered live.<br><br><code>three.js</code> · <code>instanced foliage</code> · <code>scroll-camera</code> — source in <a href="./examples/jungle-flythrough/">examples/jungle-flythrough</a>.</sub>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/"><img src="examples/aureus-flythrough/poster.jpg" alt="AUREUS — the camera flying through a liquid-chrome corridor of dark metaballs." width="100%"></a>
-    </td>
-    <td width="50%" valign="top">&nbsp;</td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/"><b>△ AUREUS — Into the Vault →</b></a><br>
-      <sub><b>Scroll-scrubbed raymarch</b> — a flight through a liquid-chrome corridor of raymarched metaballs, rendered every frame, the descent paced exactly to your scroll.<br><br><code>three.js</code> · <code>raymarching</code> · <code>scroll-scrubbed</code> — source in <a href="./examples/aureus-flythrough/">examples/aureus-flythrough</a>.</sub>
-    </td>
-    <td width="50%" valign="top">&nbsp;</td>
-  </tr>
-</table>
+<!-- single-column, full-width posters → reflows cleanly on GitHub mobile (no fixed 2-up table) -->
+
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/jungle-flythrough/"><img src="examples/jungle-flythrough/poster.jpg" alt="Verdant — flying through an overgrown concrete colonnade lit by a real rainforest sky, pollen drifting through god-rays." width="100%"></a>
+
+**🌿 [Verdant — Into the bloom →](https://mustbesimo.github.io/cinematic-scroll-skill/examples/jungle-flythrough/)**
+<sub>**Scroll-scrubbed 3D walk** — sterile concrete reclaimed by nature. A real rainforest sky lights the colonnade (image-based lighting), pollen drifts through god-rays, and instanced foliage streams past in layered 3D; move your cursor and the world leans with you. `three.js` · `image-based light` · `drifting pollen` — source in [examples/jungle-flythrough](./examples/jungle-flythrough).</sub>
+
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/"><img src="examples/aureus-flythrough/poster.jpg" alt="AUREUS — flying through a liquid-chrome corridor whose metaballs reflect a real fal.ai studio, sparks drifting." width="100%"></a>
+
+**△ [AUREUS — Into the Vault →](https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/)**
+<sub>**Scroll-scrubbed raymarch** — a flight down a liquid-chrome corridor that reflects a *real* studio. Raymarched metaballs rendered every frame, sparks drifting past, the descent steered by your cursor and paced to your scroll. `three.js` · `raymarch` · `real reflections` — source in [examples/aureus-flythrough](./examples/aureus-flythrough).</sub>
+
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/gallery-flythrough/"><img src="examples/gallery-flythrough/poster.jpg" alt="Atelier Marne — a luminous 3D museum hall lit by a real atrium, AI-painted canvases hung in brass frames, dust drifting." width="100%"></a>
+
+**🏛 [Atelier Marne — A gallery you walk →](https://mustbesimo.github.io/cinematic-scroll-skill/examples/gallery-flythrough/)**
+<sub>**Scroll-scrubbed 3D walk** — a museum you walk by scrolling. Image-based light from a generated atrium floods the hall, six AI-painted canvases hang in their frames, and dust drifts through the beams; glassmorphic cards + a clickable chapter index fly the camera anywhere. `three.js` · `HDRI lighting` · `hung art` — source in [examples/gallery-flythrough](./examples/gallery-flythrough).</sub>
+
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/"><img src="assets/video/flagship-ride.poster.jpg" alt="The 3D Flagship — a scroll-driven React Three Fiber camera rail through four 3D movements." width="100%"></a>
+
+**🎬 [3D Flagship — Four Movements →](https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/)**
+<sub>**React Three Fiber + WebXR.** A scroll-driven camera rail through four 3D modalities (Object · World · Field · Figure): a fal.ai-generated hero artifact on its stage ring → an instanced colonnade hall → a pure-GLSL field → a rigged dancer samba-ing under a concert spotlight. Velocity-reactive rail dust, aurora curtains, volumetric shafts, bloom. `three.js` · `R3F` · `WebXR` · `Draco/WebP` · `fal.ai` — vanilla twin in [examples/flagship](./examples/flagship).</sub>
+
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/"><img src="assets/immersive-preview.png" alt="Nexus Immersive Lab — a 15,000-particle galaxy field behind a massive SPATIAL COMPUTING headline." width="100%"></a>
+
+**⚡ [Nexus Immersive — Spatial Computing →](https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/)**
+<sub>**Tier C procedural shaders** — no external model. A 15,000-particle galaxy field (custom GLSL), a 60×60 wave-equation displacement grid, and a Lorenz-inspired attractor. A WebXR gate shows *Enter VR* only when `navigator.xr.isSessionSupported` returns true; context-loss handled, rAF gated on visibility. `three.js` · `GLSL` · `WebXR` — source in [examples/immersive](./examples/immersive).</sub>
+
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/volumetric-aether/"><img src="examples/volumetric-aether/poster.jpg" alt="Aether — a raymarched volumetric cloudscape at dawn, the camera flying down through golden cloud." width="100%"></a>
+
+**☁ [Aether — Make Weather →](https://mustbesimo.github.io/cinematic-scroll-skill/examples/volumetric-aether/)**
+<sub>**Tier C raymarched shader** — a fullscreen volumetric cloudscape, zero assets. Every pixel marches an fbm density field with a second light-march toward the sun (self-shadowing + god-rays); scroll flies the camera *down through* the weather as the palette morphs dawn → cosmic. `three.js` · `raymarching` · `GLSL` · `no assets` — source in [examples/volumetric-aether](./examples/volumetric-aether).</sub>
+
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/crystalline-monolith/"><img src="examples/crystalline-monolith/poster.jpg" alt="Obsidian — a refractive faceted glass monolith with a glowing violet core, orbited by glinting shards." width="100%"></a>
+
+**△ [Obsidian — Refract It →](https://mustbesimo.github.io/cinematic-scroll-skill/examples/crystalline-monolith/)**
+<sub>**Tier B transmission glass** — a faceted monolith of real `MeshPhysicalMaterial` (transmission, IOR 1.5, thickness, iridescence) lit by a procedural PMREM environment, ACES tone mapping and bloom. Scroll cranes the camera around it while 60 orbiting shards keep the facets alive. `three.js` · `transmission` · `PMREM` · `bloom` — source in [examples/crystalline-monolith](./examples/crystalline-monolith).</sub>
 
 ### ✦ The worlds — a glimpse, not a ceiling
 
