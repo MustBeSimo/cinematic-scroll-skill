@@ -256,7 +256,7 @@
 
   function init(){
     renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: false, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.5 : 2));
+    renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.0 : 1.5));
     renderer.setSize(innerWidth, innerHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -348,14 +348,13 @@
           // the canvas — a lit material that receives the painting texture when it loads
           const canvasMat = new THREE.MeshStandardMaterial({ color: '#1a140d', roughness: 0.62, metalness: 0.0, envMapIntensity: 0.3 });
           const idx = (artIdx % 6) + 1; artIdx++;
-          artTex.load('assets/art-' + idx + '.jpg', function(t){ t.colorSpace = THREE.SRGBColorSpace; canvasMat.map = t; canvasMat.emissive = new THREE.Color('#3a2c18'); canvasMat.emissiveMap = t; canvasMat.emissiveIntensity = 0.55; canvasMat.color = new THREE.Color('#ffffff'); canvasMat.needsUpdate = true; if (reduce && renderer) renderer.render(scene, camera); }, undefined, function(){});
+          // the painting is self-lit via its emissiveMap (no per-frame spotlight needed — keeps the light count low)
+          artTex.load('assets/art-' + idx + '.jpg', function(t){ t.colorSpace = THREE.SRGBColorSpace; canvasMat.map = t; canvasMat.emissive = new THREE.Color('#4a3720'); canvasMat.emissiveMap = t; canvasMat.emissiveIntensity = 0.8; canvasMat.color = new THREE.Color('#ffffff'); canvasMat.needsUpdate = true; if (reduce && renderer) renderer.render(scene, camera); }, undefined, function(){});
           const art = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 2.25), canvasMat);
           art.rotation.y = side*Math.PI/2; art.position.set(side*(w/2 - 0.22), h/2, fz); group.add(art);
-          // a small warm spotlight aimed at the canvas
-          const pl = new THREE.SpotLight('#ffe6bd', 14, 7, 0.7, 0.5, 1.4);
-          pl.position.set(side*(w/2 - 1.4), h - 0.6, fz);
-          pl.target.position.set(side*(w/2 - 0.22), h/2, fz);
-          group.add(pl); group.add(pl.target);
+          // a cheap emissive "picture light" bar above the frame (reads as a wash, costs nothing)
+          const pin = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 1.6), glowMat('#ffe2ad', 1.8));
+          pin.position.set(side*(w/2 - 0.4), h/2 + 1.35, fz); group.add(pin);
         }
       }
 
@@ -369,9 +368,8 @@
         else obj = new THREE.Mesh(new THREE.DodecahedronGeometry(0.6, 0), brass);
         obj.position.set(0, 1.5, z - SEG/2);
         obj.userData.spin = true; group.add(obj); spinners.push(obj);
-        const halo = new THREE.Mesh(new THREE.CircleGeometry(1.5, 40), glowMat('#ffcf94', 0.42));
+        const halo = new THREE.Mesh(new THREE.CircleGeometry(1.5, 40), glowMat('#ffcf94', 0.5));
         halo.rotation.x = -Math.PI/2; halo.position.set(0, 0.02, z - SEG/2); group.add(halo);
-        const objLight = new THREE.PointLight('#fff0d6', 9, 7, 2.0); objLight.position.set(0, 3.4, z - SEG/2); group.add(objLight);
       }
 
       // archway threshold between halls
@@ -393,7 +391,7 @@
 
   /* drifting dust motes that catch the light — a single Points cloud */
   function buildDust(){
-    const N = isMobile ? 220 : 520;
+    const N = isMobile ? 130 : 330;
     const pos = new Float32Array(N * 3);
     const seedArr = new Float32Array(N);
     for (let i = 0; i < N; i++){

@@ -231,8 +231,8 @@
   if (!webglOK()) document.body.classList.add('no-webgl');
 
   function init(){
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: false, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.5 : 2));
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.0 : 1.5));
     renderer.setSize(innerWidth, innerHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -323,7 +323,7 @@
       new THREE.MeshStandardMaterial({ color: '#9ac756', roughness: 0.78, side: THREE.DoubleSide, emissive:'#243d14', emissiveIntensity:0.34, envMapIntensity: 0.7 }),
       new THREE.MeshStandardMaterial({ color: '#477730', roughness: 0.88, side: THREE.DoubleSide, emissive:'#13260c', emissiveIntensity:0.26, envMapIntensity: 0.6 }),
     ];
-    const PER = 560;
+    const PER = isMobile ? 240 : 400;
     tones.forEach(function(mat, ti){
       const inst = new THREE.InstancedMesh(geo, mat, PER);
       for (let i = 0; i < PER; i++){
@@ -366,7 +366,7 @@
 
   /* drifting pollen / spores in the light — additive Points */
   function buildPollen(){
-    const N = isMobile ? 260 : 640;
+    const N = isMobile ? 150 : 340;
     const pos = new Float32Array(N * 3); const sd = new Float32Array(N);
     for (let i = 0; i < N; i++){
       pos[i*3] = (Math.random()-0.5) * HALL_W * 1.4;

@@ -219,11 +219,11 @@
 
   function init(){
     renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.25 : 1.6));
+    renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 0.9 : 1.3));
     renderer.setSize(innerWidth, innerHeight);
     scene = new THREE.Scene();
     camera = new THREE.Camera();
-    const STEPS = isMobile ? 60 : 92;
+    const STEPS = isMobile ? 40 : 64;
 
     // neutral 1×1 placeholder until the real studio panorama loads
     const ph = new THREE.DataTexture(new Uint8Array([40,46,60,255]), 1, 1, THREE.RGBAFormat);

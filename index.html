@@ -21,7 +21,7 @@
 <meta name="twitter:title" content="Cinematic Scroll — give any agent the taste to build scroll sites" />
 <meta name="twitter:description" content="Free MIT Agent Skill. Describe an aesthetic; get pinned chapters, parallax, 3D tilt & full release pages. The motion is the constant; the look is yours." />
 <meta name="twitter:image" content="https://mustbesimo.github.io/cinematic-scroll-skill/assets/social-card.png" />
-<link rel="preload" as="image" href="./assets/04_v2.png" />
+<link rel="preload" as="image" href="./assets/04_v2.webp" fetchpriority="high" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -164,7 +164,7 @@
   .ex{display:flex;flex-direction:column;border:1px solid var(--line2);border-radius:10px;overflow:hidden;background:var(--surface);transition:transform .35s var(--e-out),border-color .35s var(--e-soft)}
   .ex:hover{transform:translateY(-3px);border-color:var(--accent)}
   .ex .shot{position:relative;display:block;border-bottom:1px solid var(--line2)}
-  .ex .shot img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top}
+  .ex .shot img,.ex .shot video{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;display:block}
   .ex .shot .play{position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 22%,transparent);transition:background .3s var(--e-soft)}
   .ex .shot:hover .play{background:transparent}
   .ex .shot .play span{width:48px;height:48px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:14px;padding-left:3px}
@@ -175,7 +175,7 @@
   /* featured 3D flagships — reuses .ex card styling in a fixed 2-up */
   .feat2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.4vw,28px);margin-top:clamp(28px,4vw,44px)}
   @media(max-width:820px){.feat2{grid-template-columns:1fr}}
-  .feat2 .ex .shot img{aspect-ratio:16/9}
+  .feat2 .ex .shot img,.feat2 .ex .shot video{aspect-ratio:16/9}
   .feat2 .badge{position:absolute;top:14px;left:14px;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--on-accent);background:var(--accent);padding:6px 12px;border-radius:999px;z-index:2}
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
   .tags span{font-family:"Space Mono",monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:4px 9px}
@@ -265,8 +265,8 @@
         </div>
         <div class="layer" data-depth="0.75" data-range="64" data-tilt style="position:relative">
           <div class="fig">
-            <img class="dk" src="./assets/04_v2.png" alt="Petroleum-toned cinematic hero — sci-fi noir" loading="eager" />
-            <img class="lt" src="./assets/02_v2.png" alt="Swiss-museum light hero — quiet luxury" loading="eager" />
+            <img class="dk" src="./assets/04_v2.webp" alt="Petroleum-toned cinematic hero — sci-fi noir" loading="eager" decoding="async" width="1200" height="750" />
+            <img class="lt" src="./assets/02_v2.webp" alt="Swiss-museum light hero — quiet luxury" loading="eager" decoding="async" width="1200" height="750" />
             <div class="veil"></div>
           </div>
         </div>
@@ -386,7 +386,7 @@
     <p class="lead reveal">The most impactful builds the skill ships — <b>real-3D</b> reference sites, scroll-driven three.js, no two sharing a technique: a WebXR colonnade, a procedural particle galaxy, a raymarched volumetric sky, a refractive glass monolith, and scroll-scrubbed camera <b>flythroughs</b> through a sculpture gallery, an overgrown atrium, and a liquid-chrome vault. Each handles context-loss, caps devicePixelRatio, gates its loop on visibility, and falls back to a permanent poster — never a blank canvas. Click any to scroll the real thing.</p>
     <div class="feat2 reveal">
       <div class="ex">
-        <a class="shot" href="./examples/flagship/" aria-label="Open the 3D/WebXR flagship live demo"><img src="./assets/flagship-ride.gif" alt="The 3D flagship — a scroll-driven camera rail through four 3D movements, captured from the live route" loading="lazy"><span class="badge">🎬 3D Flagship</span><span class="play"><span>▶</span></span></a>
+        <a class="shot" href="./examples/flagship/" aria-label="Open the 3D/WebXR flagship live demo"><video class="shotvid" src="./assets/video/flagship-ride.mp4" poster="./assets/video/flagship-ride.poster.jpg" muted loop playsinline preload="none" aria-label="The 3D flagship — a scroll-driven camera rail through four 3D movements"></video><span class="badge">🎬 3D Flagship</span><span class="play"><span>▶</span></span></a>
         <div class="meta">
           <div class="num">React Three Fiber + WebXR</div>
           <h3>Four Movements.</h3>
@@ -426,8 +426,8 @@
         <div class="meta">
           <div class="num">Scroll-scrubbed 3D walk</div>
           <h3>Atelier Marne.</h3>
-          <p>A museum you walk by scrolling — the camera tracks down a hall past spotlit, slowly turning sculptures on plinths of shadow. Real depth and parallax, rendered live, not layered images.</p>
-          <div class="tags"><span>three.js</span><span>scroll-camera</span><span>real depth</span></div>
+          <p>A museum you <b>walk by scrolling</b>. Image-based light from a generated atrium floods the hall, six AI-painted canvases hang in their frames, and dust drifts through the beams. Glassmorphic cards + a clickable chapter index fly the camera anywhere.</p>
+          <div class="tags"><span>three.js</span><span>HDRI lighting</span><span>hung art</span><span>clickable index</span></div>
         </div>
       </div>
       <div class="ex">
@@ -435,8 +435,8 @@
         <div class="meta">
           <div class="num">Scroll-scrubbed 3D walk</div>
           <h3>Verdant.</h3>
-          <p>Sterile concrete reclaimed by nature — scroll flies you through an atrium as foliage drifts past in layered 3D, the room ahead rendered live every frame.</p>
-          <div class="tags"><span>three.js</span><span>instanced foliage</span><span>scroll-camera</span></div>
+          <p>Sterile concrete <b>reclaimed by nature</b>. A real rainforest sky lights the colonnade, pollen drifts through god-rays, and instanced foliage streams past in layered 3D. Move your cursor — the world leans with you.</p>
+          <div class="tags"><span>three.js</span><span>image-based light</span><span>drifting pollen</span><span>scroll-camera</span></div>
         </div>
       </div>
       <div class="ex">
@@ -444,8 +444,8 @@
         <div class="meta">
           <div class="num">Scroll-scrubbed raymarch</div>
           <h3>Into the Vault.</h3>
-          <p>A scroll-scrubbed flight through a liquid-chrome corridor — raymarched metaballs rendered every frame, the descent paced exactly to your scroll.</p>
-          <div class="tags"><span>three.js</span><span>raymarching</span><span>scroll-scrubbed</span></div>
+          <p>A scroll-scrubbed flight down a liquid-chrome corridor that <b>reflects a real studio</b> — raymarched metaballs rendered every frame, sparks drifting past, the descent steered by your cursor and paced to your scroll.</p>
+          <div class="tags"><span>three.js</span><span>raymarch</span><span>real reflections</span><span>scroll-scrubbed</span></div>
         </div>
       </div>
     </div>
@@ -458,12 +458,12 @@
     <p class="lead reveal">There is no menu of styles. Every site here is real and live — built from the <em>same</em> motion grammar and token contract, then art-directed into a different world. Describe any brief and you get a new one; the sites below are a glimpse, not a ceiling. Click any to scroll the real thing.</p>
     <nav class="exgrid" aria-label="Live example sites">
       <div class="ex reveal"><a class="shot" href="./examples/digital-wealth/" aria-label="Open the AUREUS digital-wealth live demo"><img src="./examples/digital-wealth/poster.jpg" alt="AUREUS — dark crypto-portfolio site with a live liquid-chrome WebGL hero" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Live WebGL hero · fintech</div><h3>Aureus.</h3><p>Digital wealth — a molten-chrome hero, rendered live, over pinned scroll chapters.</p></div></div>
-      <div class="ex reveal"><a class="shot" href="./examples/renaissance/" aria-label="Open the Renaissance live demo"><img src="./assets/scroll-demo.gif" alt="Renaissance editorial — warm classical scroll loop" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Renaissance editorial</div><h3>Classic Touch.</h3><p>Oil-painting heroes, gold↔oxblood morph, serif display.</p></div></div>
-      <div class="ex reveal"><a class="shot" href="./examples/studio/" aria-label="Open the brutalist studio live demo"><img src="./assets/studio-scroll-demo_v2.gif" alt="Brutalist creative-director — monochrome scroll loop with 3D motion" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Brutalist studio</div><h3>Maya Torres.</h3><p>Giant grotesk, monochrome + electric blue, scroll-driven 3D.</p></div></div>
-      <div class="ex reveal"><a class="shot" href="./examples/noir/" aria-label="Open the Vantascope signal-clean live demo"><img src="./assets/noir-scroll-demo.gif" alt="Vantascope — clean editorial sci-fi, warm white canvas, bold type, crimson signal" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Signal-clean sci-fi</div><h3>Vantascope.</h3><p>Warm-white canvas, massive black type, crimson signal accent.</p></div></div>
-      <div class="ex reveal"><a class="shot" href="./examples/luxe/" aria-label="Open the quiet-luxury live demo"><img src="./assets/luxe-scroll-demo.gif" alt="Quiet luxury — ivory and sand still-life loop" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Quiet luxury</div><h3>Maison Solenne.</h3><p>Ivory + sand, cognac accent, vast negative space.</p></div></div>
-      <div class="ex reveal"><a class="shot" href="./examples/pop/" aria-label="Open the Gen-Z pop live demo"><img src="./assets/pop-scroll-demo.gif" alt="Gen-Z pop — neon gradient and glassy UI loop" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Gen-Z pop</div><h3>Bloom.</h3><p>Candy-pink + electric-lime, bold rounded type, fast parallax.</p></div></div>
-      <div class="ex reveal"><a class="shot" href="./examples/atelier/" aria-label="Open the Awwwards-techniques live demo"><img src="./assets/atelier-scroll-demo.gif" alt="Atelier Nocturne — kinetic typography and shader-distorted imagery" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Awwwards techniques</div><h3>Atelier Nocturne.</h3><p>Shader-distorted imagery, kinetic type, magnetic cursor, transition wipes.</p></div></div>
+      <div class="ex reveal"><a class="shot" href="./examples/renaissance/" aria-label="Open the Renaissance live demo"><video class="shotvid" src="./assets/video/scroll-demo.mp4" poster="./assets/video/scroll-demo.poster.jpg" muted loop playsinline preload="none" aria-label="Renaissance editorial — warm classical scroll loop"></video><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Renaissance editorial</div><h3>Classic Touch.</h3><p>Oil-painting heroes, gold↔oxblood morph, serif display.</p></div></div>
+      <div class="ex reveal"><a class="shot" href="./examples/studio/" aria-label="Open the brutalist studio live demo"><video class="shotvid" src="./assets/video/studio-scroll-demo_v2.mp4" poster="./assets/video/studio-scroll-demo_v2.poster.jpg" muted loop playsinline preload="none" aria-label="Brutalist creative-director — monochrome scroll loop with 3D motion"></video><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Brutalist studio</div><h3>Maya Torres.</h3><p>Giant grotesk, monochrome + electric blue, scroll-driven 3D.</p></div></div>
+      <div class="ex reveal"><a class="shot" href="./examples/noir/" aria-label="Open the Vantascope signal-clean live demo"><video class="shotvid" src="./assets/video/noir-scroll-demo.mp4" poster="./assets/video/noir-scroll-demo.poster.jpg" muted loop playsinline preload="none" aria-label="Vantascope — clean editorial sci-fi, warm white canvas, bold type, crimson signal"></video><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Signal-clean sci-fi</div><h3>Vantascope.</h3><p>Warm-white canvas, massive black type, crimson signal accent.</p></div></div>
+      <div class="ex reveal"><a class="shot" href="./examples/luxe/" aria-label="Open the quiet-luxury live demo"><video class="shotvid" src="./assets/video/luxe-scroll-demo.mp4" poster="./assets/video/luxe-scroll-demo.poster.jpg" muted loop playsinline preload="none" aria-label="Quiet luxury — ivory and sand still-life loop"></video><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Quiet luxury</div><h3>Maison Solenne.</h3><p>Ivory + sand, cognac accent, vast negative space.</p></div></div>
+      <div class="ex reveal"><a class="shot" href="./examples/pop/" aria-label="Open the Gen-Z pop live demo"><video class="shotvid" src="./assets/video/pop-scroll-demo.mp4" poster="./assets/video/pop-scroll-demo.poster.jpg" muted loop playsinline preload="none" aria-label="Gen-Z pop — neon gradient and glassy UI loop"></video><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Gen-Z pop</div><h3>Bloom.</h3><p>Candy-pink + electric-lime, bold rounded type, fast parallax.</p></div></div>
+      <div class="ex reveal"><a class="shot" href="./examples/atelier/" aria-label="Open the Awwwards-techniques live demo"><video class="shotvid" src="./assets/video/atelier-scroll-demo.mp4" poster="./assets/video/atelier-scroll-demo.poster.jpg" muted loop playsinline preload="none" aria-label="Atelier Nocturne — kinetic typography and shader-distorted imagery"></video><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Awwwards techniques</div><h3>Atelier Nocturne.</h3><p>Shader-distorted imagery, kinetic type, magnetic cursor, transition wipes.</p></div></div>
       <div class="ex reveal"><a class="shot" href="./examples/symmetric-monument/" aria-label="Open the Meridian (Symmetric Monument) live demo"><img src="./examples/symmetric-monument/hero.jpg" alt="Meridian — symmetric monument theme" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Symmetric Monument</div><h3>Meridian.</h3><p>The art of standing still.</p></div></div>
       <div class="ex reveal"><a class="shot" href="./examples/clinical-noir/" aria-label="Open the Vanta Labs (Clinical Noir) live demo"><img src="./examples/clinical-noir/hero.jpg" alt="Vanta Labs — clinical noir theme" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Clinical Noir</div><h3>Vanta Labs.</h3><p>Clarity, in the dark.</p></div></div>
       <div class="ex reveal"><a class="shot" href="./examples/storybook-geometry/" aria-label="Open the Polly &amp; Plot (Storybook Geometry) live demo"><img src="./examples/storybook-geometry/hero.jpg" alt="Polly & Plot — storybook geometry theme" loading="lazy"><span class="play"><span>▶</span></span></a><div class="meta"><div class="num">Storybook Geometry</div><h3>Polly &amp; Plot.</h3><p>Stories with edges.</p></div></div>
@@ -592,6 +592,22 @@
     es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: .14 });
   document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  /* ── CARD VIDEOS — load + play only while on-screen (lazy, battery-safe) ── */
+  var vids = document.querySelectorAll('video.shotvid');
+  if(vids.length){
+    var vio = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        var v = e.target;
+        if(e.isIntersecting){
+          if(reduce) return;                              // reduced-motion: keep the poster still
+          if(v.preload === 'none'){ v.preload = 'auto'; v.load(); }
+          var pr = v.play(); if(pr && pr.catch) pr.catch(function(){});
+        } else { try{ v.pause(); }catch(_){} }
+      });
+    }, { threshold: .25 });
+    vids.forEach(function(v){ vio.observe(v); });
+  }
 
   /* ── WORLD MORPH (chapter 3) build layers ── */
   // Backgrounds are dark-normalised so the section reads as one cinematic frame on
