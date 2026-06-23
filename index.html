@@ -794,7 +794,9 @@
   if (!canvas || reduce || !webglOK()) { document.documentElement.classList.add('no-webgl'); /* .atmos gradient carries the look */ }
   else {
     let renderer, scene, camera, pts, raf=0, running=false, onScreen=true;
-    let scroll=0, tScroll=0, mx=0, my=0, tmx=0, tmy=0, time=0, cards=[];
+    let scroll=0, tScroll=0, mx=0, my=0, tmx=0, tmy=0, time=0, cards=[], cardY=[];
+    function absTop(el){ let y=0; while(el){ y+=el.offsetTop; el=el.offsetParent; } return y; }   // transform-independent
+    function measureCards(){ cardY = cards.map(function(c){ return absTop(c) + c.offsetHeight/2; }); }
 
     function themeColors(){
       const dark = (document.documentElement.getAttribute('data-theme')||'dark') !== 'light';
@@ -846,7 +848,8 @@
       build();
       cards = Array.prototype.slice.call(document.querySelectorAll('.ex,.mode,.promptcard'));
       cards.forEach(function(c){ c.classList.add('floatcard'); });
-      addEventListener('resize', onResize, { passive:true });
+      measureCards(); setTimeout(measureCards, 900);   // remeasure after fonts/layout settle
+      addEventListener('resize', function(){ onResize(); measureCards(); }, { passive:true });
       if (!isMobile) addEventListener('pointermove', onPointer, { passive:true });
       else enableGyro();                              // phone: tilt steers the tunnel
       addEventListener('scroll', onScroll, { passive:true });
@@ -893,10 +896,17 @@
         // environment transitions warm → cool as you go round (a moving, shifting sky)
         pts.material.color.copy(WARM).lerp(COOL, Math.min(1, scroll));
       }
-      // glass cards float + lean toward the cursor (or phone tilt) — one transform, no CSS conflict
+      // cards fly out of the vanishing point: emerge small+faded from centre as they
+      // approach, full at centre, then scale past + fade as the flythrough carries them by.
+      const mid = innerHeight*0.5, lx = (tmx*6).toFixed(1);
       for (let i=0;i<cards.length;i++){
-        const fy = Math.sin(time*1.1 + i*0.7)*7;
-        cards[i].style.transform = 'translate3d('+(tmx*9).toFixed(2)+'px,'+(fy - tmy*9).toFixed(2)+'px,0)';
+        const cy = (cardY[i]||0) - scrollY;              // viewport-space card centre
+        const d = (cy - mid) / mid;                      // +below · 0 centre · −above
+        let scale, op;
+        if (d >= 0){ const k = Math.min(1, d/1.05); scale = 1 - k*0.34; op = 1 - Math.pow(k,1.5)*0.96; }   // approaching from depth
+        else { const k = Math.min(1, (-d)/1.05); scale = 1 + k*0.30; op = 1 - Math.pow(k,1.3)*0.97; }       // flying past
+        cards[i].style.transform = 'translate3d('+lx+'px,'+(d*16).toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
+        cards[i].style.opacity = Math.max(0, op).toFixed(3);
       }
       renderer.render(scene, camera);
     }
