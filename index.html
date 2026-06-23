@@ -259,6 +259,8 @@
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
   /* floating glass cards over the live field — JS drives float + lean-to-cursor (see field module) */
   .floatcard{will-change:transform;transition:border-color .35s var(--e-soft),box-shadow .35s var(--e-soft)}
+  /* headings/leads ride the scroll — JS sets transform+opacity each frame, so no transition */
+  .scrolltext{will-change:transform,opacity;transition:none}
   .ex:hover{border-color:var(--accent);box-shadow:0 44px 96px -42px rgba(0,0,0,.8),0 0 0 1px var(--accent)}
 
   /* punchier + compact mobile hero — preview UP, less text, the first screen has to hit */
@@ -794,9 +796,12 @@
   if (!canvas || reduce || !webglOK()) { document.documentElement.classList.add('no-webgl'); /* .atmos gradient carries the look */ }
   else {
     let renderer, scene, camera, pts, raf=0, running=false, onScreen=true;
-    let scroll=0, tScroll=0, mx=0, my=0, tmx=0, tmy=0, time=0, cards=[], cardY=[];
+    let scroll=0, tScroll=0, mx=0, my=0, tmx=0, tmy=0, time=0, cards=[], cardY=[], texts=[], textY=[];
     function absTop(el){ let y=0; while(el){ y+=el.offsetTop; el=el.offsetParent; } return y; }   // transform-independent
-    function measureCards(){ cardY = cards.map(function(c){ return absTop(c) + c.offsetHeight/2; }); }
+    function measureCards(){
+      cardY = cards.map(function(c){ return absTop(c) + c.offsetHeight/2; });
+      textY = texts.map(function(t){ return absTop(t) + t.offsetHeight/2; });
+    }
 
     function themeColors(){
       const dark = (document.documentElement.getAttribute('data-theme')||'dark') !== 'light';
@@ -848,6 +853,8 @@
       build();
       cards = Array.prototype.slice.call(document.querySelectorAll('.ex,.mode,.promptcard'));
       cards.forEach(function(c){ c.classList.add('floatcard'); });
+      texts = Array.prototype.slice.call(document.querySelectorAll('.head,.lead,.block .eyebrow'));
+      texts.forEach(function(t){ t.classList.add('scrolltext'); });
       measureCards(); setTimeout(measureCards, 900);   // remeasure after fonts/layout settle
       addEventListener('resize', function(){ onResize(); measureCards(); }, { passive:true });
       if (!isMobile) addEventListener('pointermove', onPointer, { passive:true });
@@ -907,6 +914,15 @@
         else { const k = Math.min(1, (-d)/1.05); scale = 1 + k*0.30; op = 1 - Math.pow(k,1.3)*0.97; }       // flying past
         cards[i].style.transform = 'translate3d('+lx+'px,'+(d*16).toFixed(1)+'px,0) scale('+scale.toFixed(3)+')';
         cards[i].style.opacity = Math.max(0, op).toFixed(3);
+      }
+      // headings + leads ride the scroll too: parallax drift, a centre pop, fade at the far edges
+      for (let i=0;i<texts.length;i++){
+        const ty = (textY[i]||0) - scrollY, dd = (ty - mid)/mid;
+        const par = (-dd*34).toFixed(1);                                   // gentle parallax lag
+        const sc = (0.965 + (1-Math.min(1,Math.abs(dd)))*0.035).toFixed(3); // subtle pop toward centre
+        const to = Math.max(0, 1 - Math.max(0, Math.abs(dd)-0.55)/0.55*0.9).toFixed(3); // fade only near edges
+        texts[i].style.transform = 'translate3d(0,'+par+'px,0) scale('+sc+')';
+        texts[i].style.opacity = to;
       }
       renderer.render(scene, camera);
     }
