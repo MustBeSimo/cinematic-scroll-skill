@@ -21,7 +21,7 @@
 <meta name="twitter:title" content="Cinematic Scroll — give any agent the taste to build scroll sites" />
 <meta name="twitter:description" content="Free MIT Agent Skill. Describe an aesthetic; get pinned chapters, parallax, 3D tilt & full release pages. The motion is the constant; the look is yours." />
 <meta name="twitter:image" content="https://mustbesimo.github.io/cinematic-scroll-skill/assets/social-card.png" />
-<link rel="preload" as="image" href="./assets/04_v2.webp" fetchpriority="high" />
+<link rel="preload" as="image" href="./assets/video/reel3-hero.poster.jpg" fetchpriority="high" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -243,13 +243,36 @@
   .ex{box-shadow:0 30px 80px -44px rgba(0,0,0,.65)}
   .big{font-weight:600;font-size:clamp(2.8rem,8.4vw,6.4rem);letter-spacing:-.012em}
   .head{letter-spacing:-.008em}
-  /* punchier mobile hero — the first screen has to hit */
+  /* market-ready proof row */
+  .proofrow{display:flex;gap:clamp(14px,2.2vw,28px);flex-wrap:wrap;margin-top:20px}
+  .proofrow span{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+  .proofrow b{color:var(--accent);font-family:"Space Grotesk",sans-serif;font-size:1.7rem;font-weight:700;letter-spacing:-.02em}
+  .hero-credit{margin-top:16px}
+  /* live preview frame (replaces the old static hero image) */
+  .hero-preview .pvframe{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line2);
+    box-shadow:0 50px 110px -54px rgba(0,0,0,.85);background:#04070a}
+  .hero-preview video{width:100%;display:block;aspect-ratio:16/10;object-fit:cover}
+  .pvtag{position:absolute;top:12px;left:12px;z-index:2;display:inline-flex;align-items:center;gap:7px;
+    font-family:"Space Mono",monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text);
+    background:color-mix(in srgb,var(--bg) 58%,transparent);backdrop-filter:blur(8px);padding:6px 11px;border-radius:999px;border:1px solid var(--line2)}
+  .pvtag i{width:7px;height:7px;border-radius:50%;background:#54d98c;box-shadow:0 0 8px #54d98c;animation:pulse 1.8s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  /* floating glass cards over the live field — JS drives float + lean-to-cursor (see field module) */
+  .floatcard{will-change:transform;transition:border-color .35s var(--e-soft),box-shadow .35s var(--e-soft)}
+  .ex:hover{border-color:var(--accent);box-shadow:0 44px 96px -42px rgba(0,0,0,.8),0 0 0 1px var(--accent)}
+
+  /* punchier + compact mobile hero — preview UP, less text, the first screen has to hit */
   @media(max-width:767px){
-    .h1{font-size:clamp(3.6rem,18vw,6.4rem);line-height:.84}
-    .lede{font-size:clamp(1.15rem,5.2vw,1.55rem)}
-    .glasshero{padding:24px 22px}
+    .h1{font-size:clamp(3rem,15vw,5rem);line-height:.86}
+    .lede{font-size:clamp(1.1rem,4.6vw,1.4rem);margin-top:16px}
+    .glasshero{padding:22px 20px}
     .big{font-size:clamp(2.6rem,11vw,4.4rem)}
+    .hero-preview{order:-1}                 /* website preview at the top on mobile */
+    .hero-credit{display:none}              /* trim text so it doesn't eat the screen */
+    .proofrow{gap:16px;margin-top:16px}
+    .proofrow b{font-size:1.4rem}
   }
+  @media(prefers-reduced-motion:reduce){ .ex,.mode,.promptcard,.pvtag i{animation:none} }
 
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto}
@@ -292,21 +315,20 @@
       <div class="hero-num display layer" data-depth="1.2" data-range="160" aria-hidden="true">01</div>
       <div class="hero-grid">
         <div class="layer glasshero" data-depth="1.0" data-range="120" style="position:relative">
-          <div class="eyebrow">A free Agent Skill · Claude · Cursor · Hermes · OpenClaw</div>
+          <div class="eyebrow">Free · MIT · Claude · Cursor · Hermes · OpenClaw</div>
           <h1 class="h1" id="title">Cinematic Scroll</h1>
-          <p class="lede">One sentence in. <span class="dim">A cinematic, scroll-driven website out.</span></p>
+          <p class="lede">Describe an aesthetic. <span class="dim">Get a cinematic, scroll-driven site — art-directed to match.</span></p>
           <div class="cta">
             <a class="btn primary" href="#install">Get it — free</a>
-            <a class="btn ghost" href="#examples">Scroll the proof ↓</a>
+            <a class="btn ghost" href="#flagships">See it move ↓</a>
           </div>
-          <div class="note"><b>A skill, not a plugin</b> — runs in Claude, Cursor, Hermes &amp; OpenClaw. The motion is the constant · the look is yours · the agent is your choice.</div>
-          <div class="note" style="margin-top:10px">Created by <a href="https://w230.net" style="color:var(--text);border-bottom:1px solid var(--line2)">Simone Leonelli</a> · W230</div>
+          <div class="proofrow"><span><b>94–100</b> doctor-gated</span><span><b>27</b> live examples</span><span><b>0</b> build step</span></div>
+          <div class="note hero-credit">Built with the skill itself · by <a href="https://w230.net" style="color:var(--text);border-bottom:1px solid var(--line2)">Simone Leonelli</a> · W230</div>
         </div>
-        <div class="layer" data-depth="0.75" data-range="64" data-tilt style="position:relative">
-          <div class="fig">
-            <img class="dk" src="./assets/04_v2.webp" alt="Petroleum-toned cinematic hero — sci-fi noir" loading="eager" decoding="async" width="1200" height="750" />
-            <img class="lt" src="./assets/02_v2.webp" alt="Swiss-museum light hero — quiet luxury" loading="eager" decoding="async" width="1200" height="750" />
-            <div class="veil"></div>
+        <div class="layer hero-preview" data-depth="0.75" data-range="64" style="position:relative">
+          <div class="pvframe">
+            <span class="pvtag"><i></i> Live preview</span>
+            <video src="./assets/video/reel3-hero.mp4" poster="./assets/video/reel3-hero.poster.jpg" autoplay loop muted playsinline aria-label="The skill's launch reel — five aesthetic worlds from one engine"></video>
           </div>
         </div>
       </div>
@@ -469,7 +491,7 @@
           <div class="tags"><span>three.js</span><span>HDRI lighting</span><span>hung art</span><span>clickable index</span></div>
         </div>
       </div>
-      <div class="ex">
+      <div class="ex" style="order:-1">
         <a class="shot" href="./examples/jungle-flythrough/" aria-label="Open the Verdant jungle flythrough live demo"><img src="./examples/jungle-flythrough/poster.jpg" alt="Verdant — flying through an overgrown concrete atrium with floating green foliage" loading="lazy"><span class="badge">🌿 Jungle flythrough</span><span class="play"><span>▶</span></span></a>
         <div class="meta">
           <div class="num">Scroll-scrubbed 3D walk</div>
@@ -478,7 +500,7 @@
           <div class="tags"><span>three.js</span><span>image-based light</span><span>drifting pollen</span><span>scroll-camera</span></div>
         </div>
       </div>
-      <div class="ex">
+      <div class="ex" style="order:-2">
         <a class="shot" href="./examples/aureus-flythrough/" aria-label="Open the AUREUS vault flythrough live demo"><img src="./examples/aureus-flythrough/poster.jpg" alt="AUREUS — the camera flying through a liquid-chrome corridor of dark metaballs" loading="lazy"><span class="badge">△ Vault flight</span><span class="play"><span>▶</span></span></a>
         <div class="meta">
           <div class="num">Scroll-scrubbed raymarch</div>
@@ -772,7 +794,7 @@
   if (!canvas || reduce || !webglOK()) { document.documentElement.classList.add('no-webgl'); /* .atmos gradient carries the look */ }
   else {
     let renderer, scene, camera, pts, raf=0, running=false, onScreen=true;
-    let scroll=0, tScroll=0, mx=0, my=0, tmx=0, tmy=0, time=0;
+    let scroll=0, tScroll=0, mx=0, my=0, tmx=0, tmy=0, time=0, cards=[];
 
     function themeColors(){
       const dark = (document.documentElement.getAttribute('data-theme')||'dark') !== 'light';
@@ -788,25 +810,29 @@
       x.fillStyle=g; x.fillRect(0,0,64,64); return new THREE.CanvasTexture(cv);
     }
 
+    const LEN = 120;                  // tunnel length before a particle recycles to the far end
     function build(){
-      const N = isMobile ? 2200 : 5000;
+      const N = isMobile ? 2400 : 5200;
       const pos = new Float32Array(N*3), col = new Float32Array(N*3);
       const tc = themeColors(); const tmp = new THREE.Color();
+      // particles on a hollow tube wall (empty centre = the hole you fly down)
+      const ang = new Float32Array(N), rad = new Float32Array(N), zb = new Float32Array(N);
       for (let i=0;i<N;i++){
-        // a denser, closer drift volume so the field actually reads as a live nebula
-        const r = Math.pow(Math.random(),0.6);
-        pos[i*3]   = (Math.random()-0.5)*48;
-        pos[i*3+1] = (Math.random()-0.5)*30;
-        pos[i*3+2] = -Math.random()*44 - 1;
-        tmp.copy(tc.a).lerp(tc.b, Math.random()*Math.random()); tmp.multiplyScalar(0.7+0.6*r);
+        const a = Math.random()*Math.PI*2;
+        const r = 6 + Math.pow(Math.random(),0.5)*12;   // ring radius 6..18 — open centre
+        ang[i]=a; rad[i]=r; zb[i]=Math.random()*LEN;
+        pos[i*3]=Math.cos(a)*r; pos[i*3+1]=Math.sin(a)*r; pos[i*3+2]=-zb[i];
+        tmp.copy(tc.a).lerp(tc.b, Math.random()); tmp.multiplyScalar(0.7+0.5*Math.random());
         col[i*3]=tmp.r; col[i*3+1]=tmp.g; col[i*3+2]=tmp.b;
       }
       const geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
       geo.setAttribute('color', new THREE.BufferAttribute(col,3));
-      const mat = new THREE.PointsMaterial({ size:0.26, map:sprite(), vertexColors:true, transparent:true,
+      geo.userData = { ang, rad, zb, N };
+      const mat = new THREE.PointsMaterial({ size:0.34, map:sprite(), vertexColors:true, transparent:true,
         opacity:themeColors().op, depthWrite:false, blending:themeColors().blend, sizeAttenuation:true });
       pts = new THREE.Points(geo, mat); scene.add(pts);
+      camera.position.set(0,0,4); camera.fov = 78; camera.updateProjectionMatrix();
     }
 
     function init(){
@@ -817,8 +843,11 @@
       camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.1, 200);
       camera.position.set(0,0,16);
       build();
+      cards = Array.prototype.slice.call(document.querySelectorAll('.ex,.mode,.promptcard'));
+      cards.forEach(function(c){ c.classList.add('floatcard'); });
       addEventListener('resize', onResize, { passive:true });
       if (!isMobile) addEventListener('pointermove', onPointer, { passive:true });
+      else enableGyro();                              // phone: tilt steers the tunnel
       addEventListener('scroll', onScroll, { passive:true });
       canvas.addEventListener('webglcontextlost', (e)=>{ e.preventDefault(); running=false; cancelAnimationFrame(raf); raf=0; }, false);
       canvas.addEventListener('webglcontextrestored', ()=>{ try{ init(); }catch(_){} }, false);
@@ -832,6 +861,16 @@
     }
     function onResize(){ if(!renderer) return; camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); }
     function onPointer(e){ mx=(e.clientX/innerWidth)*2-1; my=-((e.clientY/innerHeight)*2-1); }
+    // device gyroscope → bank the tunnel as you tilt the phone (iOS needs a tap to grant)
+    function gyro(e){ if(e.gamma==null) return; mx=Math.max(-1,Math.min(1,e.gamma/28)); my=Math.max(-1,Math.min(1,(e.beta-42)/30)); }
+    function enableGyro(){
+      const DOE = window.DeviceOrientationEvent;
+      if (DOE && typeof DOE.requestPermission==='function'){
+        const ask=()=>{ DOE.requestPermission().then(s=>{ if(s==='granted') addEventListener('deviceorientation',gyro,true); }).catch(()=>{}); };
+        addEventListener('touchend', ask, { once:true });   // gesture-gated on iOS
+      } else if (DOE){ addEventListener('deviceorientation',gyro,true); }
+    }
+    const WARM=new THREE.Color(1,0.95,0.86), COOL=new THREE.Color(0.80,0.90,1.0);
     function onScroll(){ const max=document.body.scrollHeight-innerHeight; tScroll = max>0 ? scrollY/max : 0; }
     function updateRun(){ const vis=document.visibilityState==='visible' && onScreen; if(vis && !running){ running=true; if(!raf) loop(); } else if(!vis) running=false; }
     function loop(){
@@ -839,12 +878,30 @@
       time+=0.0016;
       scroll += (tScroll-scroll)*0.05; tmx += (mx-tmx)*0.04; tmy += (my-tmy)*0.04;
       if (pts){
-        // always-alive rotation + a stronger scroll fly-through + bigger mouse parallax
-        pts.rotation.y = time*0.9 + tmx*0.34;
-        pts.rotation.x = Math.sin(time*0.4)*0.06 + tmy*0.22;
-        pts.position.z = scroll*66;                 // scroll flies you through the nebula
-        pts.position.y = scroll*9 - tmy*1.9;
-        pts.position.x = -tmx*1.9;
+        // looping tunnel: travel forward (idle drift + scroll) and recycle particles
+        // that pass the camera back to the far end → an endless fly-through.
+        const ud = pts.geometry.userData; const p = pts.geometry.attributes.position.array;
+        const travel = time*9.0 + scroll*240;       // scroll dives you deep down the tube
+        const swirl = time*0.25;                     // gentle barrel-roll
+        for (let i=0;i<ud.N;i++){
+          let z = ((ud.zb[i] - travel) % LEN); if (z < 0) z += LEN;   // 0..LEN, wrapping
+          const a = ud.ang[i] + swirl, r = ud.rad[i];
+          p[i*3]   = Math.cos(a)*r;
+          p[i*3+1] = Math.sin(a)*r;
+          p[i*3+2] = 4 - z;                          // from just ahead (z≈4) out to -116
+        }
+        pts.geometry.attributes.position.needsUpdate = true;
+        // environment transitions warm → cool as you dive (a moving, shifting sky)
+        pts.material.color.copy(WARM).lerp(COOL, Math.min(1, scroll));
+        // mouse / gyro banks the camera through the tunnel
+        camera.position.x += ((tmx*2.4) - camera.position.x)*0.06;
+        camera.position.y += ((tmy*1.8) - camera.position.y)*0.06;
+        camera.lookAt(tmx*1.2, tmy*0.9, -40);
+      }
+      // glass cards float + lean toward the cursor (or phone tilt) — one transform, no CSS conflict
+      for (let i=0;i<cards.length;i++){
+        const fy = Math.sin(time*1.1 + i*0.7)*7;
+        cards[i].style.transform = 'translate3d('+(tmx*9).toFixed(2)+'px,'+(fy - tmy*9).toFixed(2)+'px,0)';
       }
       renderer.render(scene, camera);
     }
