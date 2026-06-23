@@ -48,6 +48,47 @@ The fill-in templates the 5-phase pipeline emits (lifted out of SKILL.md to keep
 
 ---
 
+## art-direction.md
+
+→ Phase 1.5. Full module: [`asset-direction.md`](asset-direction.md) · gate: [`wow-gate.md`](wow-gate.md).
+
+```markdown
+# Art Direction — [Project Name]
+
+## World Premise (one sentence, concrete nouns)
+[e.g. "A dark studio where wealth is molten chrome you fly down through."]
+
+## Hero Concept  — passes the Wow Gate (Part A)
+The visitor [VERB] a [SUBJECT] made of [MATERIAL], delivered by [MOTION / TIER].
+- Subject: [a thing]
+- Verb: [fly through · orbit · walk past · descend · pour · refract · assemble …]
+- Delivered by: [scroll-driven WebGL Tier B/C/D · multi-depth choreography]
+- Brand-specific because: [why swapping the brand breaks it]
+
+## Motif System (3–5, reused every section)
+1. [motif] — recurs in [sections]
+2. …
+
+## Material & Light Language
+- Material: [chrome · glass · fog · paper · concrete …]
+- Light: [single spotlight · dawn rim · volumetric god-rays …]
+- Palette by role: --bg [..] · --accent [..] · --accent-2 [..]
+
+## Asset Sourcing (per asset)
+| Asset | Source (procedural / fal.ai image / fal.ai GLB / CSS / user) | Notes |
+|---|---|---|
+| Hero | | Tier + camera move if 3D |
+| Section motifs | | |
+| Textures / grain | | |
+| Characters / illustration | | fal.ai — skill does not generate these |
+
+## Signature Moment (the one shot people screenshot)
+[name it + the scroll position it lands at]
+
+## Wow Rubric self-score (need ≥ 8/12)
+hero __ · motif __ · motion-as-narrative __ · depth __ · material __ · signature __ = __/12
+```
+
 ---
 
 ## motion-storyboard.md
