@@ -25,6 +25,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<script type="importmap">
+{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"}}
+</script>
 <style>
   /* ───── THEME TOKENS — [dark]=Petroleum Editorial · [light]=Swiss Museum ───── */
   :root,[data-theme="dark"]{
@@ -54,10 +57,20 @@
   .wrap{max-width:1200px;margin:0 auto;padding:0 clamp(20px,4vw,56px)}
 
   /* atmosphere + grain */
-  .atmos{position:fixed;inset:0;z-index:-2;background:
+  .atmos{position:fixed;inset:0;z-index:-3;background:
     radial-gradient(70% 50% at 82% -5%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
     radial-gradient(60% 60% at -5% 105%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 60%),
     var(--bg);transition:background .6s var(--e-soft)}
+  /* live WebGL ambient field — the page renders over a real, drifting particle scene (capped DPR, no lights) */
+  #bg3d{position:fixed;inset:0;width:100vw;height:100vh;z-index:-2;pointer-events:none;display:block;opacity:0;transition:opacity 1.2s var(--e-soft)}
+  #bg3d.on{opacity:1}
+  /* no-webgl / reduced-motion fallback: hide the canvas, the .atmos gradient backdrop carries the look */
+  .no-webgl #bg3d{display:none}
+  /* glassmorphic hero panel — content floats over the live field */
+  .glasshero{padding:clamp(22px,2.4vw,34px) clamp(24px,2.6vw,38px);border-radius:20px;
+    background:color-mix(in srgb,var(--surface) 52%,transparent);border:1px solid var(--line2);
+    backdrop-filter:blur(16px) saturate(1.1);-webkit-backdrop-filter:blur(16px) saturate(1.1);
+    box-shadow:0 30px 80px -40px rgba(0,0,0,.7)}
   .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
@@ -225,6 +238,7 @@
 </head>
 <body>
   <div class="atmos" aria-hidden="true"></div>
+  <canvas id="bg3d" aria-hidden="true"></canvas>
   <div class="grain" aria-hidden="true"></div>
   <div class="hud" id="hud" aria-hidden="true"></div>
   <div class="hud-num mono" id="hudNum" aria-hidden="true">00</div>
@@ -252,7 +266,7 @@
       <div class="wrap"><div class="inner">
       <div class="hero-num display layer" data-depth="1.2" data-range="160" aria-hidden="true">01</div>
       <div class="hero-grid">
-        <div class="layer" data-depth="1.0" data-range="120" style="position:relative">
+        <div class="layer glasshero" data-depth="1.0" data-range="120" style="position:relative">
           <div class="eyebrow">A free Agent Skill · Claude · Cursor · Hermes · OpenClaw</div>
           <h1 class="h1" id="title">Cinematic Scroll</h1>
           <p class="lede">One sentence in. <span class="dim">A cinematic, scroll-driven website out.</span></p>
@@ -541,15 +555,6 @@
     <div class="fitem"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span><b>Made by</b><br><a href="https://w230.net">Simone Leonelli</a></span></div>
   </div></div></footer>
 
-  <!-- THEME SELECTOR -->
-  <div class="selector"><div class="wrap"><div class="row">
-    <span class="lbl">Theme</span>
-    <div class="seg" id="segToggle">
-      <button data-set="dark" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>Dark · Petroleum</button>
-      <button data-set="light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Light · Swiss</button>
-    </div>
-  </div></div></div>
-
 <script>
 (function(){
   "use strict";
@@ -728,6 +733,98 @@
     });
   }
 })();
+</script>
+
+<!-- ── LIVE AMBIENT FIELD — the landing page renders over a real WebGL scene, built with the same
+     principles as the fly-through examples: capped DPR, no lights (unlit Points), scroll + mouse
+     reactive, visibility-gated, context-loss-safe, reduced-motion / no-WebGL → silent (gradients show). ── -->
+<script type="module">
+  import * as THREE from 'three';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = matchMedia('(max-width: 768px)').matches;
+  const canvas = document.getElementById('bg3d');
+  function webglOK(){ try{ const c=document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2')||c.getContext('webgl'))); }catch(e){ return false; } }
+  if (!canvas || reduce || !webglOK()) { document.documentElement.classList.add('no-webgl'); /* .atmos gradient carries the look */ }
+  else {
+    let renderer, scene, camera, pts, raf=0, running=false, onScreen=true;
+    let scroll=0, tScroll=0, mx=0, my=0, tmx=0, tmy=0, time=0;
+
+    function themeColors(){
+      const dark = (document.documentElement.getAttribute('data-theme')||'dark') !== 'light';
+      return dark
+        ? { a:new THREE.Color('#d49a4a'), b:new THREE.Color('#3a6e72'), op:0.85, blend:THREE.AdditiveBlending }
+        : { a:new THREE.Color('#9a6a2e'), b:new THREE.Color('#4a6b74'), op:0.5,  blend:THREE.NormalBlending };
+    }
+
+    function sprite(){
+      const cv=document.createElement('canvas'); cv.width=cv.height=64; const x=cv.getContext('2d');
+      const g=x.createRadialGradient(32,32,0,32,32,32);
+      g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(0.35,'rgba(255,255,255,0.5)'); g.addColorStop(1,'rgba(255,255,255,0)');
+      x.fillStyle=g; x.fillRect(0,0,64,64); return new THREE.CanvasTexture(cv);
+    }
+
+    function build(){
+      const N = isMobile ? 2200 : 5000;
+      const pos = new Float32Array(N*3), col = new Float32Array(N*3);
+      const tc = themeColors(); const tmp = new THREE.Color();
+      for (let i=0;i<N;i++){
+        // a denser, closer drift volume so the field actually reads as a live nebula
+        const r = Math.pow(Math.random(),0.6);
+        pos[i*3]   = (Math.random()-0.5)*48;
+        pos[i*3+1] = (Math.random()-0.5)*30;
+        pos[i*3+2] = -Math.random()*44 - 1;
+        tmp.copy(tc.a).lerp(tc.b, Math.random()*Math.random()); tmp.multiplyScalar(0.7+0.6*r);
+        col[i*3]=tmp.r; col[i*3+1]=tmp.g; col[i*3+2]=tmp.b;
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+      geo.setAttribute('color', new THREE.BufferAttribute(col,3));
+      const mat = new THREE.PointsMaterial({ size:0.26, map:sprite(), vertexColors:true, transparent:true,
+        opacity:themeColors().op, depthWrite:false, blending:themeColors().blend, sizeAttenuation:true });
+      pts = new THREE.Points(geo, mat); scene.add(pts);
+    }
+
+    function init(){
+      renderer = new THREE.WebGLRenderer({ canvas, antialias:false, alpha:true, powerPreference:'high-performance' });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.0 : 1.5));   // guardrail: capped DPR
+      renderer.setSize(innerWidth, innerHeight);
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.1, 200);
+      camera.position.set(0,0,16);
+      build();
+      addEventListener('resize', onResize, { passive:true });
+      if (!isMobile) addEventListener('pointermove', onPointer, { passive:true });
+      addEventListener('scroll', onScroll, { passive:true });
+      canvas.addEventListener('webglcontextlost', (e)=>{ e.preventDefault(); running=false; cancelAnimationFrame(raf); raf=0; }, false);
+      canvas.addEventListener('webglcontextrestored', ()=>{ try{ init(); }catch(_){} }, false);
+      document.addEventListener('visibilitychange', updateRun);
+      new IntersectionObserver((e)=>{ onScreen=e[0].isIntersecting; updateRun(); }, { threshold:0 }).observe(canvas);
+      // re-tint when the user flips the theme
+      new MutationObserver(()=>{ if(!pts) return; const tc=themeColors(); pts.material.opacity=tc.op; pts.material.blending=tc.blend; pts.material.needsUpdate=true; })
+        .observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+      onScroll();
+      canvas.classList.add('on'); running=true; loop();
+    }
+    function onResize(){ if(!renderer) return; camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); }
+    function onPointer(e){ mx=(e.clientX/innerWidth)*2-1; my=-((e.clientY/innerHeight)*2-1); }
+    function onScroll(){ const max=document.body.scrollHeight-innerHeight; tScroll = max>0 ? scrollY/max : 0; }
+    function updateRun(){ const vis=document.visibilityState==='visible' && onScreen; if(vis && !running){ running=true; if(!raf) loop(); } else if(!vis) running=false; }
+    function loop(){
+      raf=requestAnimationFrame(loop); if(!running) return;
+      time+=0.0016;
+      scroll += (tScroll-scroll)*0.05; tmx += (mx-tmx)*0.04; tmy += (my-tmy)*0.04;
+      if (pts){
+        pts.rotation.y = time*0.6 + tmx*0.25;
+        pts.rotation.x = tmy*0.18;
+        // scroll flies the field toward the camera (parallax through the nebula)
+        pts.position.z = scroll*42;
+        pts.position.y = scroll*6 - tmy*1.4;
+        pts.position.x = -tmx*1.4;
+      }
+      renderer.render(scene, camera);
+    }
+    try { init(); } catch(e){ /* leave gradients */ }
+  }
 </script>
 </body>
 </html>
