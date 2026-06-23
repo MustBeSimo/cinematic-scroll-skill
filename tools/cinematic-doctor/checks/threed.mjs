@@ -97,6 +97,47 @@ export function analyze(doc) {
     });
   }
 
+  // ── 3b. real-time light budget — many lights multiply per-fragment cost ─
+  const lightRe = /new\s+THREE\.(?:Spot|Point|Directional|Rect(?:Area)?)Light\b/g;
+  const lightCount = (js.match(lightRe) || []).length;
+  // a light constructor inside a loop body = a dynamic-light count that scales
+  // with geometry (one spotlight per painting, etc.) — the worst fps offender,
+  // and invisible to a flat count (one textual occurrence makes N lights).
+  let lightInLoop = false;
+  for (let m; (m = lightRe.exec(js)); ) {
+    if (/\b(?:for|while)\s*\(|\.forEach\s*\(/.test(js.slice(Math.max(0, m.index - 220), m.index))) { lightInLoop = true; break; }
+  }
+  if (lightInLoop) {
+    score -= 12;
+    findings.push({
+      level: 'warn',
+      msg: 'a real-time light is constructed inside a loop — the dynamic-light count scales with your geometry (e.g. one spotlight per object) and tanks fps; light the scene with emissive materials + a scene.environment (IBL) and keep ~2–4 fixed lights (budget §9)',
+    });
+  } else if (lightCount > 8) {
+    score -= 10;
+    findings.push({
+      level: 'warn',
+      msg: `${lightCount} real-time lights — each adds per-fragment cost on every lit mesh and tanks fps; prefer emissive materials + a scene.environment (IBL) and keep ~2–4 dynamic lights (budget §9)`,
+    });
+  } else if (lightCount > 0) {
+    findings.push({ level: 'pass', msg: `real-time light budget ok (${lightCount} dynamic light${lightCount === 1 ? '' : 's'} + cheap ambient/hemi)` });
+  }
+
+  // ── 3c. pixelRatio cap VALUE — Retina/high-DPI is the #1 cause of 3D jank ─
+  const dprNum = js.match(/setPixelRatio\([^)]*Math\.min\([^,]*,\s*([0-9.]+)\s*\)/i);
+  const mobileAwareDpr =
+    /Math\.min\([^)]*devicePixelRatio[^)]*,\s*(?:isMobile|isTouch|isPhone|coarse)[^)]*\?/i.test(js) ||
+    /isMobile\s*\?\s*[0-9.]+\s*:\s*[0-9.]+/.test(js);
+  if (dprNum && parseFloat(dprNum[1]) >= 2 && !mobileAwareDpr) {
+    score -= 8;
+    findings.push({
+      level: 'warn',
+      msg: `pixelRatio capped at ${dprNum[1]} with no lower mobile cap — on a Retina/4K screen that renders ${dprNum[1]}× the pixels and is the most common cause of 3D scroll jank; cap ≤ 1.5 desktop / ≤ 1 mobile for continuously-rendering scenes (budget §9)`,
+    });
+  } else if (dprCap && (mobileAwareDpr || (dprNum && parseFloat(dprNum[1]) < 2))) {
+    findings.push({ level: 'pass', msg: 'pixelRatio cap is conservative (mobile-aware / ≤ 1.5) — keeps high-DPI displays in budget' });
+  }
+
   // ── 4. XR feature-detection before requestSession ─────────────────────
   const requestsSession = /requestSession\s*\(/i.test(js);
   if (requestsSession) {

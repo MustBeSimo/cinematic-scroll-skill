@@ -596,9 +596,21 @@ reference; `references/3d-stack.md` (renderer + caps) and `references/webxr.md`
 (Tier D sessions) are the authority. Each rule below is enforceable — a miss is
 a bug, not a style choice.
 
-1. **Clamp `devicePixelRatio` ≤ 2** (lower on mobile, e.g. `Math.min(devicePixelRatio, isMobile ? 1.5 : 2)`).
-   Uncapped DPR is a retina GPU tax that melts mid-tier phones. **One renderer
-   per page** — never instantiate a second WebGL context per chapter.
+1. **Cap `devicePixelRatio` low for live scenes** — `Math.min(devicePixelRatio,
+   isMobile ? 1.0 : 1.5)` (raymarchers/fullscreen shaders can go 0.85–1.3; the
+   blur hides it). Uncapped or a flat `2` is a Retina GPU tax — a 4K display
+   renders 4–9× the pixels and is the **#1 cause of 3D scroll jank**. **One
+   renderer per page** — never a second WebGL context per chapter.
+   See `performance-budget.md` §9. *(doctor-enforced)*
+
+1b. **Light budget: ~2–4 dynamic lights — prefer emissive + IBL.** Every
+   real-time `PointLight`/`SpotLight`/`DirectionalLight` costs per-fragment on
+   every lit mesh; one light per object (e.g. a spotlight per painting) is a
+   frame-rate cliff. Get the look from `scene.environment` (an equirectangular
+   HDRI via `PMREMGenerator` — image-based fill + real reflections), emissive
+   materials/`emissiveMap` for self-lit art, and a couple of camera-following
+   lights. Keep MSAA off on fog/fill-heavy scenes. `performance-budget.md` §9.
+   *(doctor-enforced)*
 
 2. **Feature-detect WebGL before creating a context.** Probe for a context;
    if it fails, render the **permanent poster / CSS fallback** — never a blank

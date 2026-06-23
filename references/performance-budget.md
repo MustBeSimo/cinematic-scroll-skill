@@ -547,3 +547,57 @@ function checkFrameRate(timestamp) {
   requestAnimationFrame(checkFrameRate);
 }
 ```
+
+---
+
+## 9. Real-time 3D / WebGL budget
+
+Live, continuously-rendering WebGL (scroll-camera fly-throughs, raymarchers,
+particle fields) is the easiest way to ship a beautiful page that *runs* at
+9 fps. These caps are non-negotiable for any Tier B/C/D build; the
+`cinematic-doctor` 3D check enforces the starred ones. Lessons paid for in real
+device jank — apply them up front, not after a "why is it slow" report.
+
+### Device pixel ratio — the #1 cause of 3D jank ★
+A Retina / 4K display has `devicePixelRatio` 2–3. Uncapped, the GPU renders
+4–9× the pixels — a raymarcher or fill-heavy scene that's smooth at 1× crawls.
+**Always cap, and cap low for live scenes:**
+
+```js
+renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.0 : 1.5));
+// raymarch / fullscreen-shader scenes can go lower — 0.85–1.3; the blur hides it
+```
+
+Never `setPixelRatio(devicePixelRatio)` and never a flat cap of `2` on a scene
+that animates every frame. The doctor warns on a `≥ 2` cap with no mobile branch.
+
+### Light budget — prefer emissive + IBL over many lights ★
+Every real-time `PointLight` / `SpotLight` / `DirectionalLight` adds per-fragment
+cost to **every lit mesh**. A hall with one spotlight per painting (8–15 lights)
+is a frame-rate cliff. Keep **~2–4 dynamic lights**; get the rest of the look from:
+- **`scene.environment`** (an equirectangular HDRI through `PMREMGenerator`) for
+  image-based fill + real reflections — one texture, lights nothing per-light;
+- **emissive materials / `emissiveMap`** for self-lit art, signs, light strips
+  (a painting that glows reads as "lit" for zero light cost);
+- a couple of camera-following lights for local warmth.
+
+### Raymarch / shader step budget
+Fullscreen raymarchers cost `pixels × steps × map-complexity`. Budget
+**≤ 64 march steps desktop / ≤ 40 mobile**, and render at reduced scale (low
+pixelRatio) — chrome/cloud blur hides the softness. Sample any environment as a
+single `texture2D`, not a per-step loop.
+
+### Particles & fill
+- Particle `Points`: a few hundred, not thousands; lower the count on mobile.
+  Additive blending is fill-rate-heavy — keep sprites small.
+- **MSAA (`antialias`) off** on fog/foliage/fill-heavy scenes — the atmosphere
+  hides aliasing and you reclaim a lot of GPU.
+- One `WebGLRenderer` per page. Gate the rAF loop on visibility **and**
+  on-screen (`IntersectionObserver`), and render a single static frame under
+  `prefers-reduced-motion`.
+
+### Demo media — never ship a multi-MB GIF
+A scroll-loop GIF is 5–12 MB; the same clip as H.264 MP4 is ~0.3–0.8 MB (10×+
+smaller) **and** smoother. Capture demos to `.mp4` and use a lazy
+`<video muted loop playsinline preload="none">` that plays only while on-screen;
+keep a poster still so the box is never blank. Convert hero stills to WebP.
