@@ -72,7 +72,7 @@ npm test                                              # every gate — the same 
 <a id="flagships"></a>
 ### ⚡ Real-3D flagships — start here (real WebGL, doctor 94–100)
 
-The skill's most impactful builds, shown first: **real-3D** reference sites — scroll-driven three.js, no two sharing a technique (an asset-driven WebXR colonnade, a procedural particle galaxy, a raymarched volumetric sky, and a refractive glass monolith). Each handles context-loss, caps devicePixelRatio, gates its loop on visibility, and falls back to a permanent poster — never a blank canvas. Open any live:
+The skill's most impactful builds, shown first: **real-3D** reference sites — scroll-driven three.js, no two sharing a technique (an asset-driven WebXR colonnade, a procedural particle galaxy, a raymarched volumetric sky, a refractive glass monolith, and scroll-scrubbed camera **flythroughs** through a sculpture gallery, an overgrown atrium, and a liquid-chrome vault). Each handles context-loss, caps devicePixelRatio, gates its loop on visibility, and falls back to a permanent poster — never a blank canvas. Open any live:
 
 <table>
   <tr>
@@ -110,6 +110,37 @@ The skill's most impactful builds, shown first: **real-3D** reference sites — 
       <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/crystalline-monolith/"><b>△ Obsidian — Refract It →</b></a><br>
       <sub><b>Tier B transmission glass</b> — a faceted monolith of real <code>MeshPhysicalMaterial</code> (transmission, IOR 1.5, thickness, iridescence) lit by a procedural PMREM environment, ACES tone mapping and a bloom pass. Scroll cranes the camera around it while 60 orbiting shards and sweeping lights keep the facets alive; context-loss handled, CSS-gem fallback.<br><br><code>three.js</code> · <code>transmission</code> · <code>PMREM</code> · <code>bloom</code> — source in <a href="./examples/crystalline-monolith/">examples/crystalline-monolith</a>.</sub>
     </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/gallery-flythrough/"><img src="examples/gallery-flythrough/poster.jpg" alt="Atelier Marne — a 3D museum hall, the camera walking past spotlit gold sculptures on plinths of shadow." width="100%"></a>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/jungle-flythrough/"><img src="examples/jungle-flythrough/poster.jpg" alt="Verdant — flying through an overgrown concrete atrium with floating green foliage." width="100%"></a>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/gallery-flythrough/"><b>🏛 Atelier Marne — A gallery you walk →</b></a><br>
+      <sub><b>Scroll-scrubbed 3D walk</b> — the camera tracks down a museum hall past spotlit, slowly turning sculptures on plinths of shadow. Real depth and parallax, rendered live every frame — not layered images.<br><br><code>three.js</code> · <code>scroll-camera</code> · <code>real depth</code> — source in <a href="./examples/gallery-flythrough/">examples/gallery-flythrough</a>.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/jungle-flythrough/"><b>🌿 Verdant — Into the bloom →</b></a><br>
+      <sub><b>Scroll-scrubbed 3D walk</b> — sterile concrete reclaimed by nature; scroll flies you through an atrium as instanced foliage drifts past in layered 3D, the room ahead rendered live.<br><br><code>three.js</code> · <code>instanced foliage</code> · <code>scroll-camera</code> — source in <a href="./examples/jungle-flythrough/">examples/jungle-flythrough</a>.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/"><img src="examples/aureus-flythrough/poster.jpg" alt="AUREUS — the camera flying through a liquid-chrome corridor of dark metaballs." width="100%"></a>
+    </td>
+    <td width="50%" valign="top">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/"><b>△ AUREUS — Into the Vault →</b></a><br>
+      <sub><b>Scroll-scrubbed raymarch</b> — a flight through a liquid-chrome corridor of raymarched metaballs, rendered every frame, the descent paced exactly to your scroll.<br><br><code>three.js</code> · <code>raymarching</code> · <code>scroll-scrubbed</code> — source in <a href="./examples/aureus-flythrough/">examples/aureus-flythrough</a>.</sub>
+    </td>
+    <td width="50%" valign="top">&nbsp;</td>
   </tr>
 </table>
 
