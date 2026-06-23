@@ -4,11 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>VERDANT — Wild Nature, Back in the City</title>
-<meta name="description" content="A real-time 3D overgrown colonnade you move through by scrolling — instanced foliage, green fog, light shafts. Floating serif copy + a grunge kinetic finale. Built with the cinematic-scroll skill (procedural Three.js, no video)." />
+<meta name="description" content="A real-time 3D overgrown colonnade you move through by scrolling — image-based lighting from a real rainforest, instanced foliage, drifting pollen, god-ray light shafts, glassmorphic cards and a clickable chapter index. Built with the cinematic-scroll skill (procedural Three.js + fal.ai environment, no video)." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Anton&family=Inter:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Anton&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
 <script type="importmap">
 {"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"}}
@@ -17,13 +17,14 @@
 <style>
   :root {
     --bg:        #070b06;
-    --fg:        #eef3e6;
-    --fg-soft:   rgba(238,243,230,0.70);
-    --fg-faint:  rgba(238,243,230,0.36);
-    --accent:    #e8c15a;   /* sun through canopy */
-    --moss:      #7fa650;
-    --glass:     rgba(34,48,26,0.42);
-    --line:      rgba(238,243,230,0.16);
+    --fg:        #f1f6e9;
+    --fg-soft:   rgba(241,246,233,0.74);
+    --fg-faint:  rgba(241,246,233,0.40);
+    --accent:    #f0cf63;   /* sun through canopy */
+    --moss:      #8fc25a;
+    --glass:     rgba(26,40,20,0.40);
+    --glass-bd:  rgba(241,246,233,0.18);
+    --line:      rgba(241,246,233,0.18);
     --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-cue:    cubic-bezier(0.65, 0, 0.35, 1);
   }
@@ -32,73 +33,88 @@
   body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui, sans-serif; line-height: 1.55; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
   ::selection { background: var(--accent); color: var(--bg); }
   a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
   #stage { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; display: block; }
   .stage-fallback {
     position: fixed; inset: 0; z-index: 0; display: none;
     background:
-      radial-gradient(60% 50% at 50% 22%, rgba(232,193,90,0.40) 0%, rgba(232,193,90,0) 55%),
-      radial-gradient(90% 70% at 50% 70%, rgba(127,166,80,0.30) 0%, rgba(127,166,80,0) 60%),
-      linear-gradient(180deg, #11210d, #070b06);
+      radial-gradient(60% 50% at 50% 20%, rgba(240,207,99,0.45) 0%, rgba(240,207,99,0) 55%),
+      radial-gradient(90% 70% at 50% 70%, rgba(143,194,90,0.34) 0%, rgba(143,194,90,0) 60%),
+      linear-gradient(180deg, #16320f, #070b06);
   }
   .no-webgl #stage { display: none; }
   .no-webgl .stage-fallback { display: block; }
   .vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
-    background: radial-gradient(120% 100% at 50% 40%, transparent 48%, rgba(5,9,4,0.6) 100%); }
+    background: radial-gradient(122% 102% at 50% 38%, transparent 50%, rgba(5,9,4,0.5) 100%); }
 
   .progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60; }
   .progress span { display: block; height: 100%; transform: scaleX(0); transform-origin: 0 50%; background: linear-gradient(90deg, var(--moss), var(--accent)); will-change: transform; }
 
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: clamp(18px,2.4vh,28px) clamp(20px,5vw,64px); }
-  .brand { font-family: 'Space Mono', monospace; font-weight: 700; letter-spacing: 0.22em; font-size: clamp(12px,1.05vw,15px); }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: clamp(14px,2.2vh,24px) clamp(18px,4vw,56px); }
+  .brand { font-family: 'Space Mono', monospace; font-weight: 700; letter-spacing: 0.22em; font-size: clamp(12px,1.05vw,15px); pointer-events: auto; }
   .brand b { color: var(--moss); }
-  .nav-links { display: flex; gap: clamp(14px,2vw,30px); font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-faint); }
-  @media (max-width: 640px) { .nav-links { display: none; } }
+  .chapters { display: flex; gap: clamp(6px,0.9vw,16px); align-items: center; pointer-events: auto;
+    background: var(--glass); border: 1px solid var(--glass-bd); border-radius: 999px;
+    padding: 8px clamp(10px,1.2vw,16px); backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1); }
+  .chapters button { font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--fg-faint); padding: 4px 8px; border-radius: 999px; transition: color .3s, background .3s; white-space: nowrap; }
+  .chapters button:hover { color: var(--fg); }
+  .chapters button.active { color: var(--bg); background: var(--accent); }
+  @media (max-width: 820px) { .chapters { display: none; } }
 
   main { position: relative; z-index: 2; }
-  .beat { position: relative; height: 100vh; display: flex; align-items: center; padding: 0 clamp(24px,7vw,120px); pointer-events: none; }
+  .beat { position: relative; height: 100vh; display: flex; align-items: center; padding: 0 clamp(20px,7vw,120px); pointer-events: none; }
   .beat.center { justify-content: center; text-align: center; }
   .beat.right { justify-content: flex-end; }
 
-  /* frosted glass card — like the reference's About panel */
   .glass {
-    max-width: 46ch; padding: clamp(28px,4vw,52px); border-radius: 26px;
-    background: var(--glass); border: 1px solid var(--line);
-    backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1);
-    box-shadow: 0 40px 120px rgba(0,0,0,0.5);
+    pointer-events: auto; max-width: 46ch; padding: clamp(26px,3.2vw,46px); border-radius: 26px;
+    background: var(--glass); border: 1px solid var(--glass-bd);
+    backdrop-filter: blur(16px) saturate(1.15); -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    box-shadow: 0 40px 110px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+    transition: transform .5s var(--ease-reveal), box-shadow .5s var(--ease-reveal), border-color .5s;
   }
   .beat.center .glass { text-align: center; }
+  .glass.clickable:hover { transform: translateY(-4px); border-color: rgba(240,207,99,0.5); box-shadow: 0 50px 130px rgba(0,0,0,0.6), 0 0 0 1px rgba(240,207,99,0.22); }
 
   .eyebrow { font-family: 'Space Mono', monospace; font-size: clamp(10px,0.9vw,12px); letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); display: inline-flex; align-items: center; gap: 12px; }
   .eyebrow::before { content: ""; width: clamp(18px,3vw,40px); height: 1px; background: currentColor; }
   .beat.center .eyebrow { justify-content: center; }
 
   .serif { font-family: 'Fraunces', Georgia, serif; font-weight: 400; line-height: 1.08; letter-spacing: -0.005em; }
-  h1.serif { font-size: clamp(1.9rem,3.4vw,3.1rem); }
+  h1.serif { font-size: clamp(1.9rem,3.4vw,3.1rem); margin-top: 1rem; }
   h2.serif { font-size: clamp(1.7rem,3vw,2.7rem); }
   .serif em { font-style: italic; color: var(--accent); }
-  .lede { margin-top: 1.2rem; font-size: clamp(1rem,1.3vw,1.18rem); color: var(--fg-soft); }
-  .marquee { margin-top: 1.8rem; display: flex; flex-wrap: wrap; gap: 14px 26px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: var(--fg-faint); text-transform: uppercase; }
+  .lede { margin-top: 1.1rem; font-size: clamp(1rem,1.3vw,1.18rem); color: var(--fg-soft); }
 
-  /* the grunge finale — big condensed display */
+  .stats { margin-top: 1.4rem; display: flex; gap: clamp(16px,2.4vw,30px); flex-wrap: wrap; }
+  .stat .n { font-family: 'Fraunces', serif; font-weight: 500; font-size: clamp(1.6rem,2.7vw,2.2rem); line-height: 1; color: var(--fg); }
+  .stat .l { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-faint); margin-top: 5px; }
+  .chips { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips span { font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-soft); padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; }
+  .go { margin-top: 1.5rem; display: inline-flex; align-items: center; gap: 10px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding: 11px 18px; border: 1px solid rgba(240,207,99,0.45); border-radius: 999px; transition: background .3s, color .3s, gap .3s; }
+  .go:hover { background: var(--accent); color: var(--bg); gap: 16px; }
+  .go svg { width: 14px; height: 14px; }
+
   .mega { font-family: 'Anton', Impact, sans-serif; font-weight: 400; text-transform: uppercase; line-height: 0.84; letter-spacing: 0.005em; font-size: clamp(4.5rem,18vw,16rem); color: var(--fg); text-shadow: 0 8px 60px rgba(5,9,4,0.8); }
   .mega em { font-style: normal; color: var(--accent); }
 
-  /* word-mask reveal */
   .wd { display: inline-block; overflow: hidden; vertical-align: top; }
   .wd > span { display: inline-block; will-change: transform; }
 
-  .scroll-cue { position: fixed; left: 50%; transform: translateX(-50%); bottom: clamp(22px,3.5vh,40px); z-index: 30; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-faint); display: flex; flex-direction: column; align-items: center; gap: 10px; will-change: opacity; }
-  .scroll-cue i { width: 1px; height: 34px; background: linear-gradient(var(--accent), transparent); animation: cue 2.2s var(--ease-cue) infinite; transform-origin: top; }
+  .scroll-cue { position: fixed; left: 50%; transform: translateX(-50%); bottom: clamp(18px,3vh,36px); z-index: 30; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-faint); display: flex; flex-direction: column; align-items: center; gap: 10px; will-change: opacity; pointer-events: none; }
+  .scroll-cue i { width: 1px; height: 32px; background: linear-gradient(var(--accent), transparent); animation: cue 2.2s var(--ease-cue) infinite; transform-origin: top; }
   @keyframes cue { 0%,100% { transform: scaleY(0.3); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
 
   footer { position: relative; z-index: 2; background: var(--bg); border-top: 1px solid var(--line); padding: clamp(40px,7vh,90px) clamp(24px,6vw,80px); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 18px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-faint); }
+  footer a { color: var(--accent); }
 
   @media (prefers-reduced-motion: reduce) {
     .wd > span { transform: none !important; }
     .scroll-cue i { animation: none; }
     .progress span { transform: scaleX(1) !important; }
+    .glass { transition: none; }
   }
 </style>
 </head>
@@ -110,44 +126,59 @@
 <div class="progress" aria-hidden="true"><span></span></div>
 
 <nav>
-  <div class="brand">VERDANT<b>//</b></div>
-  <div class="nav-links"><a href="#">Work</a><a href="#">Process</a><a href="#">Contact</a></div>
+  <button class="brand" data-goto="0" aria-label="Verdant — back to start">VERDANT<b>//</b></button>
+  <div class="chapters" role="navigation" aria-label="Chapters">
+    <button data-goto="0">About</button>
+    <button data-goto="1">Colonnade</button>
+    <button data-goto="2">Canopy</button>
+    <button data-goto="3">Power</button>
+    <button data-goto="4">Visit</button>
+  </div>
 </nav>
 
 <main>
-  <!-- BEAT 0 — intro card (the reference's About panel) -->
+  <!-- BEAT 0 — intro card -->
   <section class="beat" data-beat="0">
-    <div class="glass">
+    <div class="glass clickable" data-goto="1">
       <span class="eyebrow">About us</span>
-      <h1 class="serif kinetic" style="margin-top:1rem;">We transform sterile concrete into thriving <em>urban jungles.</em></h1>
-      <p class="lede">Our designs bring wild nature back to modern cities. Scroll, and walk the bloom — the room ahead is rendered live.</p>
-      <div class="marquee"><span>Glide</span><span>Canva</span><span>Webflow</span><span>Zendesk</span><span>Pendo</span></div>
+      <h1 class="serif kinetic">We transform sterile concrete into thriving <em>urban jungles.</em></h1>
+      <p class="lede">Our designs bring wild nature back to modern cities. Scroll, and walk the bloom — the colonnade ahead is rendered live, lit by a real rainforest sky.</p>
+      <div class="stats">
+        <div class="stat"><div class="n">1.5k+</div><div class="l">instanced leaves</div></div>
+        <div class="stat"><div class="n">5</div><div class="l">light shafts</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">baked frames</div></div>
+      </div>
+      <span class="go">Walk the colonnade <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </section>
 
   <!-- BEAT 1 — deeper in -->
   <section class="beat right" data-beat="1">
-    <div class="glass">
+    <div class="glass clickable" data-goto="2">
       <span class="eyebrow">The colonnade</span>
       <h2 class="serif kinetic">Concrete, <em>reclaimed.</em></h2>
-      <p class="lede">Old arches, taken back by leaf and vine. The camera walks the platform at exactly your scroll's pace.</p>
+      <p class="lede">Old arches, taken back by leaf and vine. The camera walks the platform at exactly your scroll's pace, every surface catching the canopy light.</p>
+      <div class="chips"><span>image-based light</span><span>instanced vines</span><span>live walk</span></div>
+      <span class="go">Up to the canopy <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </section>
 
   <!-- BEAT 2 — light shafts -->
   <section class="beat" data-beat="2">
-    <div class="glass">
+    <div class="glass clickable" data-goto="3">
       <span class="eyebrow">Canopy</span>
       <h2 class="serif kinetic">Light falls <em>in shafts.</em></h2>
-      <p class="lede">Real depth, real fog — hundreds of instanced leaves, not a flat photo.</p>
+      <p class="lede">Real depth, real fog — hundreds of instanced leaves and drifting pollen, not a flat photo. Move your cursor; the world leans with you.</p>
+      <div class="chips"><span>god-rays</span><span>drifting pollen</span><span>volumetric fog</span></div>
+      <span class="go">Full power <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </section>
 
   <!-- BEAT 3 — the grunge finale -->
   <section class="beat center" data-beat="3">
-    <div>
+    <button data-goto="4" style="pointer-events:auto;">
       <p class="mega kinetic">Full <em>power.</em></p>
-    </div>
+    </button>
   </section>
 
   <!-- BEAT 4 — CTA -->
@@ -155,14 +186,15 @@
     <div class="glass">
       <span class="eyebrow">Experience the bloom</span>
       <h2 class="serif kinetic">Any brief, <em>its own wild.</em></h2>
-      <p class="lede" style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.08em;">$ npx cinematic-scroll-skill</p>
+      <p class="lede">One scroll contract, infinite worlds. Plant yours from a single command.</p>
+      <a class="go" href="https://github.com/MustBeSimo/cinematic-scroll-skill" target="_blank" rel="noopener">npx cinematic-scroll-skill <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </section>
 </main>
 
 <footer>
-  <span>VERDANT// — procedural Three.js jungle</span>
-  <span>By Simone Leonelli · built with cinematic-scroll</span>
+  <span>VERDANT// — procedural Three.js jungle · fal.ai environment</span>
+  <span>By Simone Leonelli · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a></span>
 </footer>
 
 <script type="module">
@@ -171,6 +203,7 @@
   const reduce  = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = matchMedia('(max-width: 768px)').matches;
   const canvas  = document.getElementById('stage');
+  const BEATS = 5;
 
   function webglOK(){ try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch(e){ return false; } }
 
@@ -183,14 +216,19 @@
     }).join(' ');
   });
 
+  /* ── clickable chapter index + cards → smooth-scroll the camera there ── */
+  function gotoBeat(i){ const sec = document.querySelector('.beat[data-beat="'+i+'"]'); if (sec) sec.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }
+  document.querySelectorAll('[data-goto]').forEach(function(el){
+    el.addEventListener('click', function(e){ if (el.tagName === 'A') return; e.preventDefault(); gotoBeat(parseInt(el.dataset.goto, 10)); });
+  });
+
   let renderer, scene, camera, raf = 0, running = false, onScreen = true;
   let progress = 0, t_target = 0, mx = 0, my = 0, tmx = 0, tmy = 0;
-  let sun, curve;
-  const leafMeshes = [], vines = [];
+  let sun, curve, pollen;
+  const leafMeshes = [], vines = [], shafts = [];
   const tmpV = new THREE.Vector3(), lookV = new THREE.Vector3(), dummy = new THREE.Object3D();
 
   if (!webglOK()) document.body.classList.add('no-webgl');
-  // init() called at the very bottom, after all helpers/consts are declared
 
   function init(){
     renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: false, powerPreference: 'high-performance' });
@@ -198,24 +236,25 @@
     renderer.setSize(innerWidth, innerHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.12;
+    renderer.toneMappingExposure = 1.2;
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color('#0a160a');
-    scene.fog = new THREE.FogExp2('#0c1d0c', 0.026);
+    scene.background = new THREE.Color('#0c1c0c');
+    scene.fog = new THREE.FogExp2('#10240f', 0.023);
 
     camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.1, 300);
 
-    /* light — sky/ground hemi (green canopy), a warm sun from front-top, low ambient */
-    scene.add(new THREE.AmbientLight('#16240f', 0.8));
-    scene.add(new THREE.HemisphereLight('#bfe08a', '#0a1206', 0.85));
-    sun = new THREE.DirectionalLight('#ffe7a8', 1.5);
+    scene.add(new THREE.AmbientLight('#1d3014', 0.7));
+    scene.add(new THREE.HemisphereLight('#cdec98', '#0c1408', 0.95));
+    sun = new THREE.DirectionalLight('#ffeeb0', 1.7);
     sun.position.set(6, 16, 4); scene.add(sun);
 
     buildStructure();
     buildFoliage();
     buildShafts();
+    buildPollen();
     buildPath();
+    loadEnvironment();
 
     addEventListener('resize', onResize, { passive: true });
     if (!isMobile && !reduce) addEventListener('pointermove', onPointer, { passive: true });
@@ -228,122 +267,122 @@
     if (reduce) renderer.render(scene, camera); else { running = true; loop(); }
   }
 
-  /* deterministic pseudo-random so SSR/resize don't shift layout */
+  /* image-based lighting from the fal.ai rainforest panorama */
+  function loadEnvironment(){
+    new THREE.TextureLoader().load('assets/env.jpg', function(tex){
+      tex.mapping = THREE.EquirectangularReflectionMapping; tex.colorSpace = THREE.SRGBColorSpace;
+      try { const pmrem = new THREE.PMREMGenerator(renderer); const rt = pmrem.fromEquirectangular(tex); scene.environment = rt.texture; pmrem.dispose(); tex.dispose(); if (reduce && renderer) renderer.render(scene, camera); }
+      catch(e){}
+    }, undefined, function(){});
+  }
+
   let seed = 1337;
   function rnd(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
-
   const DEPTH = 110, BAYS = 11, BAY = DEPTH / BAYS, HALL_W = 7, HALL_H = 6.5;
 
   function buildStructure(){
-    // an overgrown colonnade / platform: concrete floor + receding arch bays
-    const concrete = new THREE.MeshStandardMaterial({ color: '#8c8b80', roughness: 0.95, metalness: 0.0 });
-    const dark = new THREE.MeshStandardMaterial({ color: '#3b4036', roughness: 1.0 });
+    const concrete = new THREE.MeshStandardMaterial({ color: '#9b9a8d', roughness: 0.95, metalness: 0.02, envMapIntensity: 0.6 });
+    const dark = new THREE.MeshStandardMaterial({ color: '#414639', roughness: 1.0 });
     const g = new THREE.Group(); scene.add(g);
 
-    // floor
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(HALL_W + 4, DEPTH + 20), new THREE.MeshStandardMaterial({ color: '#4a4a40', roughness: 1 }));
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(HALL_W + 4, DEPTH + 20), new THREE.MeshStandardMaterial({ color: '#55564a', roughness: 1, envMapIntensity: 0.4 }));
     floor.rotation.x = -Math.PI/2; floor.position.set(0, 0, -DEPTH/2); g.add(floor);
 
     for (let b = 0; b <= BAYS; b++){
       const z = -b * BAY;
-      // two columns + a lintel = an arch bay
       for (const sx of [-1, 1]){
         const col = new THREE.Mesh(new THREE.BoxGeometry(0.7, HALL_H, 0.7), concrete);
         col.position.set(sx * HALL_W/2, HALL_H/2, z); g.add(col);
       }
       const lintel = new THREE.Mesh(new THREE.BoxGeometry(HALL_W + 0.7, 0.8, 0.7), concrete);
       lintel.position.set(0, HALL_H - 0.4, z); g.add(lintel);
-      // a cross-beam roof slat every other bay (broken canopy)
       if (b % 2 === 0){
         const slat = new THREE.Mesh(new THREE.BoxGeometry(HALL_W, 0.18, 0.3), dark);
         slat.position.set(0, HALL_H - 0.05, z - BAY*0.4); g.add(slat);
       }
     }
-    // far backdrop glow (sun at the end of the platform)
-    const back = new THREE.Mesh(new THREE.PlaneGeometry(40, 26), new THREE.MeshStandardMaterial({ color: '#000', emissive: '#cfe89a', emissiveIntensity: 0.7 }));
-    back.position.set(0, 8, -DEPTH - 6); scene.add(back);
+    // far backdrop — the generated jungle, glowing like the sun at the end of the platform
+    const backMat = new THREE.MeshStandardMaterial({ color: '#000', emissive: '#cfe89a', emissiveIntensity: 0.85 });
+    new THREE.TextureLoader().load('assets/backdrop.jpg', function(t){ t.colorSpace = THREE.SRGBColorSpace; backMat.emissiveMap = t; backMat.emissive = new THREE.Color('#ffffff'); backMat.emissiveIntensity = 1.0; backMat.needsUpdate = true; if (reduce && renderer) renderer.render(scene, camera); }, undefined, function(){});
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(44, 28), backMat);
+    back.position.set(0, 9, -DEPTH - 6); scene.add(back);
   }
 
-  // a single leaf: a flat diamond (teardrop) — cheap, reads as foliage with fog + clustering
   function leafGeo(){
     const gx = new THREE.BufferGeometry();
     const v = new Float32Array([ 0,0.5,0,  0.16,0,0,  0,-0.5,0,  -0.16,0,0 ]);
-    const idx = [0,1,2, 0,2,3];
     gx.setAttribute('position', new THREE.BufferAttribute(v, 3));
-    gx.setIndex(idx); gx.computeVertexNormals();
+    gx.setIndex([0,1,2, 0,2,3]); gx.computeVertexNormals();
     return gx;
   }
 
   function buildFoliage(){
     const geo = leafGeo();
-    // three green tones, each its own InstancedMesh — clustered into bushes on bays + hanging from lintels
     const tones = [
-      new THREE.MeshStandardMaterial({ color: '#5f8a35', roughness: 0.85, side: THREE.DoubleSide, emissive:'#16240c', emissiveIntensity:0.25 }),
-      new THREE.MeshStandardMaterial({ color: '#86b24a', roughness: 0.8,  side: THREE.DoubleSide, emissive:'#1d3010', emissiveIntensity:0.3 }),
-      new THREE.MeshStandardMaterial({ color: '#3f6b2c', roughness: 0.9,  side: THREE.DoubleSide, emissive:'#10200a', emissiveIntensity:0.2 }),
+      new THREE.MeshStandardMaterial({ color: '#6a9a3c', roughness: 0.82, side: THREE.DoubleSide, emissive:'#1a2e10', emissiveIntensity:0.3, envMapIntensity: 0.7 }),
+      new THREE.MeshStandardMaterial({ color: '#9ac756', roughness: 0.78, side: THREE.DoubleSide, emissive:'#243d14', emissiveIntensity:0.34, envMapIntensity: 0.7 }),
+      new THREE.MeshStandardMaterial({ color: '#477730', roughness: 0.88, side: THREE.DoubleSide, emissive:'#13260c', emissiveIntensity:0.26, envMapIntensity: 0.6 }),
     ];
-    const PER = 520;
+    const PER = 560;
     tones.forEach(function(mat, ti){
       const inst = new THREE.InstancedMesh(geo, mat, PER);
       for (let i = 0; i < PER; i++){
-        // clusters anchored to bays: pick a bay, a side, drape leaves around columns/lintels + floor bushes
         const bay = Math.floor(rnd() * (BAYS + 1));
         const z0 = -bay * BAY + (rnd() - 0.5) * BAY * 0.9;
-        const mode = rnd();
-        let x, y;
-        if (mode < 0.4){ // hanging from lintel
-          const sx = rnd() < 0.5 ? -1 : 1;
-          x = sx * (rnd() * HALL_W/2);
-          y = HALL_H - rnd() * 3.2;
-        } else if (mode < 0.75){ // climbing the columns
-          const sx = rnd() < 0.5 ? -1 : 1;
-          x = sx * (HALL_W/2 + (rnd()-0.5) * 1.2);
-          y = rnd() * HALL_H;
-        } else { // floor bushes at the edges
-          const sx = rnd() < 0.5 ? -1 : 1;
-          x = sx * (HALL_W/2 - rnd() * 1.6);
-          y = rnd() * 1.4;
-        }
-        const s = 0.6 + rnd() * 1.3;
+        const mode = rnd(); let x, y;
+        if (mode < 0.4){ const sx = rnd() < 0.5 ? -1 : 1; x = sx * (rnd() * HALL_W/2); y = HALL_H - rnd() * 3.2; }
+        else if (mode < 0.75){ const sx = rnd() < 0.5 ? -1 : 1; x = sx * (HALL_W/2 + (rnd()-0.5) * 1.2); y = rnd() * HALL_H; }
+        else { const sx = rnd() < 0.5 ? -1 : 1; x = sx * (HALL_W/2 - rnd() * 1.6); y = rnd() * 1.4; }
+        const s = 0.6 + rnd() * 1.4;
         dummy.position.set(x, y, z0);
         dummy.rotation.set(rnd()*Math.PI, rnd()*Math.PI*2, rnd()*Math.PI);
-        dummy.scale.set(s, s, s);
-        dummy.updateMatrix();
+        dummy.scale.set(s, s, s); dummy.updateMatrix();
         inst.setMatrixAt(i, dummy.matrix);
       }
-      inst.instanceMatrix.needsUpdate = true;
-      inst.userData.phase = ti;
+      inst.instanceMatrix.needsUpdate = true; inst.userData.phase = ti;
       scene.add(inst); leafMeshes.push(inst);
     });
 
-    // hanging vines — thin cylinders dripping from lintels
-    const vineMat = new THREE.MeshStandardMaterial({ color: '#48692e', roughness: 0.9 });
-    const vineGeo = new THREE.CylinderGeometry(0.03, 0.03, 1, 5);
-    const VN = 40;
-    const vInst = new THREE.InstancedMesh(vineGeo, vineMat, VN);
-    for (let i = 0; i < VN; i++){
-      const bay = Math.floor(rnd() * (BAYS + 1));
-      const len = 1.5 + rnd() * 3.0;
-      const x = (rnd() - 0.5) * HALL_W;
+    const vineMat = new THREE.MeshStandardMaterial({ color: '#527a32', roughness: 0.9, envMapIntensity: 0.5 });
+    const vInst = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.03, 0.03, 1, 5), vineMat, 44);
+    for (let i = 0; i < 44; i++){
+      const bay = Math.floor(rnd() * (BAYS + 1)); const len = 1.5 + rnd() * 3.0; const x = (rnd() - 0.5) * HALL_W;
       dummy.position.set(x, HALL_H - len/2 - 0.3, -bay*BAY + (rnd()-0.5)*1.5);
-      dummy.rotation.set((rnd()-0.5)*0.3, 0, (rnd()-0.5)*0.3);
-      dummy.scale.set(1, len, 1);
-      dummy.updateMatrix();
+      dummy.rotation.set((rnd()-0.5)*0.3, 0, (rnd()-0.5)*0.3); dummy.scale.set(1, len, 1); dummy.updateMatrix();
       vInst.setMatrixAt(i, dummy.matrix);
     }
-    vInst.instanceMatrix.needsUpdate = true;
-    scene.add(vInst); vines.push(vInst);
+    vInst.instanceMatrix.needsUpdate = true; scene.add(vInst); vines.push(vInst);
   }
 
   function buildShafts(){
-    // god-ray cones — additive, low opacity, angled from the canopy
-    const mat = new THREE.MeshBasicMaterial({ color: '#ffe7a0', transparent: true, opacity: 0.06, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
-    for (let i = 0; i < 5; i++){
-      const cone = new THREE.Mesh(new THREE.ConeGeometry(2.4, 12, 12, 1, true), mat);
-      cone.position.set((rnd()-0.5)*HALL_W, HALL_H + 2, -i * (DEPTH/5) - 6);
+    const mat = new THREE.MeshBasicMaterial({ color: '#ffe7a0', transparent: true, opacity: 0.09, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    for (let i = 0; i < 6; i++){
+      const cone = new THREE.Mesh(new THREE.ConeGeometry(2.6, 13, 14, 1, true), mat);
+      cone.position.set((rnd()-0.5)*HALL_W, HALL_H + 2.5, -i * (DEPTH/6) - 6);
       cone.rotation.x = Math.PI; cone.rotation.z = (rnd()-0.5)*0.4;
-      scene.add(cone);
+      cone.userData.base = cone.material.opacity; scene.add(cone); shafts.push(cone);
     }
+  }
+
+  /* drifting pollen / spores in the light — additive Points */
+  function buildPollen(){
+    const N = isMobile ? 260 : 640;
+    const pos = new Float32Array(N * 3); const sd = new Float32Array(N);
+    for (let i = 0; i < N; i++){
+      pos[i*3] = (Math.random()-0.5) * HALL_W * 1.4;
+      pos[i*3+1] = Math.random() * HALL_H;
+      pos[i*3+2] = -Math.random() * DEPTH + 6;
+      sd[i] = Math.random() * 6.28;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.userData.seed = sd; g.userData.base = pos.slice();
+    const cv = document.createElement('canvas'); cv.width = cv.height = 64;
+    const cx = cv.getContext('2d'); const grd = cx.createRadialGradient(32,32,0,32,32,32);
+    grd.addColorStop(0,'rgba(255,243,190,1)'); grd.addColorStop(0.4,'rgba(225,240,150,0.5)'); grd.addColorStop(1,'rgba(225,240,150,0)');
+    cx.fillStyle = grd; cx.fillRect(0,0,64,64);
+    const m = new THREE.PointsMaterial({ size: 0.08, map: new THREE.CanvasTexture(cv), transparent: true, opacity: 0.7, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+    pollen = new THREE.Points(g, m); scene.add(pollen);
   }
 
   function buildPath(){
@@ -364,8 +403,9 @@
     const t = Math.min(0.999, Math.max(0, p));
     curve.getPointAt(t, tmpV);
     curve.getPointAt(Math.min(0.999, t + 0.035), lookV);
-    camera.position.set(tmpV.x + tmx*0.6, tmpV.y + tmy*0.3, tmpV.z);
-    camera.lookAt(lookV.x + tmx*0.9, lookV.y + tmy*0.5, lookV.z);
+    camera.position.set(tmpV.x + tmx*0.9, tmpV.y + tmy*0.45, tmpV.z);
+    camera.lookAt(lookV.x + tmx*1.2, lookV.y + tmy*0.6, lookV.z);
+    camera.rotation.z += tmx * 0.03;
   }
 
   let breeze = 0;
@@ -375,8 +415,16 @@
     progress += (t_target - progress) * 0.07;
     tmx += (mx - tmx) * 0.05; tmy += (my - tmy) * 0.05;
     breeze += 0.012;
-    // gentle canopy sway — rotate each leaf layer subtly (cheap, whole-mesh)
-    for (const m of leafMeshes) m.rotation.z = Math.sin(breeze + m.userData.phase) * 0.03;
+    for (const m of leafMeshes) m.rotation.z = Math.sin(breeze + m.userData.phase) * 0.035;
+    for (let i = 0; i < shafts.length; i++) shafts[i].material.opacity = shafts[i].userData.base * (0.7 + 0.3*Math.sin(breeze*0.7 + i));
+    if (pollen){
+      const arr = pollen.geometry.attributes.position.array, base = pollen.geometry.userData.base, sd = pollen.geometry.userData.seed;
+      for (let i = 0; i < sd.length; i++){
+        arr[i*3]   = base[i*3]   + Math.sin(breeze*0.5 + sd[i]) * 0.6;
+        arr[i*3+1] = base[i*3+1] + Math.sin(breeze*0.32 + sd[i]*1.6) * 0.4;
+      }
+      pollen.geometry.attributes.position.needsUpdate = true;
+    }
     placeCamera(progress);
     renderer.render(scene, camera);
   }
@@ -386,8 +434,9 @@
   function onLost(e){ e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
   function onRestored(){ try { init(); } catch(err){ document.body.classList.add('no-webgl'); } }
 
-  /* ── scroll → camera progress ── */
+  /* ── scroll → camera progress + active chapter ── */
   function docProgress(){ const max = document.body.scrollHeight - innerHeight; return max <= 0 ? 0 : Math.min(1, Math.max(0, scrollY / max)); }
+  const chapBtns = Array.from(document.querySelectorAll('.chapters button'));
   let ticking = false;
   addEventListener('scroll', ()=>{
     if (ticking) return; ticking = true;
@@ -395,6 +444,8 @@
       t_target = docProgress();
       document.querySelector('.progress span').style.transform = 'scaleX(' + t_target + ')';
       const cue = document.querySelector('.scroll-cue'); if (cue) cue.style.opacity = t_target > 0.04 ? '0' : '1';
+      const cur = Math.round(t_target * (BEATS - 1));
+      chapBtns.forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.goto,10) === cur); });
       ticking = false;
       if (reduce){ progress = t_target; placeCamera(progress); if (renderer) renderer.render(scene, camera); }
     });
@@ -405,10 +456,10 @@
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(function(en){
       const words = en.target.querySelectorAll('.wd > span');
-      const others = en.target.querySelectorAll('.lede, .eyebrow, .marquee');
+      const others = en.target.querySelectorAll('.lede, .eyebrow, .stats, .chips, .go');
       if (en.isIntersecting && en.intersectionRatio > 0.55){
         words.forEach(function(w,i){ w.style.transition = 'transform 0.95s ' + (i*0.05) + 's var(--ease-reveal)'; w.style.transform = 'translateY(0)'; });
-        others.forEach(function(o,i){ o.style.transition = 'opacity 0.8s ' + (0.12 + i*0.08) + 's var(--ease-reveal), transform 0.8s ' + (0.12 + i*0.08) + 's var(--ease-reveal)'; o.style.opacity = '1'; o.style.transform = 'none'; });
+        others.forEach(function(o,i){ o.style.transition = 'opacity 0.8s ' + (0.12 + i*0.07) + 's var(--ease-reveal), transform 0.8s ' + (0.12 + i*0.07) + 's var(--ease-reveal)'; o.style.opacity = '1'; o.style.transform = 'none'; });
       } else {
         words.forEach(function(w){ w.style.transition = 'transform 0.5s var(--ease-reveal)'; w.style.transform = 'translateY(115%)'; });
         others.forEach(function(o){ o.style.transition = 'opacity 0.4s, transform 0.4s'; o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
@@ -419,12 +470,12 @@
   if (!reduce){
     beats.forEach(function(b){
       b.querySelectorAll('.wd > span').forEach(function(w){ w.style.transform = 'translateY(115%)'; });
-      b.querySelectorAll('.lede, .eyebrow, .marquee').forEach(function(o){ o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
+      b.querySelectorAll('.lede, .eyebrow, .stats, .chips, .go').forEach(function(o){ o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
       io.observe(b);
     });
   }
 
-  /* ── bootstrap (after all declarations) ── */
+  /* ── bootstrap ── */
   if (!document.body.classList.contains('no-webgl')){
     try { init(); } catch(e){ console.warn('jungle: init failed', e); document.body.classList.add('no-webgl'); }
   }

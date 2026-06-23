@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>AUREUS — Into the Vault (Scroll-Scrubbed Chrome Flight)</title>
-<meta name="description" content="The AUREUS fintech world as a scroll-scrubbed camera flight — the camera flies through an endless liquid-chrome corridor at exactly your scroll's pace. Real-time raymarched WebGL, one renderer, no video. Built with the cinematic-scroll skill." />
+<meta name="description" content="The AUREUS fintech world as a scroll-scrubbed camera flight — the camera flies through an endless liquid-chrome corridor at exactly your scroll's pace, the metal reflecting a real fal.ai studio. Real-time raymarched WebGL, drifting sparks, glassmorphic cards, a clickable chapter index. Built with the cinematic-scroll skill." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,11 +18,13 @@
   :root {
     --bg:        #06070b;
     --fg:        #eef2f8;
-    --fg-soft:   rgba(238,242,248,0.66);
-    --fg-faint:  rgba(238,242,248,0.34);
+    --fg-soft:   rgba(238,242,248,0.70);
+    --fg-faint:  rgba(238,242,248,0.38);
     --accent:    #5ce0ff;
-    --accent-2:  #ff9d5c;
-    --line:      rgba(238,242,248,0.12);
+    --accent-2:  #ffb15c;
+    --line:      rgba(238,242,248,0.14);
+    --glass:     rgba(14,20,32,0.42);
+    --glass-bd:  rgba(238,242,248,0.16);
     --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-cue:    cubic-bezier(0.65, 0, 0.35, 1);
   }
@@ -31,6 +33,7 @@
   body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui, sans-serif; line-height: 1.55; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
   ::selection { background: var(--accent); color: var(--bg); }
   a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
   #stage { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; display: block; }
@@ -39,56 +42,76 @@
     background:
       radial-gradient(60% 50% at 50% 46%, rgba(205,214,234,0.34) 0%, rgba(205,214,234,0) 60%),
       radial-gradient(50% 45% at 62% 56%, rgba(92,224,255,0.30) 0%, rgba(92,224,255,0) 55%),
-      radial-gradient(50% 45% at 38% 60%, rgba(255,157,92,0.26) 0%, rgba(255,157,92,0) 55%),
+      radial-gradient(50% 45% at 38% 60%, rgba(255,177,92,0.26) 0%, rgba(255,177,92,0) 55%),
       var(--bg);
   }
   .no-webgl #stage { display: none; }
   .no-webgl .stage-fallback { display: block; }
   .vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
-    background: radial-gradient(120% 100% at 50% 48%, transparent 52%, rgba(6,7,11,0.6) 100%); }
+    background: radial-gradient(120% 100% at 50% 48%, transparent 54%, rgba(6,7,11,0.5) 100%); }
 
   .progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60; }
   .progress span { display: block; height: 100%; transform: scaleX(0); transform-origin: 0 50%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); will-change: transform; }
 
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: clamp(18px,2.4vh,28px) clamp(20px,5vw,64px); }
-  .brand { font-family: 'Space Mono', monospace; font-weight: 700; letter-spacing: 0.2em; font-size: clamp(12px,1.05vw,15px); }
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: clamp(14px,2.2vh,24px) clamp(18px,4vw,56px); }
+  .brand { font-family: 'Space Mono', monospace; font-weight: 700; letter-spacing: 0.2em; font-size: clamp(12px,1.05vw,15px); pointer-events: auto; }
   .brand b { color: var(--accent); }
-  .nav-meta { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-faint); }
-  @media (max-width: 640px) { .nav-meta { display: none; } }
+  .chapters { display: flex; gap: clamp(6px,0.9vw,16px); align-items: center; pointer-events: auto;
+    background: var(--glass); border: 1px solid var(--glass-bd); border-radius: 999px;
+    padding: 8px clamp(10px,1.2vw,16px); backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1); }
+  .chapters button { font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--fg-faint); padding: 4px 8px; border-radius: 999px; transition: color .3s, background .3s; white-space: nowrap; }
+  .chapters button:hover { color: var(--fg); }
+  .chapters button.active { color: var(--bg); background: var(--accent); }
+  @media (max-width: 820px) { .chapters { display: none; } }
 
   main { position: relative; z-index: 2; }
-  .beat { position: relative; height: 100vh; display: flex; align-items: center; padding: 0 clamp(24px,7vw,120px); pointer-events: none; }
+  .beat { position: relative; height: 100vh; display: flex; align-items: center; padding: 0 clamp(20px,7vw,120px); pointer-events: none; }
   .beat.center { justify-content: center; text-align: center; }
-  .beat.right { justify-content: flex-end; text-align: right; }
+  .beat.right { justify-content: flex-end; }
 
-  .card { max-width: 40ch; }
-  .beat.center .card { max-width: 28ch; }
+  .glass {
+    pointer-events: auto; max-width: 42ch; padding: clamp(24px,2.8vw,40px); border-radius: 22px;
+    background: var(--glass); border: 1px solid var(--glass-bd);
+    backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    box-shadow: 0 34px 100px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+    transition: transform .5s var(--ease-reveal), box-shadow .5s var(--ease-reveal), border-color .5s;
+  }
+  .beat.center .glass { max-width: 30ch; text-align: center; }
+  .glass.clickable:hover { transform: translateY(-4px); border-color: rgba(92,224,255,0.5); box-shadow: 0 44px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(92,224,255,0.25); }
+
   .eyebrow { font-family: 'Space Mono', monospace; font-size: clamp(10px,0.9vw,12px); letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); display: inline-flex; align-items: center; gap: 12px; }
   .eyebrow::before { content: ""; width: clamp(18px,3vw,40px); height: 1px; background: currentColor; }
-  .beat.right .eyebrow { flex-direction: row-reverse; }
   .beat.center .eyebrow { justify-content: center; }
 
   h1, h2 { font-family: 'Fraunces', Georgia, serif; font-weight: 400; line-height: 0.98; letter-spacing: -0.02em; }
-  h1 { font-size: clamp(2.8rem,7vw,6.4rem); margin-top: 1.1rem; text-shadow: 0 4px 60px rgba(6,7,11,0.7); }
-  h2 { font-size: clamp(2rem,4.6vw,3.8rem); margin-top: 0.8rem; text-shadow: 0 4px 50px rgba(6,7,11,0.7); }
+  h1 { font-size: clamp(2.6rem,6.4vw,5.6rem); margin-top: 0.9rem; }
+  h2 { font-size: clamp(1.9rem,4.2vw,3.4rem); margin-top: 0.7rem; }
   h1 em, h2 em { font-style: italic; color: var(--accent); }
-  .lede { margin-top: 1.4rem; font-size: clamp(1rem,1.4vw,1.25rem); color: var(--fg-soft); text-shadow: 0 2px 30px rgba(6,7,11,0.85); }
-  .metric { margin-top: 1.6rem; font-family: 'Fraunces', serif; font-weight: 500; font-size: clamp(2.4rem,6vw,4.4rem); line-height: 1; }
-  .metric .u { font-size: 0.4em; color: var(--accent); vertical-align: super; }
+  .lede { margin-top: 1.1rem; font-size: clamp(0.98rem,1.3vw,1.18rem); color: var(--fg-soft); }
+  .metric { margin-top: 1.3rem; font-family: 'Fraunces', serif; font-weight: 500; font-size: clamp(2.4rem,6vw,4.2rem); line-height: 1; }
+  .metric .u { font-size: 0.36em; color: var(--accent); vertical-align: super; }
+
+  .chips { margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips span { font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-soft); padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; }
+  .go { margin-top: 1.5rem; display: inline-flex; align-items: center; gap: 10px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); padding: 11px 18px; border: 1px solid rgba(92,224,255,0.45); border-radius: 999px; transition: background .3s, color .3s, gap .3s; }
+  .go:hover { background: var(--accent); color: var(--bg); gap: 16px; }
+  .go svg { width: 14px; height: 14px; }
 
   .wd { display: inline-block; overflow: hidden; vertical-align: top; }
   .wd > span { display: inline-block; will-change: transform; }
 
-  .scroll-cue { position: fixed; left: 50%; transform: translateX(-50%); bottom: clamp(22px,3.5vh,40px); z-index: 30; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-faint); display: flex; flex-direction: column; align-items: center; gap: 10px; will-change: opacity; }
-  .scroll-cue i { width: 1px; height: 34px; background: linear-gradient(var(--accent), transparent); animation: cue 2.2s var(--ease-cue) infinite; transform-origin: top; }
+  .scroll-cue { position: fixed; left: 50%; transform: translateX(-50%); bottom: clamp(18px,3vh,36px); z-index: 30; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-faint); display: flex; flex-direction: column; align-items: center; gap: 10px; will-change: opacity; pointer-events: none; }
+  .scroll-cue i { width: 1px; height: 32px; background: linear-gradient(var(--accent), transparent); animation: cue 2.2s var(--ease-cue) infinite; transform-origin: top; }
   @keyframes cue { 0%,100% { transform: scaleY(0.3); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
 
   footer { position: relative; z-index: 2; background: var(--bg); border-top: 1px solid var(--line); padding: clamp(40px,7vh,90px) clamp(24px,6vw,80px); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 18px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-faint); }
+  footer a { color: var(--accent); }
 
   @media (prefers-reduced-motion: reduce) {
     .wd > span { transform: none !important; }
     .scroll-cue i { animation: none; }
     .progress span { transform: scaleX(1) !important; }
+    .glass { transition: none; }
   }
 </style>
 </head>
@@ -100,55 +123,70 @@
 <div class="progress" aria-hidden="true"><span></span></div>
 
 <nav>
-  <div class="brand">AUREUS<b>°</b></div>
-  <div class="nav-meta">Scroll = the descent</div>
+  <button class="brand" data-goto="0" aria-label="Aureus — back to start">AUREUS<b>°</b></button>
+  <div class="chapters" role="navigation" aria-label="Chapters">
+    <button data-goto="0">Vault</button>
+    <button data-goto="1">Custody</button>
+    <button data-goto="2">Yield</button>
+    <button data-goto="3">Scale</button>
+    <button data-goto="4">Surface</button>
+  </div>
 </nav>
 
 <main>
   <section class="beat" data-beat="0">
-    <div class="card">
+    <div class="glass clickable" data-goto="1">
       <span class="eyebrow">Into the vault</span>
       <h1 class="kinetic">Wealth has a <em>depth.</em></h1>
-      <p class="lede">Scroll, and the camera flies through it — a live liquid-chrome corridor, rendered every frame, paced exactly to your scroll.</p>
+      <p class="lede">Scroll, and the camera flies through it — a live liquid-chrome corridor, rendered every frame, reflecting a real studio, paced exactly to your scroll.</p>
+      <div class="chips"><span>raymarched chrome</span><span>real reflections</span><span>one renderer</span></div>
+      <span class="go">Descend <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </section>
 
   <section class="beat right" data-beat="1">
-    <div class="card">
+    <div class="glass clickable" data-goto="2">
       <span class="eyebrow">01 — Custody</span>
       <h2 class="kinetic">Keys held <em>at the core.</em></h2>
-      <p class="lede">Deeper in, the metal closes around you — multi-party computation, hardware isolation.</p>
+      <p class="lede">Deeper in, the metal closes around you — multi-party computation, hardware isolation, keys that never surface.</p>
+      <div class="chips"><span>MPC</span><span>hardware isolation</span><span>SOC 2</span></div>
+      <span class="go">See the yield <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </section>
 
   <section class="beat" data-beat="2">
-    <div class="card">
+    <div class="glass clickable" data-goto="3">
       <span class="eyebrow">02 — Yield</span>
       <h2 class="kinetic">Return, <em>compounding.</em></h2>
       <div class="metric"><span data-count="8.4" data-dp="1">0.0</span><span class="u">% APY</span></div>
+      <p class="lede">Yield routed across vetted venues, rebalanced continuously — net of fees, paid in kind.</p>
+      <span class="go">At scale <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </section>
 
   <section class="beat right" data-beat="3">
-    <div class="card">
+    <div class="glass clickable" data-goto="4">
       <span class="eyebrow">03 — Scale</span>
       <h2 class="kinetic">Assets under <em>custody.</em></h2>
       <div class="metric">$<span data-count="4.2" data-dp="1">0</span>B</div>
+      <p class="lede">Held for funds, treasuries and individuals across 30+ jurisdictions.</p>
+      <span class="go">To the surface <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
   </section>
 
   <section class="beat center" data-beat="4">
-    <div class="card">
+    <div class="glass">
       <span class="eyebrow">Surface</span>
       <h2 class="kinetic">Put your wealth <em>in motion.</em></h2>
-      <p class="lede" style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.08em;">$ npx cinematic-scroll-skill</p>
+      <p class="lede">One scroll contract, infinite worlds. Build yours from a single command.</p>
+      <a class="go" href="https://github.com/MustBeSimo/cinematic-scroll-skill" target="_blank" rel="noopener">npx cinematic-scroll-skill <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </section>
 </main>
 
 <footer>
-  <span>AUREUS° — scroll-scrubbed chrome flight</span>
-  <span>By Simone Leonelli · built with cinematic-scroll</span>
+  <span>AUREUS° — scroll-scrubbed chrome flight · fal.ai environment</span>
+  <span>By Simone Leonelli · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a></span>
 </footer>
 
 <script type="module">
@@ -157,6 +195,7 @@
   const reduce  = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = matchMedia('(max-width: 768px)').matches;
   const canvas  = document.getElementById('stage');
+  const BEATS = 5;
 
   function webglOK(){ try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch(e){ return false; } }
 
@@ -167,6 +206,12 @@
       if (w === '<em>' || w === '</em>') return w;
       return '<span class="wd"><span>' + w + '</span></span>';
     }).join(' ');
+  });
+
+  /* ── clickable chapter index + cards → smooth-scroll the flight there ── */
+  function gotoBeat(i){ const sec = document.querySelector('.beat[data-beat="'+i+'"]'); if (sec) sec.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }
+  document.querySelectorAll('[data-goto]').forEach(function(el){
+    el.addEventListener('click', function(e){ if (el.tagName === 'A') return; e.preventDefault(); gotoBeat(parseInt(el.dataset.goto, 10)); });
   });
 
   let renderer, scene, camera, mat, raf = 0, running = false, onScreen = true;
@@ -180,23 +225,28 @@
     camera = new THREE.Camera();
     const STEPS = isMobile ? 60 : 92;
 
+    // neutral 1×1 placeholder until the real studio panorama loads
+    const ph = new THREE.DataTexture(new Uint8Array([40,46,60,255]), 1, 1, THREE.RGBAFormat);
+    ph.needsUpdate = true;
+
     mat = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 }, uFly: { value: 0 },
         uRes: { value: new THREE.Vector2(innerWidth, innerHeight) },
         uMouse: { value: new THREE.Vector2(0, 0) },
         uAccent: { value: new THREE.Color('#5ce0ff') },
-        uAmber:  { value: new THREE.Color('#ff9d5c') },
+        uAmber:  { value: new THREE.Color('#ffb15c') },
+        uTex: { value: ph }, uHasTex: { value: 0 },
       },
       vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.,1.); }',
       fragmentShader: `
         precision highp float;
         varying vec2 vUv;
-        uniform float uTime, uFly; uniform vec2 uRes, uMouse; uniform vec3 uAccent, uAmber;
+        uniform float uTime, uFly, uHasTex; uniform vec2 uRes, uMouse; uniform vec3 uAccent, uAmber;
+        uniform sampler2D uTex;
         const int STEPS = ${STEPS};
-        const float REP = 6.0;                       // chrome blobs repeat every 6 units in z
+        const float REP = 6.0;
         float smin(float a, float b, float k){ float h = clamp(0.5+0.5*(b-a)/k, 0.0, 1.0); return mix(b,a,h)-k*h*(1.0-h); }
-        // endless liquid-metal corridor: blobs domain-repeated along z, orbiting the axis
         float map(vec3 p){
           float cell = floor(p.z / REP);
           vec3 q = p; q.z = mod(p.z, REP) - REP*0.5;
@@ -204,7 +254,6 @@
           for(int i=0;i<5;i++){
             float f = float(i);
             float a = uTime*0.4 + f*1.7 + cell*0.9;
-            // ring of blobs around the flight axis, leaving a tunnel down the middle
             vec3 c = vec3(cos(a)*1.7, sin(a*1.1+f)*1.5, sin(a*0.7+f)*1.4);
             c *= 1.0 + 0.10*sin(uTime*0.6 + f + cell);
             d = smin(d, length(q-c) - (0.72 + 0.12*sin(uTime+f+cell)), 0.7);
@@ -213,21 +262,41 @@
         }
         vec3 normal(vec3 p){ vec2 e = vec2(0.0016, 0.0); return normalize(vec3(
           map(p+e.xyy)-map(p-e.xyy), map(p+e.yxy)-map(p-e.yxy), map(p+e.yyx)-map(p-e.yyx))); }
+        // procedural studio + the real fal.ai panorama, sampled equirectangularly
         vec3 env(vec3 r){
           float h = r.y*0.5 + 0.5;
-          vec3 base = mix(vec3(0.015,0.02,0.035), vec3(0.10,0.13,0.20), pow(h,1.4));
+          vec3 base = mix(vec3(0.02,0.025,0.04), vec3(0.12,0.15,0.22), pow(h,1.4));
           base += vec3(0.55,0.72,0.95) * pow(max(0.0,1.0-abs(r.y)), 10.0) * 0.5;
           base += uAccent * pow(max(0.0, dot(r, normalize(vec3( 0.6, 0.25, 0.55)))), 16.0) * 0.9;
           base += uAmber  * pow(max(0.0, dot(r, normalize(vec3(-0.55,-0.1, 0.6)))), 20.0) * 0.8;
+          if(uHasTex > 0.5){
+            vec2 euv = vec2(atan(r.z, r.x)*0.1591549 + 0.5, asin(clamp(r.y,-1.0,1.0))*0.3183099 + 0.5);
+            vec3 tex = texture2D(uTex, euv).rgb;
+            base = mix(base, base*0.45 + tex*1.35, 0.7);
+          }
           return base;
+        }
+        // drifting twinkling sparks — a particle field in screen space
+        float hash21(vec2 p){ p = fract(p*vec2(123.34, 456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
+        float sparks(vec2 uv, float tm){
+          float s = 0.0;
+          for(int i=0;i<3;i++){
+            float fi = float(i);
+            vec2 g = (uv + vec2(0.0, -tm*(0.06+fi*0.04))) * (4.0 + fi*3.0);
+            vec2 id = floor(g); vec2 f = fract(g) - 0.5;
+            float h = hash21(id + fi*19.1);
+            vec2 off = (vec2(h, fract(h*7.3)) - 0.5) * 0.7;
+            float tw = 0.5 + 0.5*sin(tm*2.2 + h*40.0);
+            float d = length(f - off);
+            s += smoothstep(0.05, 0.0, d) * tw * (0.6 - fi*0.16) * step(0.55, h);
+          }
+          return s;
         }
         void main(){
           vec2 uv = (gl_FragCoord.xy - 0.5*uRes.xy) / uRes.y;
-          // camera flies forward (+z) with scroll; gentle sway threads the tunnel
           float fz = uFly * 60.0;
-          vec3 ro = vec3(sin(uFly*7.0 + uMouse.x)*0.7, cos(uFly*5.5 + uMouse.y)*0.45, fz);
-          // look forward down +z with a small lead-in sway
-          vec3 fwd = normalize(vec3(sin(uFly*7.0)*0.06, cos(uFly*5.5)*0.04, 1.0));
+          vec3 ro = vec3(sin(uFly*7.0 + uMouse.x)*0.7 + uMouse.x*0.5, cos(uFly*5.5 + uMouse.y)*0.45 + uMouse.y*0.4, fz);
+          vec3 fwd = normalize(vec3(sin(uFly*7.0)*0.06 + uMouse.x*0.12, cos(uFly*5.5)*0.04 + uMouse.y*0.1, 1.0));
           vec3 uu = normalize(cross(vec3(0.0,1.0,0.0), fwd));
           vec3 vv = cross(fwd, uu);
           vec3 rd = normalize(uv.x*uu + uv.y*vv + 1.4*fwd);
@@ -242,21 +311,23 @@
             float fres = pow(1.0 - max(0.0, dot(-rd, n)), 3.2);
             vec3 chrome = env(ref);
             chrome += vec3(1.0) * pow(max(0.0, dot(ref, normalize(vec3(0.5,0.7,0.4)))), 60.0) * 0.6;
-            col = mix(chrome*0.85, vec3(1.0), fres*0.7);
+            col = mix(chrome*0.9, vec3(1.0), fres*0.7);
             col += uAccent * fres * 0.5;
-            // distance fog into the chrome — depth cue for the flight
             col = mix(col, vec3(0.02,0.03,0.05), clamp(tt/22.0, 0.0, 0.85));
           } else {
-            col = env(rd) * 0.45;
+            col = env(rd) * 0.5;
           }
+          // particle sparks drift through the corridor, nudged by the mouse
+          col += vec3(0.75,0.88,1.0) * sparks(uv + uMouse*0.15, uTime) * 0.6;
           col = col / (col + vec3(0.8));
           col = pow(col, vec3(0.85));
-          col *= 0.8 + 0.2*smoothstep(1.6, 0.2, length(uv));
+          col *= 0.82 + 0.18*smoothstep(1.6, 0.2, length(uv));
           gl_FragColor = vec4(col, 1.0);
         }`,
     });
 
     scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+    loadEnvironment();
 
     addEventListener('resize', onResize, { passive: true });
     if (!isMobile && !reduce) addEventListener('pointermove', onPointer, { passive: true });
@@ -269,6 +340,14 @@
     if (reduce) renderer.render(scene, camera); else { running = true; loop(); }
   }
 
+  /* sample a real luxe studio so the chrome reflects something true */
+  function loadEnvironment(){
+    new THREE.TextureLoader().load('assets/env.jpg', function(tex){
+      tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.ClampToEdgeWrapping; tex.colorSpace = THREE.SRGBColorSpace;
+      if (mat){ mat.uniforms.uTex.value = tex; mat.uniforms.uHasTex.value = 1; if (reduce && renderer) renderer.render(scene, camera); }
+    }, undefined, function(){});
+  }
+
   function apply(){ if (!mat) return; mat.uniforms.uFly.value = fly; mat.uniforms.uTime.value = t; mat.uniforms.uMouse.value.set(tmx, tmy); }
   function loop(){ raf = requestAnimationFrame(loop); if (!running) return; t += 0.016; fly += (target - fly) * 0.06; tmx += (mx-tmx)*0.05; tmy += (my-tmy)*0.05; apply(); renderer.render(scene, camera); }
   function updateRun(){ const vis = document.visibilityState === 'visible' && onScreen; if (reduce){ running = false; return; } if (vis && !running){ running = true; if (!raf) loop(); } else if (!vis) running = false; }
@@ -277,8 +356,9 @@
   function onLost(e){ e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
   function onRestored(){ try { init(); } catch(err){ document.body.classList.add('no-webgl'); } }
 
-  /* ── scroll → forward flight ── */
+  /* ── scroll → forward flight + active chapter ── */
   function docProgress(){ const max = document.body.scrollHeight - innerHeight; return max <= 0 ? 0 : Math.min(1, Math.max(0, scrollY / max)); }
+  const chapBtns = Array.from(document.querySelectorAll('.chapters button'));
   let ticking = false;
   addEventListener('scroll', ()=>{
     if (ticking) return; ticking = true;
@@ -286,6 +366,8 @@
       target = docProgress();
       document.querySelector('.progress span').style.transform = 'scaleX(' + target + ')';
       const cue = document.querySelector('.scroll-cue'); if (cue) cue.style.opacity = target > 0.04 ? '0' : '1';
+      const cur = Math.round(target * (BEATS - 1));
+      chapBtns.forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.goto,10) === cur); });
       ticking = false;
       if (reduce){ fly = target; apply(); if (renderer) renderer.render(scene, camera); }
     });
@@ -299,14 +381,13 @@
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(function(en){
       const words = en.target.querySelectorAll('.wd > span');
-      const others = en.target.querySelectorAll('.lede, .eyebrow, .metric');
+      const others = en.target.querySelectorAll('.lede, .eyebrow, .metric, .chips, .go');
       if (en.isIntersecting && en.intersectionRatio > 0.55){
         words.forEach(function(w,i){ w.style.transition = 'transform 0.95s ' + (i*0.05) + 's var(--ease-reveal)'; w.style.transform = 'translateY(0)'; });
-        others.forEach(function(o,i){ o.style.transition = 'opacity 0.8s ' + (0.12 + i*0.08) + 's var(--ease-reveal), transform 0.8s ' + (0.12 + i*0.08) + 's var(--ease-reveal)'; o.style.opacity = '1'; o.style.transform = 'none'; });
-        // count-up when its beat arrives
+        others.forEach(function(o,i){ o.style.transition = 'opacity 0.8s ' + (0.12 + i*0.07) + 's var(--ease-reveal), transform 0.8s ' + (0.12 + i*0.07) + 's var(--ease-reveal)'; o.style.opacity = '1'; o.style.transform = 'none'; });
         en.target.querySelectorAll('[data-count]').forEach(function(el){
           const c = counters.find(function(x){ return x.el === el; });
-          if (c && !c.done){ c.done = true; const o = { v: 0 }; const start = performance.now();
+          if (c && !c.done){ c.done = true; const start = performance.now();
             (function tick(now){ const k = Math.min(1, (now-start)/1500); const e = 1-Math.pow(1-k,3); el.textContent = (c.to*e).toFixed(c.dp); if (k<1) requestAnimationFrame(tick); })(start);
           }
         });
@@ -320,7 +401,7 @@
   if (!reduce){
     beats.forEach(function(b){
       b.querySelectorAll('.wd > span').forEach(function(w){ w.style.transform = 'translateY(115%)'; });
-      b.querySelectorAll('.lede, .eyebrow, .metric').forEach(function(o){ o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
+      b.querySelectorAll('.lede, .eyebrow, .metric, .chips, .go').forEach(function(o){ o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
       io.observe(b);
     });
   }
