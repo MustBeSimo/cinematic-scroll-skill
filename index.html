@@ -226,6 +226,31 @@
     .hero-num{display:none}.cue{position:static;margin-top:26px}
     .worldbg{position:absolute}.wn-slot{height:auto}.worldname{position:static;opacity:1!important;font-size:clamp(1.3rem,6vw,1.9rem);margin:4px 0}.worldsw{display:none}
   }
+  /* ───── 10x PUNCH — bold editorial hero · glass cards · immersive field ───── */
+  .h1{font-family:"Space Grotesk",-apple-system,sans-serif;font-weight:700;font-size:clamp(3.6rem,14vw,9.6rem);line-height:.82;letter-spacing:-.035em;text-transform:uppercase}
+  .h1 .w{margin-right:.1em}
+  .h1 .w:last-child{color:var(--accent)}
+  @supports ((-webkit-background-clip:text) or (background-clip:text)){
+    .h1 .w:last-child{background:linear-gradient(116deg,var(--accent),#ecc488);-webkit-background-clip:text;background-clip:text;color:transparent}
+  }
+  [data-theme="dark"] .h1{text-shadow:0 0 70px color-mix(in srgb,var(--accent) 20%,transparent)}
+  .eyebrow{font-size:clamp(11px,1.2vw,13px);letter-spacing:.36em}
+  .lede{font-size:clamp(1.2rem,2.3vw,1.65rem);font-weight:600;max-width:22ch;color:var(--text)}
+  .glasshero{background:color-mix(in srgb,var(--surface) 40%,transparent);border-radius:24px}
+  /* glass across the content cards — they float over the live field */
+  .ex,.mode,.promptcard,.feat2 .ex{background:color-mix(in srgb,var(--surface) 42%,transparent)!important;
+    backdrop-filter:blur(18px) saturate(1.12);-webkit-backdrop-filter:blur(18px) saturate(1.12)}
+  .ex{box-shadow:0 30px 80px -44px rgba(0,0,0,.65)}
+  .big{font-weight:600;font-size:clamp(2.8rem,8.4vw,6.4rem);letter-spacing:-.012em}
+  .head{letter-spacing:-.008em}
+  /* punchier mobile hero — the first screen has to hit */
+  @media(max-width:767px){
+    .h1{font-size:clamp(3.6rem,18vw,6.4rem);line-height:.84}
+    .lede{font-size:clamp(1.15rem,5.2vw,1.55rem)}
+    .glasshero{padding:24px 22px}
+    .big{font-size:clamp(2.6rem,11vw,4.4rem)}
+  }
+
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto}
     .h1 .w{opacity:1!important;transform:none!important}
@@ -752,8 +777,8 @@
     function themeColors(){
       const dark = (document.documentElement.getAttribute('data-theme')||'dark') !== 'light';
       return dark
-        ? { a:new THREE.Color('#d49a4a'), b:new THREE.Color('#3a6e72'), op:0.85, blend:THREE.AdditiveBlending }
-        : { a:new THREE.Color('#9a6a2e'), b:new THREE.Color('#4a6b74'), op:0.5,  blend:THREE.NormalBlending };
+        ? { a:new THREE.Color('#e6a850'), b:new THREE.Color('#3f7a80'), op:0.92, blend:THREE.AdditiveBlending }
+        : { a:new THREE.Color('#9a6a2e'), b:new THREE.Color('#46676f'), op:0.55, blend:THREE.NormalBlending };
     }
 
     function sprite(){
@@ -814,12 +839,12 @@
       time+=0.0016;
       scroll += (tScroll-scroll)*0.05; tmx += (mx-tmx)*0.04; tmy += (my-tmy)*0.04;
       if (pts){
-        pts.rotation.y = time*0.6 + tmx*0.25;
-        pts.rotation.x = tmy*0.18;
-        // scroll flies the field toward the camera (parallax through the nebula)
-        pts.position.z = scroll*42;
-        pts.position.y = scroll*6 - tmy*1.4;
-        pts.position.x = -tmx*1.4;
+        // always-alive rotation + a stronger scroll fly-through + bigger mouse parallax
+        pts.rotation.y = time*0.9 + tmx*0.34;
+        pts.rotation.x = Math.sin(time*0.4)*0.06 + tmy*0.22;
+        pts.position.z = scroll*66;                 // scroll flies you through the nebula
+        pts.position.y = scroll*9 - tmy*1.9;
+        pts.position.x = -tmx*1.9;
       }
       renderer.render(scene, camera);
     }
