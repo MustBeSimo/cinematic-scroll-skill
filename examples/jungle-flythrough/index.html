@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>VERDANT — Wild Nature, Back in the City</title>
+<meta name="description" content="A real-time 3D overgrown colonnade you move through by scrolling — instanced foliage, green fog, light shafts. Floating serif copy + a grunge kinetic finale. Built with the cinematic-scroll skill (procedural Three.js, no video)." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Anton&family=Inter:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<script type="importmap">
+{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"}}
+</script>
+
+<style>
+  :root {
+    --bg:        #070b06;
+    --fg:        #eef3e6;
+    --fg-soft:   rgba(238,243,230,0.70);
+    --fg-faint:  rgba(238,243,230,0.36);
+    --accent:    #e8c15a;   /* sun through canopy */
+    --moss:      #7fa650;
+    --glass:     rgba(34,48,26,0.42);
+    --line:      rgba(238,243,230,0.16);
+    --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-cue:    cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui, sans-serif; line-height: 1.55; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--accent); color: var(--bg); }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+  #stage { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; display: block; }
+  .stage-fallback {
+    position: fixed; inset: 0; z-index: 0; display: none;
+    background:
+      radial-gradient(60% 50% at 50% 22%, rgba(232,193,90,0.40) 0%, rgba(232,193,90,0) 55%),
+      radial-gradient(90% 70% at 50% 70%, rgba(127,166,80,0.30) 0%, rgba(127,166,80,0) 60%),
+      linear-gradient(180deg, #11210d, #070b06);
+  }
+  .no-webgl #stage { display: none; }
+  .no-webgl .stage-fallback { display: block; }
+  .vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(120% 100% at 50% 40%, transparent 48%, rgba(5,9,4,0.6) 100%); }
+
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60; }
+  .progress span { display: block; height: 100%; transform: scaleX(0); transform-origin: 0 50%; background: linear-gradient(90deg, var(--moss), var(--accent)); will-change: transform; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: clamp(18px,2.4vh,28px) clamp(20px,5vw,64px); }
+  .brand { font-family: 'Space Mono', monospace; font-weight: 700; letter-spacing: 0.22em; font-size: clamp(12px,1.05vw,15px); }
+  .brand b { color: var(--moss); }
+  .nav-links { display: flex; gap: clamp(14px,2vw,30px); font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-faint); }
+  @media (max-width: 640px) { .nav-links { display: none; } }
+
+  main { position: relative; z-index: 2; }
+  .beat { position: relative; height: 100vh; display: flex; align-items: center; padding: 0 clamp(24px,7vw,120px); pointer-events: none; }
+  .beat.center { justify-content: center; text-align: center; }
+  .beat.right { justify-content: flex-end; }
+
+  /* frosted glass card — like the reference's About panel */
+  .glass {
+    max-width: 46ch; padding: clamp(28px,4vw,52px); border-radius: 26px;
+    background: var(--glass); border: 1px solid var(--line);
+    backdrop-filter: blur(14px) saturate(1.1); -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    box-shadow: 0 40px 120px rgba(0,0,0,0.5);
+  }
+  .beat.center .glass { text-align: center; }
+
+  .eyebrow { font-family: 'Space Mono', monospace; font-size: clamp(10px,0.9vw,12px); letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); display: inline-flex; align-items: center; gap: 12px; }
+  .eyebrow::before { content: ""; width: clamp(18px,3vw,40px); height: 1px; background: currentColor; }
+  .beat.center .eyebrow { justify-content: center; }
+
+  .serif { font-family: 'Fraunces', Georgia, serif; font-weight: 400; line-height: 1.08; letter-spacing: -0.005em; }
+  h1.serif { font-size: clamp(1.9rem,3.4vw,3.1rem); }
+  h2.serif { font-size: clamp(1.7rem,3vw,2.7rem); }
+  .serif em { font-style: italic; color: var(--accent); }
+  .lede { margin-top: 1.2rem; font-size: clamp(1rem,1.3vw,1.18rem); color: var(--fg-soft); }
+  .marquee { margin-top: 1.8rem; display: flex; flex-wrap: wrap; gap: 14px 26px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: var(--fg-faint); text-transform: uppercase; }
+
+  /* the grunge finale — big condensed display */
+  .mega { font-family: 'Anton', Impact, sans-serif; font-weight: 400; text-transform: uppercase; line-height: 0.84; letter-spacing: 0.005em; font-size: clamp(4.5rem,18vw,16rem); color: var(--fg); text-shadow: 0 8px 60px rgba(5,9,4,0.8); }
+  .mega em { font-style: normal; color: var(--accent); }
+
+  /* word-mask reveal */
+  .wd { display: inline-block; overflow: hidden; vertical-align: top; }
+  .wd > span { display: inline-block; will-change: transform; }
+
+  .scroll-cue { position: fixed; left: 50%; transform: translateX(-50%); bottom: clamp(22px,3.5vh,40px); z-index: 30; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-faint); display: flex; flex-direction: column; align-items: center; gap: 10px; will-change: opacity; }
+  .scroll-cue i { width: 1px; height: 34px; background: linear-gradient(var(--accent), transparent); animation: cue 2.2s var(--ease-cue) infinite; transform-origin: top; }
+  @keyframes cue { 0%,100% { transform: scaleY(0.3); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+
+  footer { position: relative; z-index: 2; background: var(--bg); border-top: 1px solid var(--line); padding: clamp(40px,7vh,90px) clamp(24px,6vw,80px); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 18px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-faint); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wd > span { transform: none !important; }
+    .scroll-cue i { animation: none; }
+    .progress span { transform: scaleX(1) !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="stage-fallback" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span></span></div>
+
+<nav>
+  <div class="brand">VERDANT<b>//</b></div>
+  <div class="nav-links"><a href="#">Work</a><a href="#">Process</a><a href="#">Contact</a></div>
+</nav>
+
+<main>
+  <!-- BEAT 0 — intro card (the reference's About panel) -->
+  <section class="beat" data-beat="0">
+    <div class="glass">
+      <span class="eyebrow">About us</span>
+      <h1 class="serif kinetic" style="margin-top:1rem;">We transform sterile concrete into thriving <em>urban jungles.</em></h1>
+      <p class="lede">Our designs bring wild nature back to modern cities. Scroll, and walk the bloom — the room ahead is rendered live.</p>
+      <div class="marquee"><span>Glide</span><span>Canva</span><span>Webflow</span><span>Zendesk</span><span>Pendo</span></div>
+    </div>
+  </section>
+
+  <!-- BEAT 1 — deeper in -->
+  <section class="beat right" data-beat="1">
+    <div class="glass">
+      <span class="eyebrow">The colonnade</span>
+      <h2 class="serif kinetic">Concrete, <em>reclaimed.</em></h2>
+      <p class="lede">Old arches, taken back by leaf and vine. The camera walks the platform at exactly your scroll's pace.</p>
+    </div>
+  </section>
+
+  <!-- BEAT 2 — light shafts -->
+  <section class="beat" data-beat="2">
+    <div class="glass">
+      <span class="eyebrow">Canopy</span>
+      <h2 class="serif kinetic">Light falls <em>in shafts.</em></h2>
+      <p class="lede">Real depth, real fog — hundreds of instanced leaves, not a flat photo.</p>
+    </div>
+  </section>
+
+  <!-- BEAT 3 — the grunge finale -->
+  <section class="beat center" data-beat="3">
+    <div>
+      <p class="mega kinetic">Full <em>power.</em></p>
+    </div>
+  </section>
+
+  <!-- BEAT 4 — CTA -->
+  <section class="beat center" data-beat="4">
+    <div class="glass">
+      <span class="eyebrow">Experience the bloom</span>
+      <h2 class="serif kinetic">Any brief, <em>its own wild.</em></h2>
+      <p class="lede" style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.08em;">$ npx cinematic-scroll-skill</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>VERDANT// — procedural Three.js jungle</span>
+  <span>Built with cinematic-scroll · scroll-driven camera</span>
+</footer>
+
+<script type="module">
+  import * as THREE from 'three';
+
+  const reduce  = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = matchMedia('(max-width: 768px)').matches;
+  const canvas  = document.getElementById('stage');
+
+  function webglOK(){ try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch(e){ return false; } }
+
+  /* ── word split for masked reveals ── */
+  document.querySelectorAll('.kinetic').forEach(function(el){
+    const html = el.innerHTML.replace(/(<em>|<\/em>)/g, ' $1 ').trim();
+    el.innerHTML = html.split(' ').filter(Boolean).map(function(w){
+      if (w === '<em>' || w === '</em>') return w;
+      return '<span class="wd"><span>' + w + '</span></span>';
+    }).join(' ');
+  });
+
+  let renderer, scene, camera, raf = 0, running = false, onScreen = true;
+  let progress = 0, t_target = 0, mx = 0, my = 0, tmx = 0, tmy = 0;
+  let sun, curve;
+  const leafMeshes = [], vines = [];
+  const tmpV = new THREE.Vector3(), lookV = new THREE.Vector3(), dummy = new THREE.Object3D();
+
+  if (!webglOK()) document.body.classList.add('no-webgl');
+  // init() called at the very bottom, after all helpers/consts are declared
+
+  function init(){
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: false, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.5 : 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.12;
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color('#0a160a');
+    scene.fog = new THREE.FogExp2('#0c1d0c', 0.026);
+
+    camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.1, 300);
+
+    /* light — sky/ground hemi (green canopy), a warm sun from front-top, low ambient */
+    scene.add(new THREE.AmbientLight('#16240f', 0.8));
+    scene.add(new THREE.HemisphereLight('#bfe08a', '#0a1206', 0.85));
+    sun = new THREE.DirectionalLight('#ffe7a8', 1.5);
+    sun.position.set(6, 16, 4); scene.add(sun);
+
+    buildStructure();
+    buildFoliage();
+    buildShafts();
+    buildPath();
+
+    addEventListener('resize', onResize, { passive: true });
+    if (!isMobile && !reduce) addEventListener('pointermove', onPointer, { passive: true });
+    canvas.addEventListener('webglcontextlost', onLost, false);
+    canvas.addEventListener('webglcontextrestored', onRestored, false);
+    document.addEventListener('visibilitychange', updateRun);
+    new IntersectionObserver((e)=>{ onScreen = e[0].isIntersecting; updateRun(); }, { threshold: 0 }).observe(canvas);
+
+    placeCamera(0);
+    if (reduce) renderer.render(scene, camera); else { running = true; loop(); }
+  }
+
+  /* deterministic pseudo-random so SSR/resize don't shift layout */
+  let seed = 1337;
+  function rnd(){ seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }
+
+  const DEPTH = 110, BAYS = 11, BAY = DEPTH / BAYS, HALL_W = 7, HALL_H = 6.5;
+
+  function buildStructure(){
+    // an overgrown colonnade / platform: concrete floor + receding arch bays
+    const concrete = new THREE.MeshStandardMaterial({ color: '#8c8b80', roughness: 0.95, metalness: 0.0 });
+    const dark = new THREE.MeshStandardMaterial({ color: '#3b4036', roughness: 1.0 });
+    const g = new THREE.Group(); scene.add(g);
+
+    // floor
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(HALL_W + 4, DEPTH + 20), new THREE.MeshStandardMaterial({ color: '#4a4a40', roughness: 1 }));
+    floor.rotation.x = -Math.PI/2; floor.position.set(0, 0, -DEPTH/2); g.add(floor);
+
+    for (let b = 0; b <= BAYS; b++){
+      const z = -b * BAY;
+      // two columns + a lintel = an arch bay
+      for (const sx of [-1, 1]){
+        const col = new THREE.Mesh(new THREE.BoxGeometry(0.7, HALL_H, 0.7), concrete);
+        col.position.set(sx * HALL_W/2, HALL_H/2, z); g.add(col);
+      }
+      const lintel = new THREE.Mesh(new THREE.BoxGeometry(HALL_W + 0.7, 0.8, 0.7), concrete);
+      lintel.position.set(0, HALL_H - 0.4, z); g.add(lintel);
+      // a cross-beam roof slat every other bay (broken canopy)
+      if (b % 2 === 0){
+        const slat = new THREE.Mesh(new THREE.BoxGeometry(HALL_W, 0.18, 0.3), dark);
+        slat.position.set(0, HALL_H - 0.05, z - BAY*0.4); g.add(slat);
+      }
+    }
+    // far backdrop glow (sun at the end of the platform)
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(40, 26), new THREE.MeshStandardMaterial({ color: '#000', emissive: '#cfe89a', emissiveIntensity: 0.7 }));
+    back.position.set(0, 8, -DEPTH - 6); scene.add(back);
+  }
+
+  // a single leaf: a flat diamond (teardrop) — cheap, reads as foliage with fog + clustering
+  function leafGeo(){
+    const gx = new THREE.BufferGeometry();
+    const v = new Float32Array([ 0,0.5,0,  0.16,0,0,  0,-0.5,0,  -0.16,0,0 ]);
+    const idx = [0,1,2, 0,2,3];
+    gx.setAttribute('position', new THREE.BufferAttribute(v, 3));
+    gx.setIndex(idx); gx.computeVertexNormals();
+    return gx;
+  }
+
+  function buildFoliage(){
+    const geo = leafGeo();
+    // three green tones, each its own InstancedMesh — clustered into bushes on bays + hanging from lintels
+    const tones = [
+      new THREE.MeshStandardMaterial({ color: '#5f8a35', roughness: 0.85, side: THREE.DoubleSide, emissive:'#16240c', emissiveIntensity:0.25 }),
+      new THREE.MeshStandardMaterial({ color: '#86b24a', roughness: 0.8,  side: THREE.DoubleSide, emissive:'#1d3010', emissiveIntensity:0.3 }),
+      new THREE.MeshStandardMaterial({ color: '#3f6b2c', roughness: 0.9,  side: THREE.DoubleSide, emissive:'#10200a', emissiveIntensity:0.2 }),
+    ];
+    const PER = 520;
+    tones.forEach(function(mat, ti){
+      const inst = new THREE.InstancedMesh(geo, mat, PER);
+      for (let i = 0; i < PER; i++){
+        // clusters anchored to bays: pick a bay, a side, drape leaves around columns/lintels + floor bushes
+        const bay = Math.floor(rnd() * (BAYS + 1));
+        const z0 = -bay * BAY + (rnd() - 0.5) * BAY * 0.9;
+        const mode = rnd();
+        let x, y;
+        if (mode < 0.4){ // hanging from lintel
+          const sx = rnd() < 0.5 ? -1 : 1;
+          x = sx * (rnd() * HALL_W/2);
+          y = HALL_H - rnd() * 3.2;
+        } else if (mode < 0.75){ // climbing the columns
+          const sx = rnd() < 0.5 ? -1 : 1;
+          x = sx * (HALL_W/2 + (rnd()-0.5) * 1.2);
+          y = rnd() * HALL_H;
+        } else { // floor bushes at the edges
+          const sx = rnd() < 0.5 ? -1 : 1;
+          x = sx * (HALL_W/2 - rnd() * 1.6);
+          y = rnd() * 1.4;
+        }
+        const s = 0.6 + rnd() * 1.3;
+        dummy.position.set(x, y, z0);
+        dummy.rotation.set(rnd()*Math.PI, rnd()*Math.PI*2, rnd()*Math.PI);
+        dummy.scale.set(s, s, s);
+        dummy.updateMatrix();
+        inst.setMatrixAt(i, dummy.matrix);
+      }
+      inst.instanceMatrix.needsUpdate = true;
+      inst.userData.phase = ti;
+      scene.add(inst); leafMeshes.push(inst);
+    });
+
+    // hanging vines — thin cylinders dripping from lintels
+    const vineMat = new THREE.MeshStandardMaterial({ color: '#48692e', roughness: 0.9 });
+    const vineGeo = new THREE.CylinderGeometry(0.03, 0.03, 1, 5);
+    const VN = 40;
+    const vInst = new THREE.InstancedMesh(vineGeo, vineMat, VN);
+    for (let i = 0; i < VN; i++){
+      const bay = Math.floor(rnd() * (BAYS + 1));
+      const len = 1.5 + rnd() * 3.0;
+      const x = (rnd() - 0.5) * HALL_W;
+      dummy.position.set(x, HALL_H - len/2 - 0.3, -bay*BAY + (rnd()-0.5)*1.5);
+      dummy.rotation.set((rnd()-0.5)*0.3, 0, (rnd()-0.5)*0.3);
+      dummy.scale.set(1, len, 1);
+      dummy.updateMatrix();
+      vInst.setMatrixAt(i, dummy.matrix);
+    }
+    vInst.instanceMatrix.needsUpdate = true;
+    scene.add(vInst); vines.push(vInst);
+  }
+
+  function buildShafts(){
+    // god-ray cones — additive, low opacity, angled from the canopy
+    const mat = new THREE.MeshBasicMaterial({ color: '#ffe7a0', transparent: true, opacity: 0.06, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    for (let i = 0; i < 5; i++){
+      const cone = new THREE.Mesh(new THREE.ConeGeometry(2.4, 12, 12, 1, true), mat);
+      cone.position.set((rnd()-0.5)*HALL_W, HALL_H + 2, -i * (DEPTH/5) - 6);
+      cone.rotation.x = Math.PI; cone.rotation.z = (rnd()-0.5)*0.4;
+      scene.add(cone);
+    }
+  }
+
+  function buildPath(){
+    const pts = [
+      new THREE.Vector3( 0.0, 1.7,   8),
+      new THREE.Vector3( 0.7, 1.7,  -8),
+      new THREE.Vector3(-0.8, 1.6, -26),
+      new THREE.Vector3( 0.6, 1.8, -46),
+      new THREE.Vector3(-0.5, 1.7, -68),
+      new THREE.Vector3( 0.4, 1.8, -90),
+      new THREE.Vector3( 0.0, 2.0, -104),
+    ];
+    curve = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.5);
+  }
+
+  function placeCamera(p){
+    if (!curve) return;
+    const t = Math.min(0.999, Math.max(0, p));
+    curve.getPointAt(t, tmpV);
+    curve.getPointAt(Math.min(0.999, t + 0.035), lookV);
+    camera.position.set(tmpV.x + tmx*0.6, tmpV.y + tmy*0.3, tmpV.z);
+    camera.lookAt(lookV.x + tmx*0.9, lookV.y + tmy*0.5, lookV.z);
+  }
+
+  let breeze = 0;
+  function loop(){
+    raf = requestAnimationFrame(loop);
+    if (!running) return;
+    progress += (t_target - progress) * 0.07;
+    tmx += (mx - tmx) * 0.05; tmy += (my - tmy) * 0.05;
+    breeze += 0.012;
+    // gentle canopy sway — rotate each leaf layer subtly (cheap, whole-mesh)
+    for (const m of leafMeshes) m.rotation.z = Math.sin(breeze + m.userData.phase) * 0.03;
+    placeCamera(progress);
+    renderer.render(scene, camera);
+  }
+  function updateRun(){ const vis = document.visibilityState === 'visible' && onScreen; if (reduce){ running = false; return; } if (vis && !running){ running = true; if (!raf) loop(); } else if (!vis) running = false; }
+  function onResize(){ if (!renderer) return; camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); if (reduce){ placeCamera(progress); renderer.render(scene, camera); } }
+  function onPointer(e){ mx = (e.clientX/innerWidth)*2 - 1; my = -((e.clientY/innerHeight)*2 - 1); }
+  function onLost(e){ e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
+  function onRestored(){ try { init(); } catch(err){ document.body.classList.add('no-webgl'); } }
+
+  /* ── scroll → camera progress ── */
+  function docProgress(){ const max = document.body.scrollHeight - innerHeight; return max <= 0 ? 0 : Math.min(1, Math.max(0, scrollY / max)); }
+  let ticking = false;
+  addEventListener('scroll', ()=>{
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(()=>{
+      t_target = docProgress();
+      document.querySelector('.progress span').style.transform = 'scaleX(' + t_target + ')';
+      const cue = document.querySelector('.scroll-cue'); if (cue) cue.style.opacity = t_target > 0.04 ? '0' : '1';
+      ticking = false;
+      if (reduce){ progress = t_target; placeCamera(progress); if (renderer) renderer.render(scene, camera); }
+    });
+  }, { passive: true });
+
+  /* ── floating kinetic text beats ── */
+  const beats = document.querySelectorAll('.beat');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(function(en){
+      const words = en.target.querySelectorAll('.wd > span');
+      const others = en.target.querySelectorAll('.lede, .eyebrow, .marquee');
+      if (en.isIntersecting && en.intersectionRatio > 0.55){
+        words.forEach(function(w,i){ w.style.transition = 'transform 0.95s ' + (i*0.05) + 's var(--ease-reveal)'; w.style.transform = 'translateY(0)'; });
+        others.forEach(function(o,i){ o.style.transition = 'opacity 0.8s ' + (0.12 + i*0.08) + 's var(--ease-reveal), transform 0.8s ' + (0.12 + i*0.08) + 's var(--ease-reveal)'; o.style.opacity = '1'; o.style.transform = 'none'; });
+      } else {
+        words.forEach(function(w){ w.style.transition = 'transform 0.5s var(--ease-reveal)'; w.style.transform = 'translateY(115%)'; });
+        others.forEach(function(o){ o.style.transition = 'opacity 0.4s, transform 0.4s'; o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
+      }
+    });
+  }, { threshold: [0, 0.55, 0.9] });
+
+  if (!reduce){
+    beats.forEach(function(b){
+      b.querySelectorAll('.wd > span').forEach(function(w){ w.style.transform = 'translateY(115%)'; });
+      b.querySelectorAll('.lede, .eyebrow, .marquee').forEach(function(o){ o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
+      io.observe(b);
+    });
+  }
+
+  /* ── bootstrap (after all declarations) ── */
+  if (!document.body.classList.contains('no-webgl')){
+    try { init(); } catch(e){ console.warn('jungle: init failed', e); document.body.classList.add('no-webgl'); }
+  }
+</script>
+</body>
+</html>

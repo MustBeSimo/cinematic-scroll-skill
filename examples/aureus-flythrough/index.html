@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AUREUS — Into the Vault (Scroll-Scrubbed Chrome Flight)</title>
+<meta name="description" content="The AUREUS fintech world as a scroll-scrubbed camera flight — the camera flies through an endless liquid-chrome corridor at exactly your scroll's pace. Real-time raymarched WebGL, one renderer, no video. Built with the cinematic-scroll skill." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<script type="importmap">
+{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"}}
+</script>
+
+<style>
+  :root {
+    --bg:        #06070b;
+    --fg:        #eef2f8;
+    --fg-soft:   rgba(238,242,248,0.66);
+    --fg-faint:  rgba(238,242,248,0.34);
+    --accent:    #5ce0ff;
+    --accent-2:  #ff9d5c;
+    --line:      rgba(238,242,248,0.12);
+    --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-cue:    cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui, sans-serif; line-height: 1.55; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--accent); color: var(--bg); }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+  #stage { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; display: block; }
+  .stage-fallback {
+    position: fixed; inset: 0; z-index: 0; display: none;
+    background:
+      radial-gradient(60% 50% at 50% 46%, rgba(205,214,234,0.34) 0%, rgba(205,214,234,0) 60%),
+      radial-gradient(50% 45% at 62% 56%, rgba(92,224,255,0.30) 0%, rgba(92,224,255,0) 55%),
+      radial-gradient(50% 45% at 38% 60%, rgba(255,157,92,0.26) 0%, rgba(255,157,92,0) 55%),
+      var(--bg);
+  }
+  .no-webgl #stage { display: none; }
+  .no-webgl .stage-fallback { display: block; }
+  .vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(120% 100% at 50% 48%, transparent 52%, rgba(6,7,11,0.6) 100%); }
+
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60; }
+  .progress span { display: block; height: 100%; transform: scaleX(0); transform-origin: 0 50%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); will-change: transform; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: clamp(18px,2.4vh,28px) clamp(20px,5vw,64px); }
+  .brand { font-family: 'Space Mono', monospace; font-weight: 700; letter-spacing: 0.2em; font-size: clamp(12px,1.05vw,15px); }
+  .brand b { color: var(--accent); }
+  .nav-meta { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-faint); }
+  @media (max-width: 640px) { .nav-meta { display: none; } }
+
+  main { position: relative; z-index: 2; }
+  .beat { position: relative; height: 100vh; display: flex; align-items: center; padding: 0 clamp(24px,7vw,120px); pointer-events: none; }
+  .beat.center { justify-content: center; text-align: center; }
+  .beat.right { justify-content: flex-end; text-align: right; }
+
+  .card { max-width: 40ch; }
+  .beat.center .card { max-width: 28ch; }
+  .eyebrow { font-family: 'Space Mono', monospace; font-size: clamp(10px,0.9vw,12px); letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); display: inline-flex; align-items: center; gap: 12px; }
+  .eyebrow::before { content: ""; width: clamp(18px,3vw,40px); height: 1px; background: currentColor; }
+  .beat.right .eyebrow { flex-direction: row-reverse; }
+  .beat.center .eyebrow { justify-content: center; }
+
+  h1, h2 { font-family: 'Fraunces', Georgia, serif; font-weight: 400; line-height: 0.98; letter-spacing: -0.02em; }
+  h1 { font-size: clamp(2.8rem,7vw,6.4rem); margin-top: 1.1rem; text-shadow: 0 4px 60px rgba(6,7,11,0.7); }
+  h2 { font-size: clamp(2rem,4.6vw,3.8rem); margin-top: 0.8rem; text-shadow: 0 4px 50px rgba(6,7,11,0.7); }
+  h1 em, h2 em { font-style: italic; color: var(--accent); }
+  .lede { margin-top: 1.4rem; font-size: clamp(1rem,1.4vw,1.25rem); color: var(--fg-soft); text-shadow: 0 2px 30px rgba(6,7,11,0.85); }
+  .metric { margin-top: 1.6rem; font-family: 'Fraunces', serif; font-weight: 500; font-size: clamp(2.4rem,6vw,4.4rem); line-height: 1; }
+  .metric .u { font-size: 0.4em; color: var(--accent); vertical-align: super; }
+
+  .wd { display: inline-block; overflow: hidden; vertical-align: top; }
+  .wd > span { display: inline-block; will-change: transform; }
+
+  .scroll-cue { position: fixed; left: 50%; transform: translateX(-50%); bottom: clamp(22px,3.5vh,40px); z-index: 30; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--fg-faint); display: flex; flex-direction: column; align-items: center; gap: 10px; will-change: opacity; }
+  .scroll-cue i { width: 1px; height: 34px; background: linear-gradient(var(--accent), transparent); animation: cue 2.2s var(--ease-cue) infinite; transform-origin: top; }
+  @keyframes cue { 0%,100% { transform: scaleY(0.3); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+
+  footer { position: relative; z-index: 2; background: var(--bg); border-top: 1px solid var(--line); padding: clamp(40px,7vh,90px) clamp(24px,6vw,80px); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 18px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-faint); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wd > span { transform: none !important; }
+    .scroll-cue i { animation: none; }
+    .progress span { transform: scaleX(1) !important; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="stage-fallback" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span></span></div>
+
+<nav>
+  <div class="brand">AUREUS<b>°</b></div>
+  <div class="nav-meta">Scroll = the descent</div>
+</nav>
+
+<main>
+  <section class="beat" data-beat="0">
+    <div class="card">
+      <span class="eyebrow">Into the vault</span>
+      <h1 class="kinetic">Wealth has a <em>depth.</em></h1>
+      <p class="lede">Scroll, and the camera flies through it — a live liquid-chrome corridor, rendered every frame, paced exactly to your scroll.</p>
+    </div>
+  </section>
+
+  <section class="beat right" data-beat="1">
+    <div class="card">
+      <span class="eyebrow">01 — Custody</span>
+      <h2 class="kinetic">Keys held <em>at the core.</em></h2>
+      <p class="lede">Deeper in, the metal closes around you — multi-party computation, hardware isolation.</p>
+    </div>
+  </section>
+
+  <section class="beat" data-beat="2">
+    <div class="card">
+      <span class="eyebrow">02 — Yield</span>
+      <h2 class="kinetic">Return, <em>compounding.</em></h2>
+      <div class="metric"><span data-count="8.4" data-dp="1">0.0</span><span class="u">% APY</span></div>
+    </div>
+  </section>
+
+  <section class="beat right" data-beat="3">
+    <div class="card">
+      <span class="eyebrow">03 — Scale</span>
+      <h2 class="kinetic">Assets under <em>custody.</em></h2>
+      <div class="metric">$<span data-count="4.2" data-dp="1">0</span>B</div>
+    </div>
+  </section>
+
+  <section class="beat center" data-beat="4">
+    <div class="card">
+      <span class="eyebrow">Surface</span>
+      <h2 class="kinetic">Put your wealth <em>in motion.</em></h2>
+      <p class="lede" style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.08em;">$ npx cinematic-scroll-skill</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>AUREUS° — scroll-scrubbed chrome flight</span>
+  <span>Built with cinematic-scroll · one raymarch renderer</span>
+</footer>
+
+<script type="module">
+  import * as THREE from 'three';
+
+  const reduce  = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = matchMedia('(max-width: 768px)').matches;
+  const canvas  = document.getElementById('stage');
+
+  function webglOK(){ try { const c = document.createElement('canvas'); return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl'))); } catch(e){ return false; } }
+
+  /* ── word split ── */
+  document.querySelectorAll('.kinetic').forEach(function(el){
+    const html = el.innerHTML.replace(/(<em>|<\/em>)/g, ' $1 ').trim();
+    el.innerHTML = html.split(' ').filter(Boolean).map(function(w){
+      if (w === '<em>' || w === '</em>') return w;
+      return '<span class="wd"><span>' + w + '</span></span>';
+    }).join(' ');
+  });
+
+  let renderer, scene, camera, mat, raf = 0, running = false, onScreen = true;
+  let t = 0, fly = 0, target = 0, mx = 0, my = 0, tmx = 0, tmy = 0;
+
+  function init(){
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.25 : 1.6));
+    renderer.setSize(innerWidth, innerHeight);
+    scene = new THREE.Scene();
+    camera = new THREE.Camera();
+    const STEPS = isMobile ? 60 : 92;
+
+    mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 }, uFly: { value: 0 },
+        uRes: { value: new THREE.Vector2(innerWidth, innerHeight) },
+        uMouse: { value: new THREE.Vector2(0, 0) },
+        uAccent: { value: new THREE.Color('#5ce0ff') },
+        uAmber:  { value: new THREE.Color('#ff9d5c') },
+      },
+      vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.,1.); }',
+      fragmentShader: `
+        precision highp float;
+        varying vec2 vUv;
+        uniform float uTime, uFly; uniform vec2 uRes, uMouse; uniform vec3 uAccent, uAmber;
+        const int STEPS = ${STEPS};
+        const float REP = 6.0;                       // chrome blobs repeat every 6 units in z
+        float smin(float a, float b, float k){ float h = clamp(0.5+0.5*(b-a)/k, 0.0, 1.0); return mix(b,a,h)-k*h*(1.0-h); }
+        // endless liquid-metal corridor: blobs domain-repeated along z, orbiting the axis
+        float map(vec3 p){
+          float cell = floor(p.z / REP);
+          vec3 q = p; q.z = mod(p.z, REP) - REP*0.5;
+          float d = 1e9;
+          for(int i=0;i<5;i++){
+            float f = float(i);
+            float a = uTime*0.4 + f*1.7 + cell*0.9;
+            // ring of blobs around the flight axis, leaving a tunnel down the middle
+            vec3 c = vec3(cos(a)*1.7, sin(a*1.1+f)*1.5, sin(a*0.7+f)*1.4);
+            c *= 1.0 + 0.10*sin(uTime*0.6 + f + cell);
+            d = smin(d, length(q-c) - (0.72 + 0.12*sin(uTime+f+cell)), 0.7);
+          }
+          return d;
+        }
+        vec3 normal(vec3 p){ vec2 e = vec2(0.0016, 0.0); return normalize(vec3(
+          map(p+e.xyy)-map(p-e.xyy), map(p+e.yxy)-map(p-e.yxy), map(p+e.yyx)-map(p-e.yyx))); }
+        vec3 env(vec3 r){
+          float h = r.y*0.5 + 0.5;
+          vec3 base = mix(vec3(0.015,0.02,0.035), vec3(0.10,0.13,0.20), pow(h,1.4));
+          base += vec3(0.55,0.72,0.95) * pow(max(0.0,1.0-abs(r.y)), 10.0) * 0.5;
+          base += uAccent * pow(max(0.0, dot(r, normalize(vec3( 0.6, 0.25, 0.55)))), 16.0) * 0.9;
+          base += uAmber  * pow(max(0.0, dot(r, normalize(vec3(-0.55,-0.1, 0.6)))), 20.0) * 0.8;
+          return base;
+        }
+        void main(){
+          vec2 uv = (gl_FragCoord.xy - 0.5*uRes.xy) / uRes.y;
+          // camera flies forward (+z) with scroll; gentle sway threads the tunnel
+          float fz = uFly * 60.0;
+          vec3 ro = vec3(sin(uFly*7.0 + uMouse.x)*0.7, cos(uFly*5.5 + uMouse.y)*0.45, fz);
+          // look forward down +z with a small lead-in sway
+          vec3 fwd = normalize(vec3(sin(uFly*7.0)*0.06, cos(uFly*5.5)*0.04, 1.0));
+          vec3 uu = normalize(cross(vec3(0.0,1.0,0.0), fwd));
+          vec3 vv = cross(fwd, uu);
+          vec3 rd = normalize(uv.x*uu + uv.y*vv + 1.4*fwd);
+
+          float tt = 0.0; bool hit = false; vec3 p;
+          for(int i=0;i<STEPS;i++){ p = ro + rd*tt; float d = map(p); if(d < 0.002){ hit = true; break; } if(tt > 24.0) break; tt += d*0.8; }
+
+          vec3 col;
+          if(hit){
+            vec3 n = normal(p);
+            vec3 ref = reflect(rd, n);
+            float fres = pow(1.0 - max(0.0, dot(-rd, n)), 3.2);
+            vec3 chrome = env(ref);
+            chrome += vec3(1.0) * pow(max(0.0, dot(ref, normalize(vec3(0.5,0.7,0.4)))), 60.0) * 0.6;
+            col = mix(chrome*0.85, vec3(1.0), fres*0.7);
+            col += uAccent * fres * 0.5;
+            // distance fog into the chrome — depth cue for the flight
+            col = mix(col, vec3(0.02,0.03,0.05), clamp(tt/22.0, 0.0, 0.85));
+          } else {
+            col = env(rd) * 0.45;
+          }
+          col = col / (col + vec3(0.8));
+          col = pow(col, vec3(0.85));
+          col *= 0.8 + 0.2*smoothstep(1.6, 0.2, length(uv));
+          gl_FragColor = vec4(col, 1.0);
+        }`,
+    });
+
+    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+
+    addEventListener('resize', onResize, { passive: true });
+    if (!isMobile && !reduce) addEventListener('pointermove', onPointer, { passive: true });
+    canvas.addEventListener('webglcontextlost', onLost, false);
+    canvas.addEventListener('webglcontextrestored', onRestored, false);
+    document.addEventListener('visibilitychange', updateRun);
+    new IntersectionObserver((e)=>{ onScreen = e[0].isIntersecting; updateRun(); }, { threshold: 0 }).observe(canvas);
+
+    apply();
+    if (reduce) renderer.render(scene, camera); else { running = true; loop(); }
+  }
+
+  function apply(){ if (!mat) return; mat.uniforms.uFly.value = fly; mat.uniforms.uTime.value = t; mat.uniforms.uMouse.value.set(tmx, tmy); }
+  function loop(){ raf = requestAnimationFrame(loop); if (!running) return; t += 0.016; fly += (target - fly) * 0.06; tmx += (mx-tmx)*0.05; tmy += (my-tmy)*0.05; apply(); renderer.render(scene, camera); }
+  function updateRun(){ const vis = document.visibilityState === 'visible' && onScreen; if (reduce){ running = false; return; } if (vis && !running){ running = true; if (!raf) loop(); } else if (!vis) running = false; }
+  function onResize(){ if (!renderer) return; renderer.setSize(innerWidth, innerHeight); mat.uniforms.uRes.value.set(innerWidth, innerHeight); if (reduce){ apply(); renderer.render(scene, camera); } }
+  function onPointer(e){ mx = (e.clientX/innerWidth)*2-1; my = (e.clientY/innerHeight)*2-1; }
+  function onLost(e){ e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
+  function onRestored(){ try { init(); } catch(err){ document.body.classList.add('no-webgl'); } }
+
+  /* ── scroll → forward flight ── */
+  function docProgress(){ const max = document.body.scrollHeight - innerHeight; return max <= 0 ? 0 : Math.min(1, Math.max(0, scrollY / max)); }
+  let ticking = false;
+  addEventListener('scroll', ()=>{
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(()=>{
+      target = docProgress();
+      document.querySelector('.progress span').style.transform = 'scaleX(' + target + ')';
+      const cue = document.querySelector('.scroll-cue'); if (cue) cue.style.opacity = target > 0.04 ? '0' : '1';
+      ticking = false;
+      if (reduce){ fly = target; apply(); if (renderer) renderer.render(scene, camera); }
+    });
+  }, { passive: true });
+
+  /* ── floating kinetic beats + scrubbed count-ups ── */
+  const beats = document.querySelectorAll('.beat');
+  const counters = [];
+  document.querySelectorAll('[data-count]').forEach(function(el){ counters.push({ el: el, to: parseFloat(el.dataset.count), dp: parseInt(el.dataset.dp||'0',10), done: false }); });
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(function(en){
+      const words = en.target.querySelectorAll('.wd > span');
+      const others = en.target.querySelectorAll('.lede, .eyebrow, .metric');
+      if (en.isIntersecting && en.intersectionRatio > 0.55){
+        words.forEach(function(w,i){ w.style.transition = 'transform 0.95s ' + (i*0.05) + 's var(--ease-reveal)'; w.style.transform = 'translateY(0)'; });
+        others.forEach(function(o,i){ o.style.transition = 'opacity 0.8s ' + (0.12 + i*0.08) + 's var(--ease-reveal), transform 0.8s ' + (0.12 + i*0.08) + 's var(--ease-reveal)'; o.style.opacity = '1'; o.style.transform = 'none'; });
+        // count-up when its beat arrives
+        en.target.querySelectorAll('[data-count]').forEach(function(el){
+          const c = counters.find(function(x){ return x.el === el; });
+          if (c && !c.done){ c.done = true; const o = { v: 0 }; const start = performance.now();
+            (function tick(now){ const k = Math.min(1, (now-start)/1500); const e = 1-Math.pow(1-k,3); el.textContent = (c.to*e).toFixed(c.dp); if (k<1) requestAnimationFrame(tick); })(start);
+          }
+        });
+      } else {
+        words.forEach(function(w){ w.style.transition = 'transform 0.5s var(--ease-reveal)'; w.style.transform = 'translateY(115%)'; });
+        others.forEach(function(o){ o.style.transition = 'opacity 0.4s, transform 0.4s'; o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
+      }
+    });
+  }, { threshold: [0, 0.55, 0.9] });
+
+  if (!reduce){
+    beats.forEach(function(b){
+      b.querySelectorAll('.wd > span').forEach(function(w){ w.style.transform = 'translateY(115%)'; });
+      b.querySelectorAll('.lede, .eyebrow, .metric').forEach(function(o){ o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
+      io.observe(b);
+    });
+  }
+
+  /* ── bootstrap ── */
+  if (!webglOK()) document.body.classList.add('no-webgl');
+  else { try { init(); } catch(e){ console.warn('aureus-fly: init failed', e); document.body.classList.add('no-webgl'); } }
+</script>
+</body>
+</html>
