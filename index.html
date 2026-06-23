@@ -810,29 +810,30 @@
       x.fillStyle=g; x.fillRect(0,0,64,64); return new THREE.CanvasTexture(cv);
     }
 
-    const LEN = 120;                  // tunnel length before a particle recycles to the far end
+    const PI2 = Math.PI*2, MAJ = 60, TUBE = 15;   // a torus tube — fly its centreline in a circle
     function build(){
-      const N = isMobile ? 2400 : 5200;
+      const N = isMobile ? 2600 : 5600;
       const pos = new Float32Array(N*3), col = new Float32Array(N*3);
       const tc = themeColors(); const tmp = new THREE.Color();
-      // particles on a hollow tube wall (empty centre = the hole you fly down)
-      const ang = new Float32Array(N), rad = new Float32Array(N), zb = new Float32Array(N);
+      // particles on the hollow wall of a torus → an endless circular tunnel
       for (let i=0;i<N;i++){
-        const a = Math.random()*Math.PI*2;
-        const r = 6 + Math.pow(Math.random(),0.5)*12;   // ring radius 6..18 — open centre
-        ang[i]=a; rad[i]=r; zb[i]=Math.random()*LEN;
-        pos[i*3]=Math.cos(a)*r; pos[i*3+1]=Math.sin(a)*r; pos[i*3+2]=-zb[i];
+        const u = Math.random()*PI2;                 // angle around the big circle (the path)
+        const v = Math.random()*PI2;                 // angle around the tube cross-section
+        const rr = TUBE*(0.74 + Math.random()*0.26); // bias to the wall, open centre to fly down
+        const ring = MAJ + rr*Math.cos(v);
+        pos[i*3]   = ring*Math.cos(u);
+        pos[i*3+1] = rr*Math.sin(v);
+        pos[i*3+2] = ring*Math.sin(u);
         tmp.copy(tc.a).lerp(tc.b, Math.random()); tmp.multiplyScalar(0.7+0.5*Math.random());
         col[i*3]=tmp.r; col[i*3+1]=tmp.g; col[i*3+2]=tmp.b;
       }
       const geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
       geo.setAttribute('color', new THREE.BufferAttribute(col,3));
-      geo.userData = { ang, rad, zb, N };
-      const mat = new THREE.PointsMaterial({ size:0.34, map:sprite(), vertexColors:true, transparent:true,
+      const mat = new THREE.PointsMaterial({ size:0.42, map:sprite(), vertexColors:true, transparent:true,
         opacity:themeColors().op, depthWrite:false, blending:themeColors().blend, sizeAttenuation:true });
       pts = new THREE.Points(geo, mat); scene.add(pts);
-      camera.position.set(0,0,4); camera.fov = 78; camera.updateProjectionMatrix();
+      camera.fov = 82; camera.far = 360; camera.updateProjectionMatrix();
     }
 
     function init(){
@@ -878,25 +879,19 @@
       time+=0.0016;
       scroll += (tScroll-scroll)*0.05; tmx += (mx-tmx)*0.04; tmy += (my-tmy)*0.04;
       if (pts){
-        // looping tunnel: travel forward (idle drift + scroll) and recycle particles
-        // that pass the camera back to the far end → an endless fly-through.
-        const ud = pts.geometry.userData; const p = pts.geometry.attributes.position.array;
-        const travel = time*9.0 + scroll*240;       // scroll dives you deep down the tube
-        const swirl = time*0.25;                     // gentle barrel-roll
-        for (let i=0;i<ud.N;i++){
-          let z = ((ud.zb[i] - travel) % LEN); if (z < 0) z += LEN;   // 0..LEN, wrapping
-          const a = ud.ang[i] + swirl, r = ud.rad[i];
-          p[i*3]   = Math.cos(a)*r;
-          p[i*3+1] = Math.sin(a)*r;
-          p[i*3+2] = 4 - z;                          // from just ahead (z≈4) out to -116
-        }
-        pts.geometry.attributes.position.needsUpdate = true;
-        // environment transitions warm → cool as you dive (a moving, shifting sky)
+        // FLY THE CIRCLE: scroll top→bottom drives a full lap of the torus centreline,
+        // idle keeps drifting — an endless flythrough that runs in a circle and loops.
+        const camU = time*0.06 + scroll*PI2;
+        const cu = Math.cos(camU), su = Math.sin(camU);
+        const tx = -su, tz = cu;                     // tangent (direction of travel)
+        // radial (toward circle centre) + up — used to bank with mouse / gyro
+        const rx = -cu, rz = -su;
+        const bank = tmx*6, lift = tmy*5;
+        camera.position.set(MAJ*cu + rx*bank, lift, MAJ*su + rz*bank);
+        camera.up.set(0,1,0);
+        camera.lookAt(MAJ*cu + tx*22 + rx*bank*1.4, lift*0.6, MAJ*su + tz*22 + rz*bank*1.4);
+        // environment transitions warm → cool as you go round (a moving, shifting sky)
         pts.material.color.copy(WARM).lerp(COOL, Math.min(1, scroll));
-        // mouse / gyro banks the camera through the tunnel
-        camera.position.x += ((tmx*2.4) - camera.position.x)*0.06;
-        camera.position.y += ((tmy*1.8) - camera.position.y)*0.06;
-        camera.lookAt(tmx*1.2, tmy*0.9, -40);
       }
       // glass cards float + lean toward the cursor (or phone tilt) — one transform, no CSS conflict
       for (let i=0;i<cards.length;i++){
