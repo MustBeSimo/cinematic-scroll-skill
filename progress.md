@@ -1,8 +1,11 @@
 # progress.md
 
-## Current state (2026-06-23)
+## Current state (2026-06-24)
 
-Cinematic-scroll-skill v2.4.0 is shipping with:
+Cinematic-scroll-skill v2.5.0 is shipping with:
+- Asset Direction (Phase 1.5) + the Wow Gate — world-before-layout, wow made reproducible
+- Three scroll-scrubbed 3D fly-throughs (gallery / jungle / AUREUS)
+- HeyGen avatar-walkthrough tooling (assets rendered out-of-repo)
 - 11 themed design systems (token-driven)
 - Real 3D flagships (WebXR)
 - fal.ai hero image generation pipeline

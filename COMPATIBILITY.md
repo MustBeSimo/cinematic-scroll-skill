@@ -259,14 +259,15 @@ This is normal if you haven't provided an `fal.ai` API key. The system falls bac
 
 | Skill version | Release | Notes |
 |---|---|---|
-| **v2.4.0 (current)** | 2026-06 | DTCG design-token contract (`design.md` + `tokens/`), zero-dep token build pipeline, 11 machine-readable visual-system themes, named component library (Mode A + Mode B), evals + browser-gated runtime smoke in CI, adversarial self-review (`REVIEW.md`) |
+| **v2.5.0 (current)** | 2026-06 | Asset Direction (Phase 1.5, `references/asset-direction.md`) + the Wow Gate (`references/wow-gate.md`) — world-before-layout direction that makes the wow reproducible; three scroll-scrubbed 3D fly-through examples (gallery / jungle / AUREUS); HeyGen avatar-walkthrough tooling (`tools/heygen/`) |
+| **v2.4.0** | 2026-06 | DTCG design-token contract (`design.md` + `tokens/`), zero-dep token build pipeline, 11 machine-readable visual-system themes, named component library (Mode A + Mode B), evals + browser-gated runtime smoke in CI, adversarial self-review (`REVIEW.md`) |
 | **v2.3.5** | 2026-06 | Security-audit fixes; distribution/packaging reconciliation |
 | **v2.1.0** | 2026-06-02 | Mobile-ready touch-safe scroll-coupled motion, deferred-GSAP showcase beats in the examples, and reconciled distribution packaging |
 | **v2.0.0** | Prior | Contract baseline; 5-phase pipeline, taste constraints, 7 visual systems — superseded by v2.1.0 |
 | **v0.1.2** | 2026-06-01 | Prior public release; corrected README GSAP documentation and softened platform verification claims |
 | **v0.1.1** | 2026-06-01 | Initial open-source release; 5 live examples, all platforms supported |
 
-**Current recommendation:** Use v2.4.0 for all new installations.
+**Current recommendation:** Use v2.5.0 for all new installations.
 
 ---
 
