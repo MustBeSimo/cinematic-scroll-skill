@@ -168,6 +168,12 @@ assets/doctor-thumb*
 # promo asset workspace (generated)
 .promo/
 
+# HeyGen walkthrough workspace (generated frames, stickers, payloads)
+.heygen/
+# HeyGen rendered walkthrough outputs — heavy + regenerable; the real render pipeline
+# lives outside this repo. Ship the tooling (tools/heygen/), not the videos.
+assets/heygen-walkthrough/
+
 # Capture/render intermediates that feed the Remotion comps (hq-capture.mjs + the
 # per-theme/3D scroll renders). Large + fully regenerable; the comps reference them
 # only at render time. Final promo deliverables live in assets/ and ARE committed.

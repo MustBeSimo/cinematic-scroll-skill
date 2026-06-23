@@ -76,6 +76,8 @@ Read this section first; read the rest as the route demands. Three rules:
 | "a launch film / video of the site" | Compile the same choreography to video: `node compile-choreography.mjs scene.json --target video`, or author HyperFrames/Remotion directly in `video/`. | `FRAME.md` · `video/PIPELINE.md` |
 | "score / review an existing URL's scroll experience" | **Audit mode**: analyze the user-supplied URL (only sites they own or are authorized to test) and score Pacing / Performance / Accessibility / Emotional Arc, then emit a remediation plan. | `audit-mode.md` |
 | "audit / improve a page I'm building" | Run the doctor first, fix what it flags, re-run; pair with the verify orchestrator. | `tools/cinematic-doctor/README.md` · `tools/verify/README.md` |
+| "avatar walkthrough / HeyGen video of the site" | Capture scroll frames + optional fal.ai sticker cutouts → HeyGen avatar-narrated walkthrough. Run `node tools/heygen/generate-walkthrough.mjs <page>` to produce the payload, then fire via HeyGen MCP or API. | `tools/heygen/README.md` |
+| "an immersive brand world / 'constant wow' / world-building / make it look like the reference" | Run **Phase 1.5 Asset Direction** before the storyboard — design the world premise, hero concept, motif system, material language, and per-asset sourcing; then clear the **Wow Gate** (reject generic *before* building). | `references/asset-direction.md` · `references/wow-gate.md` |
 | "Awwwards-tier / image distortion / kinetic type / custom cursor / preloader / page transitions" | The five second-generation techniques, each with its degrade contract; all five live in `examples/atelier/`. | `references/awwwards-techniques.md` |
 
 **1b · Speak the design contract.** Before emitting any CSS/TS, resolve every
@@ -263,6 +265,28 @@ the visual system, and establish the motion personality.
 ### Output: `cinematic-audit.md`
 
 → Full template: [`references/artifact-templates.md`](references/artifact-templates.md). Copy the **cinematic-audit.md** section and fill every field.
+
+## Phase 1.5: Asset Direction — the world before the layout
+
+**Purpose:** Decide the *physical world* the brand lives in and where every visual comes
+from — so the build can't drift into a generic dark-landing-page. This is the module that
+makes **wow reproducible** instead of occasional. Required for any *release · launch ·
+immersive · premium · flagship · "wow"* brief; skippable only for a single utilitarian section.
+
+| | |
+|---|---|
+| **Input** | `cinematic-audit.md` |
+| **Output** | `art-direction.md` (world premise · hero concept · motif system · material/light language · per-asset sourcing · signature moment) |
+| **Decision gate** | **The Wow Gate** — Hero Concept Gate (hard pass/fail) + Wow Rubric (≥ 8/12). A failed concept is regenerated *before* any code is written; never build a generic hero because the prompt was thin. |
+
+Read **[`references/asset-direction.md`](references/asset-direction.md)** (the five decisions +
+the coherence rule) and **[`references/wow-gate.md`](references/wow-gate.md)** (the gate). The
+storyboard (Phase 2) then makes every chapter carry ≥1 motif, and the polish phase (Phase 5)
+verifies the **signature moment** survived in the page-proof frames — paired with
+`cinematic-doctor`, which scores the executed contract. Doctor = "not slop"; Wow Gate =
+"actually memorable."
+
+→ Artifact template: [`references/artifact-templates.md`](references/artifact-templates.md), the **art-direction.md** section.
 
 ## Phase 2: Motion Storyboard
 
