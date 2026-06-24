@@ -59,7 +59,7 @@ function page(slug, c, themeCss) {
     </section>`).join("");
   const features = c.features.map(([t, d]) => `<div class="feat"><div class="feat-rule"></div><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join("");
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>${c.brand} — ${slug} · cinematic-scroll v2.5.0</title>
+<title>${c.brand} — ${slug} · cinematic-scroll v2.5.1</title>
 ${FONTS}
 ${GSAP}
 <style>

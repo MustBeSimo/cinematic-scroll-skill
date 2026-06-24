@@ -1,6 +1,6 @@
 {
   "name": "cinematic-scroll-skill",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Installer for the cinematic-scroll Agent Skill — copies the skill into ~/.claude/skills/ (Claude Code, Cursor, etc.). The skill builds cinematic, scroll-driven websites: pinned chapters, parallax, 3D tilt, environment-morphing backgrounds, full release pages, and a React Three Fiber + WebXR flagship with one-command fal.ai 3D asset generation (auto Draco/WebP compression, rigged dancing figure included).",
   "type": "module",
   "bin": {
