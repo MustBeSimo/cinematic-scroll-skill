@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, OffthreadVideo, staticFile, useCurrentFrame, useVideoConfig, interpolate, spring, Easing, Audio, random} from 'remotion';
+import {AbsoluteFill, OffthreadVideo, Sequence, staticFile, useCurrentFrame, useVideoConfig, interpolate, spring, Easing, Audio, random} from 'remotion';
 import {grotesk, mono} from './fonts';
 
 // Hype — a FAST, type-driven cut (à la modern marketing reels): huge centered kinetic type,
@@ -58,7 +58,10 @@ export const Hype: React.FC = () => {
         return (
           <AbsoluteFill key={w.src}>
             <AbsoluteFill style={{overflow: 'hidden'}}>
-              <OffthreadVideo src={staticFile((w as {path?: string}).path || `footage/hq/burst-${w.src}.mp4`)} startFrom={(w as {start?: number}).start ?? 0} playbackRate={1} muted style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${z})`}} />
+              {/* anchor playback to this burst's start so the 1s flash plays live, not frozen */}
+              <Sequence from={a} layout="none">
+                <OffthreadVideo src={staticFile((w as {path?: string}).path || `footage/hq/burst-${w.src}.mp4`)} startFrom={(w as {start?: number}).start ?? 0} playbackRate={1} muted style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${z})`}} />
+              </Sequence>
             </AbsoluteFill>
             <AbsoluteFill style={{background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent 30%)'}} />
             <div style={{position: 'absolute', left: 64, bottom: 60, display: 'flex', alignItems: 'baseline', gap: 18}}>

@@ -71,3 +71,33 @@ This Remotion project has a sibling: `ship-in-5/` (HyperFrames, HTML + paused
 GSAP) — and the skill's compiler can feed **both** from one choreography
 document (`compile-choreography.mjs --target video`). See **[`PIPELINE.md`](./PIPELINE.md)**
 for the three mixing patterns and when to use which.
+
+## Render invariants (read before adding a footage scene)
+
+**A footage clip must be anchored to its scene start, or it freezes.** `OffthreadVideo`
+maps to the *global* composition frame unless it sits inside a `<Sequence>`/`<Series>`.
+So a scene that starts late (e.g. global frame 800) asks the clip for source frame ~800;
+if the clip is shorter than that (our `footage/hq/*.mp4` are only ~390–900 frames), the
+video has already played out and **holds its last frame** — the background looks like a
+still image for the rest of the scene. This bit `SkillShowcase`, `Showcase`, and `Hype`
+(the late shots / the world-burst were frozen) until fixed on 2026-06-25.
+
+**Rule:** any `OffthreadVideo` rendered by opacity/global-frame (not inside a `<Series>`)
+must wrap the clip so playback restarts at the scene's start:
+
+```tsx
+<Sequence from={sceneStart} layout="none">
+  <OffthreadVideo src={...} startFrom={6} muted style={{...}} />
+</Sequence>
+```
+
+`layout="none"` shifts only the time context (no extra wrapper div). The `<Series>`-based
+reels (`Reel*`, `ReelV24*`) are already safe — `Series.Sequence` does this automatically.
+When in doubt, render two stills ~2s apart inside the scene; if the footage geometry is
+identical (ignoring the per-frame grain + animating card), it's frozen.
+
+### Aspect-aware compositions
+`SkillShowcase` renders both 16:9 (`SkillShowcase`) and 9:16 (`SkillShowcaseVertical`) from
+one component via `useVideoConfig()` → `const portrait = height > width`. Keep the landscape
+branch untouched and add portrait overrides (stacked title, top-anchored caption card,
+bottom-left PiP, top scrim, dedicated 9:16 backdrop clip). Register both ids in `Root.tsx`.

@@ -186,3 +186,10 @@ video/public/footage/
 # Ad-hoc inspect/clip helper scripts created during capture/debugging
 _inspect.mjs
 _clip.mjs
+
+# Skill-showcase promo deliverables + media inputs — kept local (avoid repo bloat).
+# Regenerate: `npm run render:showcase` / `render:showcase:vertical` (source: video/src/SkillShowcase.tsx);
+# presenter via video/scripts/heygen-presenter.mjs; eleven-worlds clips from assets/promo-v2.4.0/.
+assets/skill-showcase*.mp4
+assets/skill-showcase*-poster.jpg
+video/public/showcase/

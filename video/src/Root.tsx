@@ -14,6 +14,7 @@ import {ReelV24} from './ReelV24';
 import {ReelV24Vertical} from './ReelV24Vertical';
 import {Showcase, SHOWCASE_DUR} from './Showcase';
 import {Hype, HYPE_DUR} from './Hype';
+import {SkillShowcase, SKILL_DUR} from './SkillShowcase';
 
 // Six 16:9 compositions (render at --scale=2 for 4K):
 //   Reel       — 60s flagship sizzle (original cut)
@@ -90,6 +91,22 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1920}
         height={1080}
+      />
+      <Composition
+        id="SkillShowcase"
+        component={SkillShowcase}
+        durationInFrames={SKILL_DUR}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="SkillShowcaseVertical"
+        component={SkillShowcase}
+        durationInFrames={SKILL_DUR}
+        fps={30}
+        width={1080}
+        height={1920}
       />
       <Composition
         id="Hype"

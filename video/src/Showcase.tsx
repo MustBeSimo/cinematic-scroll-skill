@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, OffthreadVideo, staticFile, useCurrentFrame, interpolate, Easing, Audio, random} from 'remotion';
+import {AbsoluteFill, OffthreadVideo, Sequence, staticFile, useCurrentFrame, interpolate, Easing, Audio, random} from 'remotion';
 import {grotesk, mono, serif} from './fonts';
 import {bright} from './theme';
 
@@ -48,7 +48,7 @@ export const Showcase: React.FC = () => {
         const start = shotStart(i);
         const op = env(frame, start, SHOT);
         if (op <= 0) return null;
-        return <ShotLayer key={s.src} shot={s} index={i} total={SHOTS.length} local={frame - start} opacity={op} />;
+        return <ShotLayer key={s.src} shot={s} start={start} index={i} total={SHOTS.length} local={frame - start} opacity={op} />;
       })}
 
       {/* cinematic letterbox */}
@@ -61,7 +61,7 @@ export const Showcase: React.FC = () => {
   );
 };
 
-const ShotLayer: React.FC<{shot: Shot; index: number; total: number; local: number; opacity: number}> = ({shot, index, total, local, opacity}) => {
+const ShotLayer: React.FC<{shot: Shot; start: number; index: number; total: number; local: number; opacity: number}> = ({shot, start, index, total, local, opacity}) => {
   // GENTLE camera life on top of the page's own (now-fluid) scroll. Kept tiny so the
   // crisp HQ footage is never meaningfully upscaled (that was the old "soft/too-big" look).
   const z = interpolate(local, [0, SHOT], [1.0, 1.045], {extrapolateRight: 'clamp', easing: ease});
@@ -77,13 +77,16 @@ const ShotLayer: React.FC<{shot: Shot; index: number; total: number; local: numb
   return (
     <AbsoluteFill style={{opacity}}>
       <AbsoluteFill style={{overflow: 'hidden'}}>
-        <OffthreadVideo
-          src={staticFile(`footage/hq/${shot.src}.mp4`)}
-          startFrom={shot.start}
-          playbackRate={1}
-          muted
-          style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${z}) translateX(${dx}%)`}}
-        />
+        {/* anchor playback to the shot start so each clip plays live, not frozen on its last frame */}
+        <Sequence from={start} layout="none">
+          <OffthreadVideo
+            src={staticFile(`footage/hq/${shot.src}.mp4`)}
+            startFrom={shot.start}
+            playbackRate={1}
+            muted
+            style={{width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${z}) translateX(${dx}%)`}}
+          />
+        </Sequence>
       </AbsoluteFill>
 
       {/* readability scrim bottom-left */}

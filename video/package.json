@@ -30,7 +30,13 @@
     "poster:flagship": "remotion still src/index.ts Flagship3D ../assets/flagship-3d-poster.jpg --frame=700 --scale=2",
     "render:doctor": "remotion render src/index.ts Doctor ../assets/doctor.mp4 --codec=h264 --crf=16 --pixel-format=yuv420p --scale=2",
     "render:doctor:1080": "remotion render src/index.ts Doctor ../assets/doctor-1080.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
-    "poster:doctor": "remotion still src/index.ts Doctor ../assets/doctor-poster.jpg --frame=330 --scale=2"
+    "poster:doctor": "remotion still src/index.ts Doctor ../assets/doctor-poster.jpg --frame=330 --scale=2",
+    "render:showcase": "remotion render src/index.ts SkillShowcase ../assets/skill-showcase.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
+    "render:showcase:4k": "remotion render src/index.ts SkillShowcase ../assets/skill-showcase-4k.mp4 --codec=h264 --crf=16 --pixel-format=yuv420p --scale=2",
+    "poster:showcase": "remotion still src/index.ts SkillShowcase ../assets/skill-showcase-poster.jpg --frame=150",
+    "render:showcase:vertical": "remotion render src/index.ts SkillShowcaseVertical ../assets/skill-showcase-vertical.mp4 --codec=h264 --crf=18 --pixel-format=yuv420p",
+    "poster:showcase:vertical": "remotion still src/index.ts SkillShowcaseVertical ../assets/skill-showcase-vertical-poster.jpg --frame=150",
+    "heygen:presenter": "node scripts/heygen-presenter.mjs"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.481",
