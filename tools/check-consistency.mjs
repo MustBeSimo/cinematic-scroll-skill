@@ -2,7 +2,7 @@
 /**
  * check-consistency.mjs — Phase 12 invariant: catch drift that the per-phase gates don't.
  *
- *   1. VERSION SYNC      package.json.version === manifest.json.version === SKILL.md frontmatter
+ *   1. VERSION SYNC      package.json === manifest.json === SKILL.md frontmatter === .claude-plugin/plugin.json
  *   2. SECRET SCAN       no tracked *.env.local (only *.example may be tracked)
  *   3. KEY PATHS         the foundation files the docs promise actually exist
  *   4. TOKEN DETERMINISM committed tokens/build/variables.css matches a fresh build
@@ -26,6 +26,12 @@ const skillFm = readFileSync(join(ROOT, "SKILL.md"), "utf8").split(/^---\s*$/m)[
 const skillVer = (skillFm.match(/^version:\s*(.+?)\s*$/m) || [])[1];
 if (!skillVer) errors.push("SKILL.md frontmatter has no `version:` field");
 else if (skillVer !== pkg.version) errors.push(`version drift: SKILL.md frontmatter ${skillVer} ≠ package.json ${pkg.version}`);
+// the Claude Code plugin manifest is a 4th install surface — keep it in the triad (now a quad)
+const PLUGIN = join(ROOT, ".claude-plugin/plugin.json");
+if (existsSync(PLUGIN)) {
+  const plug = JSON.parse(readFileSync(PLUGIN, "utf8"));
+  if (plug.version !== pkg.version) errors.push(`version drift: .claude-plugin/plugin.json ${plug.version} ≠ package.json ${pkg.version}`);
+}
 
 // 2. secret scan (tracked .env.local) — git required; skip with notice if absent
 const ls = spawnSync("git", ["ls-files"], { cwd: ROOT, encoding: "utf8" });
@@ -67,5 +73,5 @@ if (errors.length) {
   for (const e of errors) console.error(`  - ${e}`);
   process.exit(1);
 }
-console.log(`✓ check-consistency: version ${pkg.version} in sync (package.json · manifest.json · SKILL.md), no tracked secrets, foundation paths present, token build deterministic.`);
+console.log(`✓ check-consistency: version ${pkg.version} in sync (package.json · manifest.json · SKILL.md · plugin.json), no tracked secrets, foundation paths present, token build deterministic.`);
 process.exit(0);
