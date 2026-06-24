@@ -2,7 +2,7 @@
 
 ## Current state (2026-06-24)
 
-Cinematic-scroll-skill v2.5.1 is shipping with:
+Cinematic-scroll-skill v2.5.5 is shipping with:
 - Distribution fixes: npx install ships tools/ (the doctor) + ASSETS-3D/FRAME/REVIEW; plugin.json realigned; version sync is now a quad with an installer-payload guard
 - Live demo rebuilt as a circular WebGL flythrough (gyroscope-steerable, glassmorphic, cards fly from the vanishing point)
 - Asset Direction (Phase 1.5) + the Wow Gate — world-before-layout, wow made reproducible
