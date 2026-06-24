@@ -108,7 +108,7 @@
   .c1 .track{height:210vh}.c2 .track{height:230vh}.c3 .track{height:280vh}
 
   /* hero */
-  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,5vw,72px);align-items:center}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(clamp(300px,34vw,520px),0.95fr);gap:clamp(28px,5vw,72px);align-items:center}
   .h1{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:clamp(3rem,9vw,7.4rem);line-height:.9;text-transform:uppercase;margin:16px 0 0}
   .h1 .w{display:inline-block;margin-right:.06em;will-change:transform,opacity}
   .lede{margin-top:22px;font-size:clamp(1.05rem,1.8vw,1.4rem);color:var(--text);max-width:24ch;font-weight:500}
@@ -227,7 +227,7 @@
     .worldbg{position:absolute}.wn-slot{height:auto}.worldname{position:static;opacity:1!important;font-size:clamp(1.3rem,6vw,1.9rem);margin:4px 0}.worldsw{display:none}
   }
   /* ───── 10x PUNCH — bold editorial hero · glass cards · immersive field ───── */
-  .h1{font-family:"Space Grotesk",-apple-system,sans-serif;font-weight:700;font-size:clamp(3.6rem,14vw,9.6rem);line-height:.82;letter-spacing:-.035em;text-transform:uppercase}
+  .h1{font-family:"Space Grotesk",-apple-system,sans-serif;font-weight:700;font-size:clamp(3.4rem,11.5vw,8.2rem);line-height:.82;letter-spacing:-.035em;text-transform:uppercase;overflow-wrap:break-word}
   .h1 .w{margin-right:.1em}
   .h1 .w:last-child{color:var(--accent)}
   @supports ((-webkit-background-clip:text) or (background-clip:text)){
