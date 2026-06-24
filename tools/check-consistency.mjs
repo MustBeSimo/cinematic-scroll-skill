@@ -53,9 +53,13 @@ for (const p of ["design.md", "tokens/core.tokens.json", "tokens/motion.tokens.j
 // 3b. installer payload must ship the design system — npx install would otherwise
 //     deliver a skill missing the v2.4.0 surfaces SKILL.md routes to.
 const installer = readFileSync(join(ROOT, "bin/install.mjs"), "utf8");
-for (const surface of ["design.md", "tokens", "themes", "components"]) {
+// Every top-level surface SKILL.md routes to must be in the npx PAYLOAD — incl. tools/
+// (the cinematic-doctor quality gate) and the 3D/film hand-offs. A miss = an install whose
+// SKILL.md references files that aren't there.
+for (const surface of ["design.md", "tokens", "themes", "components", "references", "templates",
+                       "examples", "tools", "ASSETS-3D.md", "FRAME.md", "MODELS.md"]) {
   if (!new RegExp(`['"]${surface.replace(".", "\\.")}['"]`).test(installer)) {
-    errors.push(`installer (bin/install.mjs) PAYLOAD is missing '${surface}' — npx install would ship an incomplete skill`);
+    errors.push(`installer (bin/install.mjs) PAYLOAD is missing '${surface}' — npx install would ship an incomplete skill (SKILL.md routes to it)`);
   }
 }
 

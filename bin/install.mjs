@@ -43,7 +43,11 @@ const PAYLOAD = [
   'compile-choreography.mjs',
   'MODELS.md',
   'COMPATIBILITY.md',
+  'ASSETS-3D.md',      // SKILL.md routes here (3D asset hand-off)
+  'FRAME.md',          // SKILL.md routes here (launch-film / video pipeline)
+  'REVIEW.md',         // adversarial self-review referenced by the docs
   'references',
+  'tools',             // cinematic-doctor (the quality gate SKILL.md tells agents to run), verify, heygen, …
   'templates',
   'examples',
   'LICENSE',
