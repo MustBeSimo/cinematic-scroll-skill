@@ -9,10 +9,8 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/MustBeSimo/cinematic-scroll-skill/ci.yml?style=flat-square&label=quality%20gate&logo=github)](https://github.com/MustBeSimo/cinematic-scroll-skill/actions/workflows/ci.yml)
 [![GitHub stars](https://img.shields.io/github/stars/MustBeSimo/cinematic-scroll-skill?style=flat-square&color=f5b301&label=stars)](https://github.com/MustBeSimo/cinematic-scroll-skill/stargazers)
 
-<!-- hero reel as MP4 (≈0.5 MB) instead of a 12 MB GIF — same motion, far faster README -->
-<video src="assets/video/reel3-hero.mp4" poster="assets/video/reel3-hero.poster.jpg" autoplay loop muted playsinline width="100%"></video>
-
-<sub><a href="https://mustbesimo.github.io/cinematic-scroll-skill/">▶ Scroll the live site — five aesthetic worlds from one engine →</a></sub>
+<!-- hero reel as an animated GIF — GitHub READMEs animate <img> GIFs (relative-path <video> does NOT render) -->
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/"><img src="assets/eleven-worlds-hero.gif" alt="Cinematic Scroll in motion — the launch reel flying through eleven aesthetic worlds from one engine" width="100%"></a>
 
 <h2 align="center">
   <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">🌐 &nbsp;Live demo — cinematic-scroll-skill.github.io</a>
