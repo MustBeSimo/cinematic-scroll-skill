@@ -1,8 +1,9 @@
 # progress.md
 
-## Current state (2026-06-24)
+## Current state (2026-06-27)
 
-Cinematic-scroll-skill v2.5.5 is shipping with:
+Cinematic-scroll-skill v2.6.0 is shipping with:
+- **Learn mode — the Pattern Compiler (Phase 1):** `Learn [URL]` distills authorized sites into original, IR-validated recipes on a pointer-first learned shelf (`references/learned/`); sibling to audit mode (shared `references/detection-pipeline.md`); originality firewall + four zero-dep tools (`tools/learn/`) + learned-shelf integrity in CI. Tag/keyword dedup only (no embeddings); reuse telemetry + semantic scoring in Phases 2–4.
 - Distribution fixes: npx install ships tools/ (the doctor) + ASSETS-3D/FRAME/REVIEW; plugin.json realigned; version sync is now a quad with an installer-payload guard
 - Live demo rebuilt as a circular WebGL flythrough (gyroscope-steerable, glassmorphic, cards fly from the vanishing point)
 - Asset Direction (Phase 1.5) + the Wow Gate — world-before-layout, wow made reproducible
