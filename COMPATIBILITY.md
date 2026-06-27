@@ -111,7 +111,7 @@ hermes chat
 
 **Installation (official Git method):**
 ```bash
-openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v2.6.0
+openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v2.6.1
 ```
 
 **Or manual clone:**
@@ -259,7 +259,8 @@ This is normal if you haven't provided an `fal.ai` API key. The system falls bac
 
 | Skill version | Release | Notes |
 |---|---|---|
-| **v2.6.0 (current)** | 2026-06 | **Learn mode — the Pattern Compiler (Phase 1).** `Learn [URL]` distills sites you own/are authorized to study into original, IR-validated recipes on a pointer-first learned shelf (`references/learned/`), behind an enforced originality firewall. Ships the compiler core: the Pattern-IR gate (`references/pattern-ir.md`), four zero-dep tools (`tools/learn/`: validate-ir · sync-manifest · check-pointers · surface-dedup), four canon pointer hosts (incl. new `references/visual-systems.md`), a shared `references/detection-pipeline.md` extracted from audit mode, and learned-shelf integrity in CI. Tag/keyword dedup only (no embeddings); reuse telemetry + semantic scoring land in Phases 2–4. |
+| **v2.6.1 (current)** | 2026-06 | Craft hygiene (from a full-app QA audit): a new advisory `cinematic-doctor` **hygiene** check (weight 0 — never affects the score) flagging dead CSS classes, dead JS attribute-branches, and the `file://` hazard of external local `<script src>`; plus taste-guardrails **1.12** (no dead code) & **1.13** (single-file must be self-contained & `file://`-safe). No score/behaviour change to existing builds. |
+| **v2.6.0** | 2026-06 | **Learn mode — the Pattern Compiler (Phase 1).** `Learn [URL]` distills sites you own/are authorized to study into original, IR-validated recipes on a pointer-first learned shelf (`references/learned/`), behind an enforced originality firewall. Ships the compiler core: the Pattern-IR gate (`references/pattern-ir.md`), four zero-dep tools (`tools/learn/`: validate-ir · sync-manifest · check-pointers · surface-dedup), four canon pointer hosts (incl. new `references/visual-systems.md`), a shared `references/detection-pipeline.md` extracted from audit mode, and learned-shelf integrity in CI. Tag/keyword dedup only (no embeddings); reuse telemetry + semantic scoring land in Phases 2–4. |
 | **v2.5.5** | 2026-06 | Version realignment (2.5.1 → 2.5.5) across the version quad (`package.json` · `manifest.json` · `SKILL.md` · `plugin.json`) and the clawhub export. No shipped skill-content changes; promo-video tooling fixes (Remotion footage anchored to scene starts; aspect-aware 16:9/9:16 showcase) live in `video/`, which is not packaged. |
 | **v2.5.1** | 2026-06 | Distribution fixes: `npx` install now ships `tools/` (the cinematic-doctor quality gate), `ASSETS-3D.md`, `FRAME.md` & `REVIEW.md` (were missing → SKILL.md referenced absent files); Claude Code `plugin.json` version realigned (was stale at 2.1.0); version sync widened to a quad (+ `plugin.json`) with an installer-payload completeness guard. Live demo rebuilt as a circular WebGL flythrough (gyroscope-steerable, glassmorphic). |
 | **v2.5.0** | 2026-06 | Asset Direction (Phase 1.5, `references/asset-direction.md`) + the Wow Gate (`references/wow-gate.md`) — world-before-layout direction that makes the wow reproducible; three scroll-scrubbed 3D fly-through examples (gallery / jungle / AUREUS); HeyGen avatar-walkthrough tooling (`tools/heygen/`) |
@@ -270,7 +271,7 @@ This is normal if you haven't provided an `fal.ai` API key. The system falls bac
 | **v0.1.2** | 2026-06-01 | Prior public release; corrected README GSAP documentation and softened platform verification claims |
 | **v0.1.1** | 2026-06-01 | Initial open-source release; 5 live examples, all platforms supported |
 
-**Current recommendation:** Use v2.6.0 for all new installations.
+**Current recommendation:** Use v2.6.1 for all new installations.
 
 ---
 
