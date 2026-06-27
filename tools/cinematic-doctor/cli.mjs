@@ -2,9 +2,10 @@
 /* ============================================================================
    cinematic-doctor — an executable quality gate for cinematic-scroll builds.
 
-   Scores an HTML build 0-100 across six categories (taste, performance, a11y,
-   mobile, tokens, 3D), prints a scorecard, writes cinematic-report.json, and exits
-   non-zero below threshold so it can sit in CI / a pre-commit hook.
+   Scores an HTML build 0-100 across six weighted categories (taste, performance,
+   a11y, mobile, tokens, 3D) plus an advisory hygiene pass (weight 0 — info only),
+   prints a scorecard, writes cinematic-report.json, and exits non-zero below
+   threshold so it can sit in CI / a pre-commit hook.
 
    Usage:
      node tools/cinematic-doctor/cli.mjs <path-to-html-or-dir>

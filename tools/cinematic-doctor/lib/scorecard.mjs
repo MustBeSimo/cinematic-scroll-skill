@@ -106,8 +106,9 @@ export function renderScorecard(file, agg, threshold) {
 
   for (const c of agg.categories) {
     const head = `${C.bold}${pad(c.category, 13)}${C.reset}`;
+    const wlabel = c.normalizedWeight === 0 ? 'advisory — info only, does not affect the score' : `weight ${c.normalizedWeight}%`;
     lines.push(
-      `  ${head} ${bar(c.score)} ${pad(String(c.score), 3)} ${C.gray}/100  (weight ${c.normalizedWeight}%)${C.reset}`,
+      `  ${head} ${bar(c.score)} ${pad(String(c.score), 3)} ${C.gray}/100  (${wlabel})${C.reset}`,
     );
     for (const f of c.findings) {
       const tag = LEVEL_TAG[f.level] ?? f.level;
