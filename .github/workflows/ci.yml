@@ -38,6 +38,8 @@ jobs:
         run: node tools/check-links.mjs
       - name: Consistency (version / secrets / token determinism)
         run: node tools/check-consistency.mjs
+      - name: Learn tools self-test
+        run: npm run learn:selftest
       - name: Skill pointer stubs in sync (.codex / .cursor)
         run: node tools/skill-sync.mjs --check
       - name: Component library (doctor ≥80 each)

@@ -93,7 +93,7 @@
     ],
     "thirdPartyNetworkCalls": [
       {"when": "Mode B image/asset generation", "destination": "fal.ai API", "trigger": "user-initiated, requires FAL_KEY"},
-      {"when": "Audit mode", "destination": "user-supplied URL", "trigger": "user-initiated, explicit confirmation required"},
+      {"when": "Audit mode", "destination": "user-supplied URL", "trigger": "user-initiated, explicit confirmation required. Learn mode uses this same browser/fetch access to observe user-authorized URLs; no additional network exception is introduced."},
       {"when": "Mode A output pages", "destination": "cdn.jsdelivr.net (GSAP + ScrollTrigger, three.js), unpkg.com (three.js Draco decoder, @google/model-viewer), fonts.googleapis.com + fonts.gstatic.com (Google Fonts)", "trigger": "loaded by the generated HTML when opened in a browser — self-host to avoid"}
     ],
     "disclosure": "manifest.md#security--privacy"
@@ -122,6 +122,7 @@
     "references/artifact-templates.md",
     "references/performance-budget.md",
     "audit-mode.md",
+    "learn-mode.md",
     "scroll-choreography.json"
   ],
   "pipeline": {

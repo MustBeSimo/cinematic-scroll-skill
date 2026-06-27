@@ -46,7 +46,12 @@ if (ls.status === 0) {
 // 3. key paths the docs promise
 for (const p of ["design.md", "tokens/core.tokens.json", "tokens/motion.tokens.json", "tokens/semantic.tokens.json",
   "tokens/build/variables.css", "themes/theme-contract.md", "components/manifest.json",
-  "references/component-grammar.md", "references/design-tokens.md"]) {
+  "references/component-grammar.md", "references/design-tokens.md",
+  "learn-mode.md", "references/detection-pipeline.md", "references/pattern-ir.md",
+  "references/learning-rubric.md", "references/promotion-rules.md", "references/visual-systems.md",
+  "references/learned/manifest.json", "references/learned/LEARNING-LOG.md",
+  "references/learned/CLUSTERS.md", "references/learned/PROMOTION-PROPOSALS.md",
+  "references/learned/REJECTED.md"]) {
   if (!existsSync(join(ROOT, p))) errors.push(`promised path missing: ${p}`);
 }
 
@@ -57,7 +62,7 @@ const installer = readFileSync(join(ROOT, "bin/install.mjs"), "utf8");
 // (the cinematic-doctor quality gate) and the 3D/film hand-offs. A miss = an install whose
 // SKILL.md references files that aren't there.
 for (const surface of ["design.md", "tokens", "themes", "components", "references", "templates",
-                       "examples", "tools", "ASSETS-3D.md", "FRAME.md", "MODELS.md"]) {
+                       "examples", "tools", "ASSETS-3D.md", "FRAME.md", "MODELS.md", "learn-mode.md"]) {
   if (!new RegExp(`['"]${surface.replace(".", "\\.")}['"]`).test(installer)) {
     errors.push(`installer (bin/install.mjs) PAYLOAD is missing '${surface}' — npx install would ship an incomplete skill (SKILL.md routes to it)`);
   }
@@ -70,6 +75,16 @@ if (build.status !== 0) errors.push(`build:tokens failed: ${(build.stderr || "")
 else {
   const after = readFileSync(join(ROOT, "tokens/build/variables.css"), "utf8");
   if (before !== null && before !== after) errors.push("tokens/build/variables.css is stale — run `npm run build:tokens` and commit the result");
+}
+
+// 5. learned-shelf integrity (real shelf): IR schema, pointer↔shelf, manifest in sync
+for (const [label, toolArgs] of [
+  ["validate-ir", ["tools/learn/validate-ir.mjs"]],
+  ["check-pointers", ["tools/learn/check-pointers.mjs"]],
+  ["sync-manifest --check", ["tools/learn/sync-manifest.mjs", "--check"]],
+]) {
+  const r = spawnSync(process.execPath, [join(ROOT, toolArgs[0]), ...toolArgs.slice(1)], { cwd: ROOT, encoding: "utf8" });
+  if (r.status !== 0) errors.push(`learned-shelf: ${label} failed — ${((r.stderr || r.stdout) || "").trim().split("\n").pop()}`);
 }
 
 if (errors.length) {

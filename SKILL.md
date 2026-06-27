@@ -27,7 +27,8 @@ permissions:
 
 # Activation: invoke this skill when the user asks to BUILD or AUDIT a
 # cinematic/scroll/parallax/3D-tilt website, launch page, or editorial microsite,
-# OR asks to review or score an existing URL's scroll experience.
+# OR asks to review or score an existing URL's scroll experience,
+# OR asks to LEARN FROM / study / distill patterns from an existing URL.
 # Do NOT activate for: generic landing pages, CRUD apps, forms-based workflows,
 # CMS integrations, dashboards, or any request that does not explicitly involve
 # scroll-driven motion or cinematic web design.
@@ -75,6 +76,7 @@ Read this section first; read the rest as the route demands. Three rules:
 | "3D / WebGL / WebXR / 'like the flagship'" | Mode A → adapt `examples/flagship/` (vanilla three, manifest-driven GLBs, FX layer). Mode B → the `/flagship` route (`templates/nextjs/FLAGSHIP.md`). Generate real meshes: `npm run generate:flagship -- --apply` (needs `FAL_KEY`). | `references/3d-stack.md` · `ASSETS-3D.md` |
 | "a launch film / video of the site" | Compile the same choreography to video: `node compile-choreography.mjs scene.json --target video`, or author HyperFrames/Remotion directly in `video/`. | `FRAME.md` · `video/PIPELINE.md` |
 | "score / review an existing URL's scroll experience" | **Audit mode**: analyze the user-supplied URL (only sites they own or are authorized to test) and score Pacing / Performance / Accessibility / Emotional Arc, then emit a remediation plan. | `audit-mode.md` |
+| "learn from / study / distill patterns from an existing URL" | **Learn mode**: study a user-authorized URL and distill reusable recipes (technique / visual system / archetype / taste rule) onto the learned shelf via the Pattern IR gate — never copying code/assets/brand. | `learn-mode.md` |
 | "audit / improve a page I'm building" | Run the doctor first, fix what it flags, re-run; pair with the verify orchestrator. | `tools/cinematic-doctor/README.md` · `tools/verify/README.md` |
 | "avatar walkthrough / HeyGen video of the site" | Capture scroll frames + optional fal.ai sticker cutouts → HeyGen avatar-narrated walkthrough. Run `node tools/heygen/generate-walkthrough.mjs <page>` to produce the payload, then fire via HeyGen MCP or API. | `tools/heygen/README.md` |
 | "an immersive brand world / 'constant wow' / world-building / make it look like the reference" | Run **Phase 1.5 Asset Direction** before the storyboard — design the world premise, hero concept, motif system, material language, and per-asset sourcing; then clear the **Wow Gate** (reject generic *before* building). | `references/asset-direction.md` · `references/wow-gate.md` |
@@ -91,6 +93,13 @@ Reusable, doctor-verified building blocks (HeroParallax, PinnedReveal, DepthFigu
 TiltCard, MorphBackground, HorizontalGallery, ScrubVideo, KineticHeadline,
 MagneticCursor) live in `references/component-grammar.md` + `components/` (Mode A
 html + Mode B tsx) — start from these instead of writing motion from scratch.
+
+**1c · Reuse what the skill has learned.** Before building, scan the `## Learned additions`
+pointer sections of `references/scroll-patterns.md`, `references/visual-systems.md`,
+`references/film-archetypes.md`, and `taste-guardrails.md`, and fetch any relevant
+`references/learned/<type>/<slug>.md` entry on demand (pointer-first, loaded only when
+relevant). These are distilled, original recipes the skill learned from authorized sites.
+To add to them, see `learn-mode.md`.
 
 **2 · Match the gating to the ask.** The 5-phase pipeline below produces an
 artifact per phase. When the user wants the *process* (or the brief is genuinely

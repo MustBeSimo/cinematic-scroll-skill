@@ -36,6 +36,7 @@ const PAYLOAD = [
   'manifest.md',
   'taste-guardrails.md',
   'audit-mode.md',
+  'learn-mode.md',
   'troubleshooting.md',
   'decision-log.md',
   'scroll-choreography.json',
