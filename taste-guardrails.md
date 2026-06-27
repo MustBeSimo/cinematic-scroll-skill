@@ -57,6 +57,14 @@ The following patterns are prohibited in all generated output. No exceptions, no
 **Why:** Uniform easing makes motion feel mechanical — like a PowerPoint transition, not cinema. Real movement has variation: anticipation, overshoot, decay, snap.
 **Replacement:** Vary easings by role. Hero entrances get `power3.out` (dramatic deceleration). Exits get `power2.in` (clean acceleration away). Micro-interactions get `back.out(1.4)` (playful overshoot). Chapter transitions get `power4.inOut` (weighty, deliberate).
 
+### 1.12 Never ship dead code — orphaned CSS selectors or unreachable JS branches
+**Why:** Dead rules and dead branches are dishonest bloat: a `.fig`/`.selector` class no element uses, or an `if (el.hasAttribute('data-tilt'))` branch when nothing carries `data-tilt`, reads as a feature but does nothing — misleading the next reader and inflating the file. (A real QA audit found exactly this shipping in a page.)
+**Replacement:** Every CSS selector must match a real element; every attribute-branch must have an element that sets the attribute. If a feature isn't wired, wire it or delete it. `cinematic-doctor`'s advisory **hygiene** pass flags dead classes and dead attribute-branches — drive it to zero.
+
+### 1.13 A single-file Mode A build must be self-contained and `file://`-safe
+**Why:** Mode A's promise is "open the `.html` from disk and it just works." That breaks the moment the page loads an **external** local file — a sibling `<script src="./app.js">` or a JS-fetched image/texture — because the browser's `file://` cross-origin policy blocks it, so the page silently fails off a double-click. (Audit finding: `flagship`/`studio` split JS out; the 3D fly-throughs load textures via JS — all actually need a server.)
+**Replacement:** For a true single-file Mode A build, **inline** the JS and avoid JS-loaded local assets (use CSS placeholders / data-URIs, or load over a CDN). If a build genuinely needs external modules or texture files, it is a **served** page — say so explicitly ("run `python3 -m http.server`") and don't market it as double-click-runnable. `cinematic-doctor`'s hygiene pass flags external local `<script src>`.
+
 ---
 
 ## 2. Cinematic Vocabulary

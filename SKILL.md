@@ -554,6 +554,16 @@ or "landing".
 
 - Single self-contained HTML file: `<!DOCTYPE html>` ... `</html>`, inline
   CSS + JS, renders immediately with **no build step and no npm packages**.
+- **Keep it truly single-file and `file://`-safe** (guardrail 1.13): inline all
+  JS — no sibling `<script src="./x.js">` — and avoid JS-loaded local assets
+  (runtime-fetched textures/images), since the browser's `file://` cross-origin
+  policy blocks both and the page would fail off a double-click. If a build
+  genuinely needs external modules or texture files it is a **served** page (tell
+  the user to "run `python3 -m http.server`"), not a `file://` one. Ship **no
+  dead code** (guardrail 1.12): every CSS selector must match an element, every
+  attribute-branch must fire. `cinematic-doctor`'s advisory **hygiene** pass
+  flags external local scripts, dead selectors, and dead attribute-branches —
+  drive it to zero.
 - Load **GSAP + ScrollTrigger from a pinned CDN with SRI** (exact version, integrity
   hash, `crossorigin` — as every `examples/*` page does). **Third-party CDN disclosure:**
   generated Mode A pages load GSAP from `unpkg.com`, fonts from `fonts.googleapis.com`

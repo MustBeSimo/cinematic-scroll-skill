@@ -32,10 +32,13 @@ import { analyze as a11y } from './checks/a11y.mjs';
 import { analyze as mobile } from './checks/mobile.mjs';
 import { analyze as tokens } from './checks/tokens.mjs';
 import { analyze as threed } from './checks/threed.mjs';
+import { analyze as hygiene } from './checks/hygiene.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_MIN = 80;
-const CHECKS = [taste, performance, a11y, mobile, tokens, threed];
+// hygiene is advisory: it carries no weight (not in WEIGHTS), so it surfaces
+// info-level findings without ever changing the score or failing a build.
+const CHECKS = [taste, performance, a11y, mobile, tokens, threed, hygiene];
 
 /** Run all checks against one HTML string, returning the aggregate. */
 export function scoreHtml(raw, file = '<input>') {
@@ -115,7 +118,7 @@ const HELP = `cinematic-doctor — quality gate for cinematic-scroll builds
   node tools/cinematic-doctor/cli.mjs <path-to-html-or-dir> [--min N] [--json] [--quiet]
   node tools/cinematic-doctor/cli.mjs --selftest
 
-Categories: taste(30) performance(25) a11y(20) mobile(15) tokens(12) threed(10, N/A unless 3D detected).
+Categories: taste(30) performance(25) a11y(20) mobile(15) tokens(12) threed(10, N/A unless 3D detected) hygiene(advisory, weight 0 — info only, never affects the score).
 Weights re-normalize over applied categories. Default threshold ${DEFAULT_MIN} (override --min).
 Exit 0 if total >= threshold, else 1. Writes cinematic-report.json next to the CLI.`;
 
@@ -137,11 +140,21 @@ function runSelftest() {
   console.log(`  bad.html  → ${badAgg.total}/100  expected FAIL (<${min})   → ${!badPass ? 'FAIL ✓' : 'PASS ✗'}`);
   for (const c of badAgg.categories) console.log(`      ${c.category.padEnd(12)} ${c.score}`);
 
-  const ok = goodPass && !badPass;
+  // Advisory hygiene check: must flag smells on a dirty page and stay silent on a
+  // clean one — and, being weight 0, must NOT change the score (bad.html still
+  // fails on the real categories, good.html still passes).
+  const dirty = '<!doctype html><html><head><style>.used{}.deadzzz{color:red}</style></head><body><div class="used"></div><script src="./local.js"></script><script>document.body.hasAttribute("data-ghost")</script></body></html>';
+  const clean = '<!doctype html><html><head><style>.used{color:red}</style></head><body><div class="used"></div><script>console.log(1)</script></body></html>';
+  const hygN = (h) => (scoreHtml(h).categories.find((c) => c.category === 'hygiene') || { findings: [] }).findings.length;
+  const dirtyN = hygN(dirty), cleanN = hygN(clean);
+  const hygieneOK = dirtyN >= 3 && cleanN === 0;
+  console.log(`  hygiene (advisory) → dirty ${dirtyN} finding(s) (expect >=3), clean ${cleanN} (expect 0)  → ${hygieneOK ? 'PASS ✓' : 'FAIL ✗'}`);
+
+  const ok = goodPass && !badPass && hygieneOK;
   console.log('');
   console.log(ok
-    ? '  selftest OK — good PASSes, bad FAILs.'
-    : `  selftest FAILED — good ${goodPass ? 'passed' : 'did NOT pass'}, bad ${badPass ? 'incorrectly passed' : 'correctly failed'}.`);
+    ? '  selftest OK — good PASSes, bad FAILs, hygiene advisory works.'
+    : `  selftest FAILED — good ${goodPass ? 'passed' : 'did NOT pass'}, bad ${badPass ? 'incorrectly passed' : 'correctly failed'}${hygieneOK ? '' : ', hygiene advisory MISfired'}.`);
   return ok ? 0 : 1;
 }
 
