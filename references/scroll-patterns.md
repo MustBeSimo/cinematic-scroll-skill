@@ -691,3 +691,7 @@ Entering archive: fade from previous section into pinned horizontal container ov
 - Small collections (<10 items — horizontal scroll is overkill)
 - Search-result pages (users expect vertical scan, not horizontal)
 - Pages where item order is not significant (random browsing is better as a grid)
+
+## Learned additions
+
+<!-- pointers are appended here by learn mode; full recipes live in references/learned/ -->

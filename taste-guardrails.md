@@ -206,3 +206,7 @@ These guardrails are referenced in `SKILL.md` and are part of the agent's system
 5. Include a reduced-motion fallback for every scroll-driven effect.
 
 **Violating these rules is a bug, not a style choice.**
+
+## Learned additions
+
+<!-- pointers are appended here by learn mode; full recipes live in references/learned/ -->

@@ -323,3 +323,7 @@ Each `themes/<system>.theme.json` makes the system above machine-readable (palet
 
 None of these systems imitates any single living artist or filmmaker. Each synthesizes visual principles that have emerged in various creative fields. Use them as starting points for your own visual language, always adapted to your specific brief.
 
+## Learned additions
+
+<!-- pointers are appended here by learn mode; full recipes live in references/learned/ -->
+
