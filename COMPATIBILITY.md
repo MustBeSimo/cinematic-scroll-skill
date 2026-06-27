@@ -146,12 +146,18 @@ GIF/video/GLB marketing assets (~hundreds of MB):
 ```bash
 # 1. stage a clean export of the skill contract
 EXPORT=$(mktemp -d)
-git archive HEAD SKILL.md design.md manifest.json LICENSE taste-guardrails.md \
-  FRAME.md ASSETS-3D.md MODELS.md tokens/ themes/ components/ evals/ \
+git archive HEAD SKILL.md audit-mode.md learn-mode.md design.md manifest.json LICENSE \
+  taste-guardrails.md FRAME.md ASSETS-3D.md MODELS.md tokens/ themes/ components/ evals/ \
   references/ tools/ examples/PROMPTS.md \
   compile-choreography.mjs scroll-choreography.json | tar -x -C "$EXPORT"
+rm -f "$EXPORT/tools/skill-sync.mjs"   # maintainer-only .codex/.cursor stub sync — not a runtime capability
 
-# 2. authenticate (GitHub account ≥ 1 week old) and publish
+# 2. security scan (NVIDIA SkillSpector) — must come back SAFE before publishing.
+#    The baseline records reviewed false positives; rationale in
+#    docs/security/skillspector-triage.md. Re-triage if NEW findings appear.
+skillspector scan "$EXPORT" --no-llm --baseline .skillspector-baseline.yaml
+
+# 3. authenticate (GitHub account ≥ 1 week old) and publish
 clawhub login
 clawhub skill publish "$EXPORT" --slug cinematic-scroll \
   --name "Cinematic Scroll" --version <X.Y.Z>   # match manifest.json
