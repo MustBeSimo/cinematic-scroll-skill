@@ -29,7 +29,8 @@ function pointersInHost(root, host) {
 
 export function run(root) {
   const errors = [];
-  const entries = collectEntries(root);
+  const allEntries = collectEntries(root);
+  const entries = allEntries.filter((e) => !e.error);
   const byId = new Map(entries.map((e) => [e.data.entry_id, e]));
   const pointers = [];
   for (const host of new Set(Object.values(TYPE_HOST))) pointers.push(...pointersInHost(root, host));
@@ -44,7 +45,7 @@ export function run(root) {
     if (p.dir && p.dir !== expectDir) errors.push(`pointer dir mismatch: ${p.host} -> ${p.id} points at ${p.dir}/ but entry is ${e.data.type} (expected ${expectDir}/)`);
     if (p.file && p.file !== e.file) errors.push(`pointer file mismatch: ${p.host} -> ${p.id} points at ${p.file} but entry file is ${e.file}`);
   }
-  return { entries: entries.length, pointers: pointers.length, errors };
+  return { entries: allEntries.length, pointers: pointers.length, errors };
 }
 
 function selftest() {
@@ -67,7 +68,7 @@ function selftest() {
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
 if (isMain) {
   const argv = process.argv.slice(2);
-  const root = argv.includes("--root") ? argv[argv.indexOf("--root") + 1] : ROOT_DEFAULT;
+  const root = (argv.includes("--root") ? argv[argv.indexOf("--root") + 1] : null) || ROOT_DEFAULT;
   if (argv.includes("--selftest")) selftest();
   else {
     const { entries, pointers, errors } = run(root);

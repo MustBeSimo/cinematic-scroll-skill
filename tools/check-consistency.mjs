@@ -92,5 +92,5 @@ if (errors.length) {
   for (const e of errors) console.error(`  - ${e}`);
   process.exit(1);
 }
-console.log(`✓ check-consistency: version ${pkg.version} in sync (package.json · manifest.json · SKILL.md · plugin.json), no tracked secrets, foundation paths present, token build deterministic.`);
+console.log(`✓ check-consistency: version ${pkg.version} in sync (package.json · manifest.json · SKILL.md · plugin.json), no tracked secrets, foundation paths present, token build deterministic, learned-shelf integrity verified (IR schema · pointer↔shelf · manifest sync).`);
 process.exit(0);

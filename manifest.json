@@ -121,6 +121,11 @@
     "references/component-grammar.md",
     "references/artifact-templates.md",
     "references/performance-budget.md",
+    "references/visual-systems.md",
+    "references/detection-pipeline.md",
+    "references/pattern-ir.md",
+    "references/learning-rubric.md",
+    "references/promotion-rules.md",
     "audit-mode.md",
     "learn-mode.md",
     "scroll-choreography.json"

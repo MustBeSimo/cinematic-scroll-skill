@@ -10,9 +10,13 @@ export function collectEntries(root) {
     if (!existsSync(d)) continue;
     for (const f of readdirSync(d)) {
       if (!f.endsWith(".md")) continue;
-      const path = join(d, f);
-      const { data, body } = readEntry(path);
-      out.push({ type, dir, file: f, path, data, body });
+      const filePath = join(d, f);
+      try {
+        const { data, body } = readEntry(filePath);
+        out.push({ type, dir, file: f, path: filePath, data, body });
+      } catch (err) {
+        out.push({ type, dir, file: f, path: filePath, error: err.message });
+      }
     }
   }
   return out;

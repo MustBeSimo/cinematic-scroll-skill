@@ -13,6 +13,8 @@ The IR is stored as **YAML frontmatter** at the top of each shelf entry. Subset 
 - No inline `#` comments inside entries (only full-line comments, and only in this doc's example).
 - Empty-string values must be written as `""` (a key with no value opens a nested map).
 
+> **Real entries must be comment-free.** Copy a clean shape from `tools/learn/lib/fixtures.mjs` (`VALID_ENTRY_TEXT`). The `#` annotations in the example below are for illustration only — `parseFrontmatter` will reject any entry that contains them.
+
 ```yaml
 schema_version: "1.0"                  # REQUIRED, semver string
 entry_id: ""                           # REQUIRED, stable, unique, SEPARATE from slug, e.g. "learned-technique-0001"

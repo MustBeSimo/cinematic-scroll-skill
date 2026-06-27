@@ -14,7 +14,7 @@ const ROOT_DEFAULT = join(HERE, "..", "..");
 const PROJECT = ["entry_id", "slug", "type", "status", "name", "source_url", "observed_date"];
 
 export function buildManifest(entries) {
-  const rows = entries.map((en) => {
+  const rows = entries.filter((en) => !en.error).map((en) => {
     const d = en.data, row = {};
     for (const k of PROJECT) row[k] = d[k];
     row.tags = (d.applicability && d.applicability.tags) || [];
@@ -56,7 +56,7 @@ function selftest() {
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
 if (isMain) {
   const argv = process.argv.slice(2);
-  const root = argv.includes("--root") ? argv[argv.indexOf("--root") + 1] : ROOT_DEFAULT;
+  const root = (argv.includes("--root") ? argv[argv.indexOf("--root") + 1] : null) || ROOT_DEFAULT;
   if (argv.includes("--selftest")) selftest();
   else {
     const r = run(root, argv.includes("--check"));

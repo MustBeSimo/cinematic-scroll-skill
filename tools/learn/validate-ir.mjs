@@ -43,6 +43,7 @@ function run(root) {
   const errors = [];
   const seen = new Map();
   for (const en of entries) {
+    if (en.error) { errors.push(`${en.dir}/${en.file}: ${en.error}`); continue; }
     for (const msg of validateEntry(en.data)) errors.push(`${en.dir}/${en.file}: ${msg}`);
     const id = en.data.entry_id;
     if (typeof id === "string" && id) {
@@ -67,7 +68,17 @@ function selftest() {
     writeFileSync(join(tdir, "valid.md"), bad);
     r = run(dir);
     if (r.errors.length < 2) { console.error("✗ validate-ir selftest: corrupt entry not flagged"); process.exit(1); }
-    console.log("✓ validate-ir selftest: valid passes; bad status + firewall flag fail.");
+    // Phase 3: malformed-frontmatter entry must not throw; must surface error mentioning filename
+    writeFileSync(join(tdir, "valid.md"), VALID_ENTRY_TEXT); // restore valid so only malformed.md is bad
+    writeFileSync(join(tdir, "malformed.md"), "no frontmatter here");
+    let threw = false;
+    let rMalformed;
+    try { rMalformed = run(dir); } catch { threw = true; }
+    if (threw) { console.error("✗ validate-ir selftest: run() threw on malformed entry (should collect error)"); process.exit(1); }
+    if (!rMalformed.errors.some((e) => e.includes("malformed.md"))) {
+      console.error("✗ validate-ir selftest: malformed.md not reported in errors:\n  " + rMalformed.errors.join("\n  ")); process.exit(1);
+    }
+    console.log("✓ validate-ir selftest: valid passes; bad status + firewall flag fail; malformed entry collected without throw.");
   } finally { rmSync(dir, { recursive: true, force: true }); }
   process.exit(0);
 }
@@ -75,7 +86,7 @@ function selftest() {
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
 if (isMain) {
   const argv = process.argv.slice(2);
-  const root = argv.includes("--root") ? argv[argv.indexOf("--root") + 1] : ROOT_DEFAULT;
+  const root = (argv.includes("--root") ? argv[argv.indexOf("--root") + 1] : null) || ROOT_DEFAULT;
   if (argv.includes("--selftest")) selftest();
   else {
     const { count, errors } = run(root);
