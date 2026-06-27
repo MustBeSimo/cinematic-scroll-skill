@@ -21,6 +21,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Anchor output-file tracing to this template (a lockfile also exists at the repo
+  // root, which otherwise makes Next.js warn that it inferred the workspace root).
+  outputFileTracingRoot: import.meta.dirname,
   // R3F v9 + React 19: Strict Mode double-mounts the Canvas in dev, causing
   // "createRoot() on a container that already has a root" — disable until
   // @react-three/fiber resolves the dev-mode cleanup race (production unaffected).

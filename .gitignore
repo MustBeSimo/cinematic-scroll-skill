@@ -193,3 +193,6 @@ _clip.mjs
 assets/skill-showcase*.mp4
 assets/skill-showcase*-poster.jpg
 video/public/showcase/
+
+# Personal QA / usability research — working artifact, not part of the shipped skill
+docs/qa/

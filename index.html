@@ -116,10 +116,6 @@
   .cta{margin-top:clamp(24px,3.2vw,38px);display:flex;flex-wrap:wrap;gap:14px;align-items:center}
   .note{margin-top:22px;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.14em;color:var(--muted)}
   .note b{color:var(--accent)}
-  .fig{position:relative;aspect-ratio:4/3.1;border-radius:8px;overflow:hidden;border:1px solid var(--line2);box-shadow:var(--shadow)}
-  .fig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
-  [data-theme="dark"] .fig img.dk{display:block}[data-theme="light"] .fig img.lt{display:block}
-  .fig .veil{position:absolute;inset:0;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg) 60%,transparent))}
   .hero-num{position:absolute;right:2vw;top:8vh;font-family:"Cormorant Garamond",serif;font-size:clamp(7rem,20vw,18rem);line-height:1;color:color-mix(in srgb,var(--text) 6%,transparent);z-index:1;pointer-events:none}
   .cue{position:absolute;left:0;bottom:5vh;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px}
   .cue i{display:block;width:1px;height:30px;background:var(--accent);transform-origin:top;animation:cue 2.4s infinite var(--e-inout)}
@@ -208,14 +204,6 @@
   .fitem{display:flex;align-items:center;gap:10px;font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   .fitem svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.3}
   .fitem b{color:var(--text);font-weight:400}.fitem a{color:var(--text);border-bottom:1px solid var(--line2)}
-  .selector{position:sticky;bottom:0;z-index:55;border-top:1px solid var(--line2);background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(8px)}
-  .selector .row{display:flex;gap:10px;padding:12px 0;align-items:center;justify-content:center}
-  .selector .lbl{font-family:"Space Mono",monospace;font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-right:6px}
-  .selector .seg{flex:1;max-width:420px;display:flex;gap:8px}
-  .selector .seg button{flex:1;appearance:none;border:1px solid var(--line2);background:var(--surface);color:var(--muted);cursor:pointer;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:12px;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:8px;transition:.3s var(--e-soft)}
-  .selector .seg button.active{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
-  .selector svg{width:14px;height:14px}
-  @media(max-width:560px){.selector .lbl{display:none}}
 
   /* mobile: release the pins, stack cleanly, keep reveals + light motion */
   @media(max-width:767px){
@@ -720,9 +708,6 @@
       var range = parseFloat(L.getAttribute('data-range') || '160');
       var ty = (p - 0.5) * range * d;
       var tf = 'translate3d(0,' + ty.toFixed(1) + 'px,0)';
-      if(L.hasAttribute('data-tilt') && !isTouch){
-        tf += ' rotateY(' + ((p - 0.5) * 4).toFixed(2) + 'deg) rotateX(' + ((0.5 - p) * 3).toFixed(2) + 'deg) translateZ(' + (-p * 60).toFixed(0) + 'px)';
-      }
       L.style.transform = tf;
     }
     for(var m=0;m<c.masks.length;m++){
