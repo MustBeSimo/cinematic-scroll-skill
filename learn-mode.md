@@ -1,5 +1,13 @@
 # Learn Mode — the Pattern Compiler
 
+> [!NOTE]
+> **Open-core preview.** This is the free *teaser* of the **Motif Engine**. It
+> ships the compiler **core** — the Pattern-IR gate and a learned shelf that
+> ships **empty**. The full self-learning art-direction engine — an accumulated
+> visual-language library, reuse telemetry, governed promotion, semantic dedup,
+> and motif-driven storyboard / asset-direction / depth & motion compilers —
+> lives in **Cinematic Scroll Studio** (paid). See the README's *Upgrade* note.
+
 > **Activation:** the user asks to *learn from / study / distill patterns from* a URL.
 > Sibling to `audit-mode.md`: audit **scores** a site, learn **distills** it into reusable,
 > original, IR-validated knowledge on the shelf (`references/learned/`).

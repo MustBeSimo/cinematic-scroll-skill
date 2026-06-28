@@ -62,7 +62,7 @@ const installer = readFileSync(join(ROOT, "bin/install.mjs"), "utf8");
 // (the cinematic-doctor quality gate) and the 3D/film hand-offs. A miss = an install whose
 // SKILL.md references files that aren't there.
 for (const surface of ["design.md", "tokens", "themes", "components", "references", "templates",
-                       "examples", "tools", "ASSETS-3D.md", "FRAME.md", "MODELS.md", "learn-mode.md"]) {
+                       "examples", "tools", "ASSETS-3D.md", "MODELS.md", "learn-mode.md"]) {
   if (!new RegExp(`['"]${surface.replace(".", "\\.")}['"]`).test(installer)) {
     errors.push(`installer (bin/install.mjs) PAYLOAD is missing '${surface}' — npx install would ship an incomplete skill (SKILL.md routes to it)`);
   }

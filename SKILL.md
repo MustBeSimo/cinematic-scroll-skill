@@ -74,11 +74,10 @@ Read this section first; read the rest as the route demands. Three rules:
 | "a scroll section / hero / one-pager" | **Mode A**: one self-contained `.html` (GSAP + ScrollTrigger via pinned CDN + SRI). Start from the closest `examples/*` page. | Phase 4 Mode A rules · `taste-guardrails.md` |
 | "a release site / product launch / multi-chapter story" | **Mode B**: copy `templates/nextjs/` verbatim, then art-direct. | Phase 4 Mode B rules · `templates/nextjs/FLAGSHIP.md` |
 | "3D / WebGL / WebXR / 'like the flagship'" | Mode A → adapt `examples/flagship/` (vanilla three, manifest-driven GLBs, FX layer). Mode B → the `/flagship` route (`templates/nextjs/FLAGSHIP.md`). Generate real meshes: `npm run generate:flagship -- --apply` (needs `FAL_KEY`). | `references/3d-stack.md` · `ASSETS-3D.md` |
-| "a launch film / video of the site" | Compile the same choreography to video: `node compile-choreography.mjs scene.json --target video`, or author HyperFrames/Remotion directly in `video/`. | `FRAME.md` · `video/PIPELINE.md` |
+| "a launch film / video of the site" | Compile the scroll choreography to a fixed-time timeline (Basic): `node compile-choreography.mjs scene.json --target video`. The full web→video render pipeline ships in **Cinematic Scroll Studio**. | `scroll-choreography-compilation.md` |
 | "score / review an existing URL's scroll experience" | **Audit mode**: analyze the user-supplied URL (only sites they own or are authorized to test) and score Pacing / Performance / Accessibility / Emotional Arc, then emit a remediation plan. | `audit-mode.md` |
 | "learn from / study / distill patterns from an existing URL" | **Learn mode**: study a user-authorized URL and distill reusable recipes (technique / visual system / archetype / taste rule) onto the learned shelf via the Pattern IR gate — never copying code/assets/brand. | `learn-mode.md` |
 | "audit / improve a page I'm building" | Run the doctor first, fix what it flags, re-run; pair with the verify orchestrator. | `tools/cinematic-doctor/README.md` · `tools/verify/README.md` |
-| "avatar walkthrough / HeyGen video of the site" | Capture scroll frames + optional fal.ai sticker cutouts → HeyGen avatar-narrated walkthrough. Run `node tools/heygen/generate-walkthrough.mjs <page>` to produce the payload, then fire via HeyGen MCP or API. | `tools/heygen/README.md` |
 | "an immersive brand world / 'constant wow' / world-building / make it look like the reference" | Run **Phase 1.5 Asset Direction** before the storyboard — design the world premise, hero concept, motif system, material language, and per-asset sourcing; then clear the **Wow Gate** (reject generic *before* building). | `references/asset-direction.md` · `references/wow-gate.md` |
 | "Awwwards-tier / image distortion / kinetic type / custom cursor / preloader / page transitions" | The five second-generation techniques, each with its degrade contract; all five live in `examples/atelier/`. | `references/awwwards-techniques.md` |
 
@@ -516,14 +515,12 @@ the schema's CSS property names to GSAP shorthand (`translateX`→`x`,
 silently no-ops in GSAP if you do. See `scroll-choreography-compilation.md`.
 
 8. **One choreography, two media.** The same document also compiles to a
-   fixed-time video timeline for HTML-to-video renderers (HyperFrames,
-Remotion): `node compile-choreography.mjs my-scene.json --target video`.
-Scroll progress maps to seconds via FRAME.md §5 pacing; the DOM contract is
-identical, so one skeleton serves the page and its launch film. For a complete
-render-ready composition in one step, use `--target hyperframes` (emits the
-full HTML with real Layer.content rendered; `npx hyperframes render` → MP4).
-If the user wants a promo/launch video of the site they just built, this is
-the path — see `video/PIPELINE.md` and `FRAME.md`.
+   fixed-time video timeline (Basic): `node compile-choreography.mjs
+my-scene.json --target video`. Scroll progress maps to seconds; the DOM
+contract is identical, so one skeleton serves the page and its launch film.
+The full render-ready web→video pipeline (HyperFrames/Remotion composition,
+`npx hyperframes render` → MP4, avatar walkthroughs) ships in **Cinematic
+Scroll Studio**.
 
 8. **Follow the `technical-spec.md` exactly.** Do not improvise animation
    configs that differ from the approved spec.

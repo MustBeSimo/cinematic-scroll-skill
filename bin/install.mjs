@@ -45,10 +45,9 @@ const PAYLOAD = [
   'MODELS.md',
   'COMPATIBILITY.md',
   'ASSETS-3D.md',      // SKILL.md routes here (3D asset hand-off)
-  'FRAME.md',          // SKILL.md routes here (launch-film / video pipeline)
   'REVIEW.md',         // adversarial self-review referenced by the docs
   'references',
-  'tools',             // cinematic-doctor (the quality gate SKILL.md tells agents to run), verify, heygen, …
+  'tools',             // cinematic-doctor (Taste Engine gate), verify, page-proof, learn (teaser)
   'templates',
   'examples',
   'LICENSE',

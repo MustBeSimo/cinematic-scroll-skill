@@ -196,3 +196,35 @@ video/public/showcase/
 
 # Personal QA / usability research — working artifact, not part of the shipped skill
 docs/qa/
+
+# ----------------------------------------------------------------------------
+# Marketing media → moved to the private Personal repo (cinematic-scroll-personal).
+# The public repo keeps ONLY the assets the README / live site / example pages
+# actually render (banners, gallery stills, the embedded scroll-demo clips).
+# Heavy reels, the YouTube campaign, Premiere projects, and reference frames
+# are NOT public.
+# ----------------------------------------------------------------------------
+.ref/
+assets/youtube/
+*.prproj
+*.prin
+assets/Adobe Premiere Pro Auto-Save/
+assets/reel-1080.mp4
+assets/reel-vertical.mp4
+assets/reel2.mp4
+assets/reel2-hero.gif
+assets/reel3-hero.gif
+assets/two-media.mp4
+assets/hero-demo.gif
+assets/flagship-ride.gif
+assets/flagship-dancer.gif
+assets/studio-scroll-demo.gif
+assets/demo-loop.webm
+assets/demo-poster.jpg
+assets/linkedin-post.md
+assets/promo-v2.4.0/eleven-worlds-1x1*
+assets/video/hero-demo.*
+assets/video/flagship-dancer.*
+assets/video/reel2-hero.*
+assets/video/studio-scroll-demo.mp4
+assets/video/studio-scroll-demo.poster.jpg
