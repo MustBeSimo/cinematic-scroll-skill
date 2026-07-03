@@ -5,7 +5,8 @@
   "type": "module",
   "bin": {
     "cinematic-scroll-skill": "bin/install.mjs",
-    "cinematic-doctor": "tools/cinematic-doctor/cli.mjs"
+    "cinematic-doctor": "tools/cinematic-doctor/cli.mjs",
+    "cinematic-bench": "tools/bench/cli.mjs"
   },
   "files": [
     "bin/",
@@ -57,6 +58,8 @@
     "evals:run": "node evals/run.mjs",
     "skill:sync": "node tools/skill-sync.mjs",
     "skill:sync:check": "node tools/skill-sync.mjs --check",
+    "bench": "node tools/bench/cli.mjs",
+    "bench:selftest": "node tools/bench/score.mjs --selftest && node tools/bench/cli.mjs --selftest && node bench/build-leaderboard.mjs --selftest",
     "test": "npm run tokens:check && npm run themes:check && npm run links:check && npm run consistency:check && npm run learn:selftest && npm run skill:sync:check && npm run components:doctor && npm run doctor:selftest && npm run evals:run",
     "build:tokens": "node tools/build-tokens/build.mjs",
     "build:themes": "for f in themes/*.theme.json; do node tools/build-tokens/build.mjs --theme \"$f\"; done",
