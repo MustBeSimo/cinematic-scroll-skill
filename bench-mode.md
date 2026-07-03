@@ -25,7 +25,7 @@ Exit codes: 0 = scored (a report, not a gate) · 1 = could not score (unmeasurab
 
 Four deterministic dimensions (0–100, deduction-based; rubric fixed in `tools/bench/score.mjs`):
 **Pacing** (25%) · **Performance** (30%) · **Accessibility** (25%) · **Motion Craft** (20%).
-`overall` is the weighted mean. Methodology + reproducibility policy: `tools/bench/README.md`.
+`overall` is the weighted mean. The Accessibility dimension is an automated motion-a11y heuristic — not a WCAG conformance assessment. Methodology + reproducibility policy: `tools/bench/README.md`.
 Unmeasurable sites (bot-wall, robots disallow, timeout) are reported with a reason and never
 scored by guesswork.
 

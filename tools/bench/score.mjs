@@ -4,7 +4,7 @@
    Any change to deductions bumps BENCH_VERSION and requires re-benching the corpus. */
 import { fileURLToPath } from "node:url";
 
-export const BENCH_VERSION = "1.0";
+export const BENCH_VERSION = "1.1";
 const clamp = (x) => Math.max(0, Math.min(100, Math.round(x)));
 
 const REQUIRED = [

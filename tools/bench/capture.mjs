@@ -5,6 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { BENCH_VERSION } from "./score.mjs";
 
 export const UA = "CinematicBench/1.0 (+https://github.com/MustBeSimo/cinematic-scroll-skill)";
 const VIEWPORT = { width: 1440, height: 900 };
@@ -29,30 +30,33 @@ export async function checkRobots(url) {
     const res = await fetch(`${u.origin}/robots.txt`, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(10000) });
     if (!res.ok) return { allowed: true, reason: "no robots.txt" };
     const text = await res.text();
-    // Grouped User-agent: consecutive User-agent lines form ONE group; Disallow applies if any
-    // agent in the group is "*". Reset groupAgents on the first User-agent after a non-UA line.
-    let groupAgents = [], inStar = false, lastWasAgent = false; const disallows = [];
+    // Parse ALL groups per RFC 9309: consecutive User-agent lines form one group sharing the
+    // following rules. Prefer a group whose agent token matches our bot (cinematicbench, case-
+    // insensitive substring); otherwise fall back to the `*` group. Fail-open on fetch errors.
+    const groups = []; let cur = null, lastWasAgent = false;
     for (const raw of text.split(/\r?\n/)) {
       const line = raw.replace(/#.*$/, "").trim();
       if (!line) { lastWasAgent = false; continue; }
       const [k, ...rest] = line.split(":"); const v = rest.join(":").trim();
       if (/^user-agent$/i.test(k)) {
-        if (!lastWasAgent) groupAgents = [];       // start a new group
-        groupAgents.push(v);
-        inStar = groupAgents.includes("*");
+        if (!lastWasAgent) { cur = { agents: [], disallows: [] }; groups.push(cur); }
+        cur.agents.push(v);
         lastWasAgent = true;
       } else {
         lastWasAgent = false;
-        if (inStar && /^disallow$/i.test(k) && v) disallows.push(v);
+        if (cur && /^disallow$/i.test(k) && v) cur.disallows.push(v);
       }
     }
+    const botGroup = groups.find((g) => g.agents.some((a) => /cinematicbench/i.test(a)));
+    const starGroup = groups.find((g) => g.agents.includes("*"));
+    const disallows = (botGroup || starGroup || { disallows: [] }).disallows;
     const p = u.pathname || "/";
     const hit = disallows.find((d) => p.startsWith(d));
     return hit ? { allowed: false, reason: `robots.txt disallows ${hit}` } : { allowed: true, reason: "allowed" };
   } catch { return { allowed: true, reason: "robots.txt unreachable (assumed allowed)" }; }
 }
 
-const un = (reason, url) => ({ bench_version: "1.0", url, viewport: "1440x900", ts: new Date().toISOString(), reachable: false, unmeasurable_reason: reason });
+const un = (reason, url) => ({ bench_version: BENCH_VERSION, url, viewport: "1440x900", ts: new Date().toISOString(), reachable: false, unmeasurable_reason: reason });
 
 async function dismissConsent(page) {
   const sels = ['[id*="cookie"] button', '[class*="cookie"] button', '[class*="consent"] button', '[id*="consent"] button', 'button:has-text("Accept")', 'button:has-text("Agree")', 'button:has-text("Got it")'];
@@ -94,7 +98,7 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
 
   let browser;
   try {
-    browser = await chromium.launch({ executablePath: exe, args: ["--enable-unsafe-swiftshader", "--use-gl=angle", "--use-angle=swiftshader", "--no-sandbox", "--disable-dev-shm-usage"] });
+    browser = await chromium.launch({ executablePath: exe, args: ["--no-sandbox", "--disable-dev-shm-usage"] });
   } catch (err) {
     const e = new Error(`browser failed to launch: ${String(err.message).slice(0, 120)}`);
     e.env = true;
@@ -122,7 +126,8 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
     await page.evaluate(`window.__cls = 0; new PerformanceObserver(l => { for (const e of l.getEntries()) if (!e.hadRecentInput) window.__cls += e.value; }).observe({ type: 'layout-shift', buffered: true });`);
 
     const dims = await page.evaluate(`({ docHeight: document.documentElement.scrollHeight, vh: innerHeight,
-      sections: document.querySelectorAll('section, [class*="section" i], main > div').length })`);
+      sections: document.querySelectorAll('section, [class*="section" i], main > div').length,
+      hasCanvas: !!document.querySelector("canvas") })`);
     const bodyText = await page.evaluate(`document.body.innerText.length`);
     if (dims.docHeight < dims.vh * 0.5 || bodyText < 80) return un("page rendered empty (likely bot-wall)", url);
 
@@ -226,9 +231,9 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
     }
 
     return {
-      bench_version: "1.0", url, viewport: "1440x900", ts: new Date().toISOString(),
+      bench_version: BENCH_VERSION, url, viewport: "1440x900", ts: new Date().toISOString(),
       reachable: true, unmeasurable_reason: null,
-      fps, scroll: { docHeight: dims.docHeight, viewportHeight: dims.vh, sections: dims.sections, pinnedRanges, scrollJack },
+      fps, scroll: { docHeight: dims.docHeight, viewportHeight: dims.vh, sections: dims.sections, pinnedRanges, scrollJack, hasCanvas: dims.hasCanvas },
       motion: { changedNodes: changed, animatedNodes: anim.count, changedRatio: Math.round((changed / sampled) * 100) / 100, transformOpacityOnly: changed ? Math.round((1 - layoutChanged / changed) * 100) / 100 : 1, parallaxLayers: Math.max(0, buckets.size - 1), entranceStagger: anim.stagger },
       stability: { clsProxy },
       a11y: { reducedMotionHonored, focusVisible, contrastFailures, motionToggle },

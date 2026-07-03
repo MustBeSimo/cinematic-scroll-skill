@@ -22,9 +22,7 @@ for every deduction value; the rubric IS the documentation).
 
 ## Reproducibility
 
-Pinned 1440×900 viewport · pinned scroll profile · **median of 3 runs** (numeric median, boolean
-majority) · every result stamped `bench_version` + date · any rubric change bumps `bench_version`
-and re-benches the corpus. Sites that can't be measured (bot-wall, robots disallow, timeout) are
+Pinned 1440×900 viewport · pinned scroll profile · headless Chromium with hardware GPU acceleration (the reference rig is ANGLE Metal on Apple silicon) · **median of 3 runs** (numeric median, boolean majority) · every result stamped with the bench_version + date · any rubric or rig change bumps the bench_version and re-benches the corpus. Sites that can't be measured (bot-wall, robots disallow, timeout) are
 reported `unmeasurable` with the reason and are never ranked. Performance varies with hardware —
 leaderboard numbers are produced on one pinned machine class; your local numbers may differ.
 

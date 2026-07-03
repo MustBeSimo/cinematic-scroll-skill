@@ -46,7 +46,7 @@ if (isMain) {
   const url = args.find((a) => !a.startsWith("--"));
   if (!url || !/^https?:\/\//.test(url)) { console.error("usage: cinematic-bench <https://url> [--runs 3] [--json] [--out file]"); process.exit(2); }
   const opt = (n, d) => { const i = args.indexOf("--" + n); return i > -1 && args[i + 1] ? args[i + 1] : d; };
-  const runsN = Math.max(1, Number(opt("runs", 3)));
+  const runsRaw = Number(opt("runs", 3)); if (!Number.isFinite(runsRaw) || runsRaw < 1) { console.error("usage: cinematic-bench <https://url> [--runs 3] [--json] [--out file]"); process.exit(2); } const runsN = Math.floor(runsRaw);
   const runs = [];
   try {
     for (let i = 0; i < runsN; i++) { console.error(`run ${i + 1}/${runsN} …`); runs.push(await capture(url)); }

@@ -13,13 +13,15 @@ export function buildHtml(results) {
   const ranked = results.filter((r) => r.scores && typeof r.scores.overall === "number").sort((a, b) => b.scores.overall - a.scores.overall || String(a.name).localeCompare(String(b.name)));
   const unmeasurable = results.filter((r) => !(r.scores && typeof r.scores.overall === "number"));
   const cats = [...new Set(ranked.map((r) => r.category))].sort();
-  const bv = ranked[0] ? ranked[0].bench_version : "1.0";
+  const bv = (results.find((r) => r.bench_version) || {}).bench_version || "unknown";
+  const bvs = [...new Set(results.map((r) => r.bench_version).filter(Boolean))];
+  const dates = results.map((r) => String(r.ts || "").slice(0, 10)).filter(Boolean).sort();
   const bar = (v, label) => { const n = Math.max(0, Math.min(100, Math.round(Number(v) || 0))); return `<div class="dim" title="${esc(label)}: ${n}"><span class="fill" style="--v:${n}%"></span><em>${n}</em></div>`; };
   const rows = ranked.map((r, i) => `      <tr data-cat="${esc(r.category)}">
         <td class="rank">${i + 1}</td>
         <td class="site"><a href="${escUrl(r.url)}" rel="noopener nofollow" target="_blank">${esc(r.name)}</a><small>${esc(r.category)}</small></td>
         <td>${bar(r.scores.pacing, "Pacing")}</td><td>${bar(r.scores.performance, "Performance")}</td>
-        <td>${bar(r.scores.a11y, "Accessibility")}</td><td>${bar(r.scores.motionCraft, "Motion Craft")}</td>
+        <td>${bar(r.scores.a11y, "Motion A11y (heuristic)")}</td><td>${bar(r.scores.motionCraft, "Motion Craft")}</td>
         <td class="overall">${r.scores.overall}</td>
       </tr>`).join("\n");
   return `<!doctype html>
@@ -42,8 +44,8 @@ export function buildHtml(results) {
   th{color:var(--dim);font:600 12px/1 inherit;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:12px 10px;border-bottom:1px solid var(--line)}
   td{padding:14px 10px;border-bottom:1px solid var(--track);vertical-align:middle}
   .rank{color:var(--dim);font:600 14px ui-monospace,monospace}.site a{color:var(--ink);text-decoration:none;font-weight:600}.site small{display:block;color:var(--dim)}
-  .dim{position:relative;width:88px;height:8px;background:var(--track);border-radius:4px;overflow:hidden}
-  .dim .fill{position:absolute;inset:0;width:var(--v);background:linear-gradient(90deg,var(--bad),var(--good))}
+  .dim{position:relative;width:88px;height:8px;background:var(--track);border-radius:4px}
+  .dim .fill{position:absolute;inset:0;width:var(--v);background:linear-gradient(90deg,var(--bad),var(--good));border-radius:4px}
   .dim em{position:absolute;right:-2px;top:10px;font:600 11px ui-monospace,monospace;color:var(--dim);font-style:normal}
   .overall{font:700 20px ui-monospace,monospace;color:var(--accent)}
   footer{max-width:1080px;margin:48px auto 0;color:var(--dim);font-size:13px}footer a{color:var(--accent)}
@@ -63,11 +65,11 @@ export function buildHtml(results) {
   <a class="cta" href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">npx -p cinematic-scroll-skill cinematic-bench https://your-site.com</a>
 </header>
 <nav aria-label="category filter"><button aria-pressed="true" data-cat="all">All</button>${cats.map((c) => `<button aria-pressed="false" data-cat="${esc(c)}">${esc(c)}</button>`).join("")}</nav>
-<table><thead><tr><th>#</th><th>Site</th><th>Pacing</th><th>Perf</th><th>A11y</th><th>Craft</th><th>Overall</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">#</th><th scope="col">Site</th><th scope="col">Pacing</th><th scope="col">Perf</th><th scope="col">Motion&nbsp;A11y*</th><th scope="col">Craft</th><th scope="col">Overall</th></tr></thead><tbody>
 ${rows}
 </tbody></table>
 <footer>
-  <p>bench_version ${esc(bv)} · ${ranked.length} sites ranked · ${unmeasurable.length} unmeasurable (bot-wall / robots / timeout — listed in the repo, never guessed) · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">methodology</a> · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll-skill</a></p>
+  <p>measured ${esc(dates[0] || "n/a")}${dates.length > 1 && dates.at(-1) !== dates[0] ? "–" + esc(dates.at(-1)) : ""} · headless Chromium (hardware GL) · 1440×900 · bench_version ${esc(bv)}${bvs.length > 1 ? " (mixed versions!)" : ""} · ${ranked.length} sites ranked · ${unmeasurable.length} unmeasurable (bot-wall / robots / timeout — listed in the repo, never guessed) · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">methodology</a> · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll-skill</a> · *Motion A11y is an automated heuristic (reduced-motion honored, focus visibility, sampled contrast) — not a WCAG conformance assessment.</p>
 </footer>
 <script>
   for (const b of document.querySelectorAll("nav button")) b.addEventListener("click", () => {
@@ -92,6 +94,9 @@ function selftest() {
   ok(!/>blocked</.test(html), "unmeasurable must not be ranked");
   ok(/1 unmeasurable/.test(html), "unmeasurable footnote count");
   ok(/bench_version 1.0/.test(html), "bench_version in footer");
+  ok(/measured /.test(html), "footer must carry the measurement date");
+  ok(/not a WCAG conformance assessment/.test(html), "a11y heuristic disclaimer present");
+  ok(/scope="col"/.test(html), "th scope");
   ok(/prefers-reduced-motion/.test(html), "leaderboard must honor reduced motion itself");
   const evil = buildHtml([fx("evil", 80, "editorial")].map((r) => ({ ...r, url: "javascript:alert(1)", scores: { ...r.scores, pacing: '80" onmouseover="alert(1)' } })));
   ok(!/javascript:alert/.test(evil), "javascript: url must be neutralized");
