@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "The Verge",
+  "category": "editorial",
+  "url": "https://www.theverge.com/",
+  "ts": "2026-07-03T16:11:04.738Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 80,
+    "a11y": 70,
+    "motionCraft": 75,
+    "overall": 82
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://www.theverge.com/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:11:04.738Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 118,
+      "droppedPct": 0,
+      "samples": 707
+    },
+    "scroll": {
+      "docHeight": 10354,
+      "viewportHeight": 900,
+      "sections": 31,
+      "pinnedRanges": 3,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 216,
+      "animatedNodes": 0,
+      "changedRatio": 0.54,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0.003
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 61,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 6,
+      "failedRequests": 26
+    }
+  }
+}

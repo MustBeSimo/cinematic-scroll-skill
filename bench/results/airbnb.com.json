@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Airbnb",
+  "category": "product-launch",
+  "url": "https://www.airbnb.com/",
+  "ts": "2026-07-03T15:38:56.917Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 5,
+    "a11y": 70,
+    "motionCraft": 90,
+    "overall": 62
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://www.airbnb.com/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T15:38:56.917Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 28,
+      "droppedPct": 16,
+      "samples": 169
+    },
+    "scroll": {
+      "docHeight": 1229,
+      "viewportHeight": 900,
+      "sections": 1,
+      "pinnedRanges": 1,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 30,
+      "animatedNodes": 3,
+      "changedRatio": 0.08,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 1,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0.05
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 32,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 2
+    }
+  }
+}

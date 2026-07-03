@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Prisma",
+  "category": "dev-tools",
+  "url": "https://www.prisma.io/",
+  "ts": "2026-07-03T16:43:03.560Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 66,
+    "a11y": 40,
+    "motionCraft": 65,
+    "overall": 68
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://www.prisma.io/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:43:03.560Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 46,
+      "droppedPct": 2,
+      "samples": 236
+    },
+    "scroll": {
+      "docHeight": 3940,
+      "viewportHeight": 900,
+      "sections": 9,
+      "pinnedRanges": 1,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 53,
+      "animatedNodes": 5,
+      "changedRatio": 0.13,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0.059
+    },
+    "a11y": {
+      "reducedMotionHonored": false,
+      "focusVisible": true,
+      "contrastFailures": 5,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 1
+    }
+  }
+}

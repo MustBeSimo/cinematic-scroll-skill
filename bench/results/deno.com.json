@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Deno",
+  "category": "dev-tools",
+  "url": "https://deno.com/",
+  "ts": "2026-07-03T16:51:20.536Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 8,
+    "a11y": 20,
+    "motionCraft": 100,
+    "overall": 52
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://deno.com/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:51:20.536Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 27,
+      "droppedPct": 13,
+      "samples": 170
+    },
+    "scroll": {
+      "docHeight": 14856,
+      "viewportHeight": 900,
+      "sections": 14,
+      "pinnedRanges": 3,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 80,
+      "animatedNodes": 318,
+      "changedRatio": 0.2,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 1,
+      "entranceStagger": true
+    },
+    "stability": {
+      "clsProxy": 0.011
+    },
+    "a11y": {
+      "reducedMotionHonored": false,
+      "focusVisible": true,
+      "contrastFailures": 104,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 1
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "The Pudding",
+  "category": "editorial",
+  "url": "https://www.pudding.cool/",
+  "ts": "2026-07-03T16:08:39.919Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 99,
+    "a11y": 88,
+    "motionCraft": 75,
+    "overall": 92
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://www.pudding.cool/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:08:39.919Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 97,
+      "droppedPct": 1,
+      "samples": 585
+    },
+    "scroll": {
+      "docHeight": 6786,
+      "viewportHeight": 900,
+      "sections": 6,
+      "pinnedRanges": 1,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 93,
+      "animatedNodes": 0,
+      "changedRatio": 0.23,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0.011
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 6,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 0
+    }
+  }
+}

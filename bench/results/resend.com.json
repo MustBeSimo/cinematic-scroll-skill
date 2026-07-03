@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Resend",
+  "category": "dev-tools",
+  "url": "https://resend.com/",
+  "ts": "2026-07-03T16:59:18.602Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 0,
+    "a11y": 20,
+    "motionCraft": 100,
+    "overall": 50
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://resend.com/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:59:18.602Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 20,
+      "droppedPct": 52,
+      "samples": 119
+    },
+    "scroll": {
+      "docHeight": 12280,
+      "viewportHeight": 900,
+      "sections": 12,
+      "pinnedRanges": 1,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 46,
+      "animatedNodes": 12,
+      "changedRatio": 0.12,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 2,
+      "entranceStagger": true
+    },
+    "stability": {
+      "clsProxy": 0.004
+    },
+    "a11y": {
+      "reducedMotionHonored": false,
+      "focusVisible": true,
+      "contrastFailures": 25,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 2,
+      "failedRequests": 1
+    }
+  }
+}

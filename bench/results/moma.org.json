@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "MoMA Store",
+  "category": "e-commerce",
+  "url": "https://www.moma.org/",
+  "ts": "2026-07-03T16:36:00.332Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 83,
+    "a11y": 100,
+    "motionCraft": 90,
+    "overall": 93
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://www.moma.org/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:36:00.332Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 113,
+      "droppedPct": 1,
+      "samples": 678
+    },
+    "scroll": {
+      "docHeight": 8459,
+      "viewportHeight": 900,
+      "sections": 21,
+      "pinnedRanges": 9,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 95,
+      "animatedNodes": 1,
+      "changedRatio": 0.24,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 1,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 0,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 8
+    }
+  }
+}

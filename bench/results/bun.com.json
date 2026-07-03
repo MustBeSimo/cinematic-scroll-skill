@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Bun",
+  "category": "dev-tools",
+  "url": "https://bun.com/",
+  "ts": "2026-07-03T16:48:56.825Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 90,
+    "performance": 92,
+    "a11y": 36,
+    "motionCraft": 75,
+    "overall": 74
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://bun.com/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:48:56.825Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 96,
+      "droppedPct": 1,
+      "samples": 568
+    },
+    "scroll": {
+      "docHeight": 16364,
+      "viewportHeight": 900,
+      "sections": 16,
+      "pinnedRanges": 0,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 6,
+      "animatedNodes": 8,
+      "changedRatio": 0.02,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0
+    },
+    "a11y": {
+      "reducedMotionHonored": false,
+      "focusVisible": true,
+      "contrastFailures": 7,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 1,
+      "failedRequests": 1
+    }
+  }
+}

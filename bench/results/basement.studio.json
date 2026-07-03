@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Basement Studio",
+  "category": "portfolio-agency",
+  "url": "https://basement.studio/",
+  "ts": "2026-07-03T15:48:56.071Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 0,
+    "a11y": 20,
+    "motionCraft": 90,
+    "overall": 48
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://basement.studio/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T15:48:56.071Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 13,
+      "droppedPct": 100,
+      "samples": 81
+    },
+    "scroll": {
+      "docHeight": 6317,
+      "viewportHeight": 900,
+      "sections": 3,
+      "pinnedRanges": 4,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 88,
+      "animatedNodes": 34,
+      "changedRatio": 0.22,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 3,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0
+    },
+    "a11y": {
+      "reducedMotionHonored": false,
+      "focusVisible": true,
+      "contrastFailures": 16,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 0
+    }
+  }
+}

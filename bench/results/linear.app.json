@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Linear",
+  "category": "product-launch",
+  "url": "https://linear.app/",
+  "ts": "2026-07-03T15:12:43.740Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 90,
+    "performance": 0,
+    "a11y": 20,
+    "motionCraft": 75,
+    "overall": 43
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://linear.app/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T15:12:43.740Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 8,
+      "droppedPct": 49,
+      "samples": 49
+    },
+    "scroll": {
+      "docHeight": 10898,
+      "viewportHeight": 900,
+      "sections": 109,
+      "pinnedRanges": 0,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 8,
+      "animatedNodes": 104,
+      "changedRatio": 0.02,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0
+    },
+    "a11y": {
+      "reducedMotionHonored": false,
+      "focusVisible": true,
+      "contrastFailures": 40,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 1,
+      "failedRequests": 1
+    }
+  }
+}

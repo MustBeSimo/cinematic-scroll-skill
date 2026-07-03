@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Immersive Garden",
+  "category": "portfolio-agency",
+  "url": "https://immersive-g.com/",
+  "ts": "2026-07-03T16:06:14.310Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 70,
+    "performance": 95,
+    "a11y": 76,
+    "motionCraft": 45,
+    "overall": 74
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://immersive-g.com/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:06:14.310Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
+    },
+    "scroll": {
+      "docHeight": 900,
+      "viewportHeight": 900,
+      "sections": 18,
+      "pinnedRanges": 0,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 0,
+      "animatedNodes": 0,
+      "changedRatio": 0,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": false,
+      "contrastFailures": 2,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 1,
+      "failedRequests": 0
+    }
+  }
+}

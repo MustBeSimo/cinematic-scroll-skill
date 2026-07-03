@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "PlanetScale",
+  "category": "dev-tools",
+  "url": "https://planetscale.com/",
+  "ts": "2026-07-03T16:55:36.190Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 70,
+    "performance": 100,
+    "a11y": 78,
+    "motionCraft": 45,
+    "overall": 76
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://planetscale.com/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:55:36.190Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 117,
+      "droppedPct": 0,
+      "samples": 700
+    },
+    "scroll": {
+      "docHeight": 7269,
+      "viewportHeight": 900,
+      "sections": 1,
+      "pinnedRanges": 0,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 0,
+      "animatedNodes": 0,
+      "changedRatio": 0,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 11,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 0
+    }
+  }
+}

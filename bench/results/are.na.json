@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Are.na",
+  "category": "editorial",
+  "url": "https://www.are.na/",
+  "ts": "2026-07-03T16:18:34.780Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 92,
+    "a11y": 100,
+    "motionCraft": 75,
+    "overall": 93
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://www.are.na/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T16:18:34.780Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
+    },
+    "scroll": {
+      "docHeight": 2658,
+      "viewportHeight": 900,
+      "sections": 1,
+      "pinnedRanges": 0,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 11,
+      "animatedNodes": 1,
+      "changedRatio": 0.07,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 0,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 4
+    }
+  }
+}

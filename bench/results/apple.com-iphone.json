@@ -1,0 +1,57 @@
+{
+  "bench_version": "1.0",
+  "name": "Apple — iPhone",
+  "category": "product-launch",
+  "url": "https://www.apple.com/iphone/",
+  "ts": "2026-07-03T15:01:40.077Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 95,
+    "a11y": 90,
+    "motionCraft": 60,
+    "overall": 88
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.0",
+    "url": "https://www.apple.com/iphone/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T15:01:40.077Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 64,
+      "droppedPct": 5,
+      "samples": 390
+    },
+    "scroll": {
+      "docHeight": 13120,
+      "viewportHeight": 900,
+      "sections": 254,
+      "pinnedRanges": 2,
+      "scrollJack": false
+    },
+    "motion": {
+      "changedNodes": 9,
+      "animatedNodes": 33,
+      "changedRatio": 0.02,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": true
+    },
+    "stability": {
+      "clsProxy": 0.249
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 5,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 0
+    }
+  }
+}
