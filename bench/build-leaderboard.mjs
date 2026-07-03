@@ -7,16 +7,17 @@ import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const escUrl = (u) => (/^https?:\/\//i.test(String(u)) ? esc(u) : "#");
 
 export function buildHtml(results) {
-  const ranked = results.filter((r) => r.scores && typeof r.scores.overall === "number").sort((a, b) => b.scores.overall - a.scores.overall);
-  const unmeasurable = results.filter((r) => !r.scores);
+  const ranked = results.filter((r) => r.scores && typeof r.scores.overall === "number").sort((a, b) => b.scores.overall - a.scores.overall || String(a.name).localeCompare(String(b.name)));
+  const unmeasurable = results.filter((r) => !(r.scores && typeof r.scores.overall === "number"));
   const cats = [...new Set(ranked.map((r) => r.category))].sort();
   const bv = ranked[0] ? ranked[0].bench_version : "1.0";
-  const bar = (v, label) => `<div class="dim" title="${esc(label)}: ${v}"><span class="fill" style="--v:${v}%"></span><em>${v}</em></div>`;
+  const bar = (v, label) => { const n = Math.max(0, Math.min(100, Math.round(Number(v) || 0))); return `<div class="dim" title="${esc(label)}: ${n}"><span class="fill" style="--v:${n}%"></span><em>${n}</em></div>`; };
   const rows = ranked.map((r, i) => `      <tr data-cat="${esc(r.category)}">
         <td class="rank">${i + 1}</td>
-        <td class="site"><a href="${esc(r.url)}" rel="noopener nofollow" target="_blank">${esc(r.name)}</a><small>${esc(r.category)}</small></td>
+        <td class="site"><a href="${escUrl(r.url)}" rel="noopener nofollow" target="_blank">${esc(r.name)}</a><small>${esc(r.category)}</small></td>
         <td>${bar(r.scores.pacing, "Pacing")}</td><td>${bar(r.scores.performance, "Performance")}</td>
         <td>${bar(r.scores.a11y, "Accessibility")}</td><td>${bar(r.scores.motionCraft, "Motion Craft")}</td>
         <td class="overall">${r.scores.overall}</td>
@@ -81,7 +82,12 @@ function selftest() {
   ok(/1 unmeasurable/.test(html), "unmeasurable footnote count");
   ok(/bench_version 1.0/.test(html), "bench_version in footer");
   ok(/prefers-reduced-motion/.test(html), "leaderboard must honor reduced motion itself");
-  console.log("✓ leaderboard selftest: ranks, excludes unmeasurable, footnotes, versioned.");
+  const evil = buildHtml([fx("evil", 80, "editorial")].map((r) => ({ ...r, url: "javascript:alert(1)", scores: { ...r.scores, pacing: '80" onmouseover="alert(1)' } })));
+  ok(!/javascript:alert/.test(evil), "javascript: url must be neutralized");
+  ok(!/onmouseover/.test(evil), "string sub-score must not inject markup");
+  const partial = buildHtml([fx("ok", 70, "editorial"), { bench_version: "1.0", name: "weird", url: "https://x.test/w", category: "editorial", scores: { overall: null }, unmeasurable_reason: null }]);
+  ok(/1 unmeasurable/.test(partial) && !/>weird</.test(partial), "invalid-scores record counts as unmeasurable, not ranked");
+  console.log("✓ leaderboard selftest: ranks, excludes unmeasurable, footnotes, versioned, escapes.");
   process.exit(0);
 }
 
