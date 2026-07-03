@@ -1,0 +1,58 @@
+{
+  "bench_version": "1.1",
+  "name": "The New Yorker",
+  "category": "editorial",
+  "url": "https://www.newyorker.com/",
+  "ts": "2026-07-03T18:33:30.224Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 80,
+    "performance": 80,
+    "a11y": 70,
+    "motionCraft": 65,
+    "overall": 75
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.1",
+    "url": "https://www.newyorker.com/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T18:33:30.224Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 119,
+      "droppedPct": 0,
+      "samples": 712
+    },
+    "scroll": {
+      "docHeight": 18227,
+      "viewportHeight": 900,
+      "sections": 25,
+      "pinnedRanges": 1,
+      "scrollJack": false,
+      "hasCanvas": false
+    },
+    "motion": {
+      "changedNodes": 325,
+      "animatedNodes": 0,
+      "changedRatio": 0.81,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 1,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0.173
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 42,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 26,
+      "failedRequests": 85
+    }
+  }
+}

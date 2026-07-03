@@ -24,6 +24,9 @@
 >   login, you must supply credentials or a pre-authenticated session — doing so
 >   exposes that authenticated context to the audit run. Prefer a throwaway/test
 >   account over real credentials, and never audit a site whose terms forbid it.
+> - **Benching is different from auditing.** Passive, Lighthouse-style scoring of a public
+>   URL's rendered scroll experience is [bench mode](./bench-mode.md) — one ordinary page load,
+>   no authorization needed. Audit mode's deep remediation analysis still requires it.
 > - Confirm before auditing `localhost`/internal URLs (see Input Validation below).
 
 ---

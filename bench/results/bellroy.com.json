@@ -1,0 +1,10 @@
+{
+  "bench_version": "1.1",
+  "name": "Bellroy",
+  "category": "e-commerce",
+  "url": "https://www.bellroy.com/",
+  "ts": "2026-07-03T18:48:24.421Z",
+  "runs": 3,
+  "scores": null,
+  "unmeasurable_reason": "page rendered empty (likely bot-wall)"
+}

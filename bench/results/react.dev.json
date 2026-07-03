@@ -1,0 +1,58 @@
+{
+  "bench_version": "1.1",
+  "name": "React",
+  "category": "dev-tools",
+  "url": "https://react.dev/",
+  "ts": "2026-07-03T18:56:35.861Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 98,
+    "a11y": 96,
+    "motionCraft": 75,
+    "overall": 93
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.1",
+    "url": "https://react.dev/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T18:56:35.861Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
+    },
+    "scroll": {
+      "docHeight": 8857,
+      "viewportHeight": 900,
+      "sections": 4,
+      "pinnedRanges": 1,
+      "scrollJack": false,
+      "hasCanvas": false
+    },
+    "motion": {
+      "changedNodes": 16,
+      "animatedNodes": 4,
+      "changedRatio": 0.04,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 2,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 1
+    }
+  }
+}

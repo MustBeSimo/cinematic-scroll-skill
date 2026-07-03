@@ -1,0 +1,58 @@
+{
+  "bench_version": "1.1",
+  "name": "Instrument",
+  "category": "portfolio-agency",
+  "url": "https://www.instrument.com/",
+  "ts": "2026-07-03T18:13:26.662Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 80,
+    "a11y": 70,
+    "motionCraft": 65,
+    "overall": 80
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.1",
+    "url": "https://www.instrument.com/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T18:13:26.662Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 719
+    },
+    "scroll": {
+      "docHeight": 6686,
+      "viewportHeight": 900,
+      "sections": 23,
+      "pinnedRanges": 1,
+      "scrollJack": false,
+      "hasCanvas": false
+    },
+    "motion": {
+      "changedNodes": 69,
+      "animatedNodes": 3,
+      "changedRatio": 0.17,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 1,
+      "entranceStagger": false
+    },
+    "stability": {
+      "clsProxy": 0.107
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 18,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 7,
+      "failedRequests": 4
+    }
+  }
+}

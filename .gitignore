@@ -228,3 +228,6 @@ assets/video/flagship-dancer.*
 assets/video/reel2-hero.*
 assets/video/studio-scroll-demo.mp4
 assets/video/studio-scroll-demo.poster.jpg
+
+# SDD scratch (subagent-driven-development ledger/handoffs)
+.superpowers/

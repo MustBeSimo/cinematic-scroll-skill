@@ -1,0 +1,58 @@
+{
+  "bench_version": "1.1",
+  "name": "Ueno",
+  "category": "portfolio-agency",
+  "url": "https://www.ueno.co/",
+  "ts": "2026-07-03T18:15:46.742Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 100,
+    "a11y": 70,
+    "motionCraft": 85,
+    "overall": 90
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.1",
+    "url": "https://www.ueno.co/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T18:15:46.742Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
+    },
+    "scroll": {
+      "docHeight": 2829,
+      "viewportHeight": 900,
+      "sections": 14,
+      "pinnedRanges": 0,
+      "scrollJack": false,
+      "hasCanvas": false
+    },
+    "motion": {
+      "changedNodes": 21,
+      "animatedNodes": 2,
+      "changedRatio": 0.13,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": true
+    },
+    "stability": {
+      "clsProxy": 0.005
+    },
+    "a11y": {
+      "reducedMotionHonored": true,
+      "focusVisible": true,
+      "contrastFailures": 15,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 0,
+      "failedRequests": 0
+    }
+  }
+}

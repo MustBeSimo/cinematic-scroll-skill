@@ -37,6 +37,7 @@ const PAYLOAD = [
   'taste-guardrails.md',
   'audit-mode.md',
   'learn-mode.md',
+  'bench-mode.md',
   'troubleshooting.md',
   'decision-log.md',
   'scroll-choreography.json',

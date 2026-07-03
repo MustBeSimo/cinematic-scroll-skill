@@ -1,0 +1,58 @@
+{
+  "bench_version": "1.1",
+  "name": "Lusion",
+  "category": "portfolio-agency",
+  "url": "https://lusion.co/",
+  "ts": "2026-07-03T17:59:26.182Z",
+  "runs": 3,
+  "scores": {
+    "pacing": 100,
+    "performance": 82,
+    "a11y": 28,
+    "motionCraft": 85,
+    "overall": 74
+  },
+  "unmeasurable_reason": null,
+  "measurements": {
+    "bench_version": "1.1",
+    "url": "https://lusion.co/",
+    "viewport": "1440x900",
+    "ts": "2026-07-03T17:59:26.182Z",
+    "reachable": true,
+    "unmeasurable_reason": null,
+    "fps": {
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
+    },
+    "scroll": {
+      "docHeight": 900,
+      "viewportHeight": 900,
+      "sections": 17,
+      "pinnedRanges": 0,
+      "scrollJack": false,
+      "hasCanvas": true
+    },
+    "motion": {
+      "changedNodes": 1,
+      "animatedNodes": 6,
+      "changedRatio": 0,
+      "transformOpacityOnly": 1,
+      "parallaxLayers": 0,
+      "entranceStagger": true
+    },
+    "stability": {
+      "clsProxy": 0
+    },
+    "a11y": {
+      "reducedMotionHonored": false,
+      "focusVisible": false,
+      "contrastFailures": 1,
+      "motionToggle": false
+    },
+    "console": {
+      "errors": 2,
+      "failedRequests": 4
+    }
+  }
+}
