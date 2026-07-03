@@ -29,12 +29,22 @@ export async function checkRobots(url) {
     const res = await fetch(`${u.origin}/robots.txt`, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(10000) });
     if (!res.ok) return { allowed: true, reason: "no robots.txt" };
     const text = await res.text();
-    let inStar = false; const disallows = [];
+    // Grouped User-agent: consecutive User-agent lines form ONE group; Disallow applies if any
+    // agent in the group is "*". Reset groupAgents on the first User-agent after a non-UA line.
+    let groupAgents = [], inStar = false, lastWasAgent = false; const disallows = [];
     for (const raw of text.split(/\r?\n/)) {
-      const line = raw.replace(/#.*$/, "").trim(); if (!line) continue;
+      const line = raw.replace(/#.*$/, "").trim();
+      if (!line) { lastWasAgent = false; continue; }
       const [k, ...rest] = line.split(":"); const v = rest.join(":").trim();
-      if (/^user-agent$/i.test(k)) inStar = v === "*";
-      else if (inStar && /^disallow$/i.test(k) && v) disallows.push(v);
+      if (/^user-agent$/i.test(k)) {
+        if (!lastWasAgent) groupAgents = [];       // start a new group
+        groupAgents.push(v);
+        inStar = groupAgents.includes("*");
+        lastWasAgent = true;
+      } else {
+        lastWasAgent = false;
+        if (inStar && /^disallow$/i.test(k) && v) disallows.push(v);
+      }
     }
     const p = u.pathname || "/";
     const hit = disallows.find((d) => p.startsWith(d));
@@ -50,15 +60,26 @@ async function dismissConsent(page) {
   return false;
 }
 
-/* In-page probe: sample up to 400 visible elements at two scroll depths; diff document-space
-   position/opacity/size to find scroll-coupled nodes, parallax velocity buckets, layout-animating
-   nodes; count sections/pins; sample text contrast. Injected once, called twice. */
-const PROBE = `(() => {
+/* Motion probes: sample DOM nodes ONCE (PROBE_SAMPLE), store refs on window.__cbSample, then
+   re-measure those SAME nodes at a second scroll depth (PROBE_MEASURE). This prevents index
+   misalignment from re-querying a live DOM that may have changed between the two depths. */
+const PROBE_SAMPLE = `(() => {
   const els = [...document.querySelectorAll('body *')].filter(e => { const r = e.getBoundingClientRect(); return r.width > 8 && r.height > 8; });
   const stride = Math.max(1, Math.floor(els.length / 400));
-  const sample = els.filter((_, i) => i % stride === 0).slice(0, 400);
-  return sample.map(e => { const r = e.getBoundingClientRect(); const cs = getComputedStyle(e);
+  window.__cbSample = els.filter((_, i) => i % stride === 0).slice(0, 400);
+  return window.__cbSample.map(e => { const r = e.getBoundingClientRect(); const cs = getComputedStyle(e);
     return { docTop: r.top + scrollY, w: Math.round(r.width), h: Math.round(r.height), op: +cs.opacity, tf: cs.transform }; });
+})()`;
+
+const PROBE_MEASURE = `(() => {
+  if (!window.__cbSample) return [];
+  return window.__cbSample.map(e => {
+    if (!e.isConnected) return null;
+    const r = e.getBoundingClientRect();
+    if (r.width === 0 && r.height === 0) return null;
+    const cs = getComputedStyle(e);
+    return { docTop: r.top + scrollY, w: Math.round(r.width), h: Math.round(r.height), op: +cs.opacity, tf: cs.transform };
+  });
 })()`;
 
 export async function capture(url, { budgetMs = 90000 } = {}) {
@@ -71,10 +92,19 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
   const robots = await checkRobots(url);
   if (!robots.allowed) return un(robots.reason, url);
 
-  const browser = await chromium.launch({ executablePath: exe, args: ["--enable-unsafe-swiftshader", "--use-gl=angle", "--use-angle=swiftshader", "--no-sandbox", "--disable-dev-shm-usage"] });
+  let browser;
+  try {
+    browser = await chromium.launch({ executablePath: exe, args: ["--enable-unsafe-swiftshader", "--use-gl=angle", "--use-angle=swiftshader", "--no-sandbox", "--disable-dev-shm-usage"] });
+  } catch (err) {
+    const e = new Error(`browser failed to launch: ${String(err.message).slice(0, 120)}`);
+    e.env = true;
+    throw e;
+  }
   const deadline = Date.now() + budgetMs;
+  const left = () => deadline - Date.now();
   try {
     const page = await browser.newPage({ viewport: VIEWPORT, userAgent: UA });
+    page.setDefaultTimeout(15000);
     let errors = 0, failedRequests = 0;
     page.on("console", (m) => { if (m.type() === "error") errors++; });
     page.on("pageerror", () => errors++);
@@ -83,7 +113,10 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
     try { await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 }); }
     catch (e) { return un(`navigation failed: ${String(e.message).slice(0, 120)}`, url); }
     await page.waitForTimeout(2500);
+    if (left() <= 0) return un("budget exceeded", url);   // check 1: after navigation+settle
+
     await dismissConsent(page);
+    if (left() <= 0) return un("budget exceeded", url);   // check 2: after consent dismissal
 
     // CLS observer for the whole session
     await page.evaluate(`window.__cls = 0; new PerformanceObserver(l => { for (const e of l.getEntries()) if (!e.hadRecentInput) window.__cls += e.value; }).observe({ type: 'layout-shift', buffered: true });`);
@@ -93,24 +126,39 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
     const bodyText = await page.evaluate(`document.body.innerText.length`);
     if (dims.docHeight < dims.vh * 0.5 || bodyText < 80) return un("page rendered empty (likely bot-wall)", url);
 
-    // scroll-jack probe: command a scroll, verify the document actually moved
+    // scroll-jack probe: command a scroll, poll scrollY every 250ms for up to 3s to allow
+    // smooth-scrolling libs (Lenis, GSAP ScrollSmoother) to converge; record maxY seen.
+    // Flag only when the document essentially never moved (wrapper-hijacked scroll).
     await page.evaluate(`window.scrollTo(0, 0.4 * (document.documentElement.scrollHeight - innerHeight))`);
-    await page.waitForTimeout(500);
-    const jackY = await page.evaluate(`scrollY`);
     const expectY = await page.evaluate(`0.4 * (document.documentElement.scrollHeight - innerHeight)`);
-    const scrollJack = dims.docHeight > dims.vh * 1.5 && Math.abs(jackY - expectY) > dims.vh * 0.5;
+    let maxY = 0;
+    for (let poll = 0; poll < 12; poll++) {
+      await page.waitForTimeout(250);
+      const curY = await page.evaluate(`scrollY`);
+      if (curY > maxY) maxY = curY;
+    }
+    const scrollJack = dims.docHeight > dims.vh * 1.5 && maxY < 0.1 * expectY;
+    if (left() <= 0) return un("budget exceeded", url);   // check 3: after scroll-jack probe
 
-    // two-depth motion sampling (document space)
+    // Reset scroll and settle before motion sampling
+    await page.evaluate(`window.scrollTo(0, 0)`);
+    await page.waitForTimeout(300);
+
+    // two-depth motion sampling (document space): sample nodes ONCE (PROBE_SAMPLE at depth 1),
+    // then re-measure those SAME stored nodes (PROBE_MEASURE at depth 2). Null entries in s2
+    // indicate nodes that became disconnected or hidden; skip them and track count separately.
     await page.evaluate(`window.scrollTo(0, 0.25 * (document.documentElement.scrollHeight - innerHeight))`);
     await page.waitForTimeout(800);
-    const s1 = await page.evaluate(PROBE); const y1 = await page.evaluate(`scrollY`);
+    const s1 = await page.evaluate(PROBE_SAMPLE); const y1 = await page.evaluate(`scrollY`);
     await page.evaluate(`window.scrollTo(0, 0.55 * (document.documentElement.scrollHeight - innerHeight))`);
     await page.waitForTimeout(800);
-    const s2 = await page.evaluate(PROBE); const y2 = await page.evaluate(`scrollY`);
+    const s2 = await page.evaluate(PROBE_MEASURE); const y2 = await page.evaluate(`scrollY`);
     const dScroll = Math.max(1, y2 - y1);
-    let changed = 0, layoutChanged = 0; const buckets = new Set();
-    for (let i = 0; i < Math.min(s1.length, s2.length); i++) {
+    let changed = 0, layoutChanged = 0, skipped = 0; const buckets = new Set();
+    const n = Math.min(s1.length, s2.length);
+    for (let i = 0; i < n; i++) {
       const a = s1[i], b = s2[i];
+      if (a === null || b === null) { skipped++; continue; }
       const dDoc = b.docTop - a.docTop;                     // movement in document space
       const moved = Math.abs(dDoc) > 4, faded = Math.abs(b.op - a.op) > 0.05, tfd = a.tf !== b.tf;
       if (moved || faded || tfd) {
@@ -119,7 +167,8 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
         if (moved) buckets.add(Math.round((dDoc / dScroll) * 10) / 10);
       }
     }
-    const sampled = Math.min(s1.length, s2.length) || 1;
+    const sampled = Math.max(1, n - skipped);
+    if (left() <= 0) return un("budget exceeded", url);   // check 4: after motion sampling
 
     // WAAPI/CSS animations + stagger
     const anim = await page.evaluate(`(() => { const as = document.getAnimations ? document.getAnimations() : [];
@@ -127,6 +176,7 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
       return { count: as.length, stagger: delays.size >= 2 }; })()`);
 
     // fps: page-proof's steady 6s rAF scroll rig
+    if (left() <= 0) return un("budget exceeded", url);   // check 5: before fps rig
     await page.evaluate(`window.scrollTo(0, 0)`); await page.waitForTimeout(500);
     const fps = await page.evaluate(`new Promise(resolve => {
       const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
@@ -144,7 +194,7 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
     const focusVisible = await page.evaluate(`(() => { const e = document.activeElement; if (!e || e === document.body) return false;
       const cs = getComputedStyle(e); return cs.outlineStyle !== 'none' || cs.boxShadow !== 'none'; })()`);
     const contrastFailures = await page.evaluate(`(() => {
-      const lum = (c) => { const [r,g,b] = c.match(/\\d+(\\.\\d+)?/g).slice(0,3).map(Number).map(v => { v /= 255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }); return 0.2126*r+0.7152*g+0.0722*b; };
+      const lum = (c) => { const [r,g,b] = c.match(/\\d+(\\.\\d+)?/g).slice(0,3).map(Number).map(v => { v /= 255; return v <= 0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }); return 0.2126*r+0.7152*g+0.0722*b; };
       let fails = 0, checked = 0;
       for (const e of document.querySelectorAll('p, a, li, span, h1, h2, h3, h4, button')) {
         if (checked >= 150) break; const cs = getComputedStyle(e);
@@ -165,6 +215,7 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
     let reducedMotionHonored = changed === 0 && anim.count === 0; // trivially honored when static
     if (!reducedMotionHonored && Date.now() < deadline) {
       const p2 = await browser.newPage({ viewport: VIEWPORT, userAgent: UA });
+      p2.setDefaultTimeout(15000);
       try {
         await p2.emulateMedia({ reducedMotion: "reduce" });
         await p2.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 });
