@@ -18,7 +18,7 @@ export function medianize(runs) {
   const good = runs.filter((r) => r.reachable);
   if (!good.length) return runs[0];
   const out = JSON.parse(JSON.stringify(good[0]));
-  const median = (xs) => { const s = [...xs].sort((a, b) => a - b); return s[Math.floor(s.length / 2)]; };
+  const median = (xs) => { const s = [...xs].sort((a, b) => a - b); const mid = s.length / 2; return s.length % 2 ? s[Math.floor(mid)] : (s[mid - 1] + s[mid]) / 2; };
   for (const p of NUM_PATHS) set(out, p, median(good.map((r) => get(r, p) ?? 0)));
   for (const p of BOOL_PATHS) set(out, p, good.filter((r) => get(r, p)).length * 2 > good.length);
   return out;
@@ -29,7 +29,13 @@ function selftest() {
   const m = medianize([mk(30, true), mk(60, false), mk(50, false)]);
   if (m.fps.avg !== 50) { console.error("✗ cli selftest: median fps expected 50, got " + m.fps.avg); process.exit(1); }
   if (m.scroll.scrollJack !== false) { console.error("✗ cli selftest: boolean majority expected false"); process.exit(1); }
-  console.log("✓ cli selftest: medianize — numeric median + boolean majority.");
+  const two = medianize([mk(30, false), mk(60, false)]);
+  if (two.fps.avg !== 45) { console.error("✗ cli selftest: even-array median expected 45, got " + two.fps.avg); process.exit(1); }
+  const withBad = medianize([{ reachable: false, unmeasurable_reason: "x" }, mk(50, false), mk(70, false)]);
+  if (withBad.fps.avg !== 60) { console.error("✗ cli selftest: unreachable runs must be excluded, expected 60, got " + withBad.fps.avg); process.exit(1); }
+  const allBad = medianize([{ reachable: false, unmeasurable_reason: "x" }]);
+  if (allBad.reachable !== false) { console.error("✗ cli selftest: all-unreachable must return runs[0]"); process.exit(1); }
+  console.log("✓ cli selftest: medianize — numeric median (odd+even), boolean majority, unreachable excluded.");
   process.exit(0);
 }
 
