@@ -1,40 +1,41 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Raycast",
   "category": "product-launch",
   "url": "https://www.raycast.com/",
-  "ts": "2026-07-03T15:20:28.225Z",
+  "ts": "2026-07-03T17:45:57.073Z",
   "runs": 3,
   "scores": {
     "pacing": 90,
-    "performance": 0,
-    "a11y": 0,
+    "performance": 98,
+    "a11y": 50,
     "motionCraft": 85,
-    "overall": 40
+    "overall": 81
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.raycast.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:20:28.225Z",
+    "ts": "2026-07-03T17:45:57.073Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 6,
-      "droppedPct": 58,
-      "samples": 24
+      "avg": 119,
+      "droppedPct": 0,
+      "samples": 716
     },
     "scroll": {
       "docHeight": 15626,
       "viewportHeight": 900,
       "sections": 110,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": true
     },
     "motion": {
       "changedNodes": 4,
-      "animatedNodes": 42,
+      "animatedNodes": 30,
       "changedRatio": 0.01,
       "transformOpacityOnly": 1,
       "parallaxLayers": 0,
@@ -44,14 +45,14 @@
       "clsProxy": 0
     },
     "a11y": {
-      "reducedMotionHonored": false,
+      "reducedMotionHonored": true,
       "focusVisible": false,
       "contrastFailures": 56,
       "motionToggle": false
     },
     "console": {
       "errors": 0,
-      "failedRequests": 0
+      "failedRequests": 1
     }
   }
 }

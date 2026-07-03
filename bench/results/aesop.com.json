@@ -1,23 +1,23 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Aesop",
   "category": "e-commerce",
   "url": "https://www.aesop.com/",
-  "ts": "2026-07-03T16:27:31.777Z",
+  "ts": "2026-07-03T18:43:33.123Z",
   "runs": 3,
   "scores": {
     "pacing": 90,
     "performance": 80,
     "a11y": 0,
-    "motionCraft": 50,
-    "overall": 57
+    "motionCraft": 75,
+    "overall": 62
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.aesop.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:27:31.777Z",
+    "ts": "2026-07-03T18:43:33.123Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
@@ -26,11 +26,12 @@
       "samples": 720
     },
     "scroll": {
-      "docHeight": 8024,
+      "docHeight": 7906,
       "viewportHeight": 900,
       "sections": 97,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 1,
@@ -41,7 +42,7 @@
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.198
+      "clsProxy": 0.003
     },
     "a11y": {
       "reducedMotionHonored": false,
@@ -50,8 +51,8 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 154,
-      "failedRequests": 31
+      "errors": 8,
+      "failedRequests": 1
     }
   }
 }

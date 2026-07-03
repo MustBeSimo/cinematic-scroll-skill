@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Apple Store — Mac",
   "category": "e-commerce",
   "url": "https://www.apple.com/shop/buy-mac",
-  "ts": "2026-07-03T16:37:52.395Z",
+  "ts": "2026-07-03T18:51:59.747Z",
   "runs": 3,
   "scores": {
     "pacing": 90,
-    "performance": 97,
+    "performance": 93,
     "a11y": 90,
     "motionCraft": 85,
-    "overall": 91
+    "overall": 90
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.apple.com/shop/buy-mac",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:37:52.395Z",
+    "ts": "2026-07-03T18:51:59.747Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 100,
-      "droppedPct": 1,
-      "samples": 602
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
     },
     "scroll": {
       "docHeight": 6877,
       "viewportHeight": 900,
       "sections": 204,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 1,
@@ -41,7 +42,7 @@
       "entranceStagger": true
     },
     "stability": {
-      "clsProxy": 0
+      "clsProxy": 0.022
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -50,7 +51,7 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 0,
+      "errors": 1,
       "failedRequests": 1
     }
   }

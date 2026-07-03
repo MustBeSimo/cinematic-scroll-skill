@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "WIRED",
   "category": "editorial",
   "url": "https://www.wired.com/",
-  "ts": "2026-07-03T16:17:01.343Z",
+  "ts": "2026-07-03T18:34:55.517Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 76,
+    "performance": 79,
     "a11y": 84,
     "motionCraft": 65,
-    "overall": 82
+    "overall": 83
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.wired.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:17:01.343Z",
+    "ts": "2026-07-03T18:34:55.517Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 90,
-      "droppedPct": 4,
-      "samples": 535
+      "avg": 107,
+      "droppedPct": 1,
+      "samples": 643
     },
     "scroll": {
-      "docHeight": 8245,
+      "docHeight": 8287,
       "viewportHeight": 900,
       "sections": 38,
       "pinnedRanges": 1,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 46,
@@ -41,7 +42,7 @@
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 1.215
+      "clsProxy": 0.826
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -50,8 +51,8 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 89,
-      "failedRequests": 165
+      "errors": 83,
+      "failedRequests": 177
     }
   }
 }

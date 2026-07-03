@@ -1,39 +1,40 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Deno",
   "category": "dev-tools",
   "url": "https://deno.com/",
-  "ts": "2026-07-03T16:51:20.536Z",
+  "ts": "2026-07-03T18:59:27.078Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 8,
+    "performance": 98,
     "a11y": 20,
     "motionCraft": 100,
-    "overall": 52
+    "overall": 79
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://deno.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:51:20.536Z",
+    "ts": "2026-07-03T18:59:27.078Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 27,
-      "droppedPct": 13,
-      "samples": 170
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
     },
     "scroll": {
       "docHeight": 14856,
       "viewportHeight": 900,
       "sections": 14,
       "pinnedRanges": 3,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": true
     },
     "motion": {
-      "changedNodes": 80,
+      "changedNodes": 78,
       "animatedNodes": 318,
       "changedRatio": 0.2,
       "transformOpacityOnly": 1,
@@ -41,7 +42,7 @@
       "entranceStagger": true
     },
     "stability": {
-      "clsProxy": 0.011
+      "clsProxy": 0.005
     },
     "a11y": {
       "reducedMotionHonored": false,

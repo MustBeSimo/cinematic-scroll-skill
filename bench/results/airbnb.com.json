@@ -1,47 +1,48 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Airbnb",
   "category": "product-launch",
   "url": "https://www.airbnb.com/",
-  "ts": "2026-07-03T15:38:56.917Z",
+  "ts": "2026-07-03T17:57:33.133Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 5,
+    "performance": 92,
     "a11y": 70,
     "motionCraft": 90,
-    "overall": 62
+    "overall": 88
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.airbnb.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:38:56.917Z",
+    "ts": "2026-07-03T17:57:33.133Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 28,
-      "droppedPct": 16,
-      "samples": 169
+      "avg": 116,
+      "droppedPct": 0,
+      "samples": 695
     },
     "scroll": {
-      "docHeight": 1229,
+      "docHeight": 2554,
       "viewportHeight": 900,
-      "sections": 1,
+      "sections": 5,
       "pinnedRanges": 1,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
-      "changedNodes": 30,
-      "animatedNodes": 3,
-      "changedRatio": 0.08,
+      "changedNodes": 13,
+      "animatedNodes": 6,
+      "changedRatio": 0.03,
       "transformOpacityOnly": 1,
       "parallaxLayers": 1,
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.05
+      "clsProxy": 0.046
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -51,7 +52,7 @@
     },
     "console": {
       "errors": 0,
-      "failedRequests": 2
+      "failedRequests": 4
     }
   }
 }

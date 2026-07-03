@@ -1,9 +1,9 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Notion",
   "category": "product-launch",
   "url": "https://www.notion.com/",
-  "ts": "2026-07-03T15:25:59.924Z",
+  "ts": "2026-07-03T17:48:45.221Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
@@ -14,23 +14,24 @@
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.notion.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:25:59.924Z",
+    "ts": "2026-07-03T17:48:45.221Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 119,
+      "avg": 120,
       "droppedPct": 0,
-      "samples": 712
+      "samples": 720
     },
     "scroll": {
       "docHeight": 6528,
       "viewportHeight": 900,
       "sections": 21,
       "pinnedRanges": 2,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 192,
@@ -50,7 +51,7 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 51,
+      "errors": 55,
       "failedRequests": 14
     }
   }

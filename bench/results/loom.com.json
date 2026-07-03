@@ -1,9 +1,9 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Loom",
   "category": "product-launch",
   "url": "https://www.loom.com/",
-  "ts": "2026-07-03T15:21:52.392Z",
+  "ts": "2026-07-03T17:46:53.249Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
@@ -14,23 +14,24 @@
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.loom.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:21:52.392Z",
+    "ts": "2026-07-03T17:46:53.249Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 77,
-      "droppedPct": 2,
-      "samples": 478
+      "avg": 115,
+      "droppedPct": 0,
+      "samples": 689
     },
     "scroll": {
       "docHeight": 12562,
       "viewportHeight": 900,
       "sections": 17,
       "pinnedRanges": 2,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 35,
@@ -41,7 +42,7 @@
       "entranceStagger": true
     },
     "stability": {
-      "clsProxy": 0.043
+      "clsProxy": 0.049
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -50,7 +51,7 @@
       "motionToggle": true
     },
     "console": {
-      "errors": 2,
+      "errors": 4,
       "failedRequests": 4
     }
   }

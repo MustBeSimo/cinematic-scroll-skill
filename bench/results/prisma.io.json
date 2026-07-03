@@ -1,52 +1,53 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Prisma",
   "category": "dev-tools",
   "url": "https://www.prisma.io/",
-  "ts": "2026-07-03T16:43:03.560Z",
+  "ts": "2026-07-03T18:54:45.844Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 66,
-    "a11y": 40,
+    "performance": 98,
+    "a11y": 48,
     "motionCraft": 65,
-    "overall": 68
+    "overall": 79
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.prisma.io/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:43:03.560Z",
+    "ts": "2026-07-03T18:54:45.844Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 46,
-      "droppedPct": 2,
-      "samples": 236
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
     },
     "scroll": {
       "docHeight": 3940,
       "viewportHeight": 900,
       "sections": 9,
       "pinnedRanges": 1,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
-      "changedNodes": 53,
-      "animatedNodes": 5,
-      "changedRatio": 0.13,
+      "changedNodes": 48,
+      "animatedNodes": 4,
+      "changedRatio": 0.12,
       "transformOpacityOnly": 1,
       "parallaxLayers": 0,
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.059
+      "clsProxy": 0.084
     },
     "a11y": {
       "reducedMotionHonored": false,
       "focusVisible": true,
-      "contrastFailures": 5,
+      "contrastFailures": 1,
       "motionToggle": false
     },
     "console": {

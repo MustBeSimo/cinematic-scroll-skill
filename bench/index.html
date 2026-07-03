@@ -18,8 +18,8 @@
   th{color:var(--dim);font:600 12px/1 inherit;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:12px 10px;border-bottom:1px solid var(--line)}
   td{padding:14px 10px;border-bottom:1px solid var(--track);vertical-align:middle}
   .rank{color:var(--dim);font:600 14px ui-monospace,monospace}.site a{color:var(--ink);text-decoration:none;font-weight:600}.site small{display:block;color:var(--dim)}
-  .dim{position:relative;width:88px;height:8px;background:var(--track);border-radius:4px;overflow:hidden}
-  .dim .fill{position:absolute;inset:0;width:var(--v);background:linear-gradient(90deg,var(--bad),var(--good))}
+  .dim{position:relative;width:88px;height:8px;background:var(--track);border-radius:4px}
+  .dim .fill{position:absolute;inset:0;width:var(--v);background:linear-gradient(90deg,var(--bad),var(--good));border-radius:4px}
   .dim em{position:absolute;right:-2px;top:10px;font:600 11px ui-monospace,monospace;color:var(--dim);font-style:normal}
   .overall{font:700 20px ui-monospace,monospace;color:var(--accent)}
   footer{max-width:1080px;margin:48px auto 0;color:var(--dim);font-size:13px}footer a{color:var(--accent)}
@@ -39,430 +39,437 @@
   <a class="cta" href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">npx -p cinematic-scroll-skill cinematic-bench https://your-site.com</a>
 </header>
 <nav aria-label="category filter"><button aria-pressed="true" data-cat="all">All</button><button aria-pressed="false" data-cat="dev-tools">dev-tools</button><button aria-pressed="false" data-cat="e-commerce">e-commerce</button><button aria-pressed="false" data-cat="editorial">editorial</button><button aria-pressed="false" data-cat="portfolio-agency">portfolio-agency</button><button aria-pressed="false" data-cat="product-launch">product-launch</button></nav>
-<table><thead><tr><th>#</th><th>Site</th><th>Pacing</th><th>Perf</th><th>A11y</th><th>Craft</th><th>Overall</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">#</th><th scope="col">Site</th><th scope="col">Pacing</th><th scope="col">Perf</th><th scope="col">Motion&nbsp;A11y*</th><th scope="col">Craft</th><th scope="col">Overall</th></tr></thead><tbody>
       <tr data-cat="editorial">
         <td class="rank">1</td>
         <td class="site"><a href="https://www.are.na/" rel="noopener nofollow" target="_blank">Are.na</a><small>editorial</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 92"><span class="fill" style="--v:92%"></span><em>92</em></div></td>
-        <td><div class="dim" title="Accessibility: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 94"><span class="fill" style="--v:94%"></span><em>94</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
         <td class="overall">93</td>
       </tr>
       <tr data-cat="e-commerce">
         <td class="rank">2</td>
         <td class="site"><a href="https://www.moma.org/" rel="noopener nofollow" target="_blank">MoMA Store</a><small>e-commerce</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 83"><span class="fill" style="--v:83%"></span><em>83</em></div></td>
-        <td><div class="dim" title="Accessibility: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 84"><span class="fill" style="--v:84%"></span><em>84</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">93</td>
+      </tr>
+      <tr data-cat="dev-tools">
+        <td class="rank">3</td>
+        <td class="site"><a href="https://react.dev/" rel="noopener nofollow" target="_blank">React</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 98"><span class="fill" style="--v:98%"></span><em>98</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 96"><span class="fill" style="--v:96%"></span><em>96</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
         <td class="overall">93</td>
       </tr>
       <tr data-cat="product-launch">
-        <td class="rank">3</td>
+        <td class="rank">4</td>
         <td class="site"><a href="https://www.loom.com/" rel="noopener nofollow" target="_blank">Loom</a><small>product-launch</small></td>
         <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
-        <td><div class="dim" title="Accessibility: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Motion Craft: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td class="overall">92</td>
-      </tr>
-      <tr data-cat="editorial">
-        <td class="rank">4</td>
-        <td class="site"><a href="https://www.nationalgeographic.com/" rel="noopener nofollow" target="_blank">National Geographic</a><small>editorial</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 79"><span class="fill" style="--v:79%"></span><em>79</em></div></td>
-        <td><div class="dim" title="Accessibility: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Motion Craft: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
         <td class="overall">92</td>
       </tr>
       <tr data-cat="editorial">
         <td class="rank">5</td>
-        <td class="site"><a href="https://www.pudding.cool/" rel="noopener nofollow" target="_blank">The Pudding</a><small>editorial</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 99"><span class="fill" style="--v:99%"></span><em>99</em></div></td>
-        <td><div class="dim" title="Accessibility: 88"><span class="fill" style="--v:88%"></span><em>88</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="site"><a href="https://www.nationalgeographic.com/" rel="noopener nofollow" target="_blank">National Geographic</a><small>editorial</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
         <td class="overall">92</td>
       </tr>
-      <tr data-cat="e-commerce">
+      <tr data-cat="editorial">
         <td class="rank">6</td>
-        <td class="site"><a href="https://www.apple.com/shop/buy-mac" rel="noopener nofollow" target="_blank">Apple Store — Mac</a><small>e-commerce</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 97"><span class="fill" style="--v:97%"></span><em>97</em></div></td>
-        <td><div class="dim" title="Accessibility: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
-        <td class="overall">91</td>
+        <td class="site"><a href="https://www.pudding.cool/" rel="noopener nofollow" target="_blank">The Pudding</a><small>editorial</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 88"><span class="fill" style="--v:88%"></span><em>88</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">92</td>
       </tr>
-      <tr data-cat="product-launch">
+      <tr data-cat="portfolio-agency">
         <td class="rank">7</td>
-        <td class="site"><a href="https://www.polestar.com/" rel="noopener nofollow" target="_blank">Polestar</a><small>product-launch</small></td>
+        <td class="site"><a href="https://madebyfieldwork.com/" rel="noopener nofollow" target="_blank">Fieldwork</a><small>portfolio-agency</small></td>
         <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 98"><span class="fill" style="--v:98%"></span><em>98</em></div></td>
-        <td><div class="dim" title="Accessibility: 86"><span class="fill" style="--v:86%"></span><em>86</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 88"><span class="fill" style="--v:88%"></span><em>88</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
         <td class="overall">91</td>
       </tr>
       <tr data-cat="product-launch">
         <td class="rank">8</td>
-        <td class="site"><a href="https://cash.app/" rel="noopener nofollow" target="_blank">Cash App</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td><div class="dim" title="Accessibility: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">90</td>
+        <td class="site"><a href="https://www.polestar.com/" rel="noopener nofollow" target="_blank">Polestar</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 98"><span class="fill" style="--v:98%"></span><em>98</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 86"><span class="fill" style="--v:86%"></span><em>86</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">91</td>
       </tr>
-      <tr data-cat="portfolio-agency">
+      <tr data-cat="product-launch">
         <td class="rank">9</td>
-        <td class="site"><a href="https://www.ueno.co/" rel="noopener nofollow" target="_blank">Ueno</a><small>portfolio-agency</small></td>
+        <td class="site"><a href="https://www.apple.com/iphone/" rel="noopener nofollow" target="_blank">Apple — iPhone</a><small>product-launch</small></td>
         <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Motion Craft: 60"><span class="fill" style="--v:60%"></span><em>60</em></div></td>
         <td class="overall">90</td>
       </tr>
       <tr data-cat="e-commerce">
         <td class="rank">10</td>
-        <td class="site"><a href="https://www.allbirds.com/" rel="noopener nofollow" target="_blank">Allbirds</a><small>e-commerce</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 79"><span class="fill" style="--v:79%"></span><em>79</em></div></td>
-        <td><div class="dim" title="Accessibility: 96"><span class="fill" style="--v:96%"></span><em>96</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">88</td>
+        <td class="site"><a href="https://www.apple.com/shop/buy-mac" rel="noopener nofollow" target="_blank">Apple Store — Mac</a><small>e-commerce</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 93"><span class="fill" style="--v:93%"></span><em>93</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
+        <td class="overall">90</td>
       </tr>
       <tr data-cat="product-launch">
         <td class="rank">11</td>
-        <td class="site"><a href="https://www.apple.com/iphone/" rel="noopener nofollow" target="_blank">Apple — iPhone</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 95"><span class="fill" style="--v:95%"></span><em>95</em></div></td>
-        <td><div class="dim" title="Accessibility: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Motion Craft: 60"><span class="fill" style="--v:60%"></span><em>60</em></div></td>
+        <td class="site"><a href="https://cash.app/" rel="noopener nofollow" target="_blank">Cash App</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">90</td>
+      </tr>
+      <tr data-cat="portfolio-agency">
+        <td class="rank">12</td>
+        <td class="site"><a href="https://www.ueno.co/" rel="noopener nofollow" target="_blank">Ueno</a><small>portfolio-agency</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
+        <td class="overall">90</td>
+      </tr>
+      <tr data-cat="product-launch">
+        <td class="rank">13</td>
+        <td class="site"><a href="https://www.airbnb.com/" rel="noopener nofollow" target="_blank">Airbnb</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 92"><span class="fill" style="--v:92%"></span><em>92</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">88</td>
+      </tr>
+      <tr data-cat="e-commerce">
+        <td class="rank">14</td>
+        <td class="site"><a href="https://www.allbirds.com/" rel="noopener nofollow" target="_blank">Allbirds</a><small>e-commerce</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 96"><span class="fill" style="--v:96%"></span><em>96</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
         <td class="overall">88</td>
       </tr>
       <tr data-cat="dev-tools">
-        <td class="rank">12</td>
+        <td class="rank">15</td>
         <td class="site"><a href="https://vercel.com/" rel="noopener nofollow" target="_blank">Vercel</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 87"><span class="fill" style="--v:87%"></span><em>87</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">88</td>
+      </tr>
+      <tr data-cat="dev-tools">
+        <td class="rank">16</td>
+        <td class="site"><a href="https://tailwindcss.com/" rel="noopener nofollow" target="_blank">Tailwind CSS</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 98"><span class="fill" style="--v:98%"></span><em>98</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
         <td class="overall">87</td>
       </tr>
       <tr data-cat="portfolio-agency">
-        <td class="rank">13</td>
-        <td class="site"><a href="https://www.hellomonday.com/" rel="noopener nofollow" target="_blank">Hello Monday</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td><div class="dim" title="Accessibility: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
-        <td class="overall">83</td>
-      </tr>
-      <tr data-cat="dev-tools">
-        <td class="rank">14</td>
-        <td class="site"><a href="https://astro.build/" rel="noopener nofollow" target="_blank">Astro</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 95"><span class="fill" style="--v:95%"></span><em>95</em></div></td>
-        <td><div class="dim" title="Accessibility: 86"><span class="fill" style="--v:86%"></span><em>86</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
-        <td class="overall">82</td>
-      </tr>
-      <tr data-cat="e-commerce">
-        <td class="rank">15</td>
-        <td class="site"><a href="https://www.burberry.com/" rel="noopener nofollow" target="_blank">Burberry</a><small>e-commerce</small></td>
-        <td><div class="dim" title="Pacing: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td><div class="dim" title="Accessibility: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
-        <td class="overall">82</td>
-      </tr>
-      <tr data-cat="e-commerce">
-        <td class="rank">16</td>
-        <td class="site"><a href="https://www.nike.com/" rel="noopener nofollow" target="_blank">Nike</a><small>e-commerce</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
-        <td><div class="dim" title="Accessibility: 72"><span class="fill" style="--v:72%"></span><em>72</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
-        <td class="overall">82</td>
-      </tr>
-      <tr data-cat="product-launch">
         <td class="rank">17</td>
-        <td class="site"><a href="https://www.notion.com/" rel="noopener nofollow" target="_blank">Notion</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">82</td>
-      </tr>
-      <tr data-cat="product-launch">
-        <td class="rank">18</td>
-        <td class="site"><a href="https://slack.com/" rel="noopener nofollow" target="_blank">Slack</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 79"><span class="fill" style="--v:79%"></span><em>79</em></div></td>
-        <td><div class="dim" title="Accessibility: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
-        <td class="overall">82</td>
-      </tr>
-      <tr data-cat="editorial">
-        <td class="rank">19</td>
-        <td class="site"><a href="https://www.theverge.com/" rel="noopener nofollow" target="_blank">The Verge</a><small>editorial</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">82</td>
-      </tr>
-      <tr data-cat="editorial">
-        <td class="rank">20</td>
-        <td class="site"><a href="https://www.wired.com/" rel="noopener nofollow" target="_blank">WIRED</a><small>editorial</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 76"><span class="fill" style="--v:76%"></span><em>76</em></div></td>
-        <td><div class="dim" title="Accessibility: 84"><span class="fill" style="--v:84%"></span><em>84</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
-        <td class="overall">82</td>
-      </tr>
-      <tr data-cat="e-commerce">
-        <td class="rank">21</td>
-        <td class="site"><a href="https://www.glossier.com/" rel="noopener nofollow" target="_blank">Glossier</a><small>e-commerce</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 79"><span class="fill" style="--v:79%"></span><em>79</em></div></td>
-        <td><div class="dim" title="Accessibility: 86"><span class="fill" style="--v:86%"></span><em>86</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
-        <td class="overall">81</td>
-      </tr>
-      <tr data-cat="product-launch">
-        <td class="rank">22</td>
-        <td class="site"><a href="https://superlist.com/" rel="noopener nofollow" target="_blank">Superlist</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 78"><span class="fill" style="--v:78%"></span><em>78</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
-        <td class="overall">81</td>
-      </tr>
-      <tr data-cat="editorial">
-        <td class="rank">23</td>
-        <td class="site"><a href="https://www.bloomberg.com/graphics" rel="noopener nofollow" target="_blank">Bloomberg Graphics</a><small>editorial</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td>
-        <td class="overall">77</td>
-      </tr>
-      <tr data-cat="dev-tools">
-        <td class="rank">24</td>
-        <td class="site"><a href="https://supabase.com/" rel="noopener nofollow" target="_blank">Supabase</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 78"><span class="fill" style="--v:78%"></span><em>78</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 55"><span class="fill" style="--v:55%"></span><em>55</em></div></td>
-        <td class="overall">77</td>
-      </tr>
-      <tr data-cat="dev-tools">
-        <td class="rank">25</td>
-        <td class="site"><a href="https://www.warp.dev/" rel="noopener nofollow" target="_blank">Warp</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">77</td>
+        <td class="site"><a href="https://14islands.com/" rel="noopener nofollow" target="_blank">14islands</a><small>portfolio-agency</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 98"><span class="fill" style="--v:98%"></span><em>98</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 78"><span class="fill" style="--v:78%"></span><em>78</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">86</td>
       </tr>
       <tr data-cat="portfolio-agency">
-        <td class="rank">26</td>
-        <td class="site"><a href="https://madebyfieldwork.com/" rel="noopener nofollow" target="_blank">Fieldwork</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 48"><span class="fill" style="--v:48%"></span><em>48</em></div></td>
-        <td><div class="dim" title="Accessibility: 88"><span class="fill" style="--v:88%"></span><em>88</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">76</td>
+        <td class="rank">18</td>
+        <td class="site"><a href="https://www.epic.net/" rel="noopener nofollow" target="_blank">Epic Agency</a><small>portfolio-agency</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 93"><span class="fill" style="--v:93%"></span><em>93</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 78"><span class="fill" style="--v:78%"></span><em>78</em></div></td><td><div class="dim" title="Motion Craft: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td>
+        <td class="overall">86</td>
+      </tr>
+      <tr data-cat="product-launch">
+        <td class="rank">19</td>
+        <td class="site"><a href="https://slack.com/" rel="noopener nofollow" target="_blank">Slack</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td><td><div class="dim" title="Motion Craft: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td class="overall">85</td>
       </tr>
       <tr data-cat="dev-tools">
-        <td class="rank">27</td>
-        <td class="site"><a href="https://planetscale.com/" rel="noopener nofollow" target="_blank">PlanetScale</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td><div class="dim" title="Accessibility: 78"><span class="fill" style="--v:78%"></span><em>78</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
-        <td class="overall">76</td>
+        <td class="rank">20</td>
+        <td class="site"><a href="https://supabase.com/" rel="noopener nofollow" target="_blank">Supabase</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
+        <td class="overall">84</td>
+      </tr>
+      <tr data-cat="dev-tools">
+        <td class="rank">21</td>
+        <td class="site"><a href="https://astro.build/" rel="noopener nofollow" target="_blank">Astro</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 86"><span class="fill" style="--v:86%"></span><em>86</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
+        <td class="overall">83</td>
+      </tr>
+      <tr data-cat="portfolio-agency">
+        <td class="rank">22</td>
+        <td class="site"><a href="https://www.hellomonday.com/" rel="noopener nofollow" target="_blank">Hello Monday</a><small>portfolio-agency</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">83</td>
+      </tr>
+      <tr data-cat="e-commerce">
+        <td class="rank">23</td>
+        <td class="site"><a href="https://www.nike.com/" rel="noopener nofollow" target="_blank">Nike</a><small>e-commerce</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 76"><span class="fill" style="--v:76%"></span><em>76</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
+        <td class="overall">83</td>
       </tr>
       <tr data-cat="editorial">
-        <td class="rank">28</td>
-        <td class="site"><a href="https://www.newyorker.com/" rel="noopener nofollow" target="_blank">The New Yorker</a><small>editorial</small></td>
-        <td><div class="dim" title="Pacing: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
-        <td class="overall">75</td>
+        <td class="rank">24</td>
+        <td class="site"><a href="https://www.wired.com/" rel="noopener nofollow" target="_blank">WIRED</a><small>editorial</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 79"><span class="fill" style="--v:79%"></span><em>79</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 84"><span class="fill" style="--v:84%"></span><em>84</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
+        <td class="overall">83</td>
       </tr>
-      <tr data-cat="dev-tools">
+      <tr data-cat="e-commerce">
+        <td class="rank">25</td>
+        <td class="site"><a href="https://www.burberry.com/" rel="noopener nofollow" target="_blank">Burberry</a><small>e-commerce</small></td>
+        <td><div class="dim" title="Pacing: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
+        <td class="overall">82</td>
+      </tr>
+      <tr data-cat="product-launch">
+        <td class="rank">26</td>
+        <td class="site"><a href="https://www.notion.com/" rel="noopener nofollow" target="_blank">Notion</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">82</td>
+      </tr>
+      <tr data-cat="product-launch">
+        <td class="rank">27</td>
+        <td class="site"><a href="https://stripe.com/" rel="noopener nofollow" target="_blank">Stripe</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 72"><span class="fill" style="--v:72%"></span><em>72</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
+        <td class="overall">82</td>
+      </tr>
+      <tr data-cat="product-launch">
+        <td class="rank">28</td>
+        <td class="site"><a href="https://superlist.com/" rel="noopener nofollow" target="_blank">Superlist</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">82</td>
+      </tr>
+      <tr data-cat="editorial">
         <td class="rank">29</td>
-        <td class="site"><a href="https://bun.com/" rel="noopener nofollow" target="_blank">Bun</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 92"><span class="fill" style="--v:92%"></span><em>92</em></div></td>
-        <td><div class="dim" title="Accessibility: 36"><span class="fill" style="--v:36%"></span><em>36</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">74</td>
+        <td class="site"><a href="https://www.theverge.com/" rel="noopener nofollow" target="_blank">The Verge</a><small>editorial</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">82</td>
       </tr>
       <tr data-cat="dev-tools">
         <td class="rank">30</td>
-        <td class="site"><a href="https://evilmartians.com/" rel="noopener nofollow" target="_blank">Evil Martians</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 95"><span class="fill" style="--v:95%"></span><em>95</em></div></td>
-        <td><div class="dim" title="Accessibility: 30"><span class="fill" style="--v:30%"></span><em>30</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">74</td>
-      </tr>
-      <tr data-cat="portfolio-agency">
-        <td class="rank">31</td>
-        <td class="site"><a href="https://immersive-g.com/" rel="noopener nofollow" target="_blank">Immersive Garden</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Performance: 95"><span class="fill" style="--v:95%"></span><em>95</em></div></td>
-        <td><div class="dim" title="Accessibility: 76"><span class="fill" style="--v:76%"></span><em>76</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
-        <td class="overall">74</td>
+        <td class="site"><a href="https://www.warp.dev/" rel="noopener nofollow" target="_blank">Warp</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">82</td>
       </tr>
       <tr data-cat="e-commerce">
-        <td class="rank">32</td>
-        <td class="site"><a href="https://www.tiffany.com/" rel="noopener nofollow" target="_blank">Tiffany &amp; Co.</a><small>e-commerce</small></td>
-        <td><div class="dim" title="Pacing: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Performance: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
-        <td><div class="dim" title="Accessibility: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
-        <td class="overall">74</td>
+        <td class="rank">31</td>
+        <td class="site"><a href="https://www.glossier.com/" rel="noopener nofollow" target="_blank">Glossier</a><small>e-commerce</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 86"><span class="fill" style="--v:86%"></span><em>86</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
+        <td class="overall">81</td>
       </tr>
       <tr data-cat="product-launch">
+        <td class="rank">32</td>
+        <td class="site"><a href="https://www.raycast.com/" rel="noopener nofollow" target="_blank">Raycast</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 98"><span class="fill" style="--v:98%"></span><em>98</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
+        <td class="overall">81</td>
+      </tr>
+      <tr data-cat="editorial">
         <td class="rank">33</td>
-        <td class="site"><a href="https://arc.net/" rel="noopener nofollow" target="_blank">Arc Browser</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 99"><span class="fill" style="--v:99%"></span><em>99</em></div></td>
-        <td><div class="dim" title="Accessibility: 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">72</td>
+        <td class="site"><a href="https://every.to/" rel="noopener nofollow" target="_blank">Every</a><small>editorial</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
+        <td class="overall">80</td>
       </tr>
       <tr data-cat="portfolio-agency">
         <td class="rank">34</td>
         <td class="site"><a href="https://www.instrument.com/" rel="noopener nofollow" target="_blank">Instrument</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 55"><span class="fill" style="--v:55%"></span><em>55</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
-        <td class="overall">72</td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
+        <td class="overall">80</td>
       </tr>
       <tr data-cat="dev-tools">
         <td class="rank">35</td>
-        <td class="site"><a href="https://react.dev/" rel="noopener nofollow" target="_blank">React</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 15"><span class="fill" style="--v:15%"></span><em>15</em></div></td>
-        <td><div class="dim" title="Accessibility: 96"><span class="fill" style="--v:96%"></span><em>96</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">69</td>
+        <td class="site"><a href="https://deno.com/" rel="noopener nofollow" target="_blank">Deno</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 98"><span class="fill" style="--v:98%"></span><em>98</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td class="overall">79</td>
       </tr>
       <tr data-cat="dev-tools">
         <td class="rank">36</td>
         <td class="site"><a href="https://www.prisma.io/" rel="noopener nofollow" target="_blank">Prisma</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 66"><span class="fill" style="--v:66%"></span><em>66</em></div></td>
-        <td><div class="dim" title="Accessibility: 40"><span class="fill" style="--v:40%"></span><em>40</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
-        <td class="overall">68</td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 98"><span class="fill" style="--v:98%"></span><em>98</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 48"><span class="fill" style="--v:48%"></span><em>48</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
+        <td class="overall">79</td>
       </tr>
       <tr data-cat="product-launch">
         <td class="rank">37</td>
-        <td class="site"><a href="https://www.rivian.com/" rel="noopener nofollow" target="_blank">Rivian</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td><div class="dim" title="Accessibility: 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td>
-        <td class="overall">68</td>
+        <td class="site"><a href="https://www.apple.com/airpods-pro/" rel="noopener nofollow" target="_blank">Apple — AirPods Pro</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 30"><span class="fill" style="--v:30%"></span><em>30</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">78</td>
+      </tr>
+      <tr data-cat="portfolio-agency">
+        <td class="rank">38</td>
+        <td class="site"><a href="https://basement.studio/" rel="noopener nofollow" target="_blank">Basement Studio</a><small>portfolio-agency</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">78</td>
       </tr>
       <tr data-cat="editorial">
-        <td class="rank">38</td>
-        <td class="site"><a href="https://every.to/" rel="noopener nofollow" target="_blank">Every</a><small>editorial</small></td>
-        <td><div class="dim" title="Pacing: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 35"><span class="fill" style="--v:35%"></span><em>35</em></div></td>
-        <td class="overall">66</td>
-      </tr>
-      <tr data-cat="product-launch">
         <td class="rank">39</td>
-        <td class="site"><a href="https://www.figma.com/" rel="noopener nofollow" target="_blank">Figma</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 8"><span class="fill" style="--v:8%"></span><em>8</em></div></td>
-        <td><div class="dim" title="Accessibility: 82"><span class="fill" style="--v:82%"></span><em>82</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
-        <td class="overall">63</td>
+        <td class="site"><a href="https://www.bloomberg.com/graphics" rel="noopener nofollow" target="_blank">Bloomberg Graphics</a><small>editorial</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td>
+        <td class="overall">77</td>
       </tr>
-      <tr data-cat="product-launch">
+      <tr data-cat="dev-tools">
         <td class="rank">40</td>
-        <td class="site"><a href="https://www.airbnb.com/" rel="noopener nofollow" target="_blank">Airbnb</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 5"><span class="fill" style="--v:5%"></span><em>5</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
-        <td class="overall">62</td>
+        <td class="site"><a href="https://evilmartians.com/" rel="noopener nofollow" target="_blank">Evil Martians</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 96"><span class="fill" style="--v:96%"></span><em>96</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 30"><span class="fill" style="--v:30%"></span><em>30</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">77</td>
       </tr>
-      <tr data-cat="product-launch">
+      <tr data-cat="portfolio-agency">
         <td class="rank">41</td>
-        <td class="site"><a href="https://www.apple.com/airpods-pro/" rel="noopener nofollow" target="_blank">Apple — AirPods Pro</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 49"><span class="fill" style="--v:49%"></span><em>49</em></div></td>
-        <td><div class="dim" title="Accessibility: 30"><span class="fill" style="--v:30%"></span><em>30</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">62</td>
+        <td class="site"><a href="https://humaan.com/" rel="noopener nofollow" target="_blank">Humaan</a><small>portfolio-agency</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 40"><span class="fill" style="--v:40%"></span><em>40</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">77</td>
       </tr>
       <tr data-cat="portfolio-agency">
         <td class="rank">42</td>
-        <td class="site"><a href="https://www.epic.net/" rel="noopener nofollow" target="_blank">Epic Agency</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 78"><span class="fill" style="--v:78%"></span><em>78</em></div></td><td><div class="dim" title="Motion Craft: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td>
-        <td class="overall">59</td>
-      </tr>
-      <tr data-cat="editorial">
-        <td class="rank">43</td>
-        <td class="site"><a href="https://www.itsnicethat.com/" rel="noopener nofollow" target="_blank">It's Nice That</a><small>editorial</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 79"><span class="fill" style="--v:79%"></span><em>79</em></div></td>
-        <td><div class="dim" title="Accessibility: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
-        <td class="overall">59</td>
-      </tr>
-      <tr data-cat="product-launch">
-        <td class="rank">44</td>
-        <td class="site"><a href="https://stripe.com/" rel="noopener nofollow" target="_blank">Stripe</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 72"><span class="fill" style="--v:72%"></span><em>72</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
-        <td class="overall">58</td>
+        <td class="site"><a href="https://activetheory.net/" rel="noopener nofollow" target="_blank">Active Theory</a><small>portfolio-agency</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 96"><span class="fill" style="--v:96%"></span><em>96</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 30"><span class="fill" style="--v:30%"></span><em>30</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">76</td>
       </tr>
       <tr data-cat="dev-tools">
+        <td class="rank">43</td>
+        <td class="site"><a href="https://planetscale.com/" rel="noopener nofollow" target="_blank">PlanetScale</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 78"><span class="fill" style="--v:78%"></span><em>78</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
+        <td class="overall">76</td>
+      </tr>
+      <tr data-cat="dev-tools">
+        <td class="rank">44</td>
+        <td class="site"><a href="https://railway.com/" rel="noopener nofollow" target="_blank">Railway</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 81"><span class="fill" style="--v:81%"></span><em>81</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 30"><span class="fill" style="--v:30%"></span><em>30</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">75</td>
+      </tr>
+      <tr data-cat="editorial">
         <td class="rank">45</td>
-        <td class="site"><a href="https://tailwindcss.com/" rel="noopener nofollow" target="_blank">Tailwind CSS</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">58</td>
+        <td class="site"><a href="https://www.newyorker.com/" rel="noopener nofollow" target="_blank">The New Yorker</a><small>editorial</small></td>
+        <td><div class="dim" title="Pacing: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
+        <td class="overall">75</td>
+      </tr>
+      <tr data-cat="dev-tools">
+        <td class="rank">46</td>
+        <td class="site"><a href="https://bun.com/" rel="noopener nofollow" target="_blank">Bun</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 93"><span class="fill" style="--v:93%"></span><em>93</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 36"><span class="fill" style="--v:36%"></span><em>36</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">74</td>
       </tr>
       <tr data-cat="portfolio-agency">
-        <td class="rank">46</td>
-        <td class="site"><a href="https://14islands.com/" rel="noopener nofollow" target="_blank">14islands</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 78"><span class="fill" style="--v:78%"></span><em>78</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">57</td>
-      </tr>
-      <tr data-cat="e-commerce">
         <td class="rank">47</td>
-        <td class="site"><a href="https://www.aesop.com/" rel="noopener nofollow" target="_blank">Aesop</a><small>e-commerce</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
-        <td><div class="dim" title="Accessibility: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td><td><div class="dim" title="Motion Craft: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td>
-        <td class="overall">57</td>
+        <td class="site"><a href="https://immersive-g.com/" rel="noopener nofollow" target="_blank">Immersive Garden</a><small>portfolio-agency</small></td>
+        <td><div class="dim" title="Pacing: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Performance: 95"><span class="fill" style="--v:95%"></span><em>95</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 76"><span class="fill" style="--v:76%"></span><em>76</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
+        <td class="overall">74</td>
       </tr>
       <tr data-cat="portfolio-agency">
         <td class="rank">48</td>
-        <td class="site"><a href="https://humaan.com/" rel="noopener nofollow" target="_blank">Humaan</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 40"><span class="fill" style="--v:40%"></span><em>40</em></div></td><td><div class="dim" title="Motion Craft: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td class="overall">55</td>
+        <td class="site"><a href="https://locomotive.ca/en" rel="noopener nofollow" target="_blank">Locomotive</a><small>portfolio-agency</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 98"><span class="fill" style="--v:98%"></span><em>98</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td><td><div class="dim" title="Motion Craft: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td>
+        <td class="overall">74</td>
       </tr>
-      <tr data-cat="dev-tools">
+      <tr data-cat="portfolio-agency">
         <td class="rank">49</td>
-        <td class="site"><a href="https://deno.com/" rel="noopener nofollow" target="_blank">Deno</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 8"><span class="fill" style="--v:8%"></span><em>8</em></div></td>
-        <td><div class="dim" title="Accessibility: 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td class="overall">52</td>
-      </tr>
-      <tr data-cat="dev-tools">
-        <td class="rank">50</td>
-        <td class="site"><a href="https://resend.com/" rel="noopener nofollow" target="_blank">Resend</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
-        <td class="overall">50</td>
-      </tr>
-      <tr data-cat="portfolio-agency">
-        <td class="rank">51</td>
         <td class="site"><a href="https://lusion.co/" rel="noopener nofollow" target="_blank">Lusion</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 28"><span class="fill" style="--v:28%"></span><em>28</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
-        <td class="overall">49</td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 82"><span class="fill" style="--v:82%"></span><em>82</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 28"><span class="fill" style="--v:28%"></span><em>28</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
+        <td class="overall">74</td>
       </tr>
-      <tr data-cat="portfolio-agency">
-        <td class="rank">52</td>
-        <td class="site"><a href="https://basement.studio/" rel="noopener nofollow" target="_blank">Basement Studio</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
-        <td class="overall">48</td>
+      <tr data-cat="e-commerce">
+        <td class="rank">50</td>
+        <td class="site"><a href="https://www.tiffany.com/" rel="noopener nofollow" target="_blank">Tiffany &amp; Co.</a><small>e-commerce</small></td>
+        <td><div class="dim" title="Pacing: 70"><span class="fill" style="--v:70%"></span><em>70</em></div></td><td><div class="dim" title="Performance: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td><td><div class="dim" title="Motion Craft: 45"><span class="fill" style="--v:45%"></span><em>45</em></div></td>
+        <td class="overall">74</td>
       </tr>
       <tr data-cat="product-launch">
+        <td class="rank">51</td>
+        <td class="site"><a href="https://www.porsche.com/international/" rel="noopener nofollow" target="_blank">Porsche</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 92"><span class="fill" style="--v:92%"></span><em>92</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 30"><span class="fill" style="--v:30%"></span><em>30</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">73</td>
+      </tr>
+      <tr data-cat="dev-tools">
+        <td class="rank">52</td>
+        <td class="site"><a href="https://resend.com/" rel="noopener nofollow" target="_blank">Resend</a><small>dev-tools</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 88"><span class="fill" style="--v:88%"></span><em>88</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
+        <td class="overall">73</td>
+      </tr>
+      <tr data-cat="dev-tools">
         <td class="rank">53</td>
-        <td class="site"><a href="https://www.framer.com/" rel="noopener nofollow" target="_blank">Framer</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
-        <td class="overall">48</td>
-      </tr>
-      <tr data-cat="dev-tools">
-        <td class="rank">54</td>
-        <td class="site"><a href="https://railway.com/" rel="noopener nofollow" target="_blank">Railway</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 10"><span class="fill" style="--v:10%"></span><em>10</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
-        <td class="overall">46</td>
-      </tr>
-      <tr data-cat="dev-tools">
-        <td class="rank">55</td>
         <td class="site"><a href="https://clerk.com/" rel="noopener nofollow" target="_blank">Clerk</a><small>dev-tools</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">45</td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">72</td>
       </tr>
-      <tr data-cat="portfolio-agency">
+      <tr data-cat="product-launch">
+        <td class="rank">54</td>
+        <td class="site"><a href="https://www.framer.com/" rel="noopener nofollow" target="_blank">Framer</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">72</td>
+      </tr>
+      <tr data-cat="product-launch">
+        <td class="rank">55</td>
+        <td class="site"><a href="https://linear.app/" rel="noopener nofollow" target="_blank">Linear</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 93"><span class="fill" style="--v:93%"></span><em>93</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">70</td>
+      </tr>
+      <tr data-cat="product-launch">
         <td class="rank">56</td>
-        <td class="site"><a href="https://locomotive.ca/en" rel="noopener nofollow" target="_blank">Locomotive</a><small>portfolio-agency</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td><td><div class="dim" title="Motion Craft: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td>
-        <td class="overall">45</td>
+        <td class="site"><a href="https://arc.net/" rel="noopener nofollow" target="_blank">Arc Browser</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td>
+        <td class="overall">68</td>
       </tr>
       <tr data-cat="product-launch">
         <td class="rank">57</td>
-        <td class="site"><a href="https://www.porsche.com/international/" rel="noopener nofollow" target="_blank">Porsche</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 30"><span class="fill" style="--v:30%"></span><em>30</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">45</td>
+        <td class="site"><a href="https://www.rivian.com/" rel="noopener nofollow" target="_blank">Rivian</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 50"><span class="fill" style="--v:50%"></span><em>50</em></div></td>
+        <td class="overall">68</td>
       </tr>
       <tr data-cat="product-launch">
         <td class="rank">58</td>
         <td class="site"><a href="https://pitch.com/" rel="noopener nofollow" target="_blank">Pitch</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 3"><span class="fill" style="--v:3%"></span><em>3</em></div></td>
-        <td><div class="dim" title="Accessibility: 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
-        <td class="overall">44</td>
+        <td><div class="dim" title="Pacing: 100"><span class="fill" style="--v:100%"></span><em>100</em></div></td><td><div class="dim" title="Performance: 81"><span class="fill" style="--v:81%"></span><em>81</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
+        <td class="overall">67</td>
       </tr>
       <tr data-cat="product-launch">
         <td class="rank">59</td>
-        <td class="site"><a href="https://linear.app/" rel="noopener nofollow" target="_blank">Linear</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 20"><span class="fill" style="--v:20%"></span><em>20</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
-        <td class="overall">43</td>
+        <td class="site"><a href="https://www.figma.com/" rel="noopener nofollow" target="_blank">Figma</a><small>product-launch</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 9"><span class="fill" style="--v:9%"></span><em>9</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 82"><span class="fill" style="--v:82%"></span><em>82</em></div></td><td><div class="dim" title="Motion Craft: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td>
+        <td class="overall">64</td>
       </tr>
-      <tr data-cat="product-launch">
+      <tr data-cat="e-commerce">
         <td class="rank">60</td>
-        <td class="site"><a href="https://www.raycast.com/" rel="noopener nofollow" target="_blank">Raycast</a><small>product-launch</small></td>
-        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td>
-        <td><div class="dim" title="Accessibility: 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td><td><div class="dim" title="Motion Craft: 85"><span class="fill" style="--v:85%"></span><em>85</em></div></td>
-        <td class="overall">40</td>
+        <td class="site"><a href="https://www.aesop.com/" rel="noopener nofollow" target="_blank">Aesop</a><small>e-commerce</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td><td><div class="dim" title="Motion Craft: 75"><span class="fill" style="--v:75%"></span><em>75</em></div></td>
+        <td class="overall">62</td>
+      </tr>
+      <tr data-cat="editorial">
+        <td class="rank">61</td>
+        <td class="site"><a href="https://www.itsnicethat.com/" rel="noopener nofollow" target="_blank">It's Nice That</a><small>editorial</small></td>
+        <td><div class="dim" title="Pacing: 90"><span class="fill" style="--v:90%"></span><em>90</em></div></td><td><div class="dim" title="Performance: 80"><span class="fill" style="--v:80%"></span><em>80</em></div></td>
+        <td><div class="dim" title="Motion A11y (heuristic): 0"><span class="fill" style="--v:0%"></span><em>0</em></div></td><td><div class="dim" title="Motion Craft: 65"><span class="fill" style="--v:65%"></span><em>65</em></div></td>
+        <td class="overall">60</td>
       </tr>
 </tbody></table>
 <footer>
-  <p>bench_version 1.0 · 60 sites ranked · 6 unmeasurable (bot-wall / robots / timeout — listed in the repo, never guessed) · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">methodology</a> · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll-skill</a></p>
+  <p>measured 2026-07-03 · headless Chromium (hardware GL) · 1440×900 · bench_version 1.1 · 61 sites ranked · 5 unmeasurable (bot-wall / robots / timeout — listed in the repo, never guessed) · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">methodology</a> · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll-skill</a> · *Motion A11y is an automated heuristic (reduced-motion honored, focus visibility, sampled contrast) — not a WCAG conformance assessment.</p>
 </footer>
 <script>
   for (const b of document.querySelectorAll("nav button")) b.addEventListener("click", () => {

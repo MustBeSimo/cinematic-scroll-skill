@@ -1,9 +1,9 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Immersive Garden",
   "category": "portfolio-agency",
   "url": "https://immersive-g.com/",
-  "ts": "2026-07-03T16:06:14.310Z",
+  "ts": "2026-07-03T18:25:29.587Z",
   "runs": 3,
   "scores": {
     "pacing": 70,
@@ -14,23 +14,24 @@
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://immersive-g.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:06:14.310Z",
+    "ts": "2026-07-03T18:25:29.587Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 720
+      "samples": 721
     },
     "scroll": {
       "docHeight": 900,
       "viewportHeight": 900,
       "sections": 18,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": true
     },
     "motion": {
       "changedNodes": 0,

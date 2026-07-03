@@ -1,9 +1,9 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Polestar",
   "category": "product-launch",
   "url": "https://www.polestar.com/",
-  "ts": "2026-07-03T15:31:39.127Z",
+  "ts": "2026-07-03T17:53:38.914Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
@@ -14,23 +14,24 @@
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.polestar.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:31:39.127Z",
+    "ts": "2026-07-03T17:53:38.914Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 119,
+      "avg": 120,
       "droppedPct": 0,
-      "samples": 713
+      "samples": 717
     },
     "scroll": {
       "docHeight": 5134,
       "viewportHeight": 900,
       "sections": 13,
       "pinnedRanges": 3,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 218,

@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Pitch",
   "category": "product-launch",
   "url": "https://pitch.com/",
-  "ts": "2026-07-03T15:23:44.830Z",
+  "ts": "2026-07-03T17:47:48.131Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 3,
+    "performance": 81,
     "a11y": 20,
     "motionCraft": 65,
-    "overall": 44
+    "overall": 67
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://pitch.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:23:44.830Z",
+    "ts": "2026-07-03T17:47:48.131Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 33,
-      "droppedPct": 16,
-      "samples": 204
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 718
     },
     "scroll": {
       "docHeight": 14960,
       "viewportHeight": 900,
       "sections": 15,
       "pinnedRanges": 3,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 46,
@@ -41,7 +42,7 @@
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.303
+      "clsProxy": 0.27
     },
     "a11y": {
       "reducedMotionHonored": false,

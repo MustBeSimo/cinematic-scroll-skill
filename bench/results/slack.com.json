@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Slack",
   "category": "product-launch",
   "url": "https://slack.com/",
-  "ts": "2026-07-03T15:27:43.174Z",
+  "ts": "2026-07-03T17:50:12.684Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 79,
+    "performance": 80,
     "a11y": 80,
-    "motionCraft": 65,
-    "overall": 82
+    "motionCraft": 80,
+    "overall": 85
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://slack.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:27:43.174Z",
+    "ts": "2026-07-03T17:50:12.684Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 91,
-      "droppedPct": 1,
-      "samples": 547
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 721
     },
     "scroll": {
       "docHeight": 10980,
       "viewportHeight": 900,
       "sections": 44,
       "pinnedRanges": 2,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 190,
@@ -41,7 +42,7 @@
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.168
+      "clsProxy": 0.086
     },
     "a11y": {
       "reducedMotionHonored": true,

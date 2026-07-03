@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Basement Studio",
   "category": "portfolio-agency",
   "url": "https://basement.studio/",
-  "ts": "2026-07-03T15:48:56.071Z",
+  "ts": "2026-07-03T18:06:54.184Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 0,
+    "performance": 100,
     "a11y": 20,
     "motionCraft": 90,
-    "overall": 48
+    "overall": 78
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://basement.studio/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:48:56.071Z",
+    "ts": "2026-07-03T18:06:54.184Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 13,
-      "droppedPct": 100,
-      "samples": 81
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
     },
     "scroll": {
       "docHeight": 6317,
       "viewportHeight": 900,
       "sections": 3,
       "pinnedRanges": 4,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": true
     },
     "motion": {
       "changedNodes": 88,

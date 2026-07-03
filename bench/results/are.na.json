@@ -1,23 +1,23 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Are.na",
   "category": "editorial",
   "url": "https://www.are.na/",
-  "ts": "2026-07-03T16:18:34.780Z",
+  "ts": "2026-07-03T18:35:57.282Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 92,
+    "performance": 94,
     "a11y": 100,
     "motionCraft": 75,
     "overall": 93
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.are.na/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:18:34.780Z",
+    "ts": "2026-07-03T18:35:57.282Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
@@ -30,7 +30,8 @@
       "viewportHeight": 900,
       "sections": 1,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 11,
@@ -51,7 +52,7 @@
     },
     "console": {
       "errors": 0,
-      "failedRequests": 4
+      "failedRequests": 3
     }
   }
 }

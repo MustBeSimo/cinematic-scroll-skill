@@ -1,47 +1,48 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Resend",
   "category": "dev-tools",
   "url": "https://resend.com/",
-  "ts": "2026-07-03T16:59:18.602Z",
+  "ts": "2026-07-03T19:05:25.882Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 0,
+    "performance": 88,
     "a11y": 20,
-    "motionCraft": 100,
-    "overall": 50
+    "motionCraft": 85,
+    "overall": 73
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://resend.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:59:18.602Z",
+    "ts": "2026-07-03T19:05:25.882Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 20,
-      "droppedPct": 52,
-      "samples": 119
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
     },
     "scroll": {
       "docHeight": 12280,
       "viewportHeight": 900,
       "sections": 12,
       "pinnedRanges": 1,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": true
     },
     "motion": {
-      "changedNodes": 46,
+      "changedNodes": 9,
       "animatedNodes": 12,
-      "changedRatio": 0.12,
+      "changedRatio": 0.02,
       "transformOpacityOnly": 1,
-      "parallaxLayers": 2,
+      "parallaxLayers": 0,
       "entranceStagger": true
     },
     "stability": {
-      "clsProxy": 0.004
+      "clsProxy": 0.001
     },
     "a11y": {
       "reducedMotionHonored": false,

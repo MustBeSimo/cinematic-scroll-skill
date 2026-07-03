@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Superlist",
   "category": "product-launch",
   "url": "https://superlist.com/",
-  "ts": "2026-07-03T15:35:27.322Z",
+  "ts": "2026-07-03T17:55:35.443Z",
   "runs": 3,
   "scores": {
     "pacing": 90,
-    "performance": 78,
+    "performance": 80,
     "a11y": 70,
     "motionCraft": 90,
-    "overall": 81
+    "overall": 82
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://superlist.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:35:27.322Z",
+    "ts": "2026-07-03T17:55:35.443Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 66,
-      "droppedPct": 2,
-      "samples": 396
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
     },
     "scroll": {
       "docHeight": 8456,
       "viewportHeight": 900,
       "sections": 17,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 199,
@@ -41,7 +42,7 @@
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.001
+      "clsProxy": 0.006
     },
     "a11y": {
       "reducedMotionHonored": true,

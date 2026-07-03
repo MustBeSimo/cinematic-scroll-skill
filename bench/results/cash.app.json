@@ -1,9 +1,9 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Cash App",
   "category": "product-launch",
   "url": "https://cash.app/",
-  "ts": "2026-07-03T15:37:15.822Z",
+  "ts": "2026-07-03T17:56:31.743Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
@@ -14,23 +14,24 @@
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://cash.app/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:37:15.822Z",
+    "ts": "2026-07-03T17:56:31.743Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 718
+      "samples": 720
     },
     "scroll": {
       "docHeight": 1440,
       "viewportHeight": 900,
       "sections": 112,
       "pinnedRanges": 2,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 151,

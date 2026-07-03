@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Vercel",
   "category": "dev-tools",
   "url": "https://vercel.com/",
-  "ts": "2026-07-03T16:39:41.852Z",
+  "ts": "2026-07-03T18:52:55.595Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 87,
+    "performance": 90,
     "a11y": 70,
     "motionCraft": 90,
-    "overall": 87
+    "overall": 88
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://vercel.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:39:41.852Z",
+    "ts": "2026-07-03T18:52:55.595Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 58,
-      "droppedPct": 8,
-      "samples": 363
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 721
     },
     "scroll": {
       "docHeight": 5333,
       "viewportHeight": 900,
       "sections": 11,
       "pinnedRanges": 2,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": true
     },
     "motion": {
       "changedNodes": 156,
@@ -50,7 +51,7 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 1,
+      "errors": 2,
       "failedRequests": 0
     }
   }

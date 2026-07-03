@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Warp",
   "category": "dev-tools",
   "url": "https://www.warp.dev/",
-  "ts": "2026-07-03T16:56:31.769Z",
+  "ts": "2026-07-03T19:03:29.128Z",
   "runs": 3,
   "scores": {
     "pacing": 100,
-    "performance": 65,
+    "performance": 80,
     "a11y": 70,
     "motionCraft": 75,
-    "overall": 77
+    "overall": 82
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.warp.dev/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:56:31.769Z",
+    "ts": "2026-07-03T19:03:29.128Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 53,
-      "droppedPct": 3,
-      "samples": 316
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
     },
     "scroll": {
       "docHeight": 8451,
       "viewportHeight": 900,
       "sections": 23,
       "pinnedRanges": 2,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 129,
@@ -41,7 +42,7 @@
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.002
+      "clsProxy": 0.007
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -51,7 +52,7 @@
     },
     "console": {
       "errors": 8,
-      "failedRequests": 24
+      "failedRequests": 26
     }
   }
 }

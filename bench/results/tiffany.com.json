@@ -1,9 +1,9 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Tiffany & Co.",
   "category": "e-commerce",
   "url": "https://www.tiffany.com/",
-  "ts": "2026-07-03T16:35:06.118Z",
+  "ts": "2026-07-03T18:48:53.729Z",
   "runs": 3,
   "scores": {
     "pacing": 70,
@@ -14,23 +14,24 @@
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.tiffany.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:35:06.118Z",
+    "ts": "2026-07-03T18:48:53.729Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 721
+      "samples": 720
     },
     "scroll": {
       "docHeight": 900,
       "viewportHeight": 900,
       "sections": 0,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 0,

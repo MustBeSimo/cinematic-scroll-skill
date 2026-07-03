@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Figma",
   "category": "product-launch",
   "url": "https://www.figma.com/",
-  "ts": "2026-07-03T15:17:18.172Z",
+  "ts": "2026-07-03T17:43:56.930Z",
   "runs": 3,
   "scores": {
     "pacing": 90,
-    "performance": 8,
+    "performance": 9,
     "a11y": 82,
     "motionCraft": 90,
-    "overall": 63
+    "overall": 64
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.figma.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:17:18.172Z",
+    "ts": "2026-07-03T17:43:56.930Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
       "avg": 32,
-      "droppedPct": 17,
-      "samples": 193
+      "droppedPct": 16,
+      "samples": 191
     },
     "scroll": {
       "docHeight": 8936,
       "viewportHeight": 900,
       "sections": 8,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 45,

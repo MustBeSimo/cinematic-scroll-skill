@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Arc Browser",
   "category": "product-launch",
   "url": "https://arc.net/",
-  "ts": "2026-07-03T15:19:10.283Z",
+  "ts": "2026-07-03T17:44:52.708Z",
   "runs": 3,
   "scores": {
     "pacing": 90,
-    "performance": 99,
+    "performance": 100,
     "a11y": 20,
-    "motionCraft": 75,
-    "overall": 72
+    "motionCraft": 50,
+    "overall": 68
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://arc.net/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:19:10.283Z",
+    "ts": "2026-07-03T17:44:52.708Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 84,
-      "droppedPct": 1,
-      "samples": 503
+      "avg": 105,
+      "droppedPct": 0,
+      "samples": 629
     },
     "scroll": {
       "docHeight": 6125,
       "viewportHeight": 900,
       "sections": 7,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 48,
@@ -41,7 +42,7 @@
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.001
+      "clsProxy": 0.132
     },
     "a11y": {
       "reducedMotionHonored": false,

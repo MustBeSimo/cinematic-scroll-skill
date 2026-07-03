@@ -1,36 +1,37 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Astro",
   "category": "dev-tools",
   "url": "https://astro.build/",
-  "ts": "2026-07-03T16:47:13.302Z",
+  "ts": "2026-07-03T18:57:30.566Z",
   "runs": 3,
   "scores": {
     "pacing": 90,
-    "performance": 95,
+    "performance": 100,
     "a11y": 86,
     "motionCraft": 45,
-    "overall": 82
+    "overall": 83
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://astro.build/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T16:47:13.302Z",
+    "ts": "2026-07-03T18:57:30.566Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 60,
-      "droppedPct": 5,
-      "samples": 343
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 720
     },
     "scroll": {
       "docHeight": 9017,
       "viewportHeight": 900,
       "sections": 88,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 0,

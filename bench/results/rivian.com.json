@@ -1,9 +1,9 @@
 {
-  "bench_version": "1.0",
+  "bench_version": "1.1",
   "name": "Rivian",
   "category": "product-launch",
   "url": "https://www.rivian.com/",
-  "ts": "2026-07-03T15:29:58.570Z",
+  "ts": "2026-07-03T17:51:46.797Z",
   "runs": 3,
   "scores": {
     "pacing": 90,
@@ -14,23 +14,24 @@
   },
   "unmeasurable_reason": null,
   "measurements": {
-    "bench_version": "1.0",
+    "bench_version": "1.1",
     "url": "https://www.rivian.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T15:29:58.570Z",
+    "ts": "2026-07-03T17:51:46.797Z",
     "reachable": true,
     "unmeasurable_reason": null,
     "fps": {
-      "avg": 115,
+      "avg": 120,
       "droppedPct": 0,
-      "samples": 689
+      "samples": 721
     },
     "scroll": {
       "docHeight": 5307,
       "viewportHeight": 900,
       "sections": 6,
       "pinnedRanges": 0,
-      "scrollJack": false
+      "scrollJack": false,
+      "hasCanvas": false
     },
     "motion": {
       "changedNodes": 51,
