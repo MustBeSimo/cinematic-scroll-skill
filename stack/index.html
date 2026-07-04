@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Taste Stack — generate, judge, benchmark, learn</title>
+<meta name="description" content="Four connected tools for taste in the agentic era: cinematic-scroll generates with taste built in, tasteHQ judges it, CinematicBench measures it in public, and the Studio motif engine learns from every build.">
+<meta property="og:title" content="The Taste Stack — generate, judge, benchmark, learn">
+<meta property="og:description" content="Generation is cheap. Taste is the moat. Four connected tools for taste in the agentic era.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mustbesimo.github.io/cinematic-scroll-skill/stack/">
+<style>
+  :root{
+    --bg:#101417;--panel:#1B2026;--card:#202A31;--ink:#E9E1D4;--dim:#8B857B;
+    --accent:#C08A3E;--line:#2c343b;--track:#171c20;
+    --paid-line:#3a3325;--paid-deep:#1e1c15;
+    --e-soft:cubic-bezier(.22,.61,.36,1);
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+    .reveal{opacity:1!important;transform:none!important}
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;padding:0 24px 96px;-webkit-font-smoothing:antialiased}
+  a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+  .wrap{max-width:1040px;margin:0 auto}
+  .eyebrow{font:600 12px/1 ui-monospace,monospace;letter-spacing:.28em;text-transform:uppercase;color:var(--accent)}
+  header.hero{padding:88px 0 56px}
+  h1{font-size:clamp(30px,5.4vw,58px);line-height:1.06;letter-spacing:-.02em;margin:18px 0 20px;max-width:820px}
+  h1 em{color:var(--accent);font-style:normal}
+  .hero p{color:var(--dim);max-width:640px}
+  .hero p strong{color:var(--ink);font-weight:600}
+  .flow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:34px 0 0;font:600 13px ui-monospace,monospace;color:var(--dim)}
+  .flow b{color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 15px;font-weight:600}
+  .flow span{color:var(--accent)}
+  .stages{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}
+  .stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 26px 22px;display:flex;flex-direction:column;gap:12px;transition:transform .45s var(--e-soft),border-color .45s var(--e-soft)}
+  @media (hover:hover){
+    .stage:hover{transform:translateY(-3px);border-color:var(--accent)}
+    .stage a:hover{border-bottom-color:var(--accent)}
+    .research li a:hover,footer a:hover{text-decoration:underline}
+  }
+  .stage .role{font:600 11px/1 ui-monospace,monospace;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+  .stage h2{font-size:22px;letter-spacing:-.01em}
+  .stage h2 small{display:block;font-size:13px;color:var(--dim);font-weight:400;margin-top:4px;letter-spacing:0}
+  .stage p{color:var(--dim);font-size:15px;flex:1}
+  .stage .proof{font:600 12px ui-monospace,monospace;color:var(--ink);background:var(--track);border-radius:8px;padding:9px 12px}
+  .stage .links{display:flex;gap:14px;flex-wrap:wrap}
+  .stage a{color:var(--accent);text-decoration:none;font:600 14px inherit;border-bottom:1px solid transparent;transition:border-color .3s var(--e-soft)}
+  .stage.paid{border-color:var(--paid-line);background:linear-gradient(180deg,var(--panel),var(--paid-deep))}
+  .badge{display:inline-block;font:600 10px/1 ui-monospace,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--bg);background:var(--accent);border-radius:999px;padding:5px 10px;margin-left:8px;vertical-align:middle}
+  section.research{margin-top:64px}
+  section.research h2,section.why h2{font-size:20px;margin-bottom:14px}
+  .research ul{list-style:none;display:grid;gap:10px}
+  .research li{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;color:var(--dim);font-size:15px}
+  .research li a{color:var(--accent);text-decoration:none;font-weight:600}
+  section.why{margin-top:64px;max-width:720px}
+  .why p{color:var(--dim);margin-bottom:12px}
+  .why p strong{color:var(--ink)}
+  footer{margin-top:80px;padding-top:26px;border-top:1px solid var(--line);color:var(--dim);font-size:14px;display:flex;gap:18px;flex-wrap:wrap}
+  footer a{color:var(--accent);text-decoration:none}
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s var(--e-soft),transform .6s var(--e-soft)}
+  .reveal.in{opacity:1;transform:none}
+  @media (max-width:760px){
+    body{padding:0 14px 64px}
+    header.hero{padding:56px 0 40px}
+    .stages{grid-template-columns:1fr}
+    .flow{gap:8px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">The taste stack</p>
+  <h1>Generation is cheap.<br><em>Taste</em> is the moat.</h1>
+  <p>AI agents can produce interfaces on demand — and almost all of them feel the same.
+  The bottleneck moved from writing code to <strong>knowing what good looks like</strong>.
+  This is a working stack for that problem: one tool generates with taste built in, one
+  judges it against a declared target, one measures it in public, and one learns from
+  every build. Each piece works alone; together they close the loop.</p>
+  <nav class="flow" aria-label="stack flow">
+    <b>generate</b><span>&rarr;</span><b>judge</b><span>&rarr;</span><b>benchmark</b><span>&rarr;</span><b>learn</b><span>&rarr;</span><b>generate better</b>
+  </nav>
+</header>
+
+<main>
+<div class="stages">
+  <article class="stage reveal">
+    <p class="role">01 · Generate</p>
+    <h2>Cinematic Scroll <small>free Agent Skill · MIT</small></h2>
+    <p>Gives any coding agent (Claude Code, Cursor, …) the craft to build cinematic,
+    scroll-driven sites: pinned chapters, parallax, 3D, editorial pacing — run through a
+    5-phase pipeline with taste guardrails and a transform/opacity performance budget.
+    Every build is gated by its own quality scorer before it ships.</p>
+    <p class="proof">5 live demos · 11 themes · self-gated at ≥90/100</p>
+    <div class="links">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">Live demos</a>
+      <a href="https://github.com/MustBeSimo/cinematic-scroll-skill" rel="noopener">GitHub</a>
+    </div>
+  </article>
+
+  <article class="stage reveal">
+    <p class="role">02 · Judge</p>
+    <h2>tasteHQ <small>design-taste judge · free API</small></h2>
+    <p>Turns taste into a declared, checkable target: a 30-axis design grammar, 101 brands
+    published as machine-readable vectors, and a deterministic judge that scores any URL
+    against a brand, a live reference, or a pinned grammar — returning per-axis failures
+    and a prescriptive fix-list, not just a number.</p>
+    <p class="proof">101 brands · 30 axes · no-auth API + MCP + CLI</p>
+    <div class="links">
+      <a href="https://taste-hq.vercel.app" rel="noopener">taste-hq.vercel.app</a>
+      <a href="https://taste-hq.vercel.app/agents" rel="noopener">For agents</a>
+    </div>
+  </article>
+
+  <article class="stage reveal">
+    <p class="role">03 · Benchmark</p>
+    <h2>CinematicBench <small>public scroll-craft leaderboard</small></h2>
+    <p>One rubric over the web's best-known sites: pacing, performance, motion
+    accessibility, craft — measured passively (one ordinary page load, robots honored,
+    truthful UA), median of three runs, deterministic scoring. Then run the exact same
+    scorer on your own site with one command.</p>
+    <p class="proof">61 sites ranked · npx cinematic-bench &lt;url&gt;</p>
+    <div class="links">
+      <a href="https://mustbesimo.github.io/cinematic-scroll-skill/bench/">Leaderboard</a>
+      <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench" rel="noopener">Methodology</a>
+    </div>
+  </article>
+
+  <article class="stage paid reveal">
+    <p class="role">04 · Learn<span class="badge">Studio · paid</span></p>
+    <h2>Motif Engine <small>Cinematic Scroll Studio · private</small></h2>
+    <p>The self-improving layer: it distills patterns from sites you're authorized to study
+    into an originality-firewalled pattern library, tracks which motifs actually get reused,
+    scaffolds new variants against a declared taste target, and promotes nothing to canon
+    without human sign-off. The skill that gets better every time you build.</p>
+    <p class="proof">pattern IR · reuse telemetry · judged variants · human-gated canon</p>
+    <div class="links">
+      <a href="mailto:simone@w230.net?subject=Cinematic%20Scroll%20Studio%20%E2%80%94%20early%20access">Request early access</a>
+    </div>
+  </article>
+</div>
+
+<section class="research reveal">
+  <h2>The research underneath</h2>
+  <ul>
+    <li><a href="https://mustbesimo.github.io/taste-layer/taste-layer/" rel="noopener">The Taste Layer</a> — why the bottleneck shifts from generation to evaluation, and what quality gates look like inside an organization.</li>
+    <li><a href="https://mustbesimo.github.io/taste-layer/curation-stack/" rel="noopener">The Curation Stack</a> — quality infrastructure across a marketplace: the L0–L3 curation architecture tasteHQ implements.</li>
+    <li>A 244-paper literature map (2023–2026) on how autonomous systems learn, score, govern and reuse visual taste — the field moved from static aesthetic scoring to judge-and-optimize loops. This stack is that loop, operationalized.</li>
+  </ul>
+</section>
+
+<section class="why reveal">
+  <h2>Why one stack</h2>
+  <p><strong>A generator without a judge drifts generic.</strong> A judge without a
+  benchmark has no public ground truth. A benchmark without a learner is a scoreboard
+  nobody improves against. Wired together: builds declare a taste target before a line is
+  written, get scored against it after, land on a public rubric anyone can verify — and
+  the patterns that survive feed the next build.</p>
+  <p>Everything measurable here is deterministic and open: published weights, reproducible
+  scorers, audit trails. The judgment stays human where it should — nothing is promoted to
+  canon by a machine.</p>
+</section>
+</main>
+
+<footer class="reveal">
+  <span>Simone Leonelli</span>
+  <a href="mailto:simone@w230.net">simone@w230.net</a>
+  <a href="https://github.com/MustBeSimo" rel="noopener">GitHub</a>
+  <span>this page was built (and gated) by the stack itself</span>
+</footer>
+
+</div>
+<script>
+  const io = new IntersectionObserver((es) => {
+    for (const e of es) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  }, { threshold: 0.12 });
+  for (const el of document.querySelectorAll(".reveal")) io.observe(el);
+</script>
+</body>
+</html>

@@ -69,7 +69,7 @@ export function buildHtml(results) {
 ${rows}
 </tbody></table>
 <footer>
-  <p>measured ${esc(dates[0] || "n/a")}${dates.length > 1 && dates.at(-1) !== dates[0] ? "–" + esc(dates.at(-1)) : ""} · headless Chromium (hardware GL) · 1440×900 · bench_version ${esc(bv)}${bvs.length > 1 ? " (mixed versions!)" : ""} · ${ranked.length} sites ranked · ${unmeasurable.length} unmeasurable (bot-wall / robots / timeout — listed in the repo, never guessed) · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">methodology</a> · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll-skill</a> · *Motion A11y is an automated heuristic (reduced-motion honored, focus visibility, sampled contrast) — not a WCAG conformance assessment.</p>
+  <p>measured ${esc(dates[0] || "n/a")}${dates.length > 1 && dates.at(-1) !== dates[0] ? "–" + esc(dates.at(-1)) : ""} · headless Chromium (hardware GL) · 1440×900 · bench_version ${esc(bv)}${bvs.length > 1 ? " (mixed versions!)" : ""} · ${ranked.length} sites ranked · ${unmeasurable.length} unmeasurable (bot-wall / robots / timeout — listed in the repo, never guessed) · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">methodology</a> · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll-skill</a> · part of <a href="../stack/">the taste stack</a> · *Motion A11y is an automated heuristic (reduced-motion honored, focus visibility, sampled contrast) — not a WCAG conformance assessment.</p>
 </footer>
 <script>
   for (const b of document.querySelectorAll("nav button")) b.addEventListener("click", () => {
