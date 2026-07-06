@@ -1,7 +1,7 @@
 ---
 name: cinematic-scroll
 description: Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, background-morphing layouts, release/launch pages, product story pages, or editorial commerce microsites. From a single self-contained scroll section (Mode A) to a full Shopify-Editions-style Next.js release site with optional AI-generated visuals via the fal.ai remote API (Mode B — requires your own fal.ai key; makes outbound API calls to fal.ai). Includes an optional audit mode in which the agent analyzes a user-supplied URL using its own browser/fetch access and scores the scroll experience on 4 dimensions (Pacing, Performance, Accessibility, Emotional Arc). Works through an optional 5-phase pipeline (cinematic audit → motion storyboard → technical spec → build → polish) with taste guardrails, 12 proven scroll patterns, 11 visual systems, and a transform/opacity performance budget as built-in craft constraints. Advanced capabilities are user-initiated, not absent: WebXR/AR sessions are feature-gated and only start on an explicit user action (an Enter VR/AR button that appears solely when the device reports support), and 3D GLB generation lives in the Mode B Next.js template (`templates/nextjs/scripts/generate-flagship-assets.mjs`, run with your own fal.ai key) — see activation guidelines below.
-version: 2.6.1
+version: 2.6.2
 author: Simone Leonelli
 license: MIT
 metadata:
