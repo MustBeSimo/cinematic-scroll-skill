@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* frontmatter.mjs — minimal zero-dep YAML-subset reader for Pattern IR frontmatter.
    Subset is documented in references/pattern-ir.md. NOT a general YAML parser. */
-import { readFileSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const FM = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/;
@@ -66,5 +66,8 @@ function selftest() {
   process.exit(0);
 }
 
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+// realpath-resolved: npm's node_modules/.bin/ symlinks (how npx always invokes bins) and
+// macOS's /tmp -> /private/tmp both break a raw argv[1]-vs-import.meta.url comparison.
+let isMain = false;
+try { isMain = !!process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1]); } catch { isMain = false; }
 if (isMain) { if (process.argv.includes("--selftest")) selftest(); else { console.error("frontmatter.mjs is a library; run --selftest."); process.exit(2); } }

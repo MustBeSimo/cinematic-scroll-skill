@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* sync-manifest.mjs — project shelf-entry IR frontmatter into references/learned/manifest.json.
    Deterministic (sorted by entry_id, no timestamps). --check verifies without writing. */
-import { readFileSync, writeFileSync, existsSync, mkdtempSync, mkdirSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdtempSync, mkdirSync, rmSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -53,7 +53,10 @@ function selftest() {
   process.exit(0);
 }
 
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+// realpath-resolved: npm's node_modules/.bin/ symlinks (how npx always invokes bins) and
+// macOS's /tmp -> /private/tmp both break a raw argv[1]-vs-import.meta.url comparison.
+let isMain = false;
+try { isMain = !!process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1]); } catch { isMain = false; }
 if (isMain) {
   const argv = process.argv.slice(2);
   const root = (argv.includes("--root") ? argv[argv.indexOf("--root") + 1] : null) || ROOT_DEFAULT;

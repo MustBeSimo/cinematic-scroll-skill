@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* surface-dedup-candidates.mjs — surface possible duplicates for a candidate by TAG overlap
    (Jaccard) only. NO embeddings, NO semantic model. The agent makes the create|merge|skip call. */
-import { readFileSync, existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { readFileSync, existsSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -47,7 +47,10 @@ function selftest() {
   process.exit(0);
 }
 
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+// realpath-resolved: npm's node_modules/.bin/ symlinks (how npx always invokes bins) and
+// macOS's /tmp -> /private/tmp both break a raw argv[1]-vs-import.meta.url comparison.
+let isMain = false;
+try { isMain = !!process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1]); } catch { isMain = false; }
 if (isMain) {
   const argv = process.argv.slice(2);
   const arg = (n) => { const i = argv.indexOf(`--${n}`); return i >= 0 ? argv[i + 1] : null; };

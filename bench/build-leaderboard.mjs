@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* build-leaderboard.mjs — render bench/results/*.json into the static leaderboard page.
    Zero deps. Unmeasurable sites are footnoted, never ranked. Page must pass the doctor ≥90. */
-import { readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, writeFileSync, existsSync, realpathSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -107,7 +107,10 @@ function selftest() {
   process.exit(0);
 }
 
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+// realpath-resolved: npm's node_modules/.bin/ symlinks (how npx always invokes bins) and
+// macOS's /tmp -> /private/tmp both break a raw argv[1]-vs-import.meta.url comparison.
+let isMain = false;
+try { isMain = !!process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1]); } catch { isMain = false; }
 if (isMain) {
   if (process.argv.includes("--selftest")) selftest();
   const results = loadResults();

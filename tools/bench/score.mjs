@@ -2,6 +2,7 @@
 /* score.mjs — CinematicBench pure rubric. Deterministic: measurements in → 0-100 out.
    No I/O, no network, no LLM. Deduction-based, mirroring doctor/audit conventions.
    Any change to deductions bumps BENCH_VERSION and requires re-benching the corpus. */
+import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 export const BENCH_VERSION = "1.1";
@@ -115,5 +116,8 @@ function selftest() {
   process.exit(0);
 }
 
-const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+// realpath-resolved: npm's node_modules/.bin/ symlinks (how npx always invokes bins) and
+// macOS's /tmp -> /private/tmp both break a raw argv[1]-vs-import.meta.url comparison.
+let isMain = false;
+try { isMain = !!process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1]); } catch { isMain = false; }
 if (isMain) { if (process.argv.includes("--selftest")) selftest(); else { console.error("score.mjs is a library; run --selftest."); process.exit(2); } }
