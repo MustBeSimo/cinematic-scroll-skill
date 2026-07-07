@@ -4,9 +4,10 @@
 # imagery lives in the git repo (clone) and the Claude Code plugin install.
 **/assets/
 
-# Never ship dependencies or the marketing landing page.
+# Never ship dependencies, build caches, or the marketing landing page.
 **/node_modules/
 node_modules/
+**/.next/
 index.html
 
 # Channel-specific / dev cruft not needed by the npm installer.

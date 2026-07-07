@@ -1,6 +1,6 @@
 {
   "name": "cinematic-scroll-skill",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "description": "Installer for the cinematic-scroll Agent Skill — copies the skill into ~/.claude/skills/ (Claude Code, Cursor, etc.). The skill builds cinematic, scroll-driven websites: pinned chapters, parallax, 3D tilt, environment-morphing backgrounds, full release pages, and a React Three Fiber + WebXR flagship with one-command fal.ai 3D asset generation (auto Draco/WebP compression, rigged dancing figure included).",
   "type": "module",
   "bin": {
@@ -65,7 +65,7 @@
     "test": "npm run tokens:check && npm run themes:check && npm run links:check && npm run consistency:check && npm run learn:selftest && npm run skill:sync:check && npm run components:doctor && npm run doctor:selftest && npm run evals:run && npm run bench:selftest",
     "build:tokens": "node tools/build-tokens/build.mjs",
     "build:themes": "for f in themes/*.theme.json; do node tools/build-tokens/build.mjs --theme \"$f\"; done",
-    "prepack": "rm -rf templates/nextjs/node_modules",
+    "prepack": "rm -rf templates/nextjs/node_modules templates/nextjs/.next",
     "proof": "node tools/page-proof/proof.mjs",
     "proof:components": "node tools/page-proof/proof-components.mjs"
   },
