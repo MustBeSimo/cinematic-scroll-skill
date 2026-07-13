@@ -8,7 +8,7 @@ An original cinematic example website for the `cinematic-scroll` skill.
 - A continuously playing monochrome base video.
 - A synchronized full-colour video above it.
 - Scroll-scrubbed CSS `clip-path` masking applied only to the colour layer.
-- Frame-by-frame drift correction using `requestVideoFrameCallback`, with playback-rate convergence and an 80 ms hard-resync threshold.
+- Frame-by-frame drift correction using `requestVideoFrameCallback`, with playback-rate convergence and a 45 ms hard-resync threshold.
 - Generated precision-mechanical hero imagery converted into a seamless 12-second, 30 fps master loop.
 - Five selectable mechanical systems with live readings and macro crops.
 - Procedural Web Audio ambience behind an explicit user-controlled sound toggle.

@@ -98,8 +98,8 @@ nav{position:fixed;z-index:80;top:0;left:0;right:0;padding:max(17px,env(safe-are
   function syncVideos(force=false){
     if(!monoVideo.duration||!colorVideo.duration)return;
     const delta=monoVideo.currentTime-colorVideo.currentTime, drift=Math.abs(delta);
-    if(force||drift>.08){colorVideo.currentTime=monoVideo.currentTime;colorVideo.playbackRate=1;}
-    else colorVideo.playbackRate=1+Math.max(-.06,Math.min(.06,delta*.8));
+    if(force||drift>.045){colorVideo.currentTime=monoVideo.currentTime;colorVideo.playbackRate=1;}
+    else colorVideo.playbackRate=1+Math.max(-.08,Math.min(.08,delta));
     if(monoVideo.paused!==colorVideo.paused){monoVideo.paused?colorVideo.pause():colorVideo.play().catch(()=>{});}
   }
   async function startVideos(){
