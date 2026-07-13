@@ -4,9 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#d9d7ce" />
-<meta name="description" content="Limen is an original cinematic field-survey interface built with the Cinematic Scroll skill." />
-<title>LIMEN — Exobotanical Field Survey</title>
-<link rel="preload" as="image" href="./assets/limen-specimen.png" fetchpriority="high" />
+<meta name="description" content="KERN is an original cinematic precision-calibration interface built with the Cinematic Scroll skill." />
+<title>KERN — Precision Calibration Unit</title>
+<link rel="preload" as="video" href="./assets/kern-mono.mp4" type="video/mp4" fetchpriority="high" />
 <style>
 :root{
   --paper:#dedcd3;--paper-hi:#efeee8;--ink:#151b1b;--muted:#687170;
@@ -48,38 +48,39 @@ nav{position:fixed;z-index:80;top:0;left:0;right:0;padding:max(17px,env(safe-are
 </head>
 <body>
 <div class="noise" aria-hidden="true"></div><div class="progress" aria-hidden="true"></div>
-<nav aria-label="Primary navigation"><div class="brand"><span class="brand-mark" aria-hidden="true"></span><strong class="caps">Limen</strong><small>Field unit 07</small></div><div class="nav-right"><a href="#archive">Archive</a><a href="#method">Protocol</a><button class="sound" type="button" aria-pressed="false">Sound off</button></div></nav>
+<nav aria-label="Primary navigation"><div class="brand"><span class="brand-mark" aria-hidden="true"></span><strong class="caps">Kern</strong><small>Calibration unit 01</small></div><div class="nav-right"><a href="#archive">Assembly</a><a href="#method">Protocol</a><button class="sound" type="button" aria-pressed="false">Sound off</button></div></nav>
 <main>
-<section class="hero-track" id="survey" aria-label="Interactive exobotanical survey">
+<section class="hero-track" id="survey" aria-label="Interactive precision calibration sequence">
   <div class="hero">
     <div class="horizon" aria-hidden="true"></div><div class="ambient" aria-hidden="true"></div>
-    <div class="hero-title"><div class="kicker">Exobotanical survey / Plate 07</div><h1>Limen<br/>Archive</h1><p>A living fragment recovered beyond the treeline. Scroll to inspect its five signal-bearing colonies.</p></div>
-    <div class="index" aria-hidden="true"><div class="num">07</div><small>Lat 46.8182° N<br/>Long 8.2275° E</small></div>
-    <div class="specimen-wrap" aria-hidden="true"><div class="specimen-stage"><img class="specimen base" src="./assets/limen-specimen.png" alt="" /><img class="specimen scan" src="./assets/limen-specimen.png" alt="" /><div class="scan-plane"></div><div class="target"><i></i></div><div class="connector"></div></div></div>
-    <aside class="panel panel-left" aria-label="Field survey data"><div class="panel-head"><span>Field survey</span><span class="blink">Scan active</span></div><h2 id="speciesName">Glasscap</h2><div class="latin" id="speciesLatin">Mycena vitrea liminalis</div><div class="metrics"><div class="metric"><b id="metricVital">94</b><span>Vitality</span></div><div class="metric"><b id="metricSignal">71</b><span>Signal</span></div><div class="metric"><b id="metricRisk">03</b><span>Risk</span></div></div><div class="specimen-list" role="list"><button class="specimen-btn active" data-index="0" type="button">01 Glasscap</button><button class="specimen-btn" data-index="1" type="button">02 Rust bloom</button><button class="specimen-btn" data-index="2" type="button">03 Thread moss</button><button class="specimen-btn" data-index="3" type="button">04 Cyan well</button><button class="specimen-btn" data-index="4" type="button">05 Root veil</button></div></aside>
-    <aside class="panel panel-right" aria-label="Macro optical view"><div class="panel-head"><span>Macro optics</span><span id="plateLabel">Plate 01/A</span></div><div class="macro"><img src="./assets/limen-specimen.png" alt="Magnified field specimen" /></div><div class="macro-meta"><span id="magnification">MAG 4.8×</span><span>Tracking locked</span></div></aside>
-    <div class="scroll-cue" aria-hidden="true"><i></i>Scroll to survey</div>
+    <div class="hero-title"><div class="kicker">Precision calibration / Unit 01</div><h1>Kern<br/>Index</h1><p>A mechanical reference assembly measured under load. Scroll to reveal its five critical systems in colour.</p></div>
+    <div class="index" aria-hidden="true"><div class="num">01</div><small>Tolerance ±0.002 μm<br/>Cycle 12.000 s</small></div>
+    <div class="specimen-wrap" aria-hidden="true"><div class="specimen-stage"><video class="specimen base" src="./assets/kern-mono.mp4" poster="./assets/kern-calibration-unit.png" muted loop playsinline autoplay preload="auto"></video><video class="specimen scan" src="./assets/kern-color.mp4" poster="./assets/kern-calibration-unit.png" muted loop playsinline autoplay preload="auto"></video><div class="scan-plane"></div><div class="target"><i></i></div><div class="connector"></div></div></div>
+    <aside class="panel panel-left" aria-label="Calibration data"><div class="panel-head"><span>System index</span><span class="blink">Scan active</span></div><h2 id="speciesName">Escapement</h2><div class="latin" id="speciesLatin">Isochronous control train</div><div class="metrics"><div class="metric"><b id="metricVital">99</b><span>Stability</span></div><div class="metric"><b id="metricSignal">84</b><span>Torque</span></div><div class="metric"><b id="metricRisk">02</b><span>Drift</span></div></div><div class="specimen-list" role="list"><button class="specimen-btn active" data-index="0" type="button">01 Escapement</button><button class="specimen-btn" data-index="1" type="button">02 Copper coil</button><button class="specimen-btn" data-index="2" type="button">03 Ruby bearing</button><button class="specimen-btn" data-index="3" type="button">04 Cyan emitter</button><button class="specimen-btn" data-index="4" type="button">05 Outer gimbal</button></div></aside>
+    <aside class="panel panel-right" aria-label="Macro optical view"><div class="panel-head"><span>Macro optics</span><span id="plateLabel">Plate 01/A</span></div><div class="macro"><img src="./assets/kern-calibration-unit.png" alt="Magnified precision mechanism" /></div><div class="macro-meta"><span id="magnification">MAG 4.8×</span><span>Tracking locked</span></div></aside>
+    <div class="scroll-cue" aria-hidden="true"><i></i>Scroll to calibrate</div>
   </div>
 </section>
-<section class="section catalogue" id="archive"><div class="section-tag reveal">01 / Recovered signals</div><h2 class="reveal">The colony<br/>is speaking.</h2><p class="section-lede reveal">Five organisms. One shared substrate. Each signal changes the reading of the whole.</p><div class="cards"><article class="card reveal"><div class="card-num">SIGNAL / 01</div><div class="card-orbit"></div><h3>Light as<br/>language</h3><p>Cyan wells pulse in a repeating interval, suggesting communication rather than random bioluminescence.</p></article><article class="card reveal"><div class="card-num">SIGNAL / 02</div><div class="card-orbit"></div><h3>Shared<br/>memory</h3><p>Root filaments retain charge after contact, preserving a faint trace of the last disturbance.</p></article><article class="card reveal"><div class="card-num">SIGNAL / 03</div><div class="card-orbit"></div><h3>Mutual<br/>shelter</h3><p>Glasscaps cool the surrounding moss by three degrees, creating a stable pocket for new growth.</p></article></div></section>
-<section class="section" id="method"><div class="method-grid"><div><div class="section-tag reveal">02 / Survey protocol</div><h2 class="reveal">Observe<br/>without<br/>owning.</h2><p class="section-lede reveal">The archive records relationships, not trophies. Every reading is reversible and leaves the colony intact.</p></div><div class="steps"><article class="step reveal"><b>01</b><div><h3>Locate the disturbance</h3><p>Map light, heat and movement before assigning names.</p></div></article><article class="step reveal"><b>02</b><div><h3>Isolate one signal</h3><p>Use the mask to compare the untreated field with the active reading.</p></div></article><article class="step reveal"><b>03</b><div><h3>Return to the whole</h3><p>No specimen is interpreted outside the system that keeps it alive.</p></div></article><article class="step reveal"><b>04</b><div><h3>Publish uncertainty</h3><p>Confidence and contradiction remain visible in every plate.</p></div></article></div></div></section>
-<section class="section final"><div><div class="section-tag reveal">Survey status / complete</div><h2 class="reveal">A fragment<br/>is never<br/>alone.</h2><p class="section-lede reveal" style="margin-inline:auto">Limen is an original cinematic web specimen built with the Cinematic Scroll skill.</p><a class="reveal" href="../../index.html">Return to Cinematic Scroll</a></div></section>
+<section class="section catalogue" id="archive"><div class="section-tag reveal">01 / Measured systems</div><h2 class="reveal">Precision<br/>is relational.</h2><p class="section-lede reveal">Five mechanisms. One timing reference. Every tolerance changes the behaviour of the whole.</p><div class="cards"><article class="card reveal"><div class="card-num">SYSTEM / 01</div><div class="card-orbit"></div><h3>Time as<br/>geometry</h3><p>The escapement converts stored force into a repeatable interval without surrendering energy to noise.</p></article><article class="card reveal"><div class="card-num">SYSTEM / 02</div><div class="card-orbit"></div><h3>Friction<br/>made visible</h3><p>Ruby bearings isolate the highest-load pivots and expose drift before it reaches the outer gimbal.</p></article><article class="card reveal"><div class="card-num">SYSTEM / 03</div><div class="card-orbit"></div><h3>Signal<br/>under load</h3><p>The cyan emitter marks the instant mechanical movement becomes a calibrated electrical reading.</p></article></div></section>
+<section class="section" id="method"><div class="method-grid"><div><div class="section-tag reveal">02 / Calibration protocol</div><h2 class="reveal">Measure<br/>what<br/>moves.</h2><p class="section-lede reveal">The index compares the untreated monochrome reference with a colour diagnostic layer, revealed only where the measurement is active.</p></div><div class="steps"><article class="step reveal"><b>01</b><div><h3>Establish the reference</h3><p>Lock timing, framing and playback across both video streams.</p></div></article><article class="step reveal"><b>02</b><div><h3>Isolate one system</h3><p>Move the mask across the mechanism without disturbing the underlying sequence.</p></div></article><article class="step reveal"><b>03</b><div><h3>Measure phase drift</h3><p>Resynchronise any frame deviation before it becomes visible at the reveal boundary.</p></div></article><article class="step reveal"><b>04</b><div><h3>Publish the tolerance</h3><p>Every reading carries its uncertainty, cycle and calibration state.</p></div></article></div></div></section>
+<section class="section final"><div><div class="section-tag reveal">Calibration status / locked</div><h2 class="reveal">Nothing<br/>moves<br/>alone.</h2><p class="section-lede reveal" style="margin-inline:auto">KERN is an original two-video cinematic website built with the Cinematic Scroll skill.</p><a class="reveal" href="../../index.html">Return to Cinematic Scroll</a></div></section>
 </main>
 <script>
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const track = document.querySelector('.hero-track'), scan = document.querySelector('.specimen.scan');
+  const monoVideo = document.querySelector('video.specimen.base'), colorVideo = document.querySelector('video.specimen.scan');
   const plane = document.querySelector('.scan-plane'), stage = document.querySelector('.specimen-stage');
   const target = document.querySelector('.target'), connector = document.querySelector('.connector');
   const heroTitle = document.querySelector('.hero-title');
   const panels = [...document.querySelectorAll('.panel')], progress = document.querySelector('.progress');
   const ambient = document.querySelector('.ambient');
   const data = [
-    {name:'Glasscap',latin:'Mycena vitrea liminalis',v:'94',s:'71',r:'03',x:34,y:55,mx:'33%',my:'55%',mag:'4.8×'},
-    {name:'Rust bloom',latin:'Saxifraga ferrum',v:'88',s:'43',r:'08',x:67,y:39,mx:'67%',my:'40%',mag:'5.6×'},
-    {name:'Thread moss',latin:'Bryum conductiva',v:'97',s:'29',r:'01',x:52,y:47,mx:'52%',my:'46%',mag:'6.3×'},
-    {name:'Cyan well',latin:'Lumen fontis caerulea',v:'76',s:'98',r:'21',x:61,y:60,mx:'61%',my:'61%',mag:'8.1×'},
-    {name:'Root veil',latin:'Rhiza memoria',v:'82',s:'64',r:'05',x:49,y:76,mx:'49%',my:'76%',mag:'7.4×'}
+    {name:'Escapement',latin:'Isochronous control train',v:'99',s:'84',r:'02',x:51,y:52,mx:'51%',my:'52%',mag:'4.8×'},
+    {name:'Copper coil',latin:'Electromagnetic impulse stage',v:'96',s:'91',r:'04',x:36,y:35,mx:'36%',my:'35%',mag:'5.6×'},
+    {name:'Ruby bearing',latin:'Synthetic corundum pivot',v:'98',s:'42',r:'01',x:57,y:39,mx:'57%',my:'39%',mag:'6.3×'},
+    {name:'Cyan emitter',latin:'Optical phase reference',v:'93',s:'99',r:'03',x:69,y:57,mx:'69%',my:'57%',mag:'8.1×'},
+    {name:'Outer gimbal',latin:'Tri-axial isolation frame',v:'97',s:'67',r:'02',x:48,y:70,mx:'48%',my:'70%',mag:'7.4×'}
   ];
   let raf=0,current=0,audioCtx=null,osc=null,gain=null;
   function setSpecimen(i, user=false){
@@ -94,6 +95,19 @@ nav{position:fixed;z-index:80;top:0;left:0;right:0;padding:max(17px,env(safe-are
   }
   function ping(freq=310){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type='sine';g.gain.setValueAtTime(.025,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.22);o.connect(g).connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.23)}
   document.querySelectorAll('.specimen-btn').forEach(b=>b.addEventListener('click',()=>setSpecimen(+b.dataset.index,true)));
+  function syncVideos(force=false){
+    if(!monoVideo.duration||!colorVideo.duration)return;
+    const delta=monoVideo.currentTime-colorVideo.currentTime, drift=Math.abs(delta);
+    if(force||drift>.08){colorVideo.currentTime=monoVideo.currentTime;colorVideo.playbackRate=1;}
+    else colorVideo.playbackRate=1+Math.max(-.06,Math.min(.06,delta*.8));
+    if(monoVideo.paused!==colorVideo.paused){monoVideo.paused?colorVideo.pause():colorVideo.play().catch(()=>{});}
+  }
+  async function startVideos(){
+    try{await Promise.all([monoVideo.play(),colorVideo.play()]);syncVideos(true);}catch(_){/* posters remain visible until browser permits playback */}
+  }
+  monoVideo.addEventListener('playing',()=>syncVideos(true));monoVideo.addEventListener('timeupdate',()=>syncVideos());monoVideo.addEventListener('seeking',()=>syncVideos(true));monoVideo.addEventListener('ended',()=>syncVideos(true));
+  if('requestVideoFrameCallback' in monoVideo){const frameSync=()=>{syncVideos();monoVideo.requestVideoFrameCallback(frameSync)};monoVideo.requestVideoFrameCallback(frameSync)}else setInterval(syncVideos,80);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)startVideos()});startVideos();
   function draw(){raf=0;const max=document.documentElement.scrollHeight-innerHeight;const global=max?scrollY/max:0;progress.style.transform=`scaleX(${global})`;
     if(reduce||innerWidth<701)return;
     const rect=track.getBoundingClientRect(),range=track.offsetHeight-innerHeight,p=Math.max(0,Math.min(1,-rect.top/range));
