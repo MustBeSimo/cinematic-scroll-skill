@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#d9d7ce" />
+<meta name="description" content="Limen is an original cinematic field-survey interface built with the Cinematic Scroll skill." />
+<title>LIMEN — Exobotanical Field Survey</title>
+<link rel="preload" as="image" href="./assets/limen-specimen.png" fetchpriority="high" />
+<style>
+:root{
+  --paper:#dedcd3;--paper-hi:#efeee8;--ink:#151b1b;--muted:#687170;
+  --line:rgba(21,27,27,.18);--line-hi:rgba(21,27,27,.42);--cyan:#00e6d2;
+  --acid:#b7ff57;--rust:#c75a39;--panel:rgba(234,233,226,.68);
+  --ease:cubic-bezier(.16,1,.3,1);--ease-scan:cubic-bezier(.65,.05,.36,1)
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--paper)}
+body{margin:0;color:var(--ink);background:var(--paper);font-family:Arial,Helvetica,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+button,a{color:inherit}button{font:inherit}.caps{text-transform:uppercase;letter-spacing:.16em}
+button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}
+.noise{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.055;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
+.progress{position:fixed;left:0;top:0;height:2px;width:100%;z-index:100;background:var(--cyan);transform:scaleX(0);transform-origin:left;will-change:transform}
+nav{position:fixed;z-index:80;top:0;left:0;right:0;padding:max(17px,env(safe-area-inset-top)) clamp(18px,3vw,42px) 14px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(222,220,211,.92),rgba(222,220,211,0));pointer-events:none}
+.brand,.nav-right{pointer-events:auto;display:flex;align-items:center;gap:18px}.brand-mark{width:11px;height:11px;border:1px solid var(--ink);position:relative}.brand-mark:before,.brand-mark:after{content:"";position:absolute;background:var(--ink)}.brand-mark:before{width:1px;height:17px;left:4px;top:-4px}.brand-mark:after{height:1px;width:17px;top:4px;left:-4px}
+.brand strong{font-size:12px;letter-spacing:.24em}.brand small,.nav-right a,.sound{font:9px/1 "Courier New",monospace;letter-spacing:.16em;text-transform:uppercase;text-decoration:none}
+.sound{border:1px solid var(--line-hi);background:transparent;padding:10px 12px;cursor:pointer;min-height:40px}.sound[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.hero-track{height:360vh;position:relative}.hero{height:100svh;position:sticky;top:0;overflow:hidden;background:radial-gradient(circle at 50% 48%,var(--paper-hi),var(--paper) 59%,#cbc8bd 100%);isolation:isolate}
+.horizon{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 63%,rgba(50,53,50,.09) 63.2%,transparent 64%);z-index:-1}.ambient{position:absolute;inset:-20%;background:radial-gradient(circle at 52% 55%,rgba(255,255,255,.68),transparent 40%);transform:translate3d(0,0,0);will-change:transform,opacity}
+.specimen-wrap{position:absolute;inset:0;display:grid;place-items:center;perspective:1200px}.specimen-stage{position:relative;width:min(67vw,980px);aspect-ratio:3/2;transform-style:preserve-3d;will-change:transform}
+.specimen{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:saturate(.92) contrast(1.03);user-select:none;-webkit-user-drag:none}.specimen.scan{filter:saturate(1.18) contrast(1.08) hue-rotate(3deg);opacity:.88;clip-path:inset(0 100% 0 0);will-change:clip-path,opacity}
+.scan-plane{position:absolute;top:6%;bottom:7%;left:0;width:2px;background:linear-gradient(transparent,var(--cyan) 12%,var(--cyan) 88%,transparent);box-shadow:0 0 24px 3px rgba(0,230,210,.42);opacity:0;will-change:transform,opacity}.scan-plane:before{content:"";position:absolute;top:0;bottom:0;left:-110px;width:110px;background:linear-gradient(to right,transparent,rgba(0,230,210,.11))}
+.target{position:absolute;width:54px;height:54px;border:1px solid rgba(0,230,210,.85);border-radius:50%;transform:translate(-50%,-50%);opacity:0;will-change:transform,opacity}.target:before,.target:after{content:"";position:absolute;background:var(--cyan)}.target:before{width:72px;height:1px;left:-10px;top:26px}.target:after{height:72px;width:1px;top:-10px;left:26px}.target i{position:absolute;inset:7px;border:1px dashed rgba(0,230,210,.65);border-radius:50%;animation:spin 7s cubic-bezier(.45,.05,.55,.95) infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.connector{position:absolute;left:50%;top:50%;width:42%;height:1px;background:repeating-linear-gradient(to right,var(--ink) 0 4px,transparent 4px 9px);transform-origin:left;opacity:0;will-change:transform,opacity}
+.hero-title{position:absolute;left:clamp(18px,3vw,44px);bottom:clamp(22px,4.5vh,54px);z-index:20;max-width:38rem}.hero-title .kicker{font:9px/1.4 "Courier New",monospace;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}.hero-title h1{font-size:clamp(3rem,8.7vw,8.5rem);font-weight:500;line-height:.76;letter-spacing:-.075em;margin:.16em 0 .12em;text-transform:uppercase}.hero-title p{max-width:33ch;font-size:clamp(12px,1.15vw,16px);line-height:1.4;margin:0;color:#404947}
+.index{position:absolute;right:clamp(18px,3vw,42px);top:19%;z-index:20;text-align:right}.index .num{font:clamp(3.5rem,9vw,8.6rem)/.75 Arial,sans-serif;letter-spacing:-.08em;color:rgba(21,27,27,.09)}.index small{display:block;font:9px/1.4 "Courier New",monospace;letter-spacing:.18em;text-transform:uppercase;margin-top:11px}
+.panel{position:absolute;z-index:30;width:min(265px,25vw);border-top:1px solid var(--ink);padding-top:10px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:linear-gradient(to bottom,var(--panel),rgba(234,233,226,.15));opacity:0;transform:translateY(18px);will-change:transform,opacity}.panel-left{left:clamp(18px,3vw,44px);top:18%}.panel-right{right:clamp(18px,3vw,44px);bottom:16%}.panel-head{display:flex;justify-content:space-between;font:8px/1.2 "Courier New",monospace;letter-spacing:.16em;text-transform:uppercase}.blink{display:inline-flex;align-items:center;gap:7px}.blink:before{content:"";width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}.panel h2{font-size:clamp(17px,1.8vw,25px);font-weight:500;line-height:1;margin:24px 0 7px}.latin{font:italic 11px/1.3 Georgia,serif;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:20px}.metric{border-top:1px solid var(--line);padding-top:7px}.metric b{font:18px/1 Arial,sans-serif}.metric span{display:block;font:7px/1.2 "Courier New",monospace;letter-spacing:.12em;margin-top:5px;color:var(--muted)}
+.specimen-list{display:grid;gap:0;margin-top:18px;border-top:1px solid var(--line)}.specimen-btn{border:0;border-bottom:1px solid var(--line);background:transparent;padding:9px 0;display:flex;justify-content:space-between;text-align:left;cursor:pointer;font:8px/1.2 "Courier New",monospace;letter-spacing:.09em;text-transform:uppercase}.specimen-btn.active{color:#007e73}.specimen-btn.active:after{content:"●";color:var(--cyan)}
+.macro{height:125px;margin-top:16px;border:1px solid var(--line-hi);overflow:hidden;position:relative;background:#aeb1a9}.macro img{width:100%;height:100%;object-fit:cover;transform:scale(2.7);transform-origin:var(--mx,44%) var(--my,52%);filter:saturate(1.12) contrast(1.08);transition:transform .9s var(--ease),transform-origin .9s var(--ease)}.macro:before,.macro:after{content:"";position:absolute;z-index:2;pointer-events:none}.macro:before{inset:9px;border:1px solid rgba(0,230,210,.76)}.macro:after{left:50%;top:50%;width:14px;height:14px;border:1px solid var(--cyan);border-radius:50%;transform:translate(-50%,-50%)}.macro-meta{display:flex;justify-content:space-between;margin-top:7px;font:7px/1 "Courier New",monospace;letter-spacing:.1em;text-transform:uppercase}
+.scroll-cue{position:absolute;right:clamp(18px,3vw,42px);bottom:clamp(22px,4.5vh,54px);z-index:20;display:flex;align-items:center;gap:10px;font:8px/1 "Courier New",monospace;letter-spacing:.17em;text-transform:uppercase}.scroll-cue i{width:42px;height:1px;background:var(--ink);display:block;transform-origin:left;animation:pulse 2.4s var(--ease-scan) infinite}@keyframes pulse{50%{transform:scaleX(.25);opacity:.4}}
+.section{padding:clamp(80px,13vw,170px) clamp(18px,5vw,72px);border-top:1px solid var(--line);position:relative}.section-tag{font:9px/1 "Courier New",monospace;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}.section h2{font-size:clamp(2.7rem,7vw,7rem);font-weight:500;line-height:.86;letter-spacing:-.065em;text-transform:uppercase;margin:.25em 0}.section-lede{font-size:clamp(1rem,1.7vw,1.4rem);line-height:1.45;max-width:46ch;color:#424b49}.catalogue{background:#171d1d;color:#e9e9e1}.catalogue .section-tag,.catalogue .section-lede{color:#929b98}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.13);margin-top:clamp(44px,7vw,90px);border:1px solid rgba(255,255,255,.13)}.card{background:#171d1d;padding:clamp(20px,3vw,36px);min-height:310px;position:relative;overflow:hidden}.card-num{font:9px/1 "Courier New",monospace;letter-spacing:.18em;color:var(--cyan)}.card h3{font:500 clamp(1.5rem,3vw,3rem)/.9 Arial,sans-serif;letter-spacing:-.05em;text-transform:uppercase;margin:90px 0 13px}.card p{font-size:12px;line-height:1.5;color:#909997;max-width:28ch}.card-orbit{position:absolute;width:150px;height:150px;border:1px solid rgba(0,230,210,.17);border-radius:50%;right:-55px;top:-55px}.card-orbit:after{content:"";position:absolute;inset:28px;border:1px dashed rgba(0,230,210,.35);border-radius:50%}.card-orbit{transition:transform 1.2s var(--ease)}
+.method-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(40px,9vw,140px);align-items:start}.steps{border-top:1px solid var(--ink)}.step{display:grid;grid-template-columns:46px 1fr;gap:20px;border-bottom:1px solid var(--line);padding:23px 0}.step b{font:10px/1 "Courier New",monospace;color:#008b7e}.step h3{font-size:clamp(1.1rem,2vw,1.7rem);margin:0 0 7px;font-weight:500}.step p{font-size:12px;line-height:1.5;color:var(--muted);margin:0;max-width:46ch}.final{min-height:90svh;display:grid;place-items:center;text-align:center;background:var(--paper-hi)}.final h2{max-width:12ch}.final a{display:inline-flex;margin-top:25px;border:1px solid var(--ink);padding:15px 22px;text-decoration:none;font:9px/1 "Courier New",monospace;letter-spacing:.16em;text-transform:uppercase;transition:background .3s var(--ease),color .3s var(--ease)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 1s var(--ease),transform 1s var(--ease)}.reveal.in{opacity:1;transform:none}
+@media(max-width:980px){.specimen-stage{width:92vw}.panel{width:225px}.panel-left{top:14%}.panel-right{bottom:13%}.hero-title h1{font-size:clamp(3rem,10vw,6.5rem)}.cards{grid-template-columns:1fr}.card{min-height:240px}.card h3{margin-top:55px}.method-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.hero-track{height:auto}.hero{height:auto;min-height:100svh;position:relative;padding:105px 18px 42px;display:flex;flex-direction:column}.specimen-wrap{position:relative;inset:auto;height:44svh;order:1}.specimen-stage{width:112vw;max-width:none}.hero-title{position:relative;left:auto;bottom:auto;order:0;margin-bottom:5px}.hero-title h1{font-size:clamp(3.2rem,18vw,5.8rem)}.hero-title p{font-size:12px}.panel{position:relative;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;width:100%;opacity:1!important;transform:none!important;background:transparent;backdrop-filter:none}.panel-left{order:2}.panel-right{order:3;margin-top:35px}.index,.scroll-cue,.connector{display:none}.scan-plane{top:4%;bottom:4%}.macro{height:180px}.nav-right a{display:none}.cards{grid-template-columns:1fr}.section{padding-inline:18px}.section h2{font-size:clamp(2.8rem,15vw,5rem)}}
+@media(hover:hover){.specimen-btn:hover{color:#007e73}.card:hover .card-orbit{transform:scale(1.2) rotate(45deg)}.final a:hover{background:var(--ink);color:var(--paper-hi)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition-duration:.01ms!important}.hero-track{height:auto}.hero{position:relative}.specimen.scan{clip-path:inset(0 0 0 0);opacity:.35}.scan-plane,.connector{display:none}.panel{opacity:1;transform:none}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="noise" aria-hidden="true"></div><div class="progress" aria-hidden="true"></div>
+<nav aria-label="Primary navigation"><div class="brand"><span class="brand-mark" aria-hidden="true"></span><strong class="caps">Limen</strong><small>Field unit 07</small></div><div class="nav-right"><a href="#archive">Archive</a><a href="#method">Protocol</a><button class="sound" type="button" aria-pressed="false">Sound off</button></div></nav>
+<main>
+<section class="hero-track" id="survey" aria-label="Interactive exobotanical survey">
+  <div class="hero">
+    <div class="horizon" aria-hidden="true"></div><div class="ambient" aria-hidden="true"></div>
+    <div class="hero-title"><div class="kicker">Exobotanical survey / Plate 07</div><h1>Limen<br/>Archive</h1><p>A living fragment recovered beyond the treeline. Scroll to inspect its five signal-bearing colonies.</p></div>
+    <div class="index" aria-hidden="true"><div class="num">07</div><small>Lat 46.8182° N<br/>Long 8.2275° E</small></div>
+    <div class="specimen-wrap" aria-hidden="true"><div class="specimen-stage"><img class="specimen base" src="./assets/limen-specimen.png" alt="" /><img class="specimen scan" src="./assets/limen-specimen.png" alt="" /><div class="scan-plane"></div><div class="target"><i></i></div><div class="connector"></div></div></div>
+    <aside class="panel panel-left" aria-label="Field survey data"><div class="panel-head"><span>Field survey</span><span class="blink">Scan active</span></div><h2 id="speciesName">Glasscap</h2><div class="latin" id="speciesLatin">Mycena vitrea liminalis</div><div class="metrics"><div class="metric"><b id="metricVital">94</b><span>Vitality</span></div><div class="metric"><b id="metricSignal">71</b><span>Signal</span></div><div class="metric"><b id="metricRisk">03</b><span>Risk</span></div></div><div class="specimen-list" role="list"><button class="specimen-btn active" data-index="0" type="button">01 Glasscap</button><button class="specimen-btn" data-index="1" type="button">02 Rust bloom</button><button class="specimen-btn" data-index="2" type="button">03 Thread moss</button><button class="specimen-btn" data-index="3" type="button">04 Cyan well</button><button class="specimen-btn" data-index="4" type="button">05 Root veil</button></div></aside>
+    <aside class="panel panel-right" aria-label="Macro optical view"><div class="panel-head"><span>Macro optics</span><span id="plateLabel">Plate 01/A</span></div><div class="macro"><img src="./assets/limen-specimen.png" alt="Magnified field specimen" /></div><div class="macro-meta"><span id="magnification">MAG 4.8×</span><span>Tracking locked</span></div></aside>
+    <div class="scroll-cue" aria-hidden="true"><i></i>Scroll to survey</div>
+  </div>
+</section>
+<section class="section catalogue" id="archive"><div class="section-tag reveal">01 / Recovered signals</div><h2 class="reveal">The colony<br/>is speaking.</h2><p class="section-lede reveal">Five organisms. One shared substrate. Each signal changes the reading of the whole.</p><div class="cards"><article class="card reveal"><div class="card-num">SIGNAL / 01</div><div class="card-orbit"></div><h3>Light as<br/>language</h3><p>Cyan wells pulse in a repeating interval, suggesting communication rather than random bioluminescence.</p></article><article class="card reveal"><div class="card-num">SIGNAL / 02</div><div class="card-orbit"></div><h3>Shared<br/>memory</h3><p>Root filaments retain charge after contact, preserving a faint trace of the last disturbance.</p></article><article class="card reveal"><div class="card-num">SIGNAL / 03</div><div class="card-orbit"></div><h3>Mutual<br/>shelter</h3><p>Glasscaps cool the surrounding moss by three degrees, creating a stable pocket for new growth.</p></article></div></section>
+<section class="section" id="method"><div class="method-grid"><div><div class="section-tag reveal">02 / Survey protocol</div><h2 class="reveal">Observe<br/>without<br/>owning.</h2><p class="section-lede reveal">The archive records relationships, not trophies. Every reading is reversible and leaves the colony intact.</p></div><div class="steps"><article class="step reveal"><b>01</b><div><h3>Locate the disturbance</h3><p>Map light, heat and movement before assigning names.</p></div></article><article class="step reveal"><b>02</b><div><h3>Isolate one signal</h3><p>Use the mask to compare the untreated field with the active reading.</p></div></article><article class="step reveal"><b>03</b><div><h3>Return to the whole</h3><p>No specimen is interpreted outside the system that keeps it alive.</p></div></article><article class="step reveal"><b>04</b><div><h3>Publish uncertainty</h3><p>Confidence and contradiction remain visible in every plate.</p></div></article></div></div></section>
+<section class="section final"><div><div class="section-tag reveal">Survey status / complete</div><h2 class="reveal">A fragment<br/>is never<br/>alone.</h2><p class="section-lede reveal" style="margin-inline:auto">Limen is an original cinematic web specimen built with the Cinematic Scroll skill.</p><a class="reveal" href="../../index.html">Return to Cinematic Scroll</a></div></section>
+</main>
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const track = document.querySelector('.hero-track'), scan = document.querySelector('.specimen.scan');
+  const plane = document.querySelector('.scan-plane'), stage = document.querySelector('.specimen-stage');
+  const target = document.querySelector('.target'), connector = document.querySelector('.connector');
+  const heroTitle = document.querySelector('.hero-title');
+  const panels = [...document.querySelectorAll('.panel')], progress = document.querySelector('.progress');
+  const ambient = document.querySelector('.ambient');
+  const data = [
+    {name:'Glasscap',latin:'Mycena vitrea liminalis',v:'94',s:'71',r:'03',x:34,y:55,mx:'33%',my:'55%',mag:'4.8×'},
+    {name:'Rust bloom',latin:'Saxifraga ferrum',v:'88',s:'43',r:'08',x:67,y:39,mx:'67%',my:'40%',mag:'5.6×'},
+    {name:'Thread moss',latin:'Bryum conductiva',v:'97',s:'29',r:'01',x:52,y:47,mx:'52%',my:'46%',mag:'6.3×'},
+    {name:'Cyan well',latin:'Lumen fontis caerulea',v:'76',s:'98',r:'21',x:61,y:60,mx:'61%',my:'61%',mag:'8.1×'},
+    {name:'Root veil',latin:'Rhiza memoria',v:'82',s:'64',r:'05',x:49,y:76,mx:'49%',my:'76%',mag:'7.4×'}
+  ];
+  let raf=0,current=0,audioCtx=null,osc=null,gain=null;
+  function setSpecimen(i, user=false){
+    current=i; const d=data[i];
+    document.querySelector('#speciesName').textContent=d.name;document.querySelector('#speciesLatin').textContent=d.latin;
+    document.querySelector('#metricVital').textContent=d.v;document.querySelector('#metricSignal').textContent=d.s;document.querySelector('#metricRisk').textContent=d.r;
+    document.querySelector('#plateLabel').textContent=`Plate 0${i+1}/${String.fromCharCode(65+i)}`;document.querySelector('#magnification').textContent=`MAG ${d.mag}`;
+    document.querySelector('.macro').style.setProperty('--mx',d.mx);document.querySelector('.macro').style.setProperty('--my',d.my);
+    target.style.left=d.x+'%';target.style.top=d.y+'%';
+    document.querySelectorAll('.specimen-btn').forEach((b,n)=>b.classList.toggle('active',n===i));
+    if(user){ target.animate([{transform:'translate(-50%,-50%) scale(.55)',opacity:.2},{transform:'translate(-50%,-50%) scale(1)',opacity:1}],{duration:620,easing:'cubic-bezier(.16,1,.3,1)'}); ping(280+i*34); }
+  }
+  function ping(freq=310){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type='sine';g.gain.setValueAtTime(.025,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.22);o.connect(g).connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.23)}
+  document.querySelectorAll('.specimen-btn').forEach(b=>b.addEventListener('click',()=>setSpecimen(+b.dataset.index,true)));
+  function draw(){raf=0;const max=document.documentElement.scrollHeight-innerHeight;const global=max?scrollY/max:0;progress.style.transform=`scaleX(${global})`;
+    if(reduce||innerWidth<701)return;
+    const rect=track.getBoundingClientRect(),range=track.offsetHeight-innerHeight,p=Math.max(0,Math.min(1,-rect.top/range));
+    const reveal=Math.max(0,Math.min(1,(p-.08)/.36));const scanP=Math.max(0,Math.min(1,(p-.23)/.48));const settle=Math.max(0,Math.min(1,(p-.76)/.2));
+    scan.style.clipPath=`inset(0 ${(1-scanP)*100}% 0 0)`;plane.style.opacity=p>.2&&p<.82?1:0;plane.style.transform=`translate3d(${scanP*stage.clientWidth}px,0,0)`;
+    stage.style.transform=`rotateX(${(p-.5)*2.2}deg) rotateY(${(p-.5)*-4.2}deg) translate3d(0,${Math.sin(p*Math.PI)*-12}px,0) scale(${1+p*.035})`;
+    const titleOut=Math.max(0,Math.min(1,(p-.16)*4.4));heroTitle.style.opacity=1-titleOut;heroTitle.style.transform=`translate3d(${titleOut*-38}px,0,0)`;
+    ambient.style.transform=`translate3d(${(p-.5)*24}px,${(p-.5)*-15}px,0) scale(${1+p*.08})`;
+    panels.forEach((el,i)=>{const q=Math.max(0,Math.min(1,(reveal-i*.08)*1.3));el.style.opacity=q;el.style.transform=`translate3d(0,${(1-q)*18}px,0)`});
+    target.style.opacity=Math.max(0,Math.min(1,(p-.5)*5))*(1-settle*.35);connector.style.opacity=Math.max(0,Math.min(1,(p-.58)*5))*(1-settle);
+    const d=data[current];connector.style.transform=`translate3d(${(d.x-50)*stage.clientWidth/100}px,${(d.y-50)*stage.clientHeight/100}px,0) scaleX(${Math.max(.25,(100-d.x)/50)})`;
+    const auto=Math.min(4,Math.floor(Math.max(0,p-.46)/.105));if(p>.46&&auto!==current)setSpecimen(auto);
+  }
+  addEventListener('scroll',()=>{if(!raf)raf=requestAnimationFrame(draw)},{passive:true});addEventListener('resize',draw,{passive:true});draw();setSpecimen(0);
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.16});document.querySelectorAll('.reveal').forEach(e=>io.observe(e));
+  const sound=document.querySelector('.sound');sound.addEventListener('click',async()=>{const on=sound.getAttribute('aria-pressed')==='true';if(on){gain?.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.25);setTimeout(()=>{osc?.stop();osc=null},270);sound.setAttribute('aria-pressed','false');sound.textContent='Sound off';return}
+    audioCtx ||= new (window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();osc=audioCtx.createOscillator();gain=audioCtx.createGain();osc.type='sine';osc.frequency.value=58;gain.gain.value=.0001;osc.connect(gain).connect(audioCtx.destination);osc.start();gain.gain.exponentialRampToValueAtTime(.018,audioCtx.currentTime+.8);sound.setAttribute('aria-pressed','true');sound.textContent='Sound on';ping(420)});
+})();
+</script>
+</body>
+</html>
