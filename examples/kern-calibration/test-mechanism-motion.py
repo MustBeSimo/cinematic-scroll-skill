@@ -22,8 +22,16 @@ def grab(video, n, tmp):
     return Image.open(target).convert("RGB")
 
 
+def frame_count(video):
+    out = run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-count_frames",
+               "-show_entries", "stream=nb_read_frames", "-of", "csv=p=0", str(video)],
+              capture_output=True, text=True)
+    return int(out.stdout.strip())
+
+
 with TemporaryDirectory() as tmp:
-    f0, f30, f_last = grab(VIDEO, 0, tmp), grab(VIDEO, 30, tmp), grab(VIDEO, 349, tmp)
+    last = frame_count(VIDEO) - 1
+    f0, f30, f_last = grab(VIDEO, 0, tmp), grab(VIDEO, 30, tmp), grab(VIDEO, last, tmp)
 
     diff = ImageChops.difference(f0, f30)
     w, h = diff.size
