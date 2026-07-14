@@ -56,7 +56,26 @@ mask-image:radial-gradient(ellipse calc(var(--b0)*1.25) var(--b0) at 36% 35%,#00
 .steps{position:relative}.step{padding-left:20px}
 .steps-line{position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(var(--cyan) 0%,rgba(0,230,210,.55) 60%,rgba(0,230,210,.12));transform:scaleY(0);transform-origin:top;pointer-events:none}
 @media(max-width:980px){.panel{width:225px}.panel-left{top:14%}.panel-right{bottom:13%}.hero-title h1{font-size:clamp(3rem,10vw,6.5rem)}.cards{grid-template-columns:1fr}.card{min-height:240px}.card h3{margin-top:55px}.method-grid{grid-template-columns:1fr}}
-@media(max-width:700px){.hero-track{height:auto}.hero{height:auto;min-height:100svh;position:relative;padding:92px 18px 34px;display:grid;grid-template-columns:1fr;grid-template-areas:"title" "visual" "index"}.specimen-wrap{grid-area:visual;position:relative;inset:auto;height:50svh;margin-inline:-18px}.specimen-stage{width:100vw;height:50svh;max-width:none}.hero-title{grid-area:title;position:relative;left:auto;bottom:auto;margin-bottom:8px}.hero-title h1{font-size:clamp(3.2rem,18vw,5.8rem)}.hero-title p{font-size:12px}.panel{position:relative;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;width:100%;opacity:1!important;transform:none!important;background:transparent;backdrop-filter:none}.panel-left{grid-area:index;margin-top:18px}.panel-right{grid-area:visual;position:relative!important;z-index:35;align-self:end;justify-self:end;width:min(48vw,190px);margin:0 -8px 10px 0;padding:8px;background:rgba(234,233,226,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.index,.scroll-cue,.connector{display:none}.scan-plane{top:0;bottom:0}.macro{height:106px;margin-top:8px}.macro-meta{font-size:6px}.nav-right a{display:none}.cards{grid-template-columns:1fr}.section{padding-inline:18px}.section h2{font-size:clamp(2.8rem,15vw,5rem)}}
+@media(max-width:700px){
+  /* Full-bleed immersive hero on mobile too: the SAME sticky full-viewport video as desktop —
+     no 50svh letterboxed band. Panels become compact top-corner overlays; the title anchors the
+     bottom over a soft scrim; the bloom sequence rides the pinned track exactly as on desktop. */
+  .hero-track{height:300vh}
+  .hero{height:100svh;position:sticky;top:0}
+  .hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:42%;z-index:15;pointer-events:none;background:linear-gradient(to top,rgba(222,220,211,.88),rgba(222,220,211,.34) 46%,transparent)}
+  .specimen-stage{width:100vw;height:100svh;max-width:none}
+  .hero-title{left:16px;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));max-width:none}
+  .hero-title h1{font-size:clamp(3rem,15vw,5.4rem)}.hero-title p{font-size:11px;max-width:30ch}
+  .panel{width:min(45vw,215px);background:linear-gradient(to bottom,rgba(234,233,226,.82),rgba(234,233,226,.4));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .panel-left{left:12px;top:calc(58px + env(safe-area-inset-top));bottom:auto}
+  .panel-right{right:12px;top:calc(58px + env(safe-area-inset-top));bottom:auto}
+  .panel h2{font-size:15px;margin:12px 0 6px}.metrics{gap:5px;margin-top:12px}.metric b{font-size:15px}
+  .specimen-list{display:none}
+  .macro{aspect-ratio:16/11;margin-top:9px}.macro-meta{font-size:6px}
+  .index,.scroll-cue,.connector{display:none}
+  .nav-right a{display:none}
+  .section{padding-inline:18px}.section h2{font-size:clamp(2.8rem,15vw,5rem)}
+}
 @media(hover:hover){.specimen-btn:hover{color:#007e73}.card:hover .card-orbit{transform:scale(1.2) rotate(45deg)}.final a:hover{background:var(--ink);color:var(--paper-hi)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition-duration:.01ms!important}.hero-track{height:auto}.hero{position:relative}.specimen.scan{-webkit-mask-image:none;mask-image:none;opacity:1}.scan-plane,.connector,.bloom-ring,.steps-line{display:none}.panel{opacity:1;transform:none}}
 </style>
@@ -226,16 +245,9 @@ mask-image:radial-gradient(ellipse calc(var(--b0)*1.25) var(--b0) at 36% 35%,#00
     if(dt>0&&dt<400)velRate=1+Math.min(.9,(Math.abs(scrollY-lastScrollYv)/dt*1000)/2400);
     lastScrollT=now;lastScrollYv=scrollY;
     applyFx();
-    if(innerWidth<701){
-      // Mobile: no pin — the same bloom sequence rides plain page scroll (scroll-coupled, transform+mask only).
-      const planeX=Math.max(0,Math.min(1,scrollY/(innerHeight*.72)))*100;
-      const washM=smooth(Math.max(0,Math.min(1,(scrollY-innerHeight*.78)/(innerHeight*.4))));
-      const crossed=applyBlooms(planeX,washM*140);
-      plane.style.opacity=planeX>0&&planeX<100?1:0;plane.style.transform=`translate3d(${planeX/100*stage.clientWidth}px,0,0)`;
-      if(crossed>=0&&crossed!==current&&!locked)setSpecimen(crossed);
-      setLocked(washM>.85);
-      return;
-    }
+    // Mobile and desktop now share one path: a sticky full-viewport hero whose bloom sequence
+    // scrubs against the pinned track (no separate letterboxed-band branch). Layer offsets in
+    // applyFx() already scale down on narrow screens.
     const rect=track.getBoundingClientRect(),range=track.offsetHeight-innerHeight,p=Math.max(0,Math.min(1,-rect.top/range));
     const reveal=Math.max(0,Math.min(1,(p-.08)/.36));const scanP=Math.max(0,Math.min(1,(p-.23)/.48));const settle=Math.max(0,Math.min(1,(p-.76)/.2));
     const crossed=applyBlooms(scanP*100,smooth(settle)*140);

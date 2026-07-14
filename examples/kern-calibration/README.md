@@ -16,7 +16,7 @@ An original cinematic example website for the `cinematic-scroll` skill.
 - Five selectable mechanical systems with live, phase-locked macro video crops and matching readings.
 - Procedural Web Audio ambience behind an explicit user-controlled sound toggle.
 - A complete website after the hero: system catalogue, calibration protocol and closing chapter — all scroll-choreographed (scrubbed, reversible entrances with per-card parallax depths, a drawing protocol timeline, and a dolly-in finale; transform + opacity only).
-- Mobile and `prefers-reduced-motion` fallbacks.
+- Full-bleed on every viewport: mobile keeps the same sticky full-viewport video as desktop (panels become compact top-corner overlays), never a letterboxed band; plus a `prefers-reduced-motion` static fallback.
 
 ## Video assets
 
