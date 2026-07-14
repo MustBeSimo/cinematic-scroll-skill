@@ -19,5 +19,5 @@ with TemporaryDirectory() as tmp:
 
     difference = ImageChops.difference(*frames)
     mean_delta = sum(ImageStat.Stat(difference).mean) / 3
-    assert mean_delta >= 0.8, f"mechanical loop has no perceptible frame change: mean delta {mean_delta:.2f} < 0.8"
-    print(f"PASS perceptible localized video motion: mean frame delta {mean_delta:.2f}")
+    assert mean_delta >= 2.0, f"camera move has no perceptible frame change: mean delta {mean_delta:.2f} < 2.0"
+    print(f"PASS perceptible coherent camera motion: mean frame delta {mean_delta:.2f}")

@@ -1,84 +1,72 @@
 #!/usr/bin/env python3
-"""Render the KERN hero as a locked-camera mechanical loop.
+"""Render the KERN hero as a coherent, seamless-loop camera move.
 
-The outer housing and background remain pixel-stable. Only circular internal
-subassemblies rotate/oscillate; the monochrome master is derived from the exact
-colour encode so both website layers remain frame-matched.
+The whole frame moves as ONE integrated shot — the entire mechanism and its cast
+shadow drift, breathe and sway together under a gently floating camera. There are
+no isolated composited "moving centre" patches over a frozen plate, so the motion
+never reads as pasted on: every pixel belongs to the same live beauty shot.
+
+The camera path is built from a single sine/cosine cycle, so the last frame's
+position and velocity exactly match the first — the loop is seamless with no
+crossfade. The monochrome master is a desaturated grade of the exact colour
+encode, so both website layers stay frame-matched by construction.
+
+Note: a single 2-D still cannot reveal new faces of the object. A true turntable
+(the mechanism itself rotating) needs either a 3-D model or an image-to-video
+generation — see README. This renderer delivers the honest best from one plate.
 """
 from pathlib import Path
 from subprocess import Popen, run, PIPE
-from math import sin, tau
-from PIL import Image, ImageDraw, ImageFilter, ImageEnhance
+from math import sin, cos, tau, radians
+from PIL import Image, ImageEnhance, ImageFilter
 
 HERE = Path(__file__).resolve().parent
 SOURCE = HERE / "kern-calibration-unit.png"
 COLOR = HERE / "kern-color.mp4"
 MONO = HERE / "kern-mono.mp4"
-WIDTH, HEIGHT, FPS, FRAMES = 1920, 1080, 30, 350
+OW, OH, FPS, FRAMES = 2560, 1440, 30, 350
 DURATION = FRAMES / FPS
 
-base = Image.open(SOURCE).convert("RGB").resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
-base = ImageEnhance.Contrast(base).enhance(1.035)
-base = ImageEnhance.Color(base).enhance(1.06)
+# Prepare the plate once: grade + sharpen so every resampled frame is crisp and consistent.
+src = Image.open(SOURCE).convert("RGB")
+src = ImageEnhance.Contrast(src).enhance(1.035)
+src = ImageEnhance.Color(src).enhance(1.05)
+src = src.filter(ImageFilter.UnsharpMask(radius=2.2, percent=90, threshold=2))
+SW, SH = src.size
+base_fit = max(OW / SW, OH / SH)          # cover the output frame from the plate
+OCX, OCY = OW / 2.0, OH / 2.0
+SCX, SCY = SW / 2.0, SH / 2.0
 
-# center-x, center-y and radius are normalized to the output frame.
-parts = [
-    # Tourbillon-like inner carrier: one calm revolution per seamless loop.
-    {"name": "carrier", "x": .505, "y": .515, "r": .112, "cycles": 1.0, "phase": 0},
-    # Visible pinions counter-rotate at integer loop ratios.
-    {"name": "upper-pinion", "x": .548, "y": .455, "r": .034, "cycles": -7.0, "phase": 8},
-    {"name": "lower-pinion", "x": .458, "y": .555, "r": .031, "cycles": 10.0, "phase": -5},
-    # Central gold escapement receives continuous rotation plus a tick oscillation.
-    {"name": "escapement", "x": .505, "y": .515, "r": .052, "cycles": 4.0, "phase": 0, "tick": 14},
-]
-
-prepared = []
-for part in parts:
-    cx, cy = int(part["x"] * WIDTH), int(part["y"] * HEIGHT)
-    radius = int(part["r"] * HEIGHT)
-    pad = int(radius * 1.18)
-    box = (cx - pad, cy - pad, cx + pad, cy + pad)
-    patch = base.crop(box)
-    mask = Image.new("L", patch.size, 0)
-    d = ImageDraw.Draw(mask)
-    feather = max(5, int(radius * .10))
-    d.ellipse((pad-radius+feather, pad-radius+feather, pad+radius-feather, pad+radius-feather), fill=255)
-    mask = mask.filter(ImageFilter.GaussianBlur(feather))
-    prepared.append((part, box, patch, mask))
+# Floating-camera path — one closed sine cycle → seamless loop (start == end, matching velocity).
+ZOOM0, ZOOM_A = 1.09, 0.020               # breathe 1.07 <-> 1.11 (headroom hides translate/rotate)
+DX_A = 0.008 * OW                         # gentle horizontal orbit
+DY_A = 0.006 * OH                         # gentle vertical bob
+ROT_A = 1.2                               # degrees of sway
 
 cmd = [
     "ffmpeg", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
-    "-s", f"{WIDTH}x{HEIGHT}", "-r", str(FPS), "-i", "-", "-an", "-c:v", "libx264",
-    "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(COLOR),
+    "-s", f"{OW}x{OH}", "-r", str(FPS), "-i", "-", "-an",
+    "-vf", "gradfun=1.0:16,format=yuv420p",
+    "-c:v", "libx264", "-preset", "slow", "-crf", "19", "-movflags", "+faststart", str(COLOR),
 ]
 encoder = Popen(cmd, stdin=PIPE)
 assert encoder.stdin is not None
 stream = encoder.stdin
 
-for frame_index in range(FRAMES):
-    progress = frame_index / FRAMES
-    frame = base.copy()
-    for part, box, patch, mask in prepared:
-        angle = part["phase"] + 360 * part["cycles"] * progress
-        if part.get("tick"):
-            angle += 8.5 * sin(tau * part["tick"] * progress)
-        rotated = patch.rotate(angle, resample=Image.Resampling.BICUBIC, expand=False)
-        rotated_mask = mask.rotate(angle, resample=Image.Resampling.BICUBIC, expand=False)
-        frame.paste(rotated, box[:2], rotated_mask)
-
-    # Energy is dynamic, not camera movement: coil and emitter breathe in place.
-    glow = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-    gd = ImageDraw.Draw(glow)
-    coil_pulse = .5 + .5 * sin(tau * 6 * progress)
-    emit_pulse = .5 + .5 * sin(tau * 8 * progress + 1.2)
-    for x, y, radius, color, strength in [
-        (.36, .35, .052, (224, 148, 66), coil_pulse),
-        (.69, .57, .046, (0, 230, 210), emit_pulse),
-    ]:
-        cx, cy, rr = int(x*WIDTH), int(y*HEIGHT), int(radius*HEIGHT)
-        gd.ellipse((cx-rr, cy-rr, cx+rr, cy+rr), fill=(*color, int(16 + strength*24)))
-    glow = glow.filter(ImageFilter.GaussianBlur(26))
-    frame = Image.alpha_composite(frame.convert("RGBA"), glow).convert("RGB")
+for i in range(FRAMES):
+    a = tau * i / FRAMES
+    theta = radians(ROT_A * sin(a))
+    zoom = ZOOM0 + ZOOM_A * (-cos(a))     # min at loop start, max at half, back — smooth
+    dx = DX_A * cos(a)
+    dy = DY_A * sin(a)
+    k = base_fit * zoom                    # total plate->frame scale
+    ct, st = cos(theta) / k, sin(theta) / k
+    # Inverse affine: output pixel (x,y) samples the plate at (a*x+b*y+c, d*x+e*y+f).
+    ax, bx = ct, st
+    dxc, ex = -st, ct
+    c = SCX - (ax * (OCX + dx) + bx * (OCY + dy))
+    f = SCY - (dxc * (OCX + dx) + ex * (OCY + dy))
+    frame = src.transform((OW, OH), Image.AFFINE, (ax, bx, c, dxc, ex, f), resample=Image.BICUBIC)
     stream.write(frame.tobytes())
 
 stream.close()
@@ -87,10 +75,10 @@ if encoder.wait() != 0:
 
 result = run([
     "ffmpeg", "-loglevel", "error", "-y", "-i", str(COLOR),
-    "-vf", "hue=s=0,eq=contrast=1.12:brightness=-0.015,format=yuv420p",
-    "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-movflags", "+faststart", "-an", str(MONO),
+    "-vf", "hue=s=0,eq=contrast=1.06:brightness=-0.012,format=yuv420p",
+    "-c:v", "libx264", "-preset", "slow", "-crf", "19", "-movflags", "+faststart", "-an", str(MONO),
 ])
 if result.returncode:
     raise SystemExit("monochrome encode failed")
 
-print(f"rendered {FRAMES} frames / {DURATION:.3f}s -> {COLOR.name}, {MONO.name}")
+print(f"rendered {FRAMES} frames / {DURATION:.3f}s coherent camera move -> {COLOR.name}, {MONO.name}")

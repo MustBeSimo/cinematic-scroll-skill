@@ -10,7 +10,7 @@ An original cinematic example website for the `cinematic-scroll` skill.
 - Scroll-scrubbed CSS radial-gradient masking: five soft colour blooms open cumulatively over each mechanical system as the scan plane crosses it, then a full-frame wash floods the whole unit in colour.
 - Frame-by-frame drift correction using `requestVideoFrameCallback` and circular phase-aware playback-rate convergence—no repeated seeking at the loop boundary.
 - A genuinely full-viewport video stage using `object-fit: cover`; no framed media panel or transformed 3D ancestor.
-- Generated precision-mechanical hero imagery converted into a seamless 11.667-second, 30 fps, 1080p locked-camera loop. The outer housing stays pixel-stable while the inner carrier, escapement and counter-rotating pinions move at exact integer loop ratios; the coil and emitter pulse without moving the camera.
+- Generated precision-mechanical hero imagery converted into a seamless 11.667-second, 30 fps, 1440p loop with a coherent floating-camera move: the whole frame — mechanism and cast shadow together — drifts, breathes and sways as one integrated beauty shot, so no region ever reads as a pasted-on moving patch. (A single 2-D plate cannot reveal new faces of the object; a true turntable would need a 3-D model or an image-to-video generation.)
 - Velocity-reactive playback: scrolling accelerates the loop up to ~1.9×, easing back to 1× at rest; the loops pause off-screen and resume in sync.
 - Muted inline autoplay plus pointer, touch, wheel, scroll, visibility and page-show recovery hooks.
 - Five selectable mechanical systems with live, phase-locked macro video crops and matching readings.
@@ -22,12 +22,12 @@ An original cinematic example website for the `cinematic-scroll` skill.
 
 | Asset | Role | Specification |
 |---|---|---|
-| `kern-mono.mp4` | Persistent base layer | 1920×1080, 30 fps, 11.667 s, H.264, locked-camera mechanical loop |
-| `kern-color.mp4` | Scroll-masked colour layer | 1920×1080, 30 fps, 11.667 s, H.264, locked-camera mechanical loop |
+| `kern-mono.mp4` | Persistent base layer | 2560×1440, 30 fps, 11.667 s, H.264, coherent floating-camera loop |
+| `kern-color.mp4` | Scroll-masked colour layer | 2560×1440, 30 fps, 11.667 s, H.264, coherent floating-camera loop |
 | `kern-calibration-unit.png` | Poster and macro source | Generated precision-mechanical plate |
-| `render-mechanism.py` | Deterministic renderer | Rotates isolated internal subassemblies and derives both frame-matched encodes |
+| `render-mechanism.py` | Deterministic renderer | Applies one closed sine/cosine camera cycle to the whole plate and derives both frame-matched encodes |
 
-The colour loop is rendered once; the monochrome layer is a desaturated encode of that exact stream. Framing, duration, frame count and mechanism motion therefore match by construction.
+The colour loop is rendered once; the monochrome layer is a desaturated encode of that exact stream. Framing, duration, frame count and camera motion therefore match by construction.
 
 ## Originality boundary
 

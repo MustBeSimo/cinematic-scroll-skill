@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""Assert the hero moves as ONE coherent shot, not an isolated moving centre.
+
+The failure this guards against: a frozen plate with only a small central region
+composited-and-rotated on top, which reads as pasted on. So we require the outer
+housing/background annulus to move perceptibly too (the whole frame drifts under
+the camera), and we require the loop to close seamlessly.
+"""
 from pathlib import Path
 from subprocess import run
 from tempfile import TemporaryDirectory
@@ -6,26 +13,37 @@ from PIL import Image, ImageChops, ImageStat, ImageDraw
 
 VIDEO = Path(__file__).parent / "assets" / "kern-color.mp4"
 
+
+def grab(video, n, tmp):
+    target = Path(tmp) / f"frame-{n}.png"
+    result = run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(video),
+                  "-vf", f"select='eq(n,{n})',scale=480:270", "-vsync", "0", "-frames:v", "1", str(target)])
+    assert result.returncode == 0, "ffmpeg could not decode the hero video"
+    return Image.open(target).convert("RGB")
+
+
 with TemporaryDirectory() as tmp:
-    frames = []
-    for index, second in enumerate((0, 1)):
-        target = Path(tmp) / f"frame-{index}.png"
-        result = run(["ffmpeg", "-loglevel", "error", "-y", "-ss", str(second), "-i", str(VIDEO), "-frames:v", "1", "-vf", "scale=480:270", str(target)])
-        assert result.returncode == 0, "ffmpeg could not decode the hero video"
-        frames.append(Image.open(target).convert("RGB"))
+    f0, f30, f_last = grab(VIDEO, 0, tmp), grab(VIDEO, 30, tmp), grab(VIDEO, 349, tmp)
 
-    diff = ImageChops.difference(*frames)
+    diff = ImageChops.difference(f0, f30)
     w, h = diff.size
-    housing = Image.new("L", diff.size, 0)
-    draw = ImageDraw.Draw(housing)
     cx, cy = w * 0.5, h * 0.51
-    draw.ellipse((cx-h*.43, cy-h*.43, cx+h*.43, cy+h*.43), fill=255)
-    draw.ellipse((cx-h*.20, cy-h*.20, cx+h*.20, cy+h*.20), fill=0)
-    mechanism = Image.new("L", diff.size, 0)
-    ImageDraw.Draw(mechanism).ellipse((cx-h*.18, cy-h*.18, cx+h*.18, cy+h*.18), fill=255)
+    outer = Image.new("L", diff.size, 0)
+    draw = ImageDraw.Draw(outer)
+    draw.ellipse((cx - h * .47, cy - h * .47, cx + h * .47, cy + h * .47), fill=255)
+    draw.ellipse((cx - h * .30, cy - h * .30, cx + h * .30, cy + h * .30), fill=0)
+    center = Image.new("L", diff.size, 0)
+    ImageDraw.Draw(center).ellipse((cx - h * .16, cy - h * .16, cx + h * .16, cy + h * .16), fill=255)
 
-    housing_delta = sum(ImageStat.Stat(diff, housing).mean) / 3
-    mechanism_delta = sum(ImageStat.Stat(diff, mechanism).mean) / 3
-    assert housing_delta < 2.0, f"camera/housing is shaking: static annulus delta {housing_delta:.2f}"
-    assert mechanism_delta > 3.0, f"mechanism is not visibly moving: center delta {mechanism_delta:.2f}"
-    print(f"PASS stable housing {housing_delta:.2f}; dynamic mechanism {mechanism_delta:.2f}")
+    outer_delta = sum(ImageStat.Stat(diff, outer).mean) / 3
+    center_delta = sum(ImageStat.Stat(diff, center).mean) / 3
+    seam_delta = sum(ImageStat.Stat(ImageChops.difference(f0, f_last)).mean) / 3
+
+    # The whole frame must move — the housing is NOT allowed to sit frozen while only the centre moves.
+    assert outer_delta > 3.0, f"only the centre moves — housing/background is static (outer delta {outer_delta:.2f})"
+    assert center_delta > 3.0, f"mechanism is not visibly moving: centre delta {center_delta:.2f}"
+    # A pasted-on spinning centre shows up as centre motion wildly exceeding the coherent frame drift.
+    assert center_delta < outer_delta * 6.0, f"centre motion ({center_delta:.2f}) dwarfs the frame ({outer_delta:.2f}) — looks composited"
+    # One sine cycle → the last frame should land back on the first.
+    assert seam_delta < 3.0, f"loop is not seamless: first/last frame delta {seam_delta:.2f}"
+    print(f"PASS coherent camera move — outer {outer_delta:.2f}, centre {center_delta:.2f}, seam {seam_delta:.2f}")
