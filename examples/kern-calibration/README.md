@@ -15,7 +15,7 @@ An original cinematic example website for the `cinematic-scroll` skill.
 - Muted inline autoplay plus pointer, touch, wheel, scroll, visibility and page-show recovery hooks.
 - Five selectable mechanical systems with live, phase-locked macro video crops and matching readings.
 - Procedural Web Audio ambience behind an explicit user-controlled sound toggle.
-- A complete website after the hero: system catalogue, calibration protocol and closing chapter.
+- A complete website after the hero: system catalogue, calibration protocol and closing chapter — all scroll-choreographed (scrubbed, reversible entrances with per-card parallax depths, a drawing protocol timeline, and a dolly-in finale; transform + opacity only).
 - Mobile and `prefers-reduced-motion` fallbacks.
 
 ## Video assets
