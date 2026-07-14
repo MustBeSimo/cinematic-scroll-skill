@@ -10,7 +10,8 @@ An original cinematic example website for the `cinematic-scroll` skill.
 - Scroll-scrubbed CSS radial-gradient masking: five soft colour blooms open cumulatively over each mechanical system as the scan plane crosses it, then a full-frame wash floods the whole unit in colour.
 - Frame-by-frame drift correction using `requestVideoFrameCallback`, playback-rate convergence and buffered hard-resync protection.
 - A genuinely full-viewport video stage using `object-fit: cover`; no framed media panel or transformed 3D ancestor.
-- Generated precision-mechanical hero imagery converted into a seamless 12-second, 30 fps master loop with perceptible camera movement.
+- Generated precision-mechanical hero imagery converted into a seamless 11.667-second, 30 fps, 1440p master loop — the seam is crossfaded over 10 frames so the wrap is invisible, and both layers are encoded from one processed master for guaranteed frame alignment.
+- Velocity-reactive playback: scrolling accelerates the loop up to ~1.9×, easing back to 1× at rest; the loops pause off-screen and resume in sync.
 - Muted inline autoplay plus pointer, touch, wheel, scroll, visibility and page-show recovery hooks.
 - Five selectable mechanical systems with live readings and macro crops.
 - Procedural Web Audio ambience behind an explicit user-controlled sound toggle.
@@ -21,11 +22,11 @@ An original cinematic example website for the `cinematic-scroll` skill.
 
 | Asset | Role | Specification |
 |---|---|---|
-| `kern-mono.mp4` | Persistent base layer | 1920×1080, 30 fps, 12 s, H.264 |
-| `kern-color.mp4` | Scroll-masked colour layer | 1920×1080, 30 fps, 12 s, H.264 |
+| `kern-mono.mp4` | Persistent base layer | 2560×1440, 30 fps, 11.667 s, H.264, seamless crossfaded loop |
+| `kern-color.mp4` | Scroll-masked colour layer | 2560×1440, 30 fps, 11.667 s, H.264, seamless crossfaded loop |
 | `kern-calibration-unit.png` | Poster and macro source | Generated precision-mechanical plate |
 
-Both videos share identical framing, duration, frame count and camera motion. The monochrome version is derived from the colour master.
+Both videos are encoded in a single pass from one debanded, upscaled and sharpened colour master (the monochrome layer is a desaturated grade of the same stream), so framing, duration, frame count and camera motion are identical by construction.
 
 ## Originality boundary
 

@@ -62,7 +62,7 @@ mask-image:radial-gradient(ellipse calc(var(--b0)*1.25) var(--b0) at 36% 35%,#00
   <div class="hero">
     <div class="horizon" aria-hidden="true"></div><div class="ambient" aria-hidden="true"></div>
     <div class="hero-title"><div class="kicker">Precision calibration / Unit 01</div><h1>Kern<br/>Index</h1><p>A mechanical reference assembly measured under load. Scroll to reveal its five critical systems in colour.</p></div>
-    <div class="index" aria-hidden="true"><div class="num">01</div><small>Tolerance ±0.002 μm<br/>Cycle 12.000 s</small></div>
+    <div class="index" aria-hidden="true"><div class="num">01</div><small>Tolerance ±0.002 μm<br/>Cycle 11.667 s</small></div>
     <div class="specimen-wrap" aria-hidden="true"><div class="specimen-stage"><video class="specimen base" src="./assets/kern-mono.mp4" poster="./assets/kern-calibration-unit.png" muted loop playsinline webkit-playsinline autoplay preload="auto" disablepictureinpicture></video><video class="specimen scan" src="./assets/kern-color.mp4" poster="./assets/kern-calibration-unit.png" muted loop playsinline webkit-playsinline autoplay preload="auto" disablepictureinpicture></video><div class="scan-plane"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="target"><i></i></div><div class="connector"></div></div></div>
     <aside class="panel panel-left" aria-label="Calibration data"><div class="panel-head"><span>System index</span><span class="blink">Scan active</span></div><h2 id="speciesName">Copper coil</h2><div class="latin" id="speciesLatin">Electromagnetic impulse stage</div><div class="metrics"><div class="metric"><b id="metricVital">96</b><span>Stability</span></div><div class="metric"><b id="metricSignal">91</b><span>Torque</span></div><div class="metric"><b id="metricRisk">04</b><span>Drift</span></div></div><div class="specimen-list" role="list"><button class="specimen-btn active" data-index="0" type="button">01 Copper coil</button><button class="specimen-btn" data-index="1" type="button">02 Outer gimbal</button><button class="specimen-btn" data-index="2" type="button">03 Escapement</button><button class="specimen-btn" data-index="3" type="button">04 Ruby bearing</button><button class="specimen-btn" data-index="4" type="button">05 Cyan emitter</button></div></aside>
     <aside class="panel panel-right" aria-label="Macro optical view"><div class="panel-head"><span>Macro optics</span><span id="plateLabel">Plate 01/A</span></div><div class="macro"><img src="./assets/kern-calibration-unit.png" alt="Magnified precision mechanism" /></div><div class="macro-meta"><span id="magnification">MAG 4.8×</span><span>Tracking locked</span></div></aside>
@@ -139,8 +139,8 @@ mask-image:radial-gradient(ellipse calc(var(--b0)*1.25) var(--b0) at 36% 35%,#00
   function syncVideos(force=false){
     if(monoVideo.readyState<2||colorVideo.readyState<2||!monoVideo.duration||!colorVideo.duration)return;
     const delta=monoVideo.currentTime-colorVideo.currentTime, drift=Math.abs(delta);
-    if((force||drift>.12)&&!colorVideo.seeking){colorVideo.currentTime=monoVideo.currentTime;colorVideo.playbackRate=1;}
-    else colorVideo.playbackRate=1+Math.max(-.08,Math.min(.08,delta));
+    if((force||drift>.12)&&!colorVideo.seeking){colorVideo.currentTime=monoVideo.currentTime;colorVideo.playbackRate=monoVideo.playbackRate;}
+    else colorVideo.playbackRate=monoVideo.playbackRate+Math.max(-.08,Math.min(.08,delta));
     if(monoVideo.paused!==colorVideo.paused){monoVideo.paused?colorVideo.pause():colorVideo.play().catch(()=>{});}
   }
   const whenReady=(video)=>video.readyState>=2?Promise.resolve():new Promise(resolve=>video.addEventListener('loadeddata',resolve,{once:true}));
@@ -148,20 +148,40 @@ mask-image:radial-gradient(ellipse calc(var(--b0)*1.25) var(--b0) at 36% 35%,#00
     try{
       monoVideo.defaultMuted=colorVideo.defaultMuted=true;
       await Promise.all([whenReady(monoVideo),whenReady(colorVideo)]);
+      if(reduce){monoVideo.pause();colorVideo.pause();try{monoVideo.currentTime=0;colorVideo.currentTime=0}catch(_){}return;}
       colorVideo.currentTime=monoVideo.currentTime;
       await Promise.all([monoVideo.play(),colorVideo.play()]);
       syncVideos(true);
     }catch(_){/* posters remain visible until browser permits playback */}
   }
-  monoVideo.addEventListener('playing',()=>syncVideos(true));monoVideo.addEventListener('timeupdate',()=>syncVideos());monoVideo.addEventListener('seeking',()=>syncVideos(true));monoVideo.addEventListener('ended',()=>syncVideos(true));
-  if('requestVideoFrameCallback' in monoVideo){const frameSync=()=>{syncVideos();monoVideo.requestVideoFrameCallback(frameSync)};monoVideo.requestVideoFrameCallback(frameSync)}else setInterval(syncVideos,80);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)startVideos()});
+  // Velocity-reactive loop: the mechanism spins faster while the user scrolls, easing back to 1× at rest.
+  let velRate=1,lastScrollT=0,lastScrollYv=scrollY,heroVisible=true;
+  function tick(){
+    if(!reduce&&!monoVideo.paused){
+      if(performance.now()-lastScrollT>140)velRate+=(1-velRate)*.08;
+      const r=monoVideo.playbackRate+(velRate-monoVideo.playbackRate)*.18;
+      monoVideo.playbackRate=Math.abs(r-1)<.005?1:r;
+    }
+    syncVideos();
+  }
+  monoVideo.addEventListener('playing',()=>syncVideos(true));monoVideo.addEventListener('timeupdate',()=>syncVideos());monoVideo.addEventListener('seeking',()=>syncVideos(true));
+  if('requestVideoFrameCallback' in monoVideo){const frameSync=()=>{tick();monoVideo.requestVideoFrameCallback(frameSync)};monoVideo.requestVideoFrameCallback(frameSync)}else setInterval(tick,80);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&heroVisible)startVideos()});
   addEventListener('pageshow',startVideos,{once:true});
-  ['pointerdown','touchstart','wheel','scroll'].forEach(type=>addEventListener(type,()=>{if(monoVideo.paused||colorVideo.paused)startVideos()},{once:true,passive:true}));
+  // Persistent recovery: any interaction restarts a stalled loop while the hero is on screen.
+  ['pointerdown','touchstart','wheel','scroll'].forEach(type=>addEventListener(type,()=>{if(heroVisible&&!reduce&&(monoVideo.paused||colorVideo.paused))startVideos()},{passive:true}));
+  // Decode budget: pause both loops when the hero leaves the viewport, resume in sync on return.
+  new IntersectionObserver(es=>{heroVisible=es[0].isIntersecting;
+    if(reduce)return;
+    if(heroVisible)startVideos();else{monoVideo.pause();colorVideo.pause();}
+  },{rootMargin:'15%'}).observe(stage);
   startVideos();
   const smooth=t=>t<=0?0:t>=1?1:t*t*(3-2*t);
   function draw(){raf=0;const max=document.documentElement.scrollHeight-innerHeight;const global=max?scrollY/max:0;progress.style.transform=`scaleX(${global})`;
     if(reduce)return;
+    const now=performance.now(),dt=now-lastScrollT;
+    if(dt>0&&dt<400)velRate=1+Math.min(.9,(Math.abs(scrollY-lastScrollYv)/dt*1000)/2400);
+    lastScrollT=now;lastScrollYv=scrollY;
     if(innerWidth<701){
       // Mobile: no pin — the same bloom sequence rides plain page scroll (scroll-coupled, transform+mask only).
       const planeX=Math.max(0,Math.min(1,scrollY/(innerHeight*.72)))*100;
