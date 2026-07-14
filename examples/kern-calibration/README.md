@@ -4,16 +4,12 @@ An original cinematic example website for the `cinematic-scroll` skill.
 
 ## What it demonstrates
 
-- Two real, independently encoded and frame-matched video layers.
-- A continuously playing monochrome base video.
-- A synchronized full-colour video above it.
-- Scroll-scrubbed CSS radial-gradient masking: five soft colour blooms open cumulatively over each mechanical system as the scan plane crosses it, then a full-frame wash floods the whole unit in colour.
-- Frame-by-frame drift correction using `requestVideoFrameCallback` and circular phase-aware playback-rate convergence—no repeated seeking at the loop boundary.
+- Scroll-scrubbed hero (the "Scrubbed Timeline" pattern): the video's time is driven by scroll position through a damped spring, so it glides fluidly with the scroll and springs to settle (with a touch of overshoot) when you stop; scrolling forward drives the camera's dolly-in, scrolling back reverses it.
+- One decoded file, three frame-locked layers: the mono base, the colour scan and the macro crop all stream the SAME file and are driven to one shared `currentTime`, so they can never drift; the base is desaturated purely in CSS.
+- Scroll-scrubbed CSS radial-gradient masking: five soft colour blooms open cumulatively across the mechanism as the scan plane advances, then a full-frame wash floods the whole unit in colour.
 - A genuinely full-viewport video stage using `object-fit: cover`; no framed media panel or transformed 3D ancestor.
-- A genuinely generated hero video: the still plate is animated by a fal.ai LTX-Video image-to-video model, so the exposed gears, escapement and central tourbillon actually move while the camera cranes over the movement — real motion, not a pan over a frozen image. The ~7.7 s clip is played forward then reversed (ping-pong / boomerang) into a perfectly seamless ~15 s loop.
-- Velocity-reactive playback: scrolling accelerates the loop up to ~1.9×, easing back to 1× at rest; the loops pause off-screen and resume in sync.
-- Muted inline autoplay plus pointer, touch, wheel, scroll, visibility and page-show recovery hooks.
-- Five selectable mechanical systems with live, phase-locked macro video crops and matching readings.
+- A genuinely generated hero video: the still plate is animated by a fal.ai **Seedance 2.0** image-to-video model, so the exposed gears, escapement and central tourbillon actually turn while the camera performs a cinematic dolly-in — real motion, not a pan over a frozen image.
+- A synced macro-optics panel: a moderate live crop of the very same scrubbed frame, phase-locked to the hero.
 - Procedural Web Audio ambience behind an explicit user-controlled sound toggle.
 - A complete website after the hero: system catalogue, calibration protocol and closing chapter — all scroll-choreographed (scrubbed, reversible entrances with per-card parallax depths, a drawing protocol timeline, and a dolly-in finale; transform + opacity only).
 - Full-bleed on every viewport: mobile keeps the same sticky full-viewport video as desktop (panels become compact top-corner overlays), never a letterboxed band; plus a `prefers-reduced-motion` static fallback.
@@ -22,13 +18,12 @@ An original cinematic example website for the `cinematic-scroll` skill.
 
 | Asset | Role | Specification |
 |---|---|---|
-| `kern-mono.mp4` | Persistent base layer | 1920×1080, 24 fps, ~15.3 s, H.264, ping-pong LTX i2v loop |
-| `kern-color.mp4` | Scroll-masked colour layer | 1920×1080, 24 fps, ~15.3 s, H.264, ping-pong LTX i2v loop |
+| `kern-color.mp4` | The single scrubbed hero clip | 1920×1080, 24 fps, 12.04 s, H.264, dense keyframes (GOP 6) for smooth scroll-seeking |
 | `kern-calibration-unit.png` | Source plate | Generated precision-mechanical still fed to the video model |
-| `generate-i2v.py` | Primary generator | fal.ai LTX-Video image-to-video → forward+reverse boomerang → colour + mono + poster (needs `FAL_KEY`) |
+| `generate-i2v.py` | Primary generator | fal.ai Seedance 2.0 image-to-video → scrub-optimised H.264 encode + poster (needs `FAL_KEY`) |
 | `render-mechanism.py` | Offline fallback | No-network single-still coherent camera move (used when no video model / key is available) |
 
-The colour loop is generated once; the monochrome layer is a desaturated encode of that exact stream, so framing, duration, frame count and motion match by construction. Regenerate with `FAL_KEY=<id:secret> python3 assets/generate-i2v.py`.
+There is only one video file: the mono base and colour scan are two `<video>` elements pointing at it, the base desaturated in CSS, so they share one decode-time and stay frame-locked with zero drift. The dense keyframe interval keeps `currentTime` scroll-seeking smooth. Regenerate with `FAL_KEY=<id:secret> python3 assets/generate-i2v.py`.
 
 ## Originality boundary
 

@@ -9,44 +9,29 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
 try {
   await page.goto(pathToFileURL(join(here, 'index.html')).href);
-  await page.waitForFunction(() => [...document.querySelectorAll('video.specimen')].every((video) => video.readyState >= 2 && !video.paused), { timeout: 5000 });
-  await page.evaluate(async () => {
-    const videos = [...document.querySelectorAll('video.specimen')];
-    const target = Math.max(0, Math.min(...videos.map((video) => video.duration)) - 0.45);
-    videos.forEach((video) => { video.currentTime = target; });
-    await Promise.all(videos.map((video) => video.play()));
+  await page.waitForFunction(() => {
+    const v = [...document.querySelectorAll('video.specimen'), document.querySelector('video.macro-video')];
+    return v.every((x) => x && x.readyState >= 1 && x.duration > 0);
+  }, { timeout: 6000 });
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; });
+
+  // Scrub to several positions; at each settle the three layers must share one currentTime and stay decodable.
+  const layers = () => page.evaluate(() => {
+    const vs = [...document.querySelectorAll('video.specimen'), document.querySelector('video.macro-video')];
+    return vs.map((v) => ({ t: v.currentTime, ready: v.readyState }));
   });
 
-  const samples = [];
-  for (let i = 0; i < 10; i += 1) {
-    await page.waitForTimeout(200);
-    samples.push(await page.evaluate(() => [...document.querySelectorAll('video.specimen')].map((video) => ({
-      readyState: video.readyState,
-      paused: video.paused,
-      seeking: video.seeking,
-      currentTime: video.currentTime,
-    }))));
+  for (const frac of [0.25, 0.6, 0.9, 0.4]) {
+    await page.evaluate((f) => scrollTo(0, document.querySelector('.hero-track').offsetHeight * f), frac);
+    await page.waitForTimeout(1300);
+    const s = await layers();
+    const times = s.map((x) => x.t);
+    const spread = Math.max(...times) - Math.min(...times);
+    assert.ok(spread < 0.06, `layers drifted at ${frac}: ${JSON.stringify(times)}`);
+    assert.ok(s.every((x) => x.ready >= 2), `a layer was undecodable at ${frac}: ${JSON.stringify(s)}`);
   }
 
-  for (let videoIndex = 0; videoIndex < 2; videoIndex += 1) {
-    let streak = 0;
-    let longestStreak = 0;
-    for (const sample of samples) {
-      const video = sample[videoIndex];
-      assert.equal(video.paused, false, 'video paused across loop boundary');
-      streak = video.readyState < 2 ? streak + 1 : 0;
-      longestStreak = Math.max(longestStreak, streak);
-    }
-    assert.ok(longestStreak <= 2, `video remained undecodable across loop: ${JSON.stringify(samples)}`);
-    assert.ok(samples.at(-1)[videoIndex].readyState >= 2, 'video did not recover after loop boundary');
-  }
-  const last = samples.at(-1);
-  const duration = await page.evaluate(() => document.querySelector('video.specimen').duration);
-  const raw = Math.abs(last[0].currentTime - last[1].currentTime);
-  const drift = Math.min(raw, duration - raw);
-  assert.ok(drift < 0.12, `loop-boundary drift ${drift}s exceeds tolerance`);
-
-  console.log('PASS dual-video loop remains decodable and synchronized');
+  console.log('PASS scrubbed layers stay decodable and frame-locked across positions');
 } finally {
   await browser.close();
 }

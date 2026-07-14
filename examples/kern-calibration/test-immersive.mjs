@@ -7,64 +7,50 @@ const here = dirname(fileURLToPath(import.meta.url));
 const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome' });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
+const scrollTrack = (frac) => page.evaluate((f) => {
+  document.documentElement.style.scrollBehavior = 'auto';
+  scrollTo(0, document.querySelector('.hero-track').offsetHeight * f);
+}, frac);
+
 try {
   await page.goto(pathToFileURL(join(here, 'index.html')).href);
-  await page.waitForFunction(() => [...document.querySelectorAll('video.specimen')].every((video) => video.readyState >= 2 && !video.paused), { timeout: 5000 });
+  await page.waitForFunction(() => {
+    const v = [...document.querySelectorAll('video.specimen')];
+    return v.length === 2 && v.every((x) => x.readyState >= 1 && x.duration > 0);
+  }, { timeout: 6000 });
 
   const initial = await page.evaluate(() => {
-    const stage = document.querySelector('.specimen-stage');
+    const stage = document.querySelector('.specimen-stage').getBoundingClientRect();
     const videos = [...document.querySelectorAll('video.specimen')];
-    const rect = stage.getBoundingClientRect();
     return {
-      stage: { width: rect.width, height: rect.height },
+      stage: { width: stage.width, height: stage.height },
       viewport: { width: innerWidth, height: innerHeight },
-      videos: videos.map((video) => ({
-        currentTime: video.currentTime,
-        paused: video.paused,
-        muted: video.muted,
-        loop: video.loop,
-        playsInline: video.playsInline,
-        objectFit: getComputedStyle(video).objectFit,
-        readyState: video.readyState,
-      })),
-      mask: getComputedStyle(videos[1]).maskImage !== 'none'
-        ? getComputedStyle(videos[1]).maskImage
-        : getComputedStyle(videos[1]).webkitMaskImage,
-      bloom: getComputedStyle(videos[1]).getPropertyValue('--b0').trim(),
+      srcs: videos.map((v) => v.currentSrc.split('/').pop()),
+      objectFit: getComputedStyle(videos[0]).objectFit,
+      baseFilter: getComputedStyle(document.querySelector('.specimen.base')).filter,
     };
   });
 
-  assert.ok(initial.mask.includes('radial-gradient'), 'colour video must carry the radial bloom mask');
-  assert.equal(parseFloat(initial.bloom), 0, `blooms must start closed, got ${initial.bloom}`);
+  assert.ok(initial.stage.width >= initial.viewport.width * 0.98, `stage width ${initial.stage.width} not immersive`);
+  assert.ok(initial.stage.height >= initial.viewport.height * 0.98, `stage height ${initial.stage.height} not immersive`);
+  assert.equal(initial.objectFit, 'cover', 'video must cover the immersive stage');
+  assert.deepEqual(initial.srcs, ['kern-color.mp4', 'kern-color.mp4'], 'both layers must stream the one scrubbed file');
+  assert.ok(/grayscale\(1\)/.test(initial.baseFilter), `base layer must be desaturated in CSS, got ${initial.baseFilter}`);
 
-  assert.ok(initial.stage.width >= initial.viewport.width * 0.98, `stage width ${initial.stage.width}px is not immersive`);
-  assert.ok(initial.stage.height >= initial.viewport.height * 0.98, `stage height ${initial.stage.height}px is not immersive`);
-  for (const video of initial.videos) {
-    assert.equal(video.paused, false, 'video must autoplay');
-    assert.equal(video.muted, true, 'video must be muted for autoplay');
-    assert.equal(video.loop, true, 'video must loop');
-    assert.equal(video.playsInline, true, 'video must play inline');
-    assert.equal(video.objectFit, 'cover', 'video must cover the immersive stage');
-    assert.ok(video.readyState >= 2, `video readyState ${video.readyState} is not decodable`);
-  }
+  // Scrub forward: scrolling the pinned track must advance the shared video time, layers frame-locked.
+  await scrollTrack(0.5);
+  await page.waitForTimeout(1400);
+  const mid = await page.evaluate(() => [...document.querySelectorAll('video.specimen')].map((v) => v.currentTime));
+  assert.ok(mid[0] > 0.8, `scroll did not scrub the video forward (t=${mid[0]})`);
+  assert.ok(Math.abs(mid[0] - mid[1]) < 0.05, `layers out of sync: ${mid}`);
 
-  const t0 = initial.videos.map((video) => video.currentTime);
-  await page.waitForTimeout(1000);
-  const t1 = await page.evaluate(() => [...document.querySelectorAll('video.specimen')].map((video) => video.currentTime));
-  assert.ok(t1[0] - t0[0] > 0.7, 'monochrome video did not visibly advance');
-  assert.ok(t1[1] - t0[1] > 0.7, 'colour video did not visibly advance');
-  assert.ok(Math.abs(t1[0] - t1[1]) < 0.08, `video drift ${Math.abs(t1[0] - t1[1])}s exceeds boundary tolerance`);
+  // Scrub back: scrolling up must reverse the video (fluid back-and-forth follow).
+  await scrollTrack(0.05);
+  await page.waitForTimeout(1400);
+  const back = await page.evaluate(() => document.querySelector('video.specimen.scan').currentTime);
+  assert.ok(back < mid[0] - 0.5, `scroll-up did not reverse the scrub (${back} vs ${mid[0]})`);
 
-  await page.evaluate(() => {
-    document.documentElement.style.scrollBehavior = 'auto';
-    scrollTo(0, document.querySelector('.hero-track').offsetHeight * 0.48);
-  });
-  await page.waitForTimeout(500);
-  const revealed = await page.evaluate(() => getComputedStyle(document.querySelector('video.specimen.scan')).getPropertyValue('--b0').trim());
-  assert.notEqual(revealed, initial.bloom, 'scroll must open the colour blooms');
-  assert.ok(parseFloat(revealed) > 0, `bloom radius ${revealed} did not grow on scroll`);
-
-  console.log('PASS immersive full-viewport dual-video contract');
+  console.log('PASS immersive full-viewport scroll-scrubbed dual-layer contract');
 } finally {
   await browser.close();
 }

@@ -7,7 +7,7 @@
 <meta name="description" content="KERN is an original cinematic precision-calibration interface built with the Cinematic Scroll skill." />
 <title>KERN — Precision Calibration Unit</title>
 <link rel="preload" as="image" href="./assets/kern-poster.jpg" fetchpriority="high" />
-<link rel="preload" as="video" href="./assets/kern-mono.mp4" type="video/mp4" />
+<link rel="preload" as="video" href="./assets/kern-color.mp4" type="video/mp4" fetchpriority="high" />
 <style>
 :root{
   --paper:#dedcd3;--paper-hi:#efeee8;--ink:#151b1b;--muted:#687170;
@@ -29,6 +29,9 @@ nav{position:fixed;z-index:80;top:0;left:0;right:0;padding:max(17px,env(safe-are
 .horizon{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 63%,rgba(50,53,50,.09) 63.2%,transparent 64%);z-index:-1}.ambient{position:absolute;inset:-20%;background:radial-gradient(circle at 52% 55%,rgba(255,255,255,.68),transparent 40%);transform:translate3d(0,0,0);will-change:transform,opacity}
 .specimen-wrap{position:absolute;inset:0;display:grid;place-items:center}.specimen-stage{position:relative;width:100vw;height:100svh;overflow:hidden}
 .specimen{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.92) contrast(1.03);user-select:none;-webkit-user-drag:none;pointer-events:none}
+/* Both layers stream the SAME scroll-scrubbed file — the base is desaturated in CSS so the two
+   are frame-identical by construction (perfect sync), and the colour scan blooms through on top. */
+.specimen.base{filter:grayscale(1) contrast(1.07) brightness(.97)}
 /* WebKit paints a start-playback glyph over paused/blocked inline video (iOS Low Power Mode, Safari autoplay
    restrictions, our own off-screen pause). These are decorative background layers — never show native chrome. */
 .specimen::-webkit-media-controls,.specimen::-webkit-media-controls-panel,.specimen::-webkit-media-controls-overlay-play-button,.specimen::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none!important;opacity:0!important;pointer-events:none!important}
@@ -88,10 +91,10 @@ mask-image:radial-gradient(ellipse calc(var(--b0)*1.25) var(--b0) at 36% 35%,#00
   <div class="hero">
     <div class="horizon" aria-hidden="true"></div><div class="ambient" aria-hidden="true"></div>
     <div class="hero-title"><div class="kicker">Precision calibration / Unit 01</div><h1>Kern<br/>Index</h1><p>A mechanical reference assembly measured under load. Scroll to reveal its five critical systems in colour.</p></div>
-    <div class="index" aria-hidden="true"><div class="num">01</div><small>Tolerance ±0.002 μm<br/>Cycle 11.667 s</small></div>
-    <div class="specimen-wrap" aria-hidden="true"><div class="specimen-stage"><video class="specimen base" src="./assets/kern-mono.mp4" poster="./assets/kern-poster.jpg" muted loop playsinline webkit-playsinline autoplay preload="auto" disablepictureinpicture></video><video class="specimen scan" src="./assets/kern-color.mp4" poster="./assets/kern-poster.jpg" muted loop playsinline webkit-playsinline autoplay preload="auto" disablepictureinpicture></video><div class="scan-plane"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="target"><i></i></div><div class="connector"></div></div></div>
+    <div class="index" aria-hidden="true"><div class="num">01</div><small>Tolerance ±0.002 μm<br/>Scrub 12.04 s</small></div>
+    <div class="specimen-wrap" aria-hidden="true"><div class="specimen-stage"><video class="specimen base" src="./assets/kern-color.mp4" poster="./assets/kern-poster.jpg" muted playsinline webkit-playsinline preload="auto" disablepictureinpicture></video><video class="specimen scan" src="./assets/kern-color.mp4" poster="./assets/kern-poster.jpg" muted playsinline webkit-playsinline preload="auto" disablepictureinpicture></video><div class="scan-plane"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="bloom-ring"></div><div class="target"><i></i></div><div class="connector"></div></div></div>
     <aside class="panel panel-left" aria-label="Calibration data"><div class="panel-head"><span>System index</span><span class="blink">Scan active</span></div><h2 id="speciesName">Copper coil</h2><div class="latin" id="speciesLatin">Electromagnetic impulse stage</div><div class="metrics"><div class="metric"><b id="metricVital">96</b><span>Stability</span></div><div class="metric"><b id="metricSignal">91</b><span>Torque</span></div><div class="metric"><b id="metricRisk">04</b><span>Drift</span></div></div><div class="specimen-list" role="list"><button class="specimen-btn active" data-index="0" type="button">01 Copper coil</button><button class="specimen-btn" data-index="1" type="button">02 Outer gimbal</button><button class="specimen-btn" data-index="2" type="button">03 Escapement</button><button class="specimen-btn" data-index="3" type="button">04 Ruby bearing</button><button class="specimen-btn" data-index="4" type="button">05 Cyan emitter</button></div></aside>
-    <aside class="panel panel-right" aria-label="Macro optical view"><div class="panel-head"><span>Macro optics</span><span id="plateLabel">Plate 01/A</span></div><div class="macro"><video class="macro-video" src="./assets/kern-color.mp4" poster="./assets/kern-poster.jpg" muted loop playsinline webkit-playsinline autoplay preload="auto" disablepictureinpicture aria-label="Live magnified precision mechanism"></video></div><div class="macro-meta"><span id="magnification">MAG 4.8×</span><span>Live / phase locked</span></div></aside>
+    <aside class="panel panel-right" aria-label="Macro optical view"><div class="panel-head"><span>Macro optics</span><span id="plateLabel">Plate 01/A</span></div><div class="macro"><video class="macro-video" src="./assets/kern-color.mp4" poster="./assets/kern-poster.jpg" muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-label="Magnified precision mechanism, synced to the hero"></video></div><div class="macro-meta"><span id="magnification">MAG 4.8×</span><span>Scrub / phase locked</span></div></aside>
     <div class="scroll-cue" aria-hidden="true"><i></i>Scroll to calibrate</div>
   </div>
 </section>
@@ -166,56 +169,32 @@ mask-image:radial-gradient(ellipse calc(var(--b0)*1.25) var(--b0) at 36% 35%,#00
   }
   function ping(freq=310){if(!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type='sine';g.gain.setValueAtTime(.025,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.22);o.connect(g).connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.23)}
   document.querySelectorAll('.specimen-btn').forEach(b=>b.addEventListener('click',()=>setSpecimen(+b.dataset.index,true)));
-  function syncFollower(video,duration){
-    if(video.readyState<2||!video.duration)return;
-    const raw=monoVideo.currentTime-video.currentTime;
-    const delta=((raw+duration/2)%duration+duration)%duration-duration/2;
-    video.playbackRate=monoVideo.playbackRate+Math.max(-.2,Math.min(.2,delta*1.6));
-    if(monoVideo.paused!==video.paused){monoVideo.paused?video.pause():video.play().catch(()=>{});}
+  // ---- Scroll-scrubbed hero (Scrubbed Timeline pattern) ----
+  // The video's time follows scroll through a damped spring, so it glides fluidly with the scroll
+  // and springs to settle (with a little overshoot) when you stop. All three <video> layers stream
+  // the SAME file and are driven to one shared currentTime, so the mono base, colour scan and macro
+  // crop stay frame-locked. No autoplay: scrolling forward drives the dolly-in, scrolling back reverses it.
+  const videos=[monoVideo,colorVideo,macroVideo];
+  videos.forEach(v=>{v.muted=true;v.defaultMuted=true;});
+  let vidDur=colorVideo.duration||0,vidTime=0,vidVel=0,targetTime=0,springRAF=0,primed=false,heroVisible=true;
+  function seekAll(t){for(const v of videos){if(v.readyState>=1&&Math.abs((v.currentTime||0)-t)>0.034){try{v.currentTime=t}catch(_){}}}}
+  const setDur=()=>{vidDur=colorVideo.duration||vidDur||12;if(reduce)seekAll(vidDur*0.35);};
+  colorVideo.addEventListener('loadedmetadata',setDur);if(vidDur)setDur();
+  function primeDecode(){if(primed)return;primed=true;videos.forEach(v=>{const p=v.play();if(p&&p.then)p.then(()=>v.pause()).catch(()=>{});else{try{v.pause()}catch(_){}}});}
+  function springStep(){
+    springRAF=0;if(reduce||!vidDur)return;
+    vidVel+=(targetTime-vidTime)*0.16;vidVel*=0.70;vidTime+=vidVel;   // damped spring: stiffness 0.16, damping 0.70 → glide + settle overshoot
+    if(vidTime<0){vidTime=0;if(vidVel<0)vidVel*=-0.25;}
+    else if(vidTime>vidDur){vidTime=vidDur;if(vidVel>0)vidVel*=-0.25;}
+    seekAll(vidTime);
+    if(heroVisible&&(Math.abs(vidVel)>0.0006||Math.abs(targetTime-vidTime)>0.004))springRAF=requestAnimationFrame(springStep);
   }
-  function syncVideos(){
-    if(monoVideo.readyState<2||colorVideo.readyState<2||macroVideo.readyState<2||!monoVideo.duration)return;
-    const duration=Math.min(monoVideo.duration,colorVideo.duration,macroVideo.duration);
-    syncFollower(colorVideo,duration);
-    syncFollower(macroVideo,duration);
-  }
-  const whenReady=(video)=>video.readyState>=2?Promise.resolve():new Promise(resolve=>video.addEventListener('loadeddata',resolve,{once:true}));
-  let startPromise=null;
-  function startVideos(){
-    if(reduce){[monoVideo,colorVideo,macroVideo].forEach(video=>{video.pause();try{video.currentTime=0}catch(_){}});return Promise.resolve();}
-    if([monoVideo,colorVideo,macroVideo].every(video=>!video.paused&&video.readyState>=2))return Promise.resolve();
-    if(startPromise)return startPromise;
-    startPromise=(async()=>{
-      [monoVideo,colorVideo,macroVideo].forEach(video=>video.defaultMuted=true);
-      await Promise.all([monoVideo,colorVideo,macroVideo].map(whenReady));
-      [colorVideo,macroVideo].forEach(video=>{if(Math.abs(monoVideo.currentTime-video.currentTime)>.08)video.currentTime=monoVideo.currentTime});
-      await Promise.all([monoVideo,colorVideo,macroVideo].map(video=>video.play()));
-      syncVideos();
-    })().catch(()=>{/* posters remain visible until browser permits playback */}).finally(()=>{startPromise=null});
-    return startPromise;
-  }
-  // Velocity-reactive loop: the mechanism spins faster while the user scrolls, easing back to 1× at rest.
-  let velRate=1,lastScrollT=0,lastScrollYv=scrollY,heroVisible=true;
-  function tick(){
-    if(!reduce&&!monoVideo.paused){
-      if(performance.now()-lastScrollT>140)velRate+=(1-velRate)*.08;
-      const r=monoVideo.playbackRate+(velRate-monoVideo.playbackRate)*.18;
-      monoVideo.playbackRate=Math.abs(r-1)<.005?1:r;
-    }
-    syncVideos();
-  }
-  monoVideo.addEventListener('playing',syncVideos);monoVideo.addEventListener('timeupdate',syncVideos);monoVideo.addEventListener('seeking',syncVideos);
-  if('requestVideoFrameCallback' in monoVideo){const frameSync=()=>{tick();monoVideo.requestVideoFrameCallback(frameSync)};monoVideo.requestVideoFrameCallback(frameSync)}else setInterval(tick,80);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&heroVisible)startVideos()});
-  addEventListener('pageshow',startVideos,{once:true});
-  // Persistent recovery: any interaction restarts a stalled loop while the hero is on screen.
-  ['pointerdown','touchstart','wheel','scroll'].forEach(type=>addEventListener(type,()=>{if(heroVisible&&!reduce&&[monoVideo,colorVideo,macroVideo].some(video=>video.paused))startVideos()},{passive:true}));
-  // Decode budget: pause all synchronized loops when the hero leaves the viewport, resume in sync on return.
-  new IntersectionObserver(es=>{heroVisible=es[0].isIntersecting;
-    if(reduce)return;
-    if(heroVisible)startVideos();else [monoVideo,colorVideo,macroVideo].forEach(video=>video.pause());
-  },{rootMargin:'15%'}).observe(stage);
-  startVideos();
+  function wakeSpring(){if(heroVisible&&!reduce&&!springRAF)springRAF=requestAnimationFrame(springStep);}
+  addEventListener('load',()=>{primeDecode();setDur();wakeSpring();},{once:true});
+  ['pointerdown','touchstart','wheel','scroll','keydown'].forEach(t=>addEventListener(t,primeDecode,{once:true,passive:true}));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&heroVisible)wakeSpring();});
+  new IntersectionObserver(es=>{heroVisible=es[0].isIntersecting;if(heroVisible){primeDecode();wakeSpring();}},{rootMargin:'20%'}).observe(stage);
+  primeDecode();
   const smooth=t=>t<=0?0:t>=1?1:t*t*(3-2*t);
   // Scroll choreography below the hero — entrances scrub with scroll (reversible), and every
   // element carries a continuous parallax drift so the whole document feels suspended in depth.
@@ -243,14 +222,12 @@ mask-image:radial-gradient(ellipse calc(var(--b0)*1.25) var(--b0) at 36% 35%,#00
   }
   function draw(){raf=0;const max=document.documentElement.scrollHeight-innerHeight;const global=max?scrollY/max:0;progress.style.transform=`scaleX(${global})`;
     if(reduce)return;
-    const now=performance.now(),dt=now-lastScrollT;
-    if(dt>0&&dt<400)velRate=1+Math.min(.9,(Math.abs(scrollY-lastScrollYv)/dt*1000)/2400);
-    lastScrollT=now;lastScrollYv=scrollY;
     applyFx();
     // Mobile and desktop now share one path: a sticky full-viewport hero whose bloom sequence
     // scrubs against the pinned track (no separate letterboxed-band branch). Layer offsets in
     // applyFx() already scale down on narrow screens.
     const rect=track.getBoundingClientRect(),range=track.offsetHeight-innerHeight,p=Math.max(0,Math.min(1,-rect.top/range));
+    targetTime=Math.max(0,Math.min(1,p))*vidDur;wakeSpring();   // hero scroll progress drives the scrubbed video time
     const reveal=Math.max(0,Math.min(1,(p-.08)/.36));const scanP=Math.max(0,Math.min(1,(p-.23)/.48));const settle=Math.max(0,Math.min(1,(p-.76)/.2));
     const crossed=applyBlooms(scanP*100,smooth(settle)*140);
     plane.style.opacity=p>.2&&p<.82?1:0;plane.style.transform=`translate3d(${scanP*stage.clientWidth}px,0,0)`;
