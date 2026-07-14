@@ -13,7 +13,7 @@ An original cinematic example website for the `cinematic-scroll` skill.
 - Generated precision-mechanical hero imagery converted into a seamless 11.667-second, 30 fps, 1080p locked-camera loop. The outer housing stays pixel-stable while the inner carrier, escapement and counter-rotating pinions move at exact integer loop ratios; the coil and emitter pulse without moving the camera.
 - Velocity-reactive playback: scrolling accelerates the loop up to ~1.9×, easing back to 1× at rest; the loops pause off-screen and resume in sync.
 - Muted inline autoplay plus pointer, touch, wheel, scroll, visibility and page-show recovery hooks.
-- Five selectable mechanical systems with live readings and macro crops.
+- Five selectable mechanical systems with live, phase-locked macro video crops and matching readings.
 - Procedural Web Audio ambience behind an explicit user-controlled sound toggle.
 - A complete website after the hero: system catalogue, calibration protocol and closing chapter.
 - Mobile and `prefers-reduced-motion` fallbacks.
