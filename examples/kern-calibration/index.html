@@ -27,7 +27,10 @@ nav{position:fixed;z-index:80;top:0;left:0;right:0;padding:max(17px,env(safe-are
 .hero-track{height:360vh;position:relative}.hero{height:100svh;position:sticky;top:0;overflow:hidden;background:radial-gradient(circle at 50% 48%,var(--paper-hi),var(--paper) 59%,#cbc8bd 100%);isolation:isolate}
 .horizon{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 63%,rgba(50,53,50,.09) 63.2%,transparent 64%);z-index:-1}.ambient{position:absolute;inset:-20%;background:radial-gradient(circle at 52% 55%,rgba(255,255,255,.68),transparent 40%);transform:translate3d(0,0,0);will-change:transform,opacity}
 .specimen-wrap{position:absolute;inset:0;display:grid;place-items:center}.specimen-stage{position:relative;width:100vw;height:100svh;overflow:hidden}
-.specimen{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.92) contrast(1.03);user-select:none;-webkit-user-drag:none}
+.specimen{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.92) contrast(1.03);user-select:none;-webkit-user-drag:none;pointer-events:none}
+/* WebKit paints a start-playback glyph over paused/blocked inline video (iOS Low Power Mode, Safari autoplay
+   restrictions, our own off-screen pause). These are decorative background layers — never show native chrome. */
+.specimen::-webkit-media-controls,.specimen::-webkit-media-controls-panel,.specimen::-webkit-media-controls-overlay-play-button,.specimen::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none!important;opacity:0!important;pointer-events:none!important}
 /* Rack focus in colour: the colour layer is invisible until a bloom opens over an active system. */
 .specimen.scan{--b0:0%;--b1:0%;--b2:0%;--b3:0%;--b4:0%;--wash:0%;filter:saturate(1.22) contrast(1.08) hue-rotate(3deg);opacity:0}
 @supports ((-webkit-mask-image:radial-gradient(#000,transparent)) or (mask-image:radial-gradient(#000,transparent))){
