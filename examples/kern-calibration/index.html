@@ -141,9 +141,10 @@ mask-image:radial-gradient(ellipse calc(var(--b0)*1.25) var(--b0) at 36% 35%,#00
   document.querySelectorAll('.specimen-btn').forEach(b=>b.addEventListener('click',()=>setSpecimen(+b.dataset.index,true)));
   function syncVideos(){
     if(monoVideo.readyState<2||colorVideo.readyState<2||!monoVideo.duration||!colorVideo.duration)return;
-    const delta=monoVideo.currentTime-colorVideo.currentTime, drift=Math.abs(delta);
-    if(drift>.12&&monoVideo.readyState>=3&&colorVideo.readyState>=3&&!colorVideo.seeking){colorVideo.currentTime=monoVideo.currentTime;colorVideo.playbackRate=monoVideo.playbackRate;}
-    else colorVideo.playbackRate=monoVideo.playbackRate+Math.max(-.08,Math.min(.08,delta));
+    const duration=Math.min(monoVideo.duration,colorVideo.duration);
+    const raw=monoVideo.currentTime-colorVideo.currentTime;
+    const delta=((raw+duration/2)%duration+duration)%duration-duration/2;
+    colorVideo.playbackRate=monoVideo.playbackRate+Math.max(-.2,Math.min(.2,delta*1.6));
     if(monoVideo.paused!==colorVideo.paused){monoVideo.paused?colorVideo.pause():colorVideo.play().catch(()=>{});}
   }
   const whenReady=(video)=>video.readyState>=2?Promise.resolve():new Promise(resolve=>video.addEventListener('loadeddata',resolve,{once:true}));
