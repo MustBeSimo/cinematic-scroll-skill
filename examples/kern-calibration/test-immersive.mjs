@@ -27,9 +27,15 @@ try {
         objectFit: getComputedStyle(video).objectFit,
         readyState: video.readyState,
       })),
-      clip: getComputedStyle(videos[1]).clipPath,
+      mask: getComputedStyle(videos[1]).maskImage !== 'none'
+        ? getComputedStyle(videos[1]).maskImage
+        : getComputedStyle(videos[1]).webkitMaskImage,
+      bloom: getComputedStyle(videos[1]).getPropertyValue('--b0').trim(),
     };
   });
+
+  assert.ok(initial.mask.includes('radial-gradient'), 'colour video must carry the radial bloom mask');
+  assert.equal(parseFloat(initial.bloom), 0, `blooms must start closed, got ${initial.bloom}`);
 
   assert.ok(initial.stage.width >= initial.viewport.width * 0.98, `stage width ${initial.stage.width}px is not immersive`);
   assert.ok(initial.stage.height >= initial.viewport.height * 0.98, `stage height ${initial.stage.height}px is not immersive`);
@@ -51,8 +57,9 @@ try {
 
   await page.evaluate(() => scrollTo(0, document.querySelector('.hero-track').offsetHeight * 0.48));
   await page.waitForTimeout(250);
-  const revealed = await page.evaluate(() => getComputedStyle(document.querySelector('video.specimen.scan')).clipPath);
-  assert.notEqual(revealed, initial.clip, 'scroll must change the colour-video mask');
+  const revealed = await page.evaluate(() => getComputedStyle(document.querySelector('video.specimen.scan')).getPropertyValue('--b0').trim());
+  assert.notEqual(revealed, initial.bloom, 'scroll must open the colour blooms');
+  assert.ok(parseFloat(revealed) > 0, `bloom radius ${revealed} did not grow on scroll`);
 
   console.log('PASS immersive full-viewport dual-video contract');
 } finally {

@@ -7,7 +7,7 @@ An original cinematic example website for the `cinematic-scroll` skill.
 - Two real, independently encoded and frame-matched video layers.
 - A continuously playing monochrome base video.
 - A synchronized full-colour video above it.
-- Scroll-scrubbed CSS `clip-path` masking applied only to the colour layer.
+- Scroll-scrubbed CSS radial-gradient masking: five soft colour blooms open cumulatively over each mechanical system as the scan plane crosses it, then a full-frame wash floods the whole unit in colour.
 - Frame-by-frame drift correction using `requestVideoFrameCallback`, playback-rate convergence and buffered hard-resync protection.
 - A genuinely full-viewport video stage using `object-fit: cover`; no framed media panel or transformed 3D ancestor.
 - Generated precision-mechanical hero imagery converted into a seamless 12-second, 30 fps master loop with perceptible camera movement.
