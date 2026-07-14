@@ -9,7 +9,7 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
 try {
   await page.goto(pathToFileURL(join(here, 'index.html')).href);
-  await page.waitForTimeout(1800);
+  await page.waitForFunction(() => [...document.querySelectorAll('video.specimen')].every((video) => video.readyState >= 2 && !video.paused), { timeout: 5000 });
 
   const initial = await page.evaluate(() => {
     const stage = document.querySelector('.specimen-stage');
@@ -55,8 +55,11 @@ try {
   assert.ok(t1[1] - t0[1] > 0.7, 'colour video did not visibly advance');
   assert.ok(Math.abs(t1[0] - t1[1]) < 0.08, `video drift ${Math.abs(t1[0] - t1[1])}s exceeds boundary tolerance`);
 
-  await page.evaluate(() => scrollTo(0, document.querySelector('.hero-track').offsetHeight * 0.48));
-  await page.waitForTimeout(250);
+  await page.evaluate(() => {
+    document.documentElement.style.scrollBehavior = 'auto';
+    scrollTo(0, document.querySelector('.hero-track').offsetHeight * 0.48);
+  });
+  await page.waitForTimeout(500);
   const revealed = await page.evaluate(() => getComputedStyle(document.querySelector('video.specimen.scan')).getPropertyValue('--b0').trim());
   assert.notEqual(revealed, initial.bloom, 'scroll must open the colour blooms');
   assert.ok(parseFloat(revealed) > 0, `bloom radius ${revealed} did not grow on scroll`);

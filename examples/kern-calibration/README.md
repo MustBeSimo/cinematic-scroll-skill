@@ -43,5 +43,6 @@ python3 -m http.server 8080
 
 ```bash
 node examples/kern-calibration/test-immersive.mjs
+node examples/kern-calibration/test-mobile.mjs
 python3 examples/kern-calibration/test-video-motion.py
 ```
