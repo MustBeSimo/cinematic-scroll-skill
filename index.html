@@ -916,5 +916,35 @@
     try { init(); } catch(e){ /* leave gradients */ }
   }
 </script>
+<script>
+/* autoplay-veil — a blocked video must never show Safari's native play glyph.
+   Modern Safari (Low Power Mode, per-site Auto-Play settings) refuses even muted
+   autoplay and paints a dark ▶ over the element; ::-webkit-media-controls-* hides
+   are ignored. So every self-playing video starts invisible behind its own poster
+   and unveils only on a real 'playing' event; first genuine gesture retries play.
+   Opt out per-element with data-no-veil. */
+(function(){
+  var vids=[].slice.call(document.querySelectorAll('video'));
+  vids.forEach(function(v){
+    if(v.dataset.noVeil!=null||v.controls)return;
+    var auto=v.autoplay||v.hasAttribute('autoplay')||(v.muted&&v.loop)||v.hasAttribute('muted')&&v.hasAttribute('loop');
+    if(!auto)return;
+    var poster=v.getAttribute('poster'), ph=null;
+    v.style.transition='opacity .8s ease'; v.style.opacity='0';
+    if(poster){
+      ph=document.createElement('img'); ph.src=poster; ph.alt=''; ph.setAttribute('aria-hidden','true');
+      ph.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;transition:opacity .8s ease;';
+      var host=v.parentElement;
+      if(host){ if(getComputedStyle(host).position==='static')host.style.position='relative';
+        host.insertBefore(ph,v.nextSibling); }
+    }
+    function unveil(){ v.style.opacity='1'; if(ph)ph.style.opacity='0'; }
+    if(!v.paused&&v.currentTime>0)unveil(); else v.addEventListener('playing',unveil);
+    ['pointerdown','touchstart','click','keydown'].forEach(function(t){
+      addEventListener(t,function(){ if(v.paused){ v.muted=true; var p=v.play(); if(p&&p.catch)p.catch(function(){}); } },{passive:true});
+    });
+  });
+})();
+</script>
 </body>
 </html>
