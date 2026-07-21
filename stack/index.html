@@ -48,6 +48,11 @@
   .stage .links{display:flex;gap:14px;flex-wrap:wrap}
   .stage a{color:var(--accent);text-decoration:none;font:600 14px inherit;border-bottom:1px solid transparent;transition:border-color .3s var(--e-soft)}
   .stage.paid{border-color:var(--paid-line);background:linear-gradient(180deg,var(--panel),var(--paid-deep))}
+  .stage .price{font:700 13px/1 ui-monospace,monospace;color:var(--ink);letter-spacing:.04em;text-transform:uppercase}
+  .stage .buy{display:inline-block;background:var(--accent);color:var(--bg);border-radius:10px;padding:13px 22px;font:700 15px ui-sans-serif,system-ui;text-decoration:none;border-bottom:0;transition:transform .3s var(--e-soft),filter .3s var(--e-soft)}
+  .stage .buy:hover{transform:translateY(-2px);filter:brightness(1.09)}
+  .stage .lic{font-size:12px;color:var(--dim);margin-top:2px}
+  .stage .lic a{font-size:12px;color:var(--dim);text-decoration:underline}
   .badge{display:inline-block;font:600 10px/1 ui-monospace,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--bg);background:var(--accent);border-radius:999px;padding:5px 10px;margin-left:8px;vertical-align:middle}
   section.research{margin-top:64px}
   section.research h2,section.why h2{font-size:20px;margin-bottom:14px}
@@ -131,15 +136,18 @@
 
   <article class="stage paid reveal">
     <p class="role">04 · Learn<span class="badge">Studio · paid</span></p>
-    <h2>Motif Engine <small>Cinematic Scroll Studio · private</small></h2>
-    <p>The self-improving layer: it distills patterns from sites you're authorized to study
-    into an originality-firewalled pattern library, tracks which motifs actually get reused,
-    scaffolds new variants against a declared taste target, and promotes nothing to canon
-    without human sign-off. The skill that gets better every time you build.</p>
-    <p class="proof">pattern IR · reuse telemetry · judged variants · human-gated canon</p>
+    <h2>Your agent forgets. <small>Cinematic Scroll Studio gives it memory.</small></h2>
+    <p>Every new project, your agent re-derives your taste from scratch. Studio makes it
+    <strong>learn</strong> — every site you build teaches it your visual language, so build #10
+    starts where build #9 left off. The one thing a template marketplace can never sell you:
+    <em>your own</em> accumulated style.</p>
+    <p class="proof"><b>How it works:</b> pattern IR · reuse telemetry · judged variants · human-gated canon</p>
+    <p class="price">$149 · pay once · single seat</p>
     <div class="links">
-      <a href="mailto:simone@w230.net?subject=Cinematic%20Scroll%20Studio%20%E2%80%94%20early%20access">Request early access</a>
+      <a class="buy" href="https://buy.stripe.com/cNi7sLdNBbief0L0uFfnO09" rel="noopener">Get Studio — $149</a>
     </div>
+    <p class="lic">Commercial licence, client-work allowed. By purchasing you agree to the
+      <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/blob/main/stack/LICENSE-COMMERCIAL.md" rel="noopener">licence</a>.</p>
   </article>
 </div>
 
