@@ -30,20 +30,20 @@ for (let idx = 0; idx < sites.length; idx++) {
   const runs = [];
   try { for (let i = 0; i < 3; i++) runs.push(await capture(site.url)); }
   catch (e) { console.error(`  environment error: ${e.message}`); process.exit(1); }
-  const env = runs.find((r) => r.environment)?.environment || null;
+  const benchEnv = runs.find((r) => r.environment)?.environment || null;
   // Reference run must be hardware-GL: a software rasterizer makes the performance axis meaningless.
-  if (env && env.softwareGL) {
-    console.error(`✗ reference run ABORTED: software GL renderer (${env.renderer}). The published corpus must run on hardware GL — use a GPU-backed Chrome.`);
+  if (benchEnv && benchEnv.softwareGL) {
+    console.error(`✗ reference run ABORTED: software GL renderer (${benchEnv.renderer}). The published corpus must run on hardware GL — use a GPU-backed Chrome.`);
     process.exit(1);
   }
   // Archive the raw (pre-median) captures + write the run-environment manifest once.
   writeFileSync(join(HERE, "raw", slug(site.url) + ".json"), JSON.stringify({ url: site.url, ts: new Date().toISOString(), runs }, null, 2) + "\n");
-  if (env && !envWritten) {
-    writeFileSync(join(HERE, "RUN-ENVIRONMENT.json"), JSON.stringify({ ranAt: new Date().toISOString(), node: process.version, benchVersion: BENCH_VERSION, viewport: "1440x900", runsPerSite: 3, ...env }, null, 2) + "\n");
+  if (benchEnv && !envWritten) {
+    writeFileSync(join(HERE, "RUN-ENVIRONMENT.json"), JSON.stringify({ ranAt: new Date().toISOString(), node: process.version, benchVersion: BENCH_VERSION, viewport: "1440x900", runsPerSite: 3, ...benchEnv }, null, 2) + "\n");
     envWritten = true;
   }
   const m = medianize(runs);
-  const result = { bench_version: BENCH_VERSION, name: site.name, category: site.category, url: site.url, ts: m.ts || new Date().toISOString(), runs: runs.length, environment: env, scores: m.reachable ? scoreMeasurements(m) : null, unmeasurable_reason: m.reachable ? null : m.unmeasurable_reason, measurements: m.reachable ? m : undefined };
+  const result = { bench_version: BENCH_VERSION, name: site.name, category: site.category, url: site.url, ts: m.ts || new Date().toISOString(), runs: runs.length, environment: benchEnv, scores: m.reachable ? scoreMeasurements(m) : null, unmeasurable_reason: m.reachable ? null : m.unmeasurable_reason, measurements: m.reachable ? m : undefined };
   writeFileSync(out, JSON.stringify(result, null, 2) + "\n");
   if (result.scores) { ranked++; console.log(`  → ${result.scores.overall}/100`); } else { unmeasurable++; console.log(`  → unmeasurable: ${result.unmeasurable_reason}`); }
 }

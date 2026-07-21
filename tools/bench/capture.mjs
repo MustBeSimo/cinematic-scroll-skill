@@ -97,10 +97,10 @@ const PROBE_MEASURE = `(() => {
 
 export async function capture(url, { budgetMs = 90000 } = {}) {
   const exe = findBrowser();
-  if (!exe) { const e = new Error("no Chrome/Chromium found — set $CHROME_PATH"); e.env = true; throw e; }
+  if (!exe) { const e = new Error("no Chrome/Chromium found — set $CHROME_PATH"); e.envError = true; throw e; }
   let chromium;
   try { ({ chromium } = await import("playwright-core")); }
-  catch { const e = new Error("playwright-core not installed — run: npm i -D playwright-core"); e.env = true; throw e; }
+  catch { const e = new Error("playwright-core not installed — run: npm i -D playwright-core"); e.envError = true; throw e; }
 
   const robots = await checkRobots(url);
   if (!robots.allowed) return un(robots.reason, url);
@@ -110,7 +110,7 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
     browser = await chromium.launch({ executablePath: exe, args: LAUNCH_ARGS });
   } catch (err) {
     const e = new Error(`browser failed to launch: ${String(err.message).slice(0, 120)}`);
-    e.env = true;
+    e.envError = true;
     throw e;
   }
   const chromeVersion = typeof browser.version === "function" ? browser.version() : null;
