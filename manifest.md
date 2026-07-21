@@ -47,7 +47,11 @@ Every experience starts from a baseline that works everywhere: static layout, re
 
 ## Version History
 
-### v2.3.5 (Current)
+### v2.6.9 (Current)
+
+- **CinematicBench hardened for public launch.** The passive scroll-craft benchmark now records a full **environment block** with every result (`chromeVersion`, OS, CPU, WebGL `renderer`/`vendor`, `refreshHz`, launch flags, `softwareGL`), and the reference corpus run **refuses to publish on a software-GL renderer** (SwiftShader/llvmpipe) — perf numbers are only meaningful on recorded hardware GL. `robots.txt` now honors **both `Allow` and `Disallow` with longest-match precedence** (prefix rules; no wildcard patterns). Corpus re-measured **sequentially** on clean hardware GL (parallel runs contaminate perf) — 61 scored / 5 unmeasurable, dated leaderboard with the recorded environment in the footer. Claims tightened throughout: "no human judge; published, deterministic **scoring rubric**" (the scoring is deterministic, capture varies), "**cinematic scroll craft**" not universal UX, "**accessibility heuristic**" not WCAG, and the leaderboard's own doctor-≥90 pass is separated from any CinematicBench score. Added `tools/bench/METHODOLOGY-NOTES.md`. *(Changelog note: entries for v2.4–v2.6.8 were tracked in git history rather than here; this resumes the in-manifest log.)*
+
+### v2.3.5
 
 - **ClawHub re-audit cleanup (v2.3.4 → Pass, 116 → 110 findings; this pass targets the last 3 mediums):** Added a **credential-safety warning** to the `curl` test snippet in troubleshooting.md (read the key from `$FAL_KEY`, never paste it inline, don't share the command/output, rotate if exposed). Extended the `network:fetch` permission justification to explicitly cover the **runtime third-party CDN asset loads** (GSAP/three.js on jsDelivr; Draco decoder + model-viewer on unpkg; Google Fonts) — addressing the "external fetch lacks manifest justification" flag. Clarified that the "name the cinematic technique" rule is a **developer code-comment convention**, not a user-facing language/locale mandate. Also brought the immersive example into the published set with SRI-pinned GSAP and broadened CDN disclosure.
 
