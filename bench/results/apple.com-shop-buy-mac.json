@@ -3,30 +3,56 @@
   "name": "Apple Store — Mac",
   "category": "e-commerce",
   "url": "https://www.apple.com/shop/buy-mac",
-  "ts": "2026-07-03T18:51:59.747Z",
+  "ts": "2026-07-21T13:58:21.663Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 90,
-    "performance": 93,
-    "a11y": 90,
-    "motionCraft": 85,
-    "overall": 90
+    "performance": 98,
+    "a11y": 40,
+    "motionCraft": 55,
+    "overall": 73
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.apple.com/shop/buy-mac",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:51:59.747Z",
+    "ts": "2026-07-21T13:58:21.663Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
       "samples": 720
     },
     "scroll": {
-      "docHeight": 6877,
+      "docHeight": 7576,
       "viewportHeight": 900,
       "sections": 204,
       "pinnedRanges": 0,
@@ -34,8 +60,8 @@
       "hasCanvas": false
     },
     "motion": {
-      "changedNodes": 1,
-      "animatedNodes": 7,
+      "changedNodes": 0,
+      "animatedNodes": 11,
       "changedRatio": 0,
       "transformOpacityOnly": 1,
       "parallaxLayers": 0,
@@ -45,13 +71,13 @@
       "clsProxy": 0.022
     },
     "a11y": {
-      "reducedMotionHonored": true,
+      "reducedMotionHonored": false,
       "focusVisible": true,
       "contrastFailures": 5,
       "motionToggle": false
     },
     "console": {
-      "errors": 1,
+      "errors": 0,
       "failedRequests": 1
     }
   }

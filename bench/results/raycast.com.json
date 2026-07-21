@@ -3,27 +3,53 @@
   "name": "Raycast",
   "category": "product-launch",
   "url": "https://www.raycast.com/",
-  "ts": "2026-07-03T17:45:57.073Z",
+  "ts": "2026-07-21T12:38:22.803Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 119,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 90,
-    "performance": 98,
-    "a11y": 50,
-    "motionCraft": 85,
-    "overall": 81
+    "performance": 96,
+    "a11y": 0,
+    "motionCraft": 90,
+    "overall": 69
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.raycast.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:45:57.073Z",
+    "ts": "2026-07-21T12:38:22.803Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 119,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
-      "avg": 119,
+      "avg": 116,
       "droppedPct": 0,
-      "samples": 716
+      "samples": 693
     },
     "scroll": {
       "docHeight": 15626,
@@ -34,25 +60,25 @@
       "hasCanvas": true
     },
     "motion": {
-      "changedNodes": 4,
+      "changedNodes": 5,
       "animatedNodes": 30,
       "changedRatio": 0.01,
-      "transformOpacityOnly": 1,
-      "parallaxLayers": 0,
+      "transformOpacityOnly": 0.8,
+      "parallaxLayers": 1,
       "entranceStagger": true
     },
     "stability": {
       "clsProxy": 0
     },
     "a11y": {
-      "reducedMotionHonored": true,
+      "reducedMotionHonored": false,
       "focusVisible": false,
-      "contrastFailures": 56,
+      "contrastFailures": 57,
       "motionToggle": false
     },
     "console": {
       "errors": 0,
-      "failedRequests": 1
+      "failedRequests": 2
     }
   }
 }

@@ -1,0 +1,171 @@
+{
+  "url": "https://railway.com/",
+  "ts": "2026-07-21T14:09:58.170Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://railway.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T14:09:17.083Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 93,
+        "droppedPct": 2,
+        "samples": 557
+      },
+      "scroll": {
+        "docHeight": 12180,
+        "viewportHeight": 900,
+        "sections": 8,
+        "pinnedRanges": 4,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 12,
+        "animatedNodes": 11,
+        "changedRatio": 0.03,
+        "transformOpacityOnly": 0.92,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.003
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": true,
+        "contrastFailures": 16,
+        "motionToggle": true
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 4
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://railway.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T14:09:37.855Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 99,
+        "droppedPct": 1,
+        "samples": 593
+      },
+      "scroll": {
+        "docHeight": 12180,
+        "viewportHeight": 900,
+        "sections": 8,
+        "pinnedRanges": 4,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 12,
+        "animatedNodes": 11,
+        "changedRatio": 0.03,
+        "transformOpacityOnly": 0.92,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.002
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": true,
+        "contrastFailures": 16,
+        "motionToggle": true
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 4
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://railway.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T14:09:58.087Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 118,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 109,
+        "droppedPct": 0,
+        "samples": 651
+      },
+      "scroll": {
+        "docHeight": 12180,
+        "viewportHeight": 900,
+        "sections": 8,
+        "pinnedRanges": 4,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 12,
+        "animatedNodes": 11,
+        "changedRatio": 0.03,
+        "transformOpacityOnly": 0.92,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.002
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": true,
+        "contrastFailures": 16,
+        "motionToggle": true
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 4
+      }
+    }
+  ]
+}

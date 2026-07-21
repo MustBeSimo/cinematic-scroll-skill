@@ -3,8 +3,21 @@
   "name": "Allbirds",
   "category": "e-commerce",
   "url": "https://www.allbirds.com/",
-  "ts": "2026-07-03T18:44:31.143Z",
+  "ts": "2026-07-21T13:49:51.548Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
@@ -17,16 +30,29 @@
     "bench_version": "1.1",
     "url": "https://www.allbirds.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:44:31.143Z",
+    "ts": "2026-07-21T13:49:51.548Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 720
+      "samples": 719
     },
     "scroll": {
-      "docHeight": 3710,
+      "docHeight": 3662,
       "viewportHeight": 900,
       "sections": 14,
       "pinnedRanges": 2,
@@ -51,8 +77,8 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 0,
-      "failedRequests": 20
+      "errors": 2,
+      "failedRequests": 23
     }
   }
 }

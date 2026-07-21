@@ -3,8 +3,21 @@
   "name": "Ueno",
   "category": "portfolio-agency",
   "url": "https://www.ueno.co/",
-  "ts": "2026-07-03T18:15:46.742Z",
+  "ts": "2026-07-21T13:18:00.256Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 100,
@@ -17,16 +30,29 @@
     "bench_version": "1.1",
     "url": "https://www.ueno.co/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:15:46.742Z",
+    "ts": "2026-07-21T13:18:00.256Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 720
+      "samples": 721
     },
     "scroll": {
-      "docHeight": 2829,
+      "docHeight": 2821,
       "viewportHeight": 900,
       "sections": 14,
       "pinnedRanges": 0,

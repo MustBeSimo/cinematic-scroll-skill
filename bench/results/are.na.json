@@ -3,30 +3,56 @@
   "name": "Are.na",
   "category": "editorial",
   "url": "https://www.are.na/",
-  "ts": "2026-07-03T18:35:57.282Z",
+  "ts": "2026-07-21T13:39:53.551Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 119,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
-    "performance": 94,
+    "performance": 100,
     "a11y": 100,
     "motionCraft": 75,
-    "overall": 93
+    "overall": 95
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.are.na/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:35:57.282Z",
+    "ts": "2026-07-21T13:39:53.551Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 119,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
       "samples": 720
     },
     "scroll": {
-      "docHeight": 2658,
+      "docHeight": 2664,
       "viewportHeight": 900,
       "sections": 1,
       "pinnedRanges": 0,
@@ -52,7 +78,7 @@
     },
     "console": {
       "errors": 0,
-      "failedRequests": 3
+      "failedRequests": 0
     }
   }
 }

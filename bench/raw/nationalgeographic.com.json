@@ -1,0 +1,171 @@
+{
+  "url": "https://www.nationalgeographic.com/",
+  "ts": "2026-07-21T13:37:14.755Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://www.nationalgeographic.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:35:17.391Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 118,
+        "droppedPct": 0,
+        "samples": 706
+      },
+      "scroll": {
+        "docHeight": 9382,
+        "viewportHeight": 900,
+        "sections": 144,
+        "pinnedRanges": 1,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 15,
+        "animatedNodes": 0,
+        "changedRatio": 0.04,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.094
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 0,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 25,
+        "failedRequests": 33
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.nationalgeographic.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:36:05.393Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 119,
+        "droppedPct": 0,
+        "samples": 713
+      },
+      "scroll": {
+        "docHeight": 9382,
+        "viewportHeight": 900,
+        "sections": 144,
+        "pinnedRanges": 1,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 15,
+        "animatedNodes": 0,
+        "changedRatio": 0.04,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.094
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 0,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 25,
+        "failedRequests": 33
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.nationalgeographic.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:36:51.440Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 119,
+        "droppedPct": 0,
+        "samples": 713
+      },
+      "scroll": {
+        "docHeight": 9580,
+        "viewportHeight": 900,
+        "sections": 144,
+        "pinnedRanges": 1,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 15,
+        "animatedNodes": 0,
+        "changedRatio": 0.04,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.094
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 0,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 25,
+        "failedRequests": 33
+      }
+    }
+  ]
+}

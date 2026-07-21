@@ -3,27 +3,53 @@
   "name": "Figma",
   "category": "product-launch",
   "url": "https://www.figma.com/",
-  "ts": "2026-07-03T17:43:56.930Z",
+  "ts": "2026-07-21T12:30:25.312Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 90,
-    "performance": 9,
+    "performance": 90,
     "a11y": 82,
     "motionCraft": 90,
-    "overall": 64
+    "overall": 88
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.figma.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:43:56.930Z",
+    "ts": "2026-07-21T12:30:25.312Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
-      "avg": 32,
-      "droppedPct": 16,
-      "samples": 191
+      "avg": 120,
+      "droppedPct": 0,
+      "samples": 719
     },
     "scroll": {
       "docHeight": 8936,
@@ -35,9 +61,9 @@
     },
     "motion": {
       "changedNodes": 45,
-      "animatedNodes": 3,
+      "animatedNodes": 2,
       "changedRatio": 0.12,
-      "transformOpacityOnly": 0.91,
+      "transformOpacityOnly": 0.98,
       "parallaxLayers": 1,
       "entranceStagger": false
     },

@@ -3,12 +3,18 @@
    probe load), a standard 6s scroll, passive observation. Truthful UA, robots.txt honored,
    no auth-bypass, no load-testing. The only network/browser edge of the bench. */
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { BENCH_VERSION } from "./score.mjs";
 
 export const UA = "CinematicBench/1.0 (+https://github.com/MustBeSimo/cinematic-scroll-skill)";
 const VIEWPORT = { width: 1440, height: 900 };
+const LAUNCH_ARGS = ["--no-sandbox", "--disable-dev-shm-usage"];
+// A software rasterizer (SwiftShader / llvmpipe) makes performance scores meaningless; the
+// reference corpus run refuses to publish on one (see run-corpus.mjs). End users on their own
+// machine are not blocked — this only flags the renderer in the recorded environment.
+export const isSoftwareGL = (r) => /swiftshader|llvmpipe/i.test(String(r || ""));
 
 export function findBrowser() {
   const candidates = [process.env.CHROME_PATH];
@@ -30,29 +36,32 @@ export async function checkRobots(url) {
     const res = await fetch(`${u.origin}/robots.txt`, { headers: { "user-agent": UA }, signal: AbortSignal.timeout(10000) });
     if (!res.ok) return { allowed: true, reason: "no robots.txt" };
     const text = await res.text();
-    // Parse ALL groups per RFC 9309: consecutive User-agent lines form one group sharing the
-    // following rules. Prefer a group whose agent token matches our bot (cinematicbench, case-
-    // insensitive substring); otherwise fall back to the `*` group. Fail-open on fetch errors.
+    // RFC 9309 groups: consecutive User-agent lines form one group sharing the following rules.
+    // Prefer a group whose agent token matches our bot (cinematicbench); else the `*` group.
+    // Honors BOTH Allow and Disallow with longest-match precedence (Allow wins ties). Prefix
+    // match only — no `*`/`$` wildcard pattern expansion. Fail-open on fetch/parse errors.
     const groups = []; let cur = null, lastWasAgent = false;
     for (const raw of text.split(/\r?\n/)) {
       const line = raw.replace(/#.*$/, "").trim();
       if (!line) { lastWasAgent = false; continue; }
       const [k, ...rest] = line.split(":"); const v = rest.join(":").trim();
       if (/^user-agent$/i.test(k)) {
-        if (!lastWasAgent) { cur = { agents: [], disallows: [] }; groups.push(cur); }
+        if (!lastWasAgent) { cur = { agents: [], rules: [] }; groups.push(cur); }
         cur.agents.push(v);
         lastWasAgent = true;
       } else {
         lastWasAgent = false;
-        if (cur && /^disallow$/i.test(k) && v) cur.disallows.push(v);
+        if (cur && v && /^(dis)?allow$/i.test(k)) cur.rules.push({ path: v, allow: /^allow$/i.test(k) });
       }
     }
     const botGroup = groups.find((g) => g.agents.some((a) => /cinematicbench/i.test(a)));
     const starGroup = groups.find((g) => g.agents.includes("*"));
-    const disallows = (botGroup || starGroup || { disallows: [] }).disallows;
+    const rules = (botGroup || starGroup || { rules: [] }).rules;
     const p = u.pathname || "/";
-    const hit = disallows.find((d) => p.startsWith(d));
-    return hit ? { allowed: false, reason: `robots.txt disallows ${hit}` } : { allowed: true, reason: "allowed" };
+    const win = rules.filter((r) => p.startsWith(r.path))
+      .sort((a, b) => b.path.length - a.path.length || (a.allow === b.allow ? 0 : a.allow ? -1 : 1))[0];
+    if (win && !win.allow) return { allowed: false, reason: `robots.txt disallows ${win.path}` };
+    return { allowed: true, reason: win ? "allowed (robots Allow)" : "allowed" };
   } catch { return { allowed: true, reason: "robots.txt unreachable (assumed allowed)" }; }
 }
 
@@ -98,12 +107,13 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
 
   let browser;
   try {
-    browser = await chromium.launch({ executablePath: exe, args: ["--no-sandbox", "--disable-dev-shm-usage"] });
+    browser = await chromium.launch({ executablePath: exe, args: LAUNCH_ARGS });
   } catch (err) {
     const e = new Error(`browser failed to launch: ${String(err.message).slice(0, 120)}`);
     e.env = true;
     throw e;
   }
+  const chromeVersion = typeof browser.version === "function" ? browser.version() : null;
   const deadline = Date.now() + budgetMs;
   const left = () => deadline - Date.now();
   try {
@@ -214,6 +224,25 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
     const pinnedRanges = await page.evaluate(`(() => { let n = 0, seen = 0;
       for (const e of document.querySelectorAll('body *')) { if (++seen > 3000) break;
         const p = getComputedStyle(e).position; if (p === 'sticky') n++; } return Math.min(n, 20); })()`);
+
+    // environment evidence: WebGL renderer/vendor (proves hardware vs software GL) + a rAF refresh estimate
+    const gl = await page.evaluate(`(() => { try {
+      const c = document.createElement('canvas'); const g = c.getContext('webgl') || c.getContext('experimental-webgl');
+      if (!g) return { renderer: null, vendor: null };
+      const d = g.getExtension('WEBGL_debug_renderer_info');
+      return { renderer: d ? g.getParameter(d.UNMASKED_RENDERER_WEBGL) : g.getParameter(g.RENDERER),
+               vendor: d ? g.getParameter(d.UNMASKED_VENDOR_WEBGL) : g.getParameter(g.VENDOR) }; }
+      catch { return { renderer: null, vendor: null }; } })()`);
+    const refreshHz = await page.evaluate(`new Promise(r => { const t = []; let last = performance.now();
+      function f(now){ t.push(now - last); last = now; if (t.length < 20) requestAnimationFrame(f);
+        else { t.sort((a, b) => a - b); r(Math.round(1000 / (t[Math.floor(t.length / 2)] || 16.7))); } }
+      requestAnimationFrame(f); })`);
+    const environment = {
+      chromeVersion, os: `${os.platform()} ${os.release()} ${os.arch()}`,
+      cpu: ((os.cpus() || [])[0] || {}).model || null,
+      renderer: gl.renderer, gpuVendor: gl.vendor, refreshHz,
+      launchFlags: LAUNCH_ARGS, softwareGL: isSoftwareGL(gl.renderer),
+    };
     await page.close();
 
     // reduced-motion probe: second load with the media feature emulated
@@ -232,7 +261,7 @@ export async function capture(url, { budgetMs = 90000 } = {}) {
 
     return {
       bench_version: BENCH_VERSION, url, viewport: "1440x900", ts: new Date().toISOString(),
-      reachable: true, unmeasurable_reason: null,
+      reachable: true, unmeasurable_reason: null, environment,
       fps, scroll: { docHeight: dims.docHeight, viewportHeight: dims.vh, sections: dims.sections, pinnedRanges, scrollJack, hasCanvas: dims.hasCanvas },
       motion: { changedNodes: changed, animatedNodes: anim.count, changedRatio: Math.round((changed / sampled) * 100) / 100, transformOpacityOnly: changed ? Math.round((1 - layoutChanged / changed) * 100) / 100 : 1, parallaxLayers: Math.max(0, buckets.size - 1), entranceStagger: anim.stagger },
       stability: { clsProxy },

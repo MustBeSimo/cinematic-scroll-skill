@@ -3,8 +3,21 @@
   "name": "Immersive Garden",
   "category": "portfolio-agency",
   "url": "https://immersive-g.com/",
-  "ts": "2026-07-03T18:25:29.587Z",
+  "ts": "2026-07-21T13:28:02.272Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 70,
     "performance": 95,
@@ -17,13 +30,26 @@
     "bench_version": "1.1",
     "url": "https://immersive-g.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:25:29.587Z",
+    "ts": "2026-07-21T13:28:02.272Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 721
+      "samples": 720
     },
     "scroll": {
       "docHeight": 900,

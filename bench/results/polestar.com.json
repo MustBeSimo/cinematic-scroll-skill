@@ -3,27 +3,53 @@
   "name": "Polestar",
   "category": "product-launch",
   "url": "https://www.polestar.com/",
-  "ts": "2026-07-03T17:53:38.914Z",
+  "ts": "2026-07-21T12:48:28.115Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
-    "performance": 98,
+    "performance": 94,
     "a11y": 86,
     "motionCraft": 75,
-    "overall": 91
+    "overall": 90
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.polestar.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:53:38.914Z",
+    "ts": "2026-07-21T12:48:28.115Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 717
+      "samples": 720
     },
     "scroll": {
       "docHeight": 5134,
@@ -52,7 +78,7 @@
     },
     "console": {
       "errors": 0,
-      "failedRequests": 1
+      "failedRequests": 3
     }
   }
 }

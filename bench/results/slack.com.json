@@ -3,30 +3,56 @@
   "name": "Slack",
   "category": "product-launch",
   "url": "https://slack.com/",
-  "ts": "2026-07-03T17:50:12.684Z",
+  "ts": "2026-07-21T12:43:45.446Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
     "a11y": 80,
-    "motionCraft": 80,
-    "overall": 85
+    "motionCraft": 65,
+    "overall": 82
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://slack.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:50:12.684Z",
+    "ts": "2026-07-21T12:43:45.446Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 721
+      "samples": 720
     },
     "scroll": {
-      "docHeight": 10980,
+      "docHeight": 11020,
       "viewportHeight": 900,
       "sections": 44,
       "pinnedRanges": 2,
@@ -38,11 +64,11 @@
       "animatedNodes": 2,
       "changedRatio": 0.48,
       "transformOpacityOnly": 0.99,
-      "parallaxLayers": 3,
+      "parallaxLayers": 2,
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.086
+      "clsProxy": 0.255
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -52,7 +78,7 @@
     },
     "console": {
       "errors": 3,
-      "failedRequests": 12
+      "failedRequests": 13
     }
   }
 }

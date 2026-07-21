@@ -1,0 +1,30 @@
+{
+  "url": "https://www.bellroy.com/",
+  "ts": "2026-07-21T13:54:54.417Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://www.bellroy.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:54:39.329Z",
+      "reachable": false,
+      "unmeasurable_reason": "page rendered empty (likely bot-wall)"
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.bellroy.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:54:46.373Z",
+      "reachable": false,
+      "unmeasurable_reason": "page rendered empty (likely bot-wall)"
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.bellroy.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:54:54.348Z",
+      "reachable": false,
+      "unmeasurable_reason": "page rendered empty (likely bot-wall)"
+    }
+  ]
+}

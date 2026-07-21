@@ -1,0 +1,171 @@
+{
+  "url": "https://www.apple.com/shop/buy-mac",
+  "ts": "2026-07-21T13:59:26.315Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://www.apple.com/shop/buy-mac",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:58:21.663Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 7576,
+        "viewportHeight": 900,
+        "sections": 204,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 0,
+        "animatedNodes": 11,
+        "changedRatio": 0,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0.022
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": true,
+        "contrastFailures": 5,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 0,
+        "failedRequests": 1
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.apple.com/shop/buy-mac",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:59:07.231Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 7576,
+        "viewportHeight": 900,
+        "sections": 204,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 0,
+        "animatedNodes": 11,
+        "changedRatio": 0,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0.022
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": true,
+        "contrastFailures": 5,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 0,
+        "failedRequests": 1
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.apple.com/shop/buy-mac",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:59:26.246Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 7576,
+        "viewportHeight": 900,
+        "sections": 204,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 0,
+        "animatedNodes": 11,
+        "changedRatio": 0,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": true,
+        "contrastFailures": 5,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 1,
+        "failedRequests": 1
+      }
+    }
+  ]
+}

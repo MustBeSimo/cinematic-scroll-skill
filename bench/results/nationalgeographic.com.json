@@ -3,46 +3,72 @@
   "name": "National Geographic",
   "category": "editorial",
   "url": "https://www.nationalgeographic.com/",
-  "ts": "2026-07-03T18:31:13.390Z",
+  "ts": "2026-07-21T13:35:17.391Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
     "a11y": 100,
-    "motionCraft": 90,
-    "overall": 92
+    "motionCraft": 65,
+    "overall": 87
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.nationalgeographic.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:31:13.390Z",
+    "ts": "2026-07-21T13:35:17.391Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 119,
       "droppedPct": 0,
-      "samples": 716
+      "samples": 713
     },
     "scroll": {
-      "docHeight": 9211,
+      "docHeight": 9382,
       "viewportHeight": 900,
-      "sections": 129,
+      "sections": 144,
       "pinnedRanges": 1,
       "scrollJack": false,
       "hasCanvas": false
     },
     "motion": {
-      "changedNodes": 95,
+      "changedNodes": 15,
       "animatedNodes": 0,
-      "changedRatio": 0.24,
+      "changedRatio": 0.04,
       "transformOpacityOnly": 1,
-      "parallaxLayers": 1,
+      "parallaxLayers": 0,
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.002
+      "clsProxy": 0.094
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -51,8 +77,8 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 26,
-      "failedRequests": 46
+      "errors": 25,
+      "failedRequests": 33
     }
   }
 }

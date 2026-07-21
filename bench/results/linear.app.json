@@ -3,27 +3,53 @@
   "name": "Linear",
   "category": "product-launch",
   "url": "https://linear.app/",
-  "ts": "2026-07-03T17:37:03.628Z",
+  "ts": "2026-07-21T12:27:33.693Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 90,
-    "performance": 93,
+    "performance": 98,
     "a11y": 20,
     "motionCraft": 75,
-    "overall": 70
+    "overall": 72
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://linear.app/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:37:03.628Z",
+    "ts": "2026-07-21T12:27:33.693Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
-      "avg": 120,
+      "avg": 118,
       "droppedPct": 0,
-      "samples": 720
+      "samples": 708
     },
     "scroll": {
       "docHeight": 10898,
@@ -51,7 +77,7 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 1,
+      "errors": 0,
       "failedRequests": 1
     }
   }

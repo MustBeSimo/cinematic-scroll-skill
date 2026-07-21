@@ -3,8 +3,21 @@
   "name": "Warp",
   "category": "dev-tools",
   "url": "https://www.warp.dev/",
-  "ts": "2026-07-03T19:03:29.128Z",
+  "ts": "2026-07-21T14:11:05.076Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
@@ -17,21 +30,34 @@
     "bench_version": "1.1",
     "url": "https://www.warp.dev/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T19:03:29.128Z",
+    "ts": "2026-07-21T14:11:05.076Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 720
+      "samples": 717
     },
     "scroll": {
-      "docHeight": 8451,
+      "docHeight": 8387,
       "viewportHeight": 900,
       "sections": 23,
       "pinnedRanges": 2,
       "scrollJack": false,
-      "hasCanvas": false
+      "hasCanvas": true
     },
     "motion": {
       "changedNodes": 129,
@@ -51,8 +77,8 @@
       "motionToggle": true
     },
     "console": {
-      "errors": 8,
-      "failedRequests": 26
+      "errors": 10,
+      "failedRequests": 32
     }
   }
 }

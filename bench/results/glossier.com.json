@@ -3,51 +3,77 @@
   "name": "Glossier",
   "category": "e-commerce",
   "url": "https://www.glossier.com/",
-  "ts": "2026-07-03T18:46:18.230Z",
+  "ts": "2026-07-21T13:52:57.784Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 90,
     "performance": 80,
-    "a11y": 86,
-    "motionCraft": 65,
-    "overall": 81
+    "a11y": 70,
+    "motionCraft": 75,
+    "overall": 79
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.glossier.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:46:18.230Z",
+    "ts": "2026-07-21T13:52:57.784Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
       "samples": 720
     },
     "scroll": {
-      "docHeight": 4807,
+      "docHeight": 4793,
       "viewportHeight": 900,
-      "sections": 33,
+      "sections": 29,
       "pinnedRanges": 0,
       "scrollJack": false,
       "hasCanvas": false
     },
     "motion": {
-      "changedNodes": 82,
-      "animatedNodes": 77,
-      "changedRatio": 0.21,
+      "changedNodes": 98,
+      "animatedNodes": 64,
+      "changedRatio": 0.25,
       "transformOpacityOnly": 1,
       "parallaxLayers": 0,
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.094
+      "clsProxy": 0.043
     },
     "a11y": {
       "reducedMotionHonored": true,
       "focusVisible": true,
-      "contrastFailures": 7,
+      "contrastFailures": 88,
       "motionToggle": false
     },
     "console": {

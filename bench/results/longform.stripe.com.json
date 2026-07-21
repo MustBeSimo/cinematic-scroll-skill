@@ -3,8 +3,9 @@
   "name": "Stripe Press",
   "category": "editorial",
   "url": "https://longform.stripe.com/",
-  "ts": "2026-07-03T18:35:35.935Z",
+  "ts": "2026-07-21T13:39:32.722Z",
   "runs": 3,
+  "environment": null,
   "scores": null,
   "unmeasurable_reason": "navigation failed: page.goto: net::ERR_NAME_NOT_RESOLVED at https://longform.stripe.com/\nCall log:\n\u001b[2m  - navigating to \"https://longform."
 }

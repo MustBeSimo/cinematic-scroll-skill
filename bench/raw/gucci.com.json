@@ -1,0 +1,30 @@
+{
+  "url": "https://www.gucci.com/",
+  "ts": "2026-07-21T13:47:11.925Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://www.gucci.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:46:50.353Z",
+      "reachable": false,
+      "unmeasurable_reason": "navigation failed: page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.gucci.com/\nCall log:\n\u001b[2m  - navigating to \"https://www.gucci.co"
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.gucci.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:47:01.071Z",
+      "reachable": false,
+      "unmeasurable_reason": "navigation failed: page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.gucci.com/\nCall log:\n\u001b[2m  - navigating to \"https://www.gucci.co"
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.gucci.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:47:11.860Z",
+      "reachable": false,
+      "unmeasurable_reason": "navigation failed: page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.gucci.com/\nCall log:\n\u001b[2m  - navigating to \"https://www.gucci.co"
+    }
+  ]
+}

@@ -3,8 +3,9 @@
   "name": "Gucci",
   "category": "e-commerce",
   "url": "https://www.gucci.com/",
-  "ts": "2026-07-03T18:42:52.219Z",
+  "ts": "2026-07-21T13:46:50.353Z",
   "runs": 3,
+  "environment": null,
   "scores": null,
   "unmeasurable_reason": "navigation failed: page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.gucci.com/\nCall log:\n\u001b[2m  - navigating to \"https://www.gucci.co"
 }

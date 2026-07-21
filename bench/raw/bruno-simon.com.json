@@ -1,0 +1,30 @@
+{
+  "url": "https://bruno-simon.com/",
+  "ts": "2026-07-21T13:12:51.585Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://bruno-simon.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:12:33.414Z",
+      "reachable": false,
+      "unmeasurable_reason": "page rendered empty (likely bot-wall)"
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://bruno-simon.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:12:42.240Z",
+      "reachable": false,
+      "unmeasurable_reason": "page rendered empty (likely bot-wall)"
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://bruno-simon.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:12:51.389Z",
+      "reachable": false,
+      "unmeasurable_reason": "page rendered empty (likely bot-wall)"
+    }
+  ]
+}

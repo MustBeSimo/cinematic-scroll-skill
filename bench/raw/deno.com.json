@@ -1,0 +1,171 @@
+{
+  "url": "https://deno.com/",
+  "ts": "2026-07-21T14:08:56.400Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://deno.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T14:08:09.165Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 15289,
+        "viewportHeight": 900,
+        "sections": 14,
+        "pinnedRanges": 3,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 78,
+        "animatedNodes": 318,
+        "changedRatio": 0.2,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0.003
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": true,
+        "contrastFailures": 104,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 0,
+        "failedRequests": 1
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://deno.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T14:08:32.576Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 114,
+        "droppedPct": 0,
+        "samples": 686
+      },
+      "scroll": {
+        "docHeight": 15289,
+        "viewportHeight": 900,
+        "sections": 14,
+        "pinnedRanges": 3,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 78,
+        "animatedNodes": 318,
+        "changedRatio": 0.2,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0.003
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": true,
+        "contrastFailures": 104,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 0,
+        "failedRequests": 1
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://deno.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T14:08:56.325Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 15289,
+        "viewportHeight": 900,
+        "sections": 14,
+        "pinnedRanges": 3,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 78,
+        "animatedNodes": 318,
+        "changedRatio": 0.2,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0.003
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": true,
+        "contrastFailures": 104,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 0,
+        "failedRequests": 1
+      }
+    }
+  ]
+}

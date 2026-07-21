@@ -3,27 +3,53 @@
   "name": "Supabase",
   "category": "dev-tools",
   "url": "https://supabase.com/",
-  "ts": "2026-07-03T18:53:50.775Z",
+  "ts": "2026-07-21T14:00:46.070Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
     "a11y": 70,
-    "motionCraft": 85,
-    "overall": 84
+    "motionCraft": 75,
+    "overall": 82
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://supabase.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:53:50.775Z",
+    "ts": "2026-07-21T14:00:46.070Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
-      "samples": 719
+      "samples": 720
     },
     "scroll": {
       "docHeight": 7691,
@@ -34,10 +60,10 @@
       "hasCanvas": false
     },
     "motion": {
-      "changedNodes": 6,
-      "animatedNodes": 15,
+      "changedNodes": 7,
+      "animatedNodes": 29,
       "changedRatio": 0.02,
-      "transformOpacityOnly": 1,
+      "transformOpacityOnly": 0.86,
       "parallaxLayers": 0,
       "entranceStagger": true
     },
@@ -52,7 +78,7 @@
     },
     "console": {
       "errors": 5,
-      "failedRequests": 26
+      "failedRequests": 29
     }
   }
 }

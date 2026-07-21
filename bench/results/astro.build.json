@@ -3,8 +3,21 @@
   "name": "Astro",
   "category": "dev-tools",
   "url": "https://astro.build/",
-  "ts": "2026-07-03T18:57:30.566Z",
+  "ts": "2026-07-21T14:06:11.285Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 90,
     "performance": 100,
@@ -17,16 +30,29 @@
     "bench_version": "1.1",
     "url": "https://astro.build/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:57:30.566Z",
+    "ts": "2026-07-21T14:06:11.285Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
       "samples": 720
     },
     "scroll": {
-      "docHeight": 9017,
+      "docHeight": 8841,
       "viewportHeight": 900,
       "sections": 88,
       "pinnedRanges": 0,

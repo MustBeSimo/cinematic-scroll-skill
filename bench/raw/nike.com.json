@@ -1,0 +1,171 @@
+{
+  "url": "https://www.nike.com/",
+  "ts": "2026-07-21T13:46:39.563Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://www.nike.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:45:32.648Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 119,
+        "droppedPct": 0,
+        "samples": 715
+      },
+      "scroll": {
+        "docHeight": 6171,
+        "viewportHeight": 900,
+        "sections": 6,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 217,
+        "animatedNodes": 41,
+        "changedRatio": 0.54,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 15,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 4,
+        "failedRequests": 17
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.nike.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:45:53.883Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 6172,
+        "viewportHeight": 900,
+        "sections": 6,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 217,
+        "animatedNodes": 41,
+        "changedRatio": 0.54,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 15,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 4,
+        "failedRequests": 10
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.nike.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:46:15.817Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 6172,
+        "viewportHeight": 900,
+        "sections": 6,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 217,
+        "animatedNodes": 41,
+        "changedRatio": 0.54,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 15,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 4,
+        "failedRequests": 10
+      }
+    }
+  ]
+}

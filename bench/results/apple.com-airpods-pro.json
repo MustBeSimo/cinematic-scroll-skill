@@ -3,8 +3,21 @@
   "name": "Apple — AirPods Pro",
   "category": "product-launch",
   "url": "https://www.apple.com/airpods-pro/",
-  "ts": "2026-07-03T17:29:15.077Z",
+  "ts": "2026-07-21T12:22:48.740Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 100,
@@ -17,18 +30,31 @@
     "bench_version": "1.1",
     "url": "https://www.apple.com/airpods-pro/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:29:15.077Z",
+    "ts": "2026-07-21T12:22:48.740Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
-      "avg": 116,
+      "avg": 120,
       "droppedPct": 0,
-      "samples": 697
+      "samples": 720
     },
     "scroll": {
       "docHeight": 28963,
       "viewportHeight": 900,
-      "sections": 289,
+      "sections": 295,
       "pinnedRanges": 4,
       "scrollJack": false,
       "hasCanvas": false

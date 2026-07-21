@@ -1,0 +1,171 @@
+{
+  "url": "https://stripe.com/",
+  "ts": "2026-07-21T12:27:11.265Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://stripe.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T12:25:13.555Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 119,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 81,
+        "droppedPct": 3,
+        "samples": 486
+      },
+      "scroll": {
+        "docHeight": 14604,
+        "viewportHeight": 900,
+        "sections": 128,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 68,
+        "animatedNodes": 108,
+        "changedRatio": 0.17,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 10,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 16,
+        "failedRequests": 30
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://stripe.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T12:26:02.665Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 119,
+        "droppedPct": 0,
+        "samples": 715
+      },
+      "scroll": {
+        "docHeight": 14604,
+        "viewportHeight": 900,
+        "sections": 128,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 68,
+        "animatedNodes": 108,
+        "changedRatio": 0.17,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0.008
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 10,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 16,
+        "failedRequests": 30
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://stripe.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T12:26:46.291Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 119,
+        "droppedPct": 0,
+        "samples": 713
+      },
+      "scroll": {
+        "docHeight": 14604,
+        "viewportHeight": 900,
+        "sections": 128,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 68,
+        "animatedNodes": 108,
+        "changedRatio": 0.17,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 10,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 16,
+        "failedRequests": 30
+      }
+    }
+  ]
+}

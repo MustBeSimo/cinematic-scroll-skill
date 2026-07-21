@@ -3,43 +3,69 @@
   "name": "Nike",
   "category": "e-commerce",
   "url": "https://www.nike.com/",
-  "ts": "2026-07-03T18:41:34.808Z",
+  "ts": "2026-07-21T13:45:32.648Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 90,
     "performance": 80,
-    "a11y": 76,
-    "motionCraft": 85,
-    "overall": 83
+    "a11y": 70,
+    "motionCraft": 90,
+    "overall": 82
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.nike.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:41:34.808Z",
+    "ts": "2026-07-21T13:45:32.648Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
       "samples": 720
     },
     "scroll": {
-      "docHeight": 6754,
+      "docHeight": 6172,
       "viewportHeight": 900,
-      "sections": 9,
+      "sections": 6,
       "pinnedRanges": 0,
       "scrollJack": false,
       "hasCanvas": false
     },
     "motion": {
-      "changedNodes": 206,
-      "animatedNodes": 40,
-      "changedRatio": 0.52,
+      "changedNodes": 217,
+      "animatedNodes": 41,
+      "changedRatio": 0.54,
       "transformOpacityOnly": 1,
-      "parallaxLayers": 0,
-      "entranceStagger": true
+      "parallaxLayers": 1,
+      "entranceStagger": false
     },
     "stability": {
       "clsProxy": 0
@@ -47,12 +73,12 @@
     "a11y": {
       "reducedMotionHonored": true,
       "focusVisible": true,
-      "contrastFailures": 12,
+      "contrastFailures": 15,
       "motionToggle": false
     },
     "console": {
       "errors": 4,
-      "failedRequests": 13
+      "failedRequests": 10
     }
   }
 }

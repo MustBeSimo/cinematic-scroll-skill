@@ -3,23 +3,49 @@
   "name": "Rivian",
   "category": "product-launch",
   "url": "https://www.rivian.com/",
-  "ts": "2026-07-03T17:51:46.797Z",
+  "ts": "2026-07-21T12:46:08.019Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 90,
     "performance": 100,
-    "a11y": 20,
+    "a11y": 70,
     "motionCraft": 50,
-    "overall": 68
+    "overall": 80
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.rivian.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:51:46.797Z",
+    "ts": "2026-07-21T12:46:08.019Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
@@ -45,7 +71,7 @@
       "clsProxy": 0.625
     },
     "a11y": {
-      "reducedMotionHonored": false,
+      "reducedMotionHonored": true,
       "focusVisible": true,
       "contrastFailures": 55,
       "motionToggle": false

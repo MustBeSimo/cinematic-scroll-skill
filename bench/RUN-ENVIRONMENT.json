@@ -1,0 +1,18 @@
+{
+  "ranAt": "2026-07-21T12:22:28.804Z",
+  "node": "v23.3.0",
+  "benchVersion": "1.1",
+  "viewport": "1440x900",
+  "runsPerSite": 3,
+  "chromeVersion": "150.0.7871.128",
+  "os": "darwin 25.5.0 arm64",
+  "cpu": "Apple M3 Max",
+  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+  "gpuVendor": "Google Inc. (Apple)",
+  "refreshHz": 120,
+  "launchFlags": [
+    "--no-sandbox",
+    "--disable-dev-shm-usage"
+  ],
+  "softwareGL": false
+}

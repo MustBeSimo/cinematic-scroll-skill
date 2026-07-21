@@ -1,0 +1,171 @@
+{
+  "url": "https://www.airbnb.com/",
+  "ts": "2026-07-21T13:00:12.890Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://www.airbnb.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T12:54:06.476Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 115,
+        "droppedPct": 0,
+        "samples": 691
+      },
+      "scroll": {
+        "docHeight": 1920,
+        "viewportHeight": 900,
+        "sections": 1,
+        "pinnedRanges": 1,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 16,
+        "animatedNodes": 6,
+        "changedRatio": 0.04,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.014
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 32,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 0,
+        "failedRequests": 2
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.airbnb.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T12:54:52.885Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 119,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 115,
+        "droppedPct": 0,
+        "samples": 693
+      },
+      "scroll": {
+        "docHeight": 2554,
+        "viewportHeight": 900,
+        "sections": 5,
+        "pinnedRanges": 1,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 16,
+        "animatedNodes": 6,
+        "changedRatio": 0.04,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.044
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 32,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 0,
+        "failedRequests": 2
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.airbnb.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:00:12.808Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 115,
+        "droppedPct": 0,
+        "samples": 693
+      },
+      "scroll": {
+        "docHeight": 2570,
+        "viewportHeight": 900,
+        "sections": 5,
+        "pinnedRanges": 1,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 18,
+        "animatedNodes": 3,
+        "changedRatio": 0.05,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.046
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 33,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 6
+      }
+    }
+  ]
+}

@@ -16,12 +16,14 @@ export function buildHtml(results) {
   const bv = (results.find((r) => r.bench_version) || {}).bench_version || "unknown";
   const bvs = [...new Set(results.map((r) => r.bench_version).filter(Boolean))];
   const dates = results.map((r) => String(r.ts || "").slice(0, 10)).filter(Boolean).sort();
+  const env = (results.find((r) => r.environment) || {}).environment || null;
+  const envLine = env ? `Chrome ${esc(env.chromeVersion || "?")} · ${esc(env.renderer || "GPU n/a")} · ${esc(env.refreshHz || "?")}Hz` : "headless Chromium (hardware GL)";
   const bar = (v, label) => { const n = Math.max(0, Math.min(100, Math.round(Number(v) || 0))); return `<div class="dim" title="${esc(label)}: ${n}"><span class="fill" style="--v:${n}%"></span><em>${n}</em></div>`; };
   const rows = ranked.map((r, i) => `      <tr data-cat="${esc(r.category)}">
         <td class="rank">${i + 1}</td>
         <td class="site"><a href="${escUrl(r.url)}" rel="noopener nofollow" target="_blank">${esc(r.name)}</a><small>${esc(r.category)}</small></td>
         <td>${bar(r.scores.pacing, "Pacing")}</td><td>${bar(r.scores.performance, "Performance")}</td>
-        <td>${bar(r.scores.a11y, "Motion A11y (heuristic)")}</td><td>${bar(r.scores.motionCraft, "Motion Craft")}</td>
+        <td>${bar(r.scores.a11y, "Accessibility (heuristic)")}</td><td>${bar(r.scores.motionCraft, "Motion Craft")}</td>
         <td class="overall">${r.scores.overall}</td>
       </tr>`).join("\n");
   return `<!doctype html>
@@ -61,15 +63,15 @@ export function buildHtml(results) {
 </style></head><body>
 <header>
   <h1>Cinematic<em>Bench</em> — how the web's best scroll experiences actually score</h1>
-  <p>A reproducible, passive benchmark of scroll craft — pacing, performance, accessibility, motion craft — measured with one ordinary page load and a standard scroll. Median of 3 runs. No opinions, one rubric.</p>
+  <p>A reproducible, passive benchmark of <strong>cinematic scroll craft</strong> — pacing, runtime performance, an accessibility heuristic, and motion craft — measured with one ordinary page load and a standard scroll, median of 3 runs. <strong>No human judge. One published, deterministic rubric.</strong> This is not a universal UX score or a WCAG assessment: the rubric deliberately rewards motion, and performance depends on hardware.</p>
   <a class="cta" href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">npx -p cinematic-scroll-skill cinematic-bench https://your-site.com</a>
 </header>
 <nav aria-label="category filter"><button aria-pressed="true" data-cat="all">All</button>${cats.map((c) => `<button aria-pressed="false" data-cat="${esc(c)}">${esc(c)}</button>`).join("")}</nav>
-<table><thead><tr><th scope="col">#</th><th scope="col">Site</th><th scope="col">Pacing</th><th scope="col">Perf</th><th scope="col">Motion&nbsp;A11y*</th><th scope="col">Craft</th><th scope="col">Overall</th></tr></thead><tbody>
+<table><thead><tr><th scope="col">#</th><th scope="col">Site</th><th scope="col">Pacing</th><th scope="col">Perf</th><th scope="col">Access.*</th><th scope="col">Craft</th><th scope="col">Overall</th></tr></thead><tbody>
 ${rows}
 </tbody></table>
 <footer>
-  <p>measured ${esc(dates[0] || "n/a")}${dates.length > 1 && dates.at(-1) !== dates[0] ? "–" + esc(dates.at(-1)) : ""} · headless Chromium (hardware GL) · 1440×900 · bench_version ${esc(bv)}${bvs.length > 1 ? " (mixed versions!)" : ""} · ${ranked.length} sites ranked · ${unmeasurable.length} unmeasurable (bot-wall / robots / timeout — listed in the repo, never guessed) · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">methodology</a> · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll-skill</a> · part of <a href="../stack/">the taste stack</a> · *Motion A11y is an automated heuristic (reduced-motion honored, focus visibility, sampled contrast) — not a WCAG conformance assessment.</p>
+  <p>measured ${esc(dates[0] || "n/a")}${dates.length > 1 && dates.at(-1) !== dates[0] ? "–" + esc(dates.at(-1)) : ""} · ${envLine} · 1440×900 · bench_version ${esc(bv)}${bvs.length > 1 ? " (mixed versions!)" : ""} · ${ranked.length} sites ranked · ${unmeasurable.length} unmeasurable (bot-wall / robots / timeout — listed in the repo, never guessed) · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/tools/bench">methodology</a> · built with <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll-skill</a> · part of <a href="../stack/">the taste stack</a> · *Accessibility is an automated heuristic (reduced-motion honored, a single-Tab focus check, sampled contrast) — not a WCAG conformance assessment. No human judge scores any site; the weights and deductions are published, opinionated design choices, applied deterministically.</p>
 </footer>
 <script>
   for (const b of document.querySelectorAll("nav button")) b.addEventListener("click", () => {

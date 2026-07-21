@@ -3,27 +3,53 @@
   "name": "Airbnb",
   "category": "product-launch",
   "url": "https://www.airbnb.com/",
-  "ts": "2026-07-03T17:57:33.133Z",
+  "ts": "2026-07-21T12:54:06.476Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
-    "performance": 92,
+    "performance": 96,
     "a11y": 70,
     "motionCraft": 90,
-    "overall": 88
+    "overall": 89
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://www.airbnb.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:57:33.133Z",
+    "ts": "2026-07-21T12:54:06.476Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
-      "avg": 116,
+      "avg": 115,
       "droppedPct": 0,
-      "samples": 695
+      "samples": 693
     },
     "scroll": {
       "docHeight": 2554,
@@ -31,18 +57,18 @@
       "sections": 5,
       "pinnedRanges": 1,
       "scrollJack": false,
-      "hasCanvas": false
+      "hasCanvas": true
     },
     "motion": {
-      "changedNodes": 13,
+      "changedNodes": 16,
       "animatedNodes": 6,
-      "changedRatio": 0.03,
+      "changedRatio": 0.04,
       "transformOpacityOnly": 1,
       "parallaxLayers": 1,
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.046
+      "clsProxy": 0.044
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -52,7 +78,7 @@
     },
     "console": {
       "errors": 0,
-      "failedRequests": 4
+      "failedRequests": 2
     }
   }
 }

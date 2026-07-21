@@ -3,8 +3,21 @@
   "name": "Humaan",
   "category": "portfolio-agency",
   "url": "https://humaan.com/",
-  "ts": "2026-07-03T18:22:12.513Z",
+  "ts": "2026-07-21T13:20:16.679Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
@@ -17,13 +30,26 @@
     "bench_version": "1.1",
     "url": "https://humaan.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:22:12.513Z",
+    "ts": "2026-07-21T13:20:16.679Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 111,
       "droppedPct": 0,
-      "samples": 664
+      "samples": 663
     },
     "scroll": {
       "docHeight": 9355,
@@ -52,7 +78,7 @@
     },
     "console": {
       "errors": 1,
-      "failedRequests": 11
+      "failedRequests": 10
     }
   }
 }

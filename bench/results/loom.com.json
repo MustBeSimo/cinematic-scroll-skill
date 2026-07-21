@@ -3,8 +3,21 @@
   "name": "Loom",
   "category": "product-launch",
   "url": "https://www.loom.com/",
-  "ts": "2026-07-03T17:46:53.249Z",
+  "ts": "2026-07-21T12:39:21.596Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
@@ -17,13 +30,26 @@
     "bench_version": "1.1",
     "url": "https://www.loom.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:46:53.249Z",
+    "ts": "2026-07-21T12:39:21.596Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
-      "avg": 115,
+      "avg": 120,
       "droppedPct": 0,
-      "samples": 689
+      "samples": 718
     },
     "scroll": {
       "docHeight": 12562,
@@ -52,7 +78,7 @@
     },
     "console": {
       "errors": 4,
-      "failedRequests": 4
+      "failedRequests": 5
     }
   }
 }

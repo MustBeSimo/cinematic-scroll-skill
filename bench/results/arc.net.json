@@ -3,8 +3,21 @@
   "name": "Arc Browser",
   "category": "product-launch",
   "url": "https://arc.net/",
-  "ts": "2026-07-03T17:44:52.708Z",
+  "ts": "2026-07-21T12:32:25.510Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 90,
     "performance": 100,
@@ -17,13 +30,26 @@
     "bench_version": "1.1",
     "url": "https://arc.net/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T17:44:52.708Z",
+    "ts": "2026-07-21T12:32:25.510Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 105,
       "droppedPct": 0,
-      "samples": 629
+      "samples": 630
     },
     "scroll": {
       "docHeight": 6125,

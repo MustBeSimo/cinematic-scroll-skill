@@ -1,0 +1,171 @@
+{
+  "url": "https://www.allbirds.com/",
+  "ts": "2026-07-21T13:51:48.917Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://www.allbirds.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:49:51.548Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 3662,
+        "viewportHeight": 900,
+        "sections": 14,
+        "pinnedRanges": 2,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 64,
+        "animatedNodes": 0,
+        "changedRatio": 0.16,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.007
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 2,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 24
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.allbirds.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:50:35.716Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 719
+      },
+      "scroll": {
+        "docHeight": 3662,
+        "viewportHeight": 900,
+        "sections": 14,
+        "pinnedRanges": 2,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 64,
+        "animatedNodes": 0,
+        "changedRatio": 0.16,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.007
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 2,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 23
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.allbirds.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:51:22.386Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 719
+      },
+      "scroll": {
+        "docHeight": 3662,
+        "viewportHeight": 900,
+        "sections": 14,
+        "pinnedRanges": 2,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 64,
+        "animatedNodes": 0,
+        "changedRatio": 0.16,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.002
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 2,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 23
+      }
+    }
+  ]
+}

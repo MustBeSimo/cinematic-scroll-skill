@@ -1,0 +1,171 @@
+{
+  "url": "https://lusion.co/",
+  "ts": "2026-07-21T13:01:38.011Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://lusion.co/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:00:32.654Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 119,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 900,
+        "viewportHeight": 900,
+        "sections": 17,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 2,
+        "animatedNodes": 6,
+        "changedRatio": 0.01,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": false,
+        "contrastFailures": 1,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 4
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://lusion.co/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:01:18.708Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 900,
+        "viewportHeight": 900,
+        "sections": 17,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 3,
+        "animatedNodes": 6,
+        "changedRatio": 0.01,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": false,
+        "contrastFailures": 1,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 4
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://lusion.co/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:01:37.940Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 116,
+        "droppedPct": 0,
+        "samples": 696
+      },
+      "scroll": {
+        "docHeight": 900,
+        "viewportHeight": 900,
+        "sections": 17,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": true
+      },
+      "motion": {
+        "changedNodes": 0,
+        "animatedNodes": 6,
+        "changedRatio": 0,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": true
+      },
+      "stability": {
+        "clsProxy": 0
+      },
+      "a11y": {
+        "reducedMotionHonored": false,
+        "focusVisible": false,
+        "contrastFailures": 1,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 2,
+        "failedRequests": 4
+      }
+    }
+  ]
+}

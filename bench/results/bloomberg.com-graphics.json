@@ -3,8 +3,21 @@
   "name": "Bloomberg Graphics",
   "category": "editorial",
   "url": "https://www.bloomberg.com/graphics",
-  "ts": "2026-07-03T18:30:11.661Z",
+  "ts": "2026-07-21T13:34:14.407Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
@@ -17,32 +30,45 @@
     "bench_version": "1.1",
     "url": "https://www.bloomberg.com/graphics",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:30:11.661Z",
+    "ts": "2026-07-21T13:34:14.407Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 119,
       "droppedPct": 0,
-      "samples": 718
+      "samples": 715
     },
     "scroll": {
-      "docHeight": 4566,
+      "docHeight": 4652,
       "viewportHeight": 900,
-      "sections": 67,
+      "sections": 68,
       "pinnedRanges": 1,
       "scrollJack": false,
       "hasCanvas": false
     },
     "motion": {
-      "changedNodes": 63,
+      "changedNodes": 82,
       "animatedNodes": 0,
-      "changedRatio": 0.16,
+      "changedRatio": 0.21,
       "transformOpacityOnly": 1,
       "parallaxLayers": 0,
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.278
+      "clsProxy": 0.177
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -51,8 +77,8 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 11,
-      "failedRequests": 50
+      "errors": 13,
+      "failedRequests": 62
     }
   }
 }

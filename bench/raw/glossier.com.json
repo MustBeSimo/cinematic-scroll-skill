@@ -1,0 +1,171 @@
+{
+  "url": "https://www.glossier.com/",
+  "ts": "2026-07-21T13:54:31.533Z",
+  "runs": [
+    {
+      "bench_version": "1.1",
+      "url": "https://www.glossier.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:52:57.784Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 717
+      },
+      "scroll": {
+        "docHeight": 4793,
+        "viewportHeight": 900,
+        "sections": 29,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 98,
+        "animatedNodes": 64,
+        "changedRatio": 0.25,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.043
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 88,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 8,
+        "failedRequests": 30
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.glossier.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:53:43.935Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 4793,
+        "viewportHeight": 900,
+        "sections": 29,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 400,
+        "animatedNodes": 64,
+        "changedRatio": 1,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 1,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.024
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 88,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 4,
+        "failedRequests": 28
+      }
+    },
+    {
+      "bench_version": "1.1",
+      "url": "https://www.glossier.com/",
+      "viewport": "1440x900",
+      "ts": "2026-07-21T13:54:31.433Z",
+      "reachable": true,
+      "unmeasurable_reason": null,
+      "environment": {
+        "chromeVersion": "150.0.7871.128",
+        "os": "darwin 25.5.0 arm64",
+        "cpu": "Apple M3 Max",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+        "gpuVendor": "Google Inc. (Apple)",
+        "refreshHz": 120,
+        "launchFlags": [
+          "--no-sandbox",
+          "--disable-dev-shm-usage"
+        ],
+        "softwareGL": false
+      },
+      "fps": {
+        "avg": 120,
+        "droppedPct": 0,
+        "samples": 720
+      },
+      "scroll": {
+        "docHeight": 4790,
+        "viewportHeight": 900,
+        "sections": 29,
+        "pinnedRanges": 0,
+        "scrollJack": false,
+        "hasCanvas": false
+      },
+      "motion": {
+        "changedNodes": 98,
+        "animatedNodes": 64,
+        "changedRatio": 0.25,
+        "transformOpacityOnly": 1,
+        "parallaxLayers": 0,
+        "entranceStagger": false
+      },
+      "stability": {
+        "clsProxy": 0.114
+      },
+      "a11y": {
+        "reducedMotionHonored": true,
+        "focusVisible": true,
+        "contrastFailures": 88,
+        "motionToggle": false
+      },
+      "console": {
+        "errors": 3,
+        "failedRequests": 27
+      }
+    }
+  ]
+}

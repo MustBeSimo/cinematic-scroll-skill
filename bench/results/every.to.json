@@ -3,46 +3,72 @@
   "name": "Every",
   "category": "editorial",
   "url": "https://every.to/",
-  "ts": "2026-07-03T18:36:55.462Z",
+  "ts": "2026-07-21T13:40:57.670Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 119,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
     "a11y": 70,
-    "motionCraft": 65,
-    "overall": 80
+    "motionCraft": 75,
+    "overall": 82
   },
   "unmeasurable_reason": null,
   "measurements": {
     "bench_version": "1.1",
     "url": "https://every.to/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:36:55.462Z",
+    "ts": "2026-07-21T13:40:57.670Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 119,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
       "avg": 120,
       "droppedPct": 0,
       "samples": 720
     },
     "scroll": {
-      "docHeight": 10126,
+      "docHeight": 9895,
       "viewportHeight": 900,
-      "sections": 18,
+      "sections": 19,
       "pinnedRanges": 1,
       "scrollJack": false,
-      "hasCanvas": false
+      "hasCanvas": true
     },
     "motion": {
-      "changedNodes": 70,
-      "animatedNodes": 0,
-      "changedRatio": 0.18,
+      "changedNodes": 41,
+      "animatedNodes": 1,
+      "changedRatio": 0.1,
       "transformOpacityOnly": 1,
       "parallaxLayers": 0,
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0.081
+      "clsProxy": 0.042
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -52,7 +78,7 @@
     },
     "console": {
       "errors": 0,
-      "failedRequests": 32
+      "failedRequests": 35
     }
   }
 }

@@ -3,8 +3,21 @@
   "name": "The Verge",
   "category": "editorial",
   "url": "https://www.theverge.com/",
-  "ts": "2026-07-03T18:29:09.980Z",
+  "ts": "2026-07-21T13:33:13.413Z",
   "runs": 3,
+  "environment": {
+    "chromeVersion": "150.0.7871.128",
+    "os": "darwin 25.5.0 arm64",
+    "cpu": "Apple M3 Max",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+    "gpuVendor": "Google Inc. (Apple)",
+    "refreshHz": 120,
+    "launchFlags": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage"
+    ],
+    "softwareGL": false
+  },
   "scores": {
     "pacing": 100,
     "performance": 80,
@@ -17,32 +30,45 @@
     "bench_version": "1.1",
     "url": "https://www.theverge.com/",
     "viewport": "1440x900",
-    "ts": "2026-07-03T18:29:09.980Z",
+    "ts": "2026-07-21T13:33:13.413Z",
     "reachable": true,
     "unmeasurable_reason": null,
+    "environment": {
+      "chromeVersion": "150.0.7871.128",
+      "os": "darwin 25.5.0 arm64",
+      "cpu": "Apple M3 Max",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M3 Max, Unspecified Version)",
+      "gpuVendor": "Google Inc. (Apple)",
+      "refreshHz": 120,
+      "launchFlags": [
+        "--no-sandbox",
+        "--disable-dev-shm-usage"
+      ],
+      "softwareGL": false
+    },
     "fps": {
-      "avg": 119,
+      "avg": 118,
       "droppedPct": 0,
-      "samples": 713
+      "samples": 710
     },
     "scroll": {
-      "docHeight": 10354,
+      "docHeight": 7608,
       "viewportHeight": 900,
-      "sections": 31,
+      "sections": 24,
       "pinnedRanges": 3,
       "scrollJack": false,
       "hasCanvas": false
     },
     "motion": {
-      "changedNodes": 222,
-      "animatedNodes": 0,
-      "changedRatio": 0.56,
+      "changedNodes": 247,
+      "animatedNodes": 1,
+      "changedRatio": 0.63,
       "transformOpacityOnly": 1,
       "parallaxLayers": 0,
       "entranceStagger": false
     },
     "stability": {
-      "clsProxy": 0
+      "clsProxy": 0.001
     },
     "a11y": {
       "reducedMotionHonored": true,
@@ -51,8 +77,8 @@
       "motionToggle": false
     },
     "console": {
-      "errors": 5,
-      "failedRequests": 18
+      "errors": 6,
+      "failedRequests": 21
     }
   }
 }
