@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>ATELIER MARNE — A Gallery You Walk By Scrolling</title>
+<link rel="stylesheet" href="../_flagship-shell.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='27' fill='%235b83ff'/%3E%3C/svg%3E">
 <meta name="description" content="A real-time 3D architectural gallery you move through by scrolling — image-based lighting, real hung artwork, drifting dust, a clickable chapter index. Built with the cinematic-scroll skill (procedural Three.js + fal.ai environment, no video, no baked frames)." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -120,6 +122,11 @@
 </style>
 </head>
 <body>
+  <aside class="cs-flagship-nav" aria-label="Real 3D flagship collection">
+    <a class="cs-flagship-nav__mark" href="../flagships/"><span>Cinematic Scroll · Real 3D</span></a>
+    <span class="cs-flagship-nav__count">05 / 07</span>
+    <a class="cs-flagship-nav__next" href="../jungle-flythrough/">Next · Verdant →</a>
+  </aside>
 
 <canvas id="stage" aria-hidden="true"></canvas>
 <div class="stage-fallback" aria-hidden="true"></div>

@@ -23,8 +23,9 @@ const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 const man = JSON.parse(readFileSync(join(ROOT, "manifest.json"), "utf8"));
 if (pkg.version !== man.version) errors.push(`version drift: package.json ${pkg.version} ≠ manifest.json ${man.version}`);
 const skillFm = readFileSync(join(ROOT, "SKILL.md"), "utf8").split(/^---\s*$/m)[1] || "";
-const skillVer = (skillFm.match(/^version:\s*(.+?)\s*$/m) || [])[1];
-if (!skillVer) errors.push("SKILL.md frontmatter has no `version:` field");
+// Standard skill frontmatter carries custom fields under metadata.
+const skillVer = (skillFm.match(/^  version:\s*(.+?)\s*$/m) || skillFm.match(/^version:\s*(.+?)\s*$/m) || [])[1];
+if (!skillVer) errors.push("SKILL.md frontmatter has no metadata.version field");
 else if (skillVer !== pkg.version) errors.push(`version drift: SKILL.md frontmatter ${skillVer} ≠ package.json ${pkg.version}`);
 // the Claude Code plugin manifest is a 4th install surface — keep it in the triad (now a quad)
 const PLUGIN = join(ROOT, ".claude-plugin/plugin.json");

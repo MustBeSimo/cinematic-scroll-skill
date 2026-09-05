@@ -1,113 +1,111 @@
 #!/usr/bin/env node
-/**
- * verify-build.mjs — Phase 5: one command, one exit code, one report.
- *
- * Composes the project's gates so an agent can prove a phase in a single call instead of
- * remembering five tools. Static contract checks always run; a build target adds the doctor;
- * --runtime adds page-proof; --mode-b adds typecheck + next build.
- *
- *   node tools/verify/verify-build.mjs [target.html|dir] [--phase build|polish]
- *        [--min N] [--runtime] [--mode-b <dir>] [--fast] [--json] [--report <path>]
- *
- * Exit 0 = every NON-optional step passed. Optional steps that can't run (no browser, no
- * node_modules) report SKIP and don't fail the build unless --strict. Zero dependencies.
- */
-import { spawnSync } from "node:child_process";
-import { existsSync, statSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+/** Verify the requested output. Exit 0 PASS, 1 FAIL, 2 INCOMPLETE/invalid usage. */
+import { spawnSync } from 'node:child_process';
+import { existsSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { dirname, join, resolve } from 'node:path';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const NODE = process.execPath;
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
-// ---- args ---------------------------------------------------------------
-const argv = process.argv.slice(2);
-const flag = (n) => argv.includes(`--${n}`);
-const val = (n, d = null) => { const i = argv.indexOf(`--${n}`); return i >= 0 ? argv[i + 1] : d; };
-// Positional target: first non-flag token, correctly skipping value-taking flags' values
-// (a naive argv.find mis-fires when the target string equals a flag's value).
-const VALUE_FLAGS = new Set(["--min", "--mode-b", "--report", "--phase"]);
-let target = null;
-for (let i = 0; i < argv.length; i++) {
-  const a = argv[i];
-  if (a.startsWith("--")) { if (VALUE_FLAGS.has(a)) i++; continue; }
-  target = a; break;
-}
-const phase = val("phase", "build");
-const fast = flag("fast");
-const strict = flag("strict");
-const runtime = flag("runtime") || phase === "polish";
-const minScore = Number(val("min", phase === "polish" ? 85 : 80));
-const modeB = val("mode-b");
-
-// ---- step runner --------------------------------------------------------
-const steps = [];
-function run(name, args, { optional = false, cwd = ROOT } = {}) {
-  const r = spawnSync(NODE, args, { cwd, encoding: "utf8" });
-  const out = `${r.stdout || ""}${r.stderr || ""}`.trim();
-  const lastLine = out.split("\n").filter(Boolean).pop() || "";
-  const ok = r.status === 0;
-  steps.push({ name, ok, code: r.status, optional, detail: lastLine.slice(0, 160) });
-  return ok;
-}
-function runCmd(name, cmd, args, { optional = false, cwd = ROOT } = {}) {
-  const r = spawnSync(cmd, args, { cwd, encoding: "utf8" });
-  const out = `${r.stdout || ""}${r.stderr || ""}`.trim();
-  const ok = r.status === 0;
-  steps.push({ name, ok, code: r.status, optional, detail: (out.split("\n").filter(Boolean).pop() || "").slice(0, 160) });
-  return ok;
-}
-function skip(name, why) { steps.push({ name, ok: true, code: null, optional: true, skipped: true, detail: why }); }
-
-// ---- 1. static contract (always) ---------------------------------------
-run("tokens:check", [join(ROOT, "tools/check-tokens.mjs")]);
-run("themes:check", [join(ROOT, "tools/check-themes.mjs")]);
-run("links:check", [join(ROOT, "tools/check-links.mjs")]);
-
-// ---- 2. resolve target html --------------------------------------------
-let html = null;
-if (target) {
-  const t = join(ROOT, target);
-  if (existsSync(t) && statSync(t).isDirectory()) {
-    const idx = join(t, "index.html");
-    html = existsSync(idx) ? idx : null;
-  } else if (existsSync(t)) html = t;
-  if (!html) steps.push({ name: "resolve-target", ok: false, code: 2, detail: `no html at ${target}` });
-}
-
-// ---- 3. doctor (if html) -----------------------------------------------
-if (html) run(`doctor (min ${minScore})`, [join(ROOT, "tools/cinematic-doctor/cli.mjs"), html, "--min", String(minScore), "--quiet"]);
-
-// ---- 4. runtime page-proof (optional) ----------------------------------
-if (html && runtime && !fast) {
-  const browser = process.env.CHROME_PATH || process.env.PUPPETEER_EXECUTABLE_PATH;
-  if (!existsSync(join(ROOT, "node_modules", "playwright-core"))) skip("page-proof", "playwright-core not installed");
-  else run("page-proof", [join(ROOT, "tools/page-proof/proof.mjs"), html, "--out", join(ROOT, ".verify/proof"), ...(browser ? ["--browser", browser] : [])], { optional: true });
-} else if (html && runtime && fast) skip("page-proof", "--fast");
-
-// ---- 5. Mode B (optional) ----------------------------------------------
-if (modeB && !fast) {
-  const dir = join(ROOT, modeB);
-  if (!existsSync(join(dir, "node_modules"))) skip("mode-b typecheck/build", "node_modules not installed — run npm install first");
-  else { runCmd("mode-b typecheck", "npm", ["--prefix", dir, "run", "typecheck"], { optional: true, cwd: dir }); runCmd("mode-b build", "npm", ["--prefix", dir, "run", "build"], { optional: true, cwd: dir }); }
-} else if (modeB && fast) skip("mode-b", "--fast");
-
-// ---- report -------------------------------------------------------------
-const required = steps.filter((s) => !s.optional);
-const failed = required.filter((s) => !s.ok);
-const report = { phase, target: target || null, minScore, ok: failed.length === 0, steps };
-
-if (flag("json")) console.log(JSON.stringify(report, null, 2));
-else {
-  console.log(`\n  verify-build · phase=${phase}${target ? ` · ${target}` : " · static only"}`);
-  for (const s of steps) {
-    const mark = s.skipped ? "○ SKIP" : s.ok ? "✓ PASS" : "✗ FAIL";
-    console.log(`   ${mark}  ${s.name}${s.detail ? `  — ${s.detail}` : ""}`);
+export function parseArgs(argv) {
+  const options = { phase: 'build', runtime: false, fast: false, strict: false, json: false };
+  const values = new Set(['phase', 'min', 'mode-b', 'report', 'browser']);
+  const flags = new Set(['runtime', 'fast', 'strict', 'json']);
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a.startsWith('--')) {
+      const name = a.slice(2);
+      if (flags.has(name)) options[name] = true;
+      else if (values.has(name)) {
+        if (!argv[i + 1] || argv[i + 1].startsWith('--')) throw new Error('Missing value for ' + a);
+        options[name] = argv[++i];
+      } else throw new Error('Unknown option: ' + a);
+    } else if (!options.target) options.target = a;
+    else throw new Error('Unexpected argument: ' + a);
   }
-  console.log(`\n  ${report.ok ? "✓" : "✗"} ${required.length - failed.length}/${required.length} required checks passed${failed.length ? ` · FAILED: ${failed.map((s) => s.name).join(", ")}` : ""}\n`);
+  if (!['build', 'polish'].includes(options.phase)) throw new Error('Phase must be build or polish');
+  options.min = Number(options.min ?? (options.phase === 'polish' ? 85 : 80));
+  if (!Number.isFinite(options.min) || options.min < 0 || options.min > 100) throw new Error('--min must be 0–100');
+  options.runtime ||= options.phase === 'polish';
+  if (options.runtime && !options.target) throw new Error('Runtime/polish requires an HTML target or running URL');
+  return options;
 }
 
-const reportPath = val("report");
-if (reportPath) { mkdirSync(dirname(join(ROOT, reportPath)), { recursive: true }); writeFileSync(join(ROOT, reportPath), JSON.stringify(report, null, 2)); }
+export function summarize(steps, strict = false) {
+  const failed = steps.some(s => !s.ok && !s.skipped);
+  const incomplete = steps.some(s => s.skipped);
+  const verdict = failed ? 'FAIL' : incomplete ? 'INCOMPLETE' : 'PASS';
+  return { ok: verdict === 'PASS', verdict, exitCode: failed ? 1 : incomplete ? (strict ? 1 : 2) : 0 };
+}
 
-process.exit(report.ok || (failed.every((s) => s.optional) && !strict) ? 0 : 1);
+export function verify(options, { cwd = process.cwd(), root = ROOT, execute = spawnSync } = {}) {
+  const steps = [];
+  function run(name, command, args, { at = root, unavailableIsSkip = false } = {}) {
+    const r = execute(command, args, { cwd: at, encoding: 'utf8', timeout: 600000, maxBuffer: 10 * 1024 * 1024 });
+    const output = [r.stdout, r.stderr, r.error?.message].filter(Boolean).join('\n').trim();
+    const skipped = unavailableIsSkip && r.status === 2;
+    steps.push({
+      name, ok: r.status === 0, code: r.status, skipped,
+      detail: output.split('\n').filter(Boolean).slice(-6).join('\n').slice(-1600),
+    });
+  }
+  const node = (name, file, args = [], config) => run(name, process.execPath, [join(root, file), ...args], config);
+  const skip = (name, detail) => steps.push({ name, ok: false, skipped: true, code: null, detail });
+  for (const name of ['tokens', 'themes', 'links']) node(name + ':check', 'tools/check-' + name + '.mjs');
+
+  let target = null;
+  let html = null;
+  if (options.target) {
+    if (/^https?:\/\//i.test(options.target)) {
+      try { target = new URL(options.target).href; }
+      catch { steps.push({ name: 'resolve-target', ok: false, detail: 'Invalid URL' }); }
+    } else {
+      target = resolve(cwd, options.target);
+      if (existsSync(target) && statSync(target).isDirectory()) target = join(target, 'index.html');
+      if (existsSync(target) && statSync(target).isFile() && /\.html?$/i.test(target)) html = target;
+      else { steps.push({ name: 'resolve-target', ok: false, detail: 'No HTML at ' + target }); target = null; }
+    }
+  }
+  if (html) node('doctor (min ' + options.min + ')', 'tools/cinematic-doctor/cli.mjs', [html, '--min', String(options.min), '--quiet']);
+  if (target && options.runtime) {
+    if (options.fast) skip('page-proof matrix', '--fast omitted requested runtime evidence');
+    else {
+      const browser = options.browser || process.env.CHROME_PATH || process.env.PUPPETEER_EXECUTABLE_PATH;
+      node('page-proof matrix', 'tools/page-proof/matrix.mjs',
+        [target, '--out', resolve(cwd, '.verify/proof'), ...(browser ? ['--browser', browser] : [])],
+        { at: cwd, unavailableIsSkip: true });
+    }
+  }
+  if (options['mode-b']) {
+    const dir = resolve(cwd, options['mode-b']);
+    if (!existsSync(join(dir, 'package.json'))) steps.push({ name: 'mode-b', ok: false, detail: 'No package.json at ' + dir });
+    else if (options.fast) skip('mode-b typecheck/build', '--fast omitted requested compilation');
+    else {
+      // Let the project's package scripts decide how dependencies are resolved (including workspaces).
+      run('mode-b typecheck', 'npm', ['run', 'typecheck'], { at: dir });
+      run('mode-b build', 'npm', ['run', 'build'], { at: dir });
+    }
+  }
+  return { phase: options.phase, target, minScore: options.min, ...summarize(steps, options.strict), steps };
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  try {
+    const options = parseArgs(process.argv.slice(2));
+    const report = verify(options);
+    if (options.report) {
+      const file = resolve(options.report);
+      mkdirSync(dirname(file), { recursive: true });
+      writeFileSync(file, JSON.stringify(report, null, 2) + '\n');
+    }
+    if (options.json) console.log(JSON.stringify(report, null, 2));
+    else {
+      console.log('verify-build: ' + report.verdict);
+      for (const step of report.steps) console.log('  ' + (step.skipped ? 'SKIP' : step.ok ? 'PASS' : 'FAIL') + ' ' + step.name + (step.ok ? '' : '\n    ' + step.detail));
+    }
+    process.exitCode = report.exitCode;
+  } catch (error) {
+    console.error('verify-build: ' + error.message);
+    process.exitCode = 2;
+  }
+}

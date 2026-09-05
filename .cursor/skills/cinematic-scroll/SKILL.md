@@ -1,6 +1,6 @@
 ---
 name: cinematic-scroll
-description: Build cinematic, scroll-driven websites — pinned chapter reveals, multi-depth parallax, 3D tilt, and environment-morphing backgrounds, from a single self-contained HTML section to a full Next.js release site. The motion grammar is the constant; the aesthetic is always the user's.
+description: Build or improve cinematic websites with scroll-driven storytelling, pinned reveals, parallax, kinetic type, and optional 3D. Deliver standalone HTML or integrate into an existing app, with mobile and reduced-motion fallbacks and browser evidence. Also supports scroll audits and motion storyboards. Use for cinematic web work, not ordinary forms, dashboards, or unrelated animation.
 ---
 
 # cinematic-scroll (pointer)
@@ -17,7 +17,7 @@ story page, an editorial microsite, or a release/launch/drop page.
 source of truth. Read it in full before building. This file is only a pointer; do
 not duplicate SKILL.md content.
 
-The design contract (resolve every value through a token, never a literal):
+Use the project's existing design system or adapt the bundled token contract:
 [`../../../design.md`](../../../design.md) + [`../../../tokens/`](../../../tokens/);
 11 visual systems as machine themes in [`../../../themes/`](../../../themes/).
 

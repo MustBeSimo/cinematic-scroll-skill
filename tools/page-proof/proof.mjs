@@ -35,6 +35,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { inspectLayout } from './layout.mjs';
 
 const args = process.argv.slice(2);
 if (!args.length || args[0].startsWith('--')) {
@@ -50,6 +51,15 @@ const SHOTS = opt('shots', '0,0.33,0.66,1').split(',').map(Number);
 const OUT = path.resolve(opt('out', '.page-proof'));
 const WAIT = Number(opt('wait', 1200));
 const [VW, VH] = opt('viewport', '1440x900').split('x').map(Number);
+const REDUCED = args.includes('--reduced-motion');
+const MOBILE = args.includes('--mobile');
+const NO_JS = args.includes('--no-js');
+if (!SHOTS.length || SHOTS.some(f => !Number.isFinite(f) || f < 0 || f > 1) ||
+    !Number.isFinite(WAIT) || WAIT < 0 || WAIT > 60000 ||
+    ![VW, VH].every(v => Number.isInteger(v) && v > 0 && v <= 8192)) {
+  console.error('page-proof: invalid shots, wait, or viewport');
+  process.exit(2);
+}
 
 function findBrowser() {
   const explicit = opt('browser', process.env.CHROME_PATH);
@@ -93,22 +103,37 @@ try {
 const url = /^https?:\/\//.test(target) ? target : pathToFileURL(path.resolve(target)).href;
 fs.mkdirSync(OUT, { recursive: true });
 
-const browser = await chromium.launch({
-  executablePath: exe,
-  args: ['--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader', '--no-sandbox', '--disable-dev-shm-usage'],
-});
-const page = await browser.newPage({ viewport: { width: VW, height: VH } });
+let browser;
+let page;
+try {
+  browser = await chromium.launch({
+    executablePath: exe,
+    args: ['--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader', '--no-sandbox', '--disable-dev-shm-usage'],
+  });
+  page = await browser.newPage({
+    viewport: { width: VW, height: VH }, hasTouch: MOBILE, isMobile: MOBILE,
+    reducedMotion: REDUCED ? 'reduce' : 'no-preference', javaScriptEnabled: !NO_JS,
+  });
+} catch (error) {
+  if (browser) await browser.close();
+  const report = { url, verdict: 'INCOMPLETE', errors: [{ kind: 'environment', text: error.message }], shots: [] };
+  fs.writeFileSync(path.join(OUT, 'proof.json'), JSON.stringify(report, null, 2));
+  console.error('page-proof: could not launch browser: ' + error.message);
+  process.exit(2);
+}
 
 const errors = [];
 const push = (kind, text) => {
   const entry = { kind, text: String(text).slice(0, 300) };
-  // open-source Chromium has no H.264 — media aborts are advisory, not failures
-  if (/\.(mp4|webm|m4v)/i.test(entry.text) && kind === 'request') entry.kind = 'media';
+  // Seeking may intentionally abort a media request. Missing/failed media still fails.
+  if (/\.(mp4|webm|m4v)(?:[?\s]|$)/i.test(entry.text) && /ERR_ABORTED/.test(entry.text) && kind === 'request') entry.kind = 'media';
+  if (errors.some(e => e.kind === entry.kind && e.text === entry.text)) return;
   errors.push(entry);
 };
 page.on('console', (m) => { if (m.type() === 'error') push('console', m.text()); });
 page.on('pageerror', (e) => push('pageerror', e.message));
 page.on('requestfailed', (r) => push('request', `${r.url()} ${r.failure()?.errorText ?? ''}`));
+page.on('response', (r) => { if (r.status() >= 400) push('http', `${r.status()} ${r.url()}`); });
 
 const MEASURE_FPS = args.includes('--fps');
 
@@ -158,6 +183,10 @@ try {
       window.scrollTo(0, fr * Math.max(0, max));
     }, f);
     await page.waitForTimeout(WAIT);
+    if (args.includes('--check-layout')) {
+      const findings = await page.evaluate(inspectLayout, { checkHeadings: NO_JS || REDUCED });
+      for (const finding of findings) push('layout', `scroll=${f}: ${finding}`);
+    }
     const file = path.join(OUT, `shot-${String(Math.round(f * 100)).padStart(3, '0')}.png`);
     await page.screenshot({ path: file });
     shots.push(file);
@@ -170,7 +199,8 @@ await browser.close();
 
 const hard = errors.filter((e) => e.kind !== 'media');
 const verdict = hard.length === 0 ? 'CLEAN' : 'ERRORS';
-const report = { url, viewport: `${VW}x${VH}`, verdict, errors, shots, ...(fps ? { fps } : {}) };
+const report = { url, viewport: `${VW}x${VH}`, reducedMotion: REDUCED, mobile: MOBILE,
+  javaScript: !NO_JS, verdict, errors, shots, ...(fps ? { fps } : {}) };
 fs.writeFileSync(path.join(OUT, 'proof.json'), JSON.stringify(report, null, 2));
 
 console.log(`\npage-proof: ${verdict} — ${hard.length} runtime error(s), ${errors.length - hard.length} media advisories, ${shots.length} shot(s)`);

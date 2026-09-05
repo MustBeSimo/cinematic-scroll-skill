@@ -12,6 +12,9 @@
     { "query": "Give me an awwwards-tier scroll experience for our brand story", "should_trigger": true },
     { "query": "A depth-parallax storytelling page with chaptered reveals", "should_trigger": true },
     { "query": "Audit and score the scroll experience of my own landing page at this URL", "should_trigger": true },
+    { "query": "Plan a cinematic scroll storyboard for our new camera, no code yet", "should_trigger": true },
+    { "query": "Improve the parallax hero in my existing Astro site; keep the current stack", "should_trigger": true },
+    { "query": "Build a cinematic product page with restrained motion and no API keys", "should_trigger": true },
 
     { "query": "Build a hover dropdown navigation menu", "should_trigger": false },
     { "query": "Write a print stylesheet for our invoices", "should_trigger": false },

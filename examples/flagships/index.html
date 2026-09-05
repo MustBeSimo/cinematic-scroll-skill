@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b17">
+  <title>Real 3D Flagships — Cinematic Scroll</title>
+  <meta name="description" content="Seven live spatial websites. Seven different reasons to use real 3D.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g'%3E%3Cstop stop-color='%235b83ff'/%3E%3Cstop offset='1' stop-color='%23a474ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='28' fill='url(%23g)'/%3E%3C/svg%3E">
+  <style>
+    :root { color-scheme: dark; --ink:#f7f8ff; --muted:#aab2cf; --line:rgba(222,227,255,.18); --blue:#5b83ff; --violet:#a474ff; --serif:Iowan Old Style,Baskerville,"Times New Roman",serif; --sans:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    body { margin:0; color:var(--ink); background:#080b17; font-family:var(--sans); overflow-x:hidden; }
+    body::before { content:""; position:fixed; inset:0; z-index:-1; background:radial-gradient(circle at 10% 0,rgba(55,87,255,.24),transparent 34rem),radial-gradient(circle at 90% 12%,rgba(144,65,255,.2),transparent 32rem); }
+    a { color:inherit; }
+    .rail { position:fixed; z-index:30; left:0; right:0; top:0; display:flex; align-items:center; justify-content:space-between; min-height:58px; padding:0 1rem; border-bottom:1px solid var(--line); background:rgba(8,11,23,.78); backdrop-filter:blur(18px); }
+    .rail a { text-decoration:none; font-size:.76rem; font-weight:780; }
+    .rail .home { display:flex; gap:.55rem; align-items:center; }
+    .rail .home::before { content:""; width:.55rem; aspect-ratio:1; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--violet)); box-shadow:0 0 0 .25rem rgba(91,131,255,.17); }
+    .rail nav { display:flex; gap:.4rem; }
+    .rail nav a { padding:.45rem .7rem; border:1px solid var(--line); border-radius:999px; }
+    header { min-height:92svh; display:grid; align-content:end; padding:8rem max(1rem,calc((100vw - 1180px)/2)) 2rem; border-bottom:1px solid var(--line); }
+    .eyebrow { margin:0 0 .8rem; color:var(--muted); font-size:.7rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+    h1 { max-width:9ch; margin:0; font:400 clamp(4.8rem,14vw,12rem)/.82 var(--serif); letter-spacing:.01em; text-wrap:balance; }
+    h1 em { color:var(--blue); text-decoration:underline; text-decoration-color:var(--violet); text-decoration-thickness:.075em; text-underline-offset:.1em; }
+    .intro { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem; align-items:end; }
+    .intro p { max-width:58ch; margin:0; color:var(--muted); font-size:clamp(.95rem,1.5vw,1.15rem); }
+    .intro span { justify-self:end; color:var(--muted); font:.72rem ui-monospace,"SFMono-Regular",Consolas,monospace; }
+    main { width:min(1180px,calc(100% - 2rem)); margin:auto; padding:1rem 0 7rem; }
+    .card { position:relative; min-height:min(76vh,760px); margin:0 0 1rem; overflow:hidden; border:1px solid var(--line); border-radius:1.6rem; background:#10152b; box-shadow:0 2px 8px rgba(0,0,0,.25),0 26px 90px rgba(29,20,91,.3); }
+    .card img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .9s cubic-bezier(.22,1,.36,1),filter .9s ease; }
+    .card::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(5,8,18,.9),rgba(5,8,18,.28) 66%,rgba(5,8,18,.02)); }
+    .copy { position:absolute; z-index:2; inset:1.2rem auto 1.2rem 1.2rem; width:min(470px,calc(100% - 2.4rem)); display:flex; flex-direction:column; justify-content:space-between; }
+    .index { font:.68rem ui-monospace,"SFMono-Regular",Consolas,monospace; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.62); }
+    .copy h2 { margin:0 0 .45rem; font:400 clamp(3rem,8vw,7rem)/.88 var(--serif); }
+    .copy p { max-width:43ch; margin:0 0 1rem; color:rgba(255,255,255,.72); font-size:.85rem; }
+    .copy a { display:inline-flex; align-items:center; width:max-content; min-height:43px; padding:.68rem 1rem; border-radius:999px; color:white; background:linear-gradient(100deg,#315efb,#813de4); font-size:.78rem; font-weight:800; text-decoration:none; }
+    .end { display:grid; grid-template-columns:1fr 1fr; gap:1rem; padding:5rem 0 0; }
+    .end h2 { margin:0; font:400 clamp(3rem,7vw,6rem)/.9 var(--serif); }
+    .end p { color:var(--muted); }
+    .end a { text-underline-offset:.25em; }
+    :focus-visible { outline:2px solid var(--blue); outline-offset:4px; }
+    @media (hover:hover) and (pointer:fine) { .card:hover img { transform:scale(1.035); filter:saturate(1.16); } }
+    @media (max-width:700px) { header{min-height:82svh}.intro,.end{grid-template-columns:1fr}.intro span{justify-self:start}.card{min-height:72svh}.card::after{background:linear-gradient(180deg,rgba(5,8,18,.05),rgba(5,8,18,.94))}.copy{inset:1rem;justify-content:flex-end}.index{margin-bottom:auto}.rail nav a:first-child{display:none} }
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card img{transition:none}.card:hover img{transform:none}}
+  </style>
+</head>
+<body>
+  <div class="rail"><a class="home" href="../../">Cinematic Scroll</a><nav aria-label="Collection navigation"><a href="https://github.com/MustBeSimo/cinematic-scroll-skill">Source ↗</a><a href="../../#install">Install free</a></nav></div>
+  <header><p class="eyebrow">Real WebGL · seven live reference sites</p><h1>Depth with a <em>reason.</em></h1><div class="intro"><p>The expensive layer has to carry the story. These flagships use seven distinct spatial techniques, each bounded by a performance budget and backed by a designed fallback.</p><span>SCROLL TO ENTER ↓</span></div></header>
+  <main>
+    <article class="card"><img src="../../assets/video/flagship-ride.poster.jpg" alt="Aether Four Movements" loading="eager"><div class="copy"><span class="index">01 / 07 · spatial anthology</span><div><h2>Aether</h2><p>Object, world, field, and figure connected by one scroll-driven camera rail. Model-ready, XR-aware, and fully procedural today.</p><a href="../flagship/">Enter Four Movements →</a></div></div></article>
+    <article class="card"><img src="../../assets/immersive-preview.png" alt="Nexus Immersive Lab"><div class="copy"><span class="index">02 / 07 · procedural physics</span><div><h2>Nexus</h2><p>A spatial computing studio made from particles, wave displacement, and a Lorenz-inspired attractor.</p><a href="../immersive/">Enter Nexus →</a></div></div></article>
+    <article class="card"><img src="../volumetric-aether/poster.jpg" alt="Volumetric Aether"><div class="copy"><span class="index">03 / 07 · raymarched atmosphere</span><div><h2>Weather</h2><p>A zero-asset cloudscape with light marching, self-shadowing, and a camera that descends through the atmosphere.</p><a href="../volumetric-aether/">Make weather →</a></div></div></article>
+    <article class="card"><img src="../crystalline-monolith/poster.jpg" alt="Obsidian crystalline monolith"><div class="copy"><span class="index">04 / 07 · physical transmission</span><div><h2>Obsidian</h2><p>Faceted transmission glass, procedural environment light, bloom, and orbiting shards make a single object worth inspecting.</p><a href="../crystalline-monolith/">Refract it →</a></div></div></article>
+    <article class="card"><img src="../gallery-flythrough/poster.jpg" alt="Atelier Marne gallery"><div class="copy"><span class="index">05 / 07 · architectural flight</span><div><h2>Atelier Marne</h2><p>A luminous museum whose camera walks from work to work as the page moves beneath it.</p><a href="../gallery-flythrough/">Walk the gallery →</a></div></div></article>
+    <article class="card"><img src="../jungle-flythrough/poster.jpg" alt="Verdant overgrown colonnade"><div class="copy"><span class="index">06 / 07 · instanced nature</span><div><h2>Verdant</h2><p>An overgrown concrete colonnade with image-based light, instanced foliage, pollen, and god-rays.</p><a href="../jungle-flythrough/">Enter the bloom →</a></div></div></article>
+    <article class="card"><img src="../aureus-flythrough/poster.jpg" alt="Aureus liquid chrome vault"><div class="copy"><span class="index">07 / 07 · liquid raymarch</span><div><h2>Aureus</h2><p>A reflective chrome corridor whose metaballs, sparks, and camera descent all respond to the scroll.</p><a href="../aureus-flythrough/">Enter the vault →</a></div></div></article>
+    <section class="end"><h2>Build the next <u>one.</u></h2><div><p>The full craft system—including these patterns, fallbacks, and proof tools—is in the normal free edition.</p><p><a href="../../#install">Install the skill</a> · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">Browse the source</a></p></div></section>
+  </main>
+</body>
+</html>

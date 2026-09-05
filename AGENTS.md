@@ -31,7 +31,11 @@ Do not duplicate or paraphrase it; point to it.
 Deep references live in [`references/`](./references/):
 
 - [`references/scroll-patterns.md`](./references/scroll-patterns.md) — 12 proven scroll patterns
-- [`references/film-archetypes.md`](./references/film-archetypes.md) — 7 visual systems / film archetypes
+- [`references/film-archetypes.md`](./references/film-archetypes.md) — 11 visual systems / film archetypes
+- [`references/story-design.md`](./references/story-design.md) — first-preview workflow and content-led beats
+- [`references/build-recipes.md`](./references/build-recipes.md) — integration and lifecycle contracts
+- [`references/tastehq.md`](./references/tastehq.md) — optional upstream brand query and score
+- [`references/editions.md`](./references/editions.md) — normal versus Studio boundaries
 - [`references/performance-budget.md`](./references/performance-budget.md) — transform/opacity budget + 11-point pre-launch checklist
 - [`references/mobile-motion.md`](./references/mobile-motion.md) — mobile motion + reduced-motion degradation
 

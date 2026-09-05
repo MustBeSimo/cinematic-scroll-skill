@@ -1,29 +1,41 @@
 # verify-build
 
-One command, one exit code, one report — composes every gate so a phase is proven in a single
-call instead of remembering five tools.
+Run from the output project's directory. Paths resolve from the caller, including
+absolute paths and spaces. Skill contract checks run against the installed skill.
 
 ```bash
-npm run verify -- examples/atelier/index.html            # static contract + doctor
-npm run verify -- examples/atelier/index.html --runtime  # + page-proof (needs a browser)
-npm run verify -- --fast                                  # static contract only
-node tools/verify/verify-build.mjs <dir> --mode-b templates/nextjs --phase polish
+node /path/to/skill/tools/verify/verify-build.mjs ./index.html
+node /path/to/skill/tools/verify/verify-build.mjs ./index.html --phase polish
+node /path/to/skill/tools/verify/verify-build.mjs http://localhost:3000 --mode-b . --phase polish
 ```
 
-## What runs
+| Check | When | Evidence |
+|---|---|---|
+| Tokens, themes, links | Always | Bundled contract integrity |
+| Doctor | HTML file or directory with index.html | Static source heuristic; default minimum 80, polish 85 |
+| Page-proof matrix | `--runtime` or `--phase polish` | Desktop, mobile, reduced motion on both, and no-JS screenshots/errors |
+| Project typecheck/build | `--mode-b <directory>` | Runs that project's npm scripts; supports workspace dependency resolution |
 
-| Step | When | Gate |
-|------|------|------|
-| `tokens:check` · `themes:check` · `links:check` | always | the design contract is sound |
-| `doctor --min N` | a target html is given | taste/perf/a11y/mobile/3D ≥ N (80 build, 85 polish) |
-| `page-proof` | `--runtime` (auto for `--phase polish`) | headless run, console errors, scroll shots — **optional** (SKIP without a browser) |
-| `mode-b typecheck` + `next build` | `--mode-b <dir>` | Mode B compiles — **optional** (SKIP without `node_modules`) |
+URL targets are browser targets, not static source files. For application projects,
+provide their running URL and project directory; the verifier does not start a server.
+A missing typecheck/build script is reported as a failed command, not silently ignored.
 
-## Exit codes
+Exit **0** is PASS for all requested checks. Exit **1** is FAIL. Exit **2** is
+INCOMPLETE (a requested browser check could not run or `--fast` omitted checks),
+or invalid arguments. `--strict` maps incomplete evidence to exit 1 for older CI
+integrations. `--fast` alone runs static checks; `--fast --phase polish` can never
+certify a build.
 
-- **0** — every *required* step passed. Optional steps that can't run (no browser / no
-  `node_modules`) report `○ SKIP` and don't fail the build.
-- **1** — a required step failed (or any optional step failed under `--strict`).
+`--min 0..100` sets the doctor threshold. `--browser <path>` chooses Chrome.
+`--json` prints the report; `--report <path>` also saves it. Browser evidence lands
+in the caller's `.verify/proof/`. A report records each failure and skipped check.
+Both runtime and Mode B failures are required failures when requested.
 
-`--json` prints the machine report; `--report <path>` also writes it. This is the gate Phase 12
-wires into CI.
+Install `playwright-core` in the skill's package (`npm install`) and provide
+Chrome/Chromium to run browser checks. Dependency or browser failure is missing
+evidence, not success. See [page-proof](../page-proof/README.md) for extra sample
+depths and the limits of automated checks. Open the screenshots before claiming
+visual quality; the verifier is not a substitute for composition review.
+
+TasteHQ brand scoring is a separate optional gate with its own 0–1 fidelity
+threshold: [contract and commands](../../references/tastehq.md).

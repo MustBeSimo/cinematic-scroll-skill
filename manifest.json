@@ -1,6 +1,6 @@
 {
   "name": "cinematic-scroll",
-  "version": "2.6.9",
+  "version": "2.7.0",
   "description": "Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, release/launch pages, and editorial microsites. Single self-contained scroll sections (Mode A) or full Shopify-Editions-style Next.js release pages with optional AI-generated visuals via the fal.ai remote API (Mode B — requires your own fal.ai key; makes outbound API calls to fal.ai servers). A cinematic web production studio in an Agent Skill: an optional 5-phase pipeline (Cinematic Audit → Motion Storyboard → Technical Spec → Build → Polish) with taste guardrails, 12 scroll patterns, 11 visual systems, a DTCG design-token contract (design.md + tokens/), a scroll-choreography.json schema, and a 4-dimension audit mode (agent-driven analysis using the agent's browser/fetch access — not a standalone binary). WebXR/AR sessions are user-initiated (feature-gated Enter VR/AR that only starts on an explicit user action), and 3D GLB generation is provided by the Mode B Next.js template (templates/nextjs/scripts/generate-flagship-assets.mjs, run with your own fal.ai key) — neither runs unless the user triggers it. Built with React, Next.js, GSAP, Lenis, fal.ai.",
   "author": {
     "name": "Simone Leonelli",
@@ -45,6 +45,7 @@
     "invokeWhen": [
       "User asks to BUILD a cinematic/scroll-driven/parallax/3D-tilt/environment-morphing website, launch or release page, product story, or editorial microsite",
       "User asks to AUDIT, review, or score the scroll experience of a specific URL or local build they own or are authorized to test",
+      "User asks to plan a cinematic motion storyboard, integrate scroll motion into an existing app, or improve a cinematic build",
       "User references the flagship/WebXR/3D scroll experience or asks to generate 3D chapter assets in the Next.js template"
     ],
     "doNotInvokeFor": [
@@ -92,6 +93,7 @@
       "GENERATE_API_SECRET"
     ],
     "thirdPartyNetworkCalls": [
+      {"when": "Optional TasteHQ brand analysis and verification", "destination": "www.tastehq.w230.net/api/query and /api/score (or explicitly configured compatible service)", "trigger": "in-scope brand matching or a required project taste contract; sends supplied brief/URLs/grammar; no key required by the adapter, no background memory"},
       {"when": "Mode B image/asset generation", "destination": "fal.ai API", "trigger": "user-initiated, requires FAL_KEY"},
       {"when": "Audit mode", "destination": "user-supplied URL", "trigger": "user-initiated, explicit confirmation required. Learn mode uses this same browser/fetch access to observe user-authorized URLs; no additional network exception is introduced."},
       {"when": "Mode A output pages", "destination": "cdn.jsdelivr.net (GSAP + ScrollTrigger, three.js), unpkg.com (three.js Draco decoder, @google/model-viewer), fonts.googleapis.com + fonts.gstatic.com (Google Fonts)", "trigger": "loaded by the generated HTML when opened in a browser — self-host to avoid"}
@@ -105,7 +107,7 @@
     },
     {
       "name": "Full release site",
-      "description": "Tested Next.js App Router templates + optional fal.ai remote API pipeline for AI-generated chapter imagery. Requires your own fal.ai account and FAL_KEY. Makes outbound API calls to fal.ai servers."
+      "description": "Next.js App Router templates work with static or demo assets without keys. Optional fal.ai generation requires your own fal.ai account and FAL_KEY and makes outbound calls to fal.ai."
     },
     {
       "name": "Cinematic audit",
@@ -113,6 +115,10 @@
     }
   ],
   "references": [
+    "references/story-design.md",
+    "references/build-recipes.md",
+    "references/tastehq.md",
+    "references/editions.md",
     "design.md",
     "taste-guardrails.md",
     "references/scroll-patterns.md",
@@ -133,7 +139,7 @@
   "pipeline": {
     "phases": 5,
     "gated": "adaptive",
-    "gatedNote": "Phases gate on user approval when the user wants the process (ambiguous brief, iterative workflow). Phases run internally without pausing when the user asked for a direct result ('build me…', one-shot, CI invocation, or another agent invoked this skill). The agent never blocks an autonomous run waiting for approval the user cannot give.",
+    "gatedNote": "Review checkpoints apply when requested. Otherwise complete the result autonomously; resolve material ambiguity from project context or ask a focused question. A small section needs decisions and evidence, not mandatory phase documents. Full stories can use one project note; separate artifacts below are for staged or complex work. Optional Phase 0 resolves the TasteHQ brand contract.",
     "artifacts": [
       "cinematic-audit.md",
       "motion-storyboard.md",

@@ -24,6 +24,8 @@ const SKILL_NAME = 'cinematic-scroll';
 /* The skill payload — everything the agent needs at runtime. The marketing
    landing page (index.html) and its assets/ are intentionally excluded. */
 const PAYLOAD = [
+  'package.json',      // npm verification commands and the optional browser dependency
+  'bin',              // package bin entries remain valid after installation
   'SKILL.md',
   // The v2.6.1 design system — SKILL.md routes to these, so the install is
   // incomplete without them. Must stay in sync with package.json "files".

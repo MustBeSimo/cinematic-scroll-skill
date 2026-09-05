@@ -1,6 +1,6 @@
 {
   "name": "cinematic-scroll-skill",
-  "version": "2.6.9",
+  "version": "2.7.0",
   "description": "Installer for the cinematic-scroll Agent Skill — copies the skill into ~/.claude/skills/ (Claude Code, Cursor, etc.). The skill builds cinematic, scroll-driven websites: pinned chapters, parallax, 3D tilt, environment-morphing backgrounds, full release pages, and a React Three Fiber + WebXR flagship with one-command fal.ai 3D asset generation (auto Draco/WebP compression, rigged dancing figure included).",
   "type": "module",
   "bin": {
@@ -45,6 +45,9 @@
     "README.md"
   ],
   "scripts": {
+    "test:workflow": "node --test tools/verify/verify.test.mjs tools/tastehq/tastehq.test.mjs tools/page-proof/matrix.test.mjs tools/check-package.test.mjs",
+    "proof:matrix": "node tools/page-proof/matrix.mjs",
+    "tastehq": "node tools/tastehq/cli.mjs",
     "doctor": "node tools/cinematic-doctor/cli.mjs",
     "doctor:selftest": "node tools/cinematic-doctor/cli.mjs --selftest",
     "tokens:check": "node tools/check-tokens.mjs",
@@ -62,7 +65,7 @@
     "skill:sync:check": "node tools/skill-sync.mjs --check",
     "bench": "node tools/bench/cli.mjs",
     "bench:selftest": "node tools/bench/score.mjs --selftest && node tools/bench/cli.mjs --selftest && node bench/build-leaderboard.mjs --selftest",
-    "test": "npm run tokens:check && npm run themes:check && npm run links:check && npm run consistency:check && npm run learn:selftest && npm run skill:sync:check && npm run components:doctor && npm run doctor:selftest && npm run evals:run && npm run bench:selftest",
+    "test": "npm run tokens:check && npm run themes:check && npm run links:check && npm run consistency:check && npm run learn:selftest && npm run skill:sync:check && npm run components:doctor && npm run doctor:selftest && npm run evals:run && npm run bench:selftest && npm run test:workflow",
     "build:tokens": "node tools/build-tokens/build.mjs",
     "build:themes": "for f in themes/*.theme.json; do node tools/build-tokens/build.mjs --theme \"$f\"; done",
     "prepack": "rm -rf templates/nextjs/node_modules templates/nextjs/.next",

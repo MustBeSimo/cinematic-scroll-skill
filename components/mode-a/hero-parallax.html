@@ -65,14 +65,19 @@
 
   /* --- title: split-line rise (transform + opacity only, role easing) --- */
   .line{display:block;overflow:clip}
-  .line > span{display:inline-block;opacity:0;transform:translateY(110%);
+  .line > span{display:inline-block;opacity:1;transform:none;
     transition:opacity var(--dur-slow) var(--ease-reveal),transform var(--dur-slow) var(--ease-reveal)}
   .is-in .line > span{opacity:1;transform:none}
-  .eyebrow,.summary{opacity:0;transform:translateY(40px);
+  .eyebrow,.summary{opacity:1;transform:none;
     transition:opacity var(--dur-slow) var(--ease-reveal),transform var(--dur-slow) var(--ease-reveal)}
   .is-in .eyebrow,.is-in .summary{opacity:1;transform:none}
   .is-in .line:nth-child(2) > span{transition-delay:90ms}
   .is-in .summary{transition-delay:200ms}
+  /* Hide only after a working observer is attached; no-JS remains readable. */
+  @media (prefers-reduced-motion:no-preference){
+    .motion-ready:not(.is-in) .line > span{opacity:0;transform:translateY(110%)}
+    .motion-ready:not(.is-in) .eyebrow,.motion-ready:not(.is-in) .summary{opacity:0;transform:translateY(40px)}
+  }
 
   /* --- CSS scroll-timeline path: where supported the browser drives the parallax
          and the JS handler stands down (see script). Transform-only keyframes;
@@ -138,10 +143,14 @@
 
 <script>
   // Title reveal on enter — IntersectionObserver, no scroll handler, no thrash.
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
-  }, { threshold: 0.4 });
-  io.observe(document.getElementById("hero"));
+  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+    }, { threshold: 0.4 });
+    const hero = document.getElementById("hero");
+    io.observe(hero);
+    hero.classList.add("motion-ready");
+  }
 
   // Parallax. Progressive enhancement:
   //   • CSS scroll-timeline supported + motion allowed → browser drives it; JS stands down.

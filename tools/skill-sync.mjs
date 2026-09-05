@@ -17,7 +17,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const TARGETS = [".codex/skills/cinematic-scroll/SKILL.md", ".cursor/skills/cinematic-scroll/SKILL.md"];
 
 // Single source of truth for the stub (root-relative paths use ../../../ from the stub).
-const DESCRIPTION = "Build cinematic, scroll-driven websites — pinned chapter reveals, multi-depth parallax, 3D tilt, and environment-morphing backgrounds, from a single self-contained HTML section to a full Next.js release site. The motion grammar is the constant; the aesthetic is always the user's.";
+const DESCRIPTION = (readFileSync(join(ROOT, "SKILL.md"), "utf8").match(/^description:\s*(.+)$/m) || [])[1];
+if (!DESCRIPTION) throw new Error("Canonical skill description is missing");
 
 const STUB = `---
 name: cinematic-scroll
@@ -38,7 +39,7 @@ story page, an editorial microsite, or a release/launch/drop page.
 source of truth. Read it in full before building. This file is only a pointer; do
 not duplicate SKILL.md content.
 
-The design contract (resolve every value through a token, never a literal):
+Use the project's existing design system or adapt the bundled token contract:
 [\`../../../design.md\`](../../../design.md) + [\`../../../tokens/\`](../../../tokens/);
 11 visual systems as machine themes in [\`../../../themes/\`](../../../themes/).
 

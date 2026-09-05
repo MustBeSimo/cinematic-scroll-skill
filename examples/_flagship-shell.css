@@ -1,0 +1,33 @@
+:root { --cs-shell-blue: #5b83ff; --cs-shell-violet: #a474ff; }
+.repo-home-pill { display: none !important; }
+.cs-flagship-nav {
+  position: fixed; z-index: 2147483000; right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 5px;
+  max-width: calc(100vw - 28px); padding: 5px; color: #f7f8ff;
+  background: rgba(8, 11, 23, .78); border: 1px solid rgba(220, 226, 255, .22); border-radius: 999px;
+  box-shadow: 0 2px 9px rgba(0, 0, 0, .25), 0 18px 60px rgba(25, 28, 100, .32);
+  -webkit-backdrop-filter: blur(18px) saturate(150%); backdrop-filter: blur(18px) saturate(150%);
+  font: 720 11px/1.1 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: .02em;
+}
+.cs-flagship-nav a { color: inherit; text-decoration: none; }
+.cs-flagship-nav__mark, .cs-flagship-nav__next {
+  display: inline-flex; align-items: center; min-height: 35px; padding: 0 12px; border-radius: 999px;
+  transition: transform .24s cubic-bezier(.22,1,.36,1), background .24s ease;
+}
+.cs-flagship-nav__mark { gap: 8px; }
+.cs-flagship-nav__mark::before { content: ""; width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: linear-gradient(135deg, var(--cs-shell-blue), var(--cs-shell-violet)); box-shadow: 0 0 0 4px rgba(91, 131, 255, .16); }
+.cs-flagship-nav__count { color: rgba(247, 248, 255, .58); font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: 10px; }
+.cs-flagship-nav__next { color: #fff; background: linear-gradient(100deg, #315efb, #813de4); }
+.cs-flagship-nav a:hover, .cs-flagship-nav a:focus-visible { transform: translateY(-2px); background-color: rgba(255,255,255,.1); outline: none; }
+.cs-flagship-nav__next:hover, .cs-flagship-nav__next:focus-visible { background: linear-gradient(100deg, #4872ff, #9859f3) !important; }
+@media (max-width: 540px) {
+  .cs-flagship-nav { left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right)); bottom: max(8px, env(safe-area-inset-bottom)); justify-content: space-between; }
+  .cs-flagship-nav__mark { padding-inline: 9px; }
+  .cs-flagship-nav__mark span { display: none; }
+  .cs-flagship-nav__next { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-flagship-nav a { transition: none; }
+  .cs-flagship-nav a:hover, .cs-flagship-nav a:focus-visible { transform: none; }
+}
