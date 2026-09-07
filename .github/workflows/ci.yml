@@ -94,3 +94,21 @@ jobs:
           export CHROME_PATH
           echo "Using CHROME_PATH=${CHROME_PATH:-<none — step will skip>}"
           npm run proof:components
+
+  clawhub-security:
+    name: ClawHub bundle (NVIDIA SkillSpector)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate ClawHub format and version
+        run: npm run clawhub:validate
+      - name: Install pinned NVIDIA SkillSpector
+        run: python -m pip install "git+https://github.com/NVIDIA/skillspector.git@88eedca754c74260dfae4e6d6cfb293a0053c908"
+      - name: Scan ClawHub bundle without suppressions
+        run: skillspector scan skills/cinematic-scroll --no-llm --format json --output /tmp/skillspector-report.json

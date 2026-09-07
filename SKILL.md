@@ -3,7 +3,7 @@ name: cinematic-scroll
 description: Build or improve cinematic websites with scroll-driven storytelling, pinned reveals, parallax, kinetic type, and optional 3D. Deliver standalone HTML or integrate into an existing app, with mobile and reduced-motion fallbacks and browser evidence. Also supports scroll audits and motion storyboards. Use for cinematic web work, not ordinary forms, dashboards, or unrelated animation.
 license: MIT
 metadata:
-  version: 2.7.0
+  version: 2.7.1
   author: Simone Leonelli
   permissions: filesystem:read, filesystem:write, network:fetch, shell:execute, env
   hermes:

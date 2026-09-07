@@ -120,6 +120,17 @@ npx cinematic-scroll-skill
 npx cinematic-scroll-skill --dir .cursor/skills
 ```
 
+### OpenClaw / ClawHub
+
+```bash
+openclaw skills install cinematic-scroll
+```
+
+The ClawHub edition is a lean, text-only normal edition with the complete story,
+implementation, interaction, 3D, accessibility, and verification workflow. Its
+source lives in [`skills/cinematic-scroll/`](./skills/cinematic-scroll/) and is
+gated by NVIDIA SkillSpector in CI without a suppression baseline.
+
 ### Claude Code marketplace
 
 ```text
@@ -133,7 +144,7 @@ npx cinematic-scroll-skill --dir .cursor/skills
 git clone https://github.com/MustBeSimo/cinematic-scroll-skill ~/.claude/skills/cinematic-scroll
 ```
 
-For Claude Desktop, Cursor, Hermes, and OpenClaw paths, see [`COMPATIBILITY.md`](./COMPATIBILITY.md).
+For Claude Desktop, Cursor, Hermes, and alternative OpenClaw paths, see [`COMPATIBILITY.md`](./COMPATIBILITY.md).
 
 ## Two build modes
 

@@ -109,14 +109,14 @@ hermes chat
 **Prerequisites:** OpenClaw (latest version)  
 **Install OpenClaw:** See [github.com/openclaw/openclaw](https://github.com/openclaw/openclaw)
 
-**Installation (official Git method):**
+**Installation from ClawHub:**
 ```bash
-openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v2.6.1
+openclaw skills install cinematic-scroll
 ```
 
-**Or manual clone:**
+**Or install the full repository:**
 ```bash
-git clone https://github.com/MustBeSimo/cinematic-scroll-skill ~/.openclaw/workspace/skills/cinematic-scroll-skill/
+openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v2.7.1
 ```
 
 **Verify installation:**
@@ -128,39 +128,25 @@ ls -la ~/.openclaw/workspace/skills/cinematic-scroll-skill/
 **Usage:**
 OpenClaw automatically discovers the skill from the workspace directory.
 
-#### Via ClawHub (the OpenClaw skill registry)
-
-```bash
-clawhub install cinematic-scroll
-```
-
-Browse it at [clawhub.ai](https://clawhub.ai). ClawHub keeps a version history
-per publish, so installs are auditable and pinnable.
+Browse the registry at [clawhub.ai](https://clawhub.ai). ClawHub keeps a version
+history per publish, so installs are auditable and pinnable.
 
 #### Publishing a new version (maintainers)
 
-ClawHub uploads the folder you point it at — publish a **lean bundle** (the
-agent contract + references + tools + templates), not the full repo with its
-GIF/video/GLB marketing assets (~hundreds of MB):
+ClawHub uploads the folder you point it at. Publish the tracked text-only bundle,
+not the full repository with its website and 3D media:
 
 ```bash
-# 1. stage a clean export of the skill contract
-EXPORT=$(mktemp -d)
-git archive HEAD SKILL.md audit-mode.md learn-mode.md design.md manifest.json LICENSE \
-  taste-guardrails.md FRAME.md ASSETS-3D.md MODELS.md tokens/ themes/ components/ evals/ \
-  references/ tools/ examples/PROMPTS.md \
-  compile-choreography.mjs scroll-choreography.json | tar -x -C "$EXPORT"
-rm -f "$EXPORT/tools/skill-sync.mjs"   # maintainer-only .codex/.cursor stub sync — not a runtime capability
+# 1. validate bundle shape and version
+npm run clawhub:validate
 
-# 2. security scan (NVIDIA SkillSpector) — must come back SAFE before publishing.
-#    The baseline records reviewed false positives; rationale in
-#    docs/security/skillspector-triage.md. Re-triage if NEW findings appear.
-skillspector scan "$EXPORT" --no-llm --baseline .skillspector-baseline.yaml
+# 2. NVIDIA SkillSpector must pass raw, without a suppression baseline
+skillspector scan skills/cinematic-scroll --no-llm
 
 # 3. authenticate (GitHub account ≥ 1 week old) and publish
 clawhub login
-clawhub skill publish "$EXPORT" --slug cinematic-scroll \
-  --name "Cinematic Scroll" --version <X.Y.Z>   # match manifest.json
+clawhub skill publish skills/cinematic-scroll --slug cinematic-scroll \
+  --name "Cinematic Scroll" --version <X.Y.Z>
 
 # preview what a sync would do without uploading
 clawhub sync --dry-run

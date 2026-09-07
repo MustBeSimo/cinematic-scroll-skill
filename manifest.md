@@ -47,7 +47,14 @@ Every experience starts from a baseline that works everywhere: static layout, re
 
 ## Version History
 
-### v2.7.0 (Current)
+### v2.7.1 (Current)
+
+- Added a dedicated text-only OpenClaw bundle at `skills/cinematic-scroll/`.
+- Added ClawHub format/version validation and a suppression-free NVIDIA SkillSpector CI gate.
+- Passed SkillSpector 2.11.0 static and semantic analysis with risk 0, 100% coverage, and no findings.
+- Replaced the old generated 43 MB ClawHub export workflow with a 17 KiB source-controlled package.
+
+### v2.7.0
 
 - Shorter canonical skill contract with content-led story planning and progressive reference routing.
 - Complete normal edition retained; Studio adds persistent Motif Engine workflows.
