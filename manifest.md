@@ -47,7 +47,16 @@ Every experience starts from a baseline that works everywhere: static layout, re
 
 ## Version History
 
-### v2.6.9 (Current)
+### v2.7.0 (Current)
+
+- Shorter canonical skill contract with content-led story planning and progressive reference routing.
+- Complete normal edition retained; Studio adds persistent Motif Engine workflows.
+- Optional TasteHQ adapter and explicit PASS/FAIL/INCOMPLETE verification semantics.
+- Five browser proof profiles, package checks, and 23 workflow regression tests.
+- Restored full example discovery on the homepage and README, alongside the Real 3D collection.
+- Interactive-study guidance: subject-specific controls, scene feedback, reset, pause, and accessible fallbacks.
+
+### v2.6.9
 
 - **CinematicBench hardened for public launch.** The passive scroll-craft benchmark now records a full **environment block** with every result (`chromeVersion`, OS, CPU, WebGL `renderer`/`vendor`, `refreshHz`, launch flags, `softwareGL`), and the reference corpus run **refuses to publish on a software-GL renderer** (SwiftShader/llvmpipe) — perf numbers are only meaningful on recorded hardware GL. `robots.txt` now honors **both `Allow` and `Disallow` with longest-match precedence** (prefix rules; no wildcard patterns). Corpus re-measured **sequentially** on clean hardware GL (parallel runs contaminate perf) — 61 scored / 5 unmeasurable, dated leaderboard with the recorded environment in the footer. Claims tightened throughout: "no human judge; published, deterministic **scoring rubric**" (the scoring is deterministic, capture varies), "**cinematic scroll craft**" not universal UX, "**accessibility heuristic**" not WCAG, and the leaderboard's own doctor-≥90 pass is separated from any CinematicBench score. Added `tools/bench/METHODOLOGY-NOTES.md`. *(Changelog note: entries for v2.4–v2.6.8 were tracked in git history rather than here; this resumes the in-manifest log.)*
 

@@ -198,6 +198,7 @@
 
 <script type="module">
   import * as THREE from 'three';
+  import { mountSceneControls } from '../_scene-controls.js';
 
   const reduce  = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = matchMedia('(max-width: 768px)').matches;
@@ -223,6 +224,8 @@
 
   let renderer, scene, camera, mat, raf = 0, running = false, onScreen = true;
   let t = 0, fly = 0, target = 0, mx = 0, my = 0, tmx = 0, tmy = 0;
+  let liquidFusion = 0.7;
+  let driftPaused = false;
 
   function init(){
     renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
@@ -238,7 +241,7 @@
 
     mat = new THREE.ShaderMaterial({
       uniforms: {
-        uTime: { value: 0 }, uFly: { value: 0 },
+        uTime: { value: 0 }, uFly: { value: 0 }, uFusion: { value: liquidFusion },
         uRes: { value: new THREE.Vector2(innerWidth, innerHeight) },
         uMouse: { value: new THREE.Vector2(0, 0) },
         uAccent: { value: new THREE.Color('#5ce0ff') },
@@ -249,7 +252,7 @@
       fragmentShader: `
         precision highp float;
         varying vec2 vUv;
-        uniform float uTime, uFly, uHasTex; uniform vec2 uRes, uMouse; uniform vec3 uAccent, uAmber;
+        uniform float uTime, uFly, uHasTex, uFusion; uniform vec2 uRes, uMouse; uniform vec3 uAccent, uAmber;
         uniform sampler2D uTex;
         const int STEPS = ${STEPS};
         const float REP = 6.0;
@@ -263,7 +266,7 @@
             float a = uTime*0.4 + f*1.7 + cell*0.9;
             vec3 c = vec3(cos(a)*1.7, sin(a*1.1+f)*1.5, sin(a*0.7+f)*1.4);
             c *= 1.0 + 0.10*sin(uTime*0.6 + f + cell);
-            d = smin(d, length(q-c) - (0.72 + 0.12*sin(uTime+f+cell)), 0.7);
+            d = smin(d, length(q-c) - (0.72 + 0.12*sin(uTime+f+cell)), uFusion);
           }
           return d;
         }
@@ -356,7 +359,7 @@
   }
 
   function apply(){ if (!mat) return; mat.uniforms.uFly.value = fly; mat.uniforms.uTime.value = t; mat.uniforms.uMouse.value.set(tmx, tmy); }
-  function loop(){ raf = requestAnimationFrame(loop); if (!running) return; t += 0.016; fly += (target - fly) * 0.06; tmx += (mx-tmx)*0.05; tmy += (my-tmy)*0.05; apply(); renderer.render(scene, camera); }
+  function loop(){ raf = requestAnimationFrame(loop); if (!running) return; if (!driftPaused) t += 0.016; fly += (target - fly) * 0.06; tmx += (mx-tmx)*0.05; tmy += (my-tmy)*0.05; apply(); renderer.render(scene, camera); }
   function updateRun(){ const vis = document.visibilityState === 'visible' && onScreen; if (reduce){ running = false; return; } if (vis && !running){ running = true; if (!raf) loop(); } else if (!vis) running = false; }
   function onResize(){ if (!renderer) return; renderer.setSize(innerWidth, innerHeight); mat.uniforms.uRes.value.set(innerWidth, innerHeight); if (reduce){ apply(); renderer.render(scene, camera); } }
   function onPointer(e){ mx = (e.clientX/innerWidth)*2-1; my = (e.clientY/innerHeight)*2-1; }
@@ -415,7 +418,14 @@
 
   /* ── bootstrap ── */
   if (!webglOK()) document.body.classList.add('no-webgl');
-  else { try { init(); } catch(e){ console.warn('aureus-fly: init failed', e); document.body.classList.add('no-webgl'); } }
+  else { try {
+    init();
+    mountSceneControls({ title: 'Shape the liquid', label: 'Fusion', min: 0.1, max: 1.8, step: 0.05, value: 0.7,
+      pause: paused => { driftPaused = paused; }, format: value => value.toFixed(2), update: value => {
+        liquidFusion = value;
+        if (mat && !renderer.getContext().isContextLost()) { mat.uniforms.uFusion.value = value; renderer.render(scene, camera); }
+      } });
+  } catch(e){ console.warn('aureus-fly: init failed', e); document.body.classList.add('no-webgl'); } }
 </script>
 </body>
 </html>

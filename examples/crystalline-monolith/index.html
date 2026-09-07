@@ -259,6 +259,7 @@
 
 <script type="module">
   import * as THREE from 'three';
+  import { mountSceneControls } from '../_scene-controls.js';
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
@@ -275,11 +276,19 @@
   let envRT = null, pmrem = null;
   let t = 0, scroll = 0, targetScroll = 0;
   let mx = 0, my = 0, tmx = 0, tmy = 0;
+  let surfaceRoughness = 0.04;
+  let driftPaused = false;
 
   if (!webglOK()) {
     document.body.classList.add('no-webgl');
   } else {
-    initThree().catch((e) => { console.warn('Obsidian: init failed, using CSS gem', e); teardown(); document.body.classList.add('no-webgl'); });
+    initThree().then(() => {
+      mountSceneControls({ title: 'Study the surface', label: 'Frosted finish', min: 0.04, max: 0.8, step: 0.02, value: 0.04,
+        pause: paused => { driftPaused = paused; }, format: value => `${Math.round(value * 100)}%`, update: value => {
+          surfaceRoughness = value;
+          if (crystal && !renderer.getContext().isContextLost()) { crystal.material.roughness = value; renderFrame(); }
+        } });
+    }).catch((e) => { console.warn('Obsidian: init failed, using CSS gem', e); teardown(); document.body.classList.add('no-webgl'); });
   }
 
   async function initThree() {
@@ -324,7 +333,7 @@
     const mat = new THREE.MeshPhysicalMaterial({
       color: '#ffffff',
       metalness: 0,
-      roughness: 0.04,
+      roughness: surfaceRoughness,
       transmission: 1,
       thickness: 2.4,
       ior: 1.5,
@@ -453,11 +462,11 @@
   function loop() {
     raf = requestAnimationFrame(loop);
     if (!running) return;
-    t += 0.016;
+    if (!driftPaused) t += 0.016;
     scroll += (targetScroll - scroll) * 0.06;
     tmx += (mx - tmx) * 0.05; tmy += (my - tmy) * 0.05;
     // the monolith turns continuously
-    crystal.rotation.y += 0.004;
+    if (!driftPaused) crystal.rotation.y += 0.004;
     crystal.rotation.x = Math.sin(t * 0.25) * 0.16;
     crystal.rotation.z = Math.cos(t * 0.18) * 0.08;
     // lights orbit → reflections sweep across the facets
@@ -469,7 +478,7 @@
     shardGroup.rotation.x = Math.sin(t * 0.08) * 0.2;
     for (let i = 0; i < shardGroup.children.length; i++) {
       const m = shardGroup.children[i], u = m.userData;
-      m.rotation.x += 0.02 * u.spin; m.rotation.y += 0.03 * u.spin;
+      if (!driftPaused) { m.rotation.x += 0.02 * u.spin; m.rotation.y += 0.03 * u.spin; }
       m.position.y = u.y0 + Math.sin(t * 0.6 * u.bob + u.ph) * 0.4;
     }
     morphStable();

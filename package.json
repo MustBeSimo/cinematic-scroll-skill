@@ -36,6 +36,8 @@
     "tools/",
     "ASSETS-3D.md",
     "examples/*.md",
+    "examples/_*.js",
+    "examples/_*.css",
     "examples/*/index.html",
     "examples/*/README.md",
     "examples/*/*.js",

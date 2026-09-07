@@ -400,6 +400,7 @@
 
 <script type="module">
   import * as THREE from 'three';
+  import { mountSceneControls } from '../_scene-controls.js';
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
@@ -415,13 +416,22 @@
 
   let renderer, scene, camera, material, mesh, raf = 0, onScreen = true, running = false;
   const clock = { t: 0 };
+  let cloudDensity = 1;
+  let driftPaused = false;
   let scroll = 0;            // 0..1 normalized page progress (drives camera + palette)
   let targetScroll = 0;
 
   if (!webglOK()) {
     document.body.classList.add('no-webgl');
   } else {
-    try { initThree(); } catch (e) { console.warn('Aether: WebGL init failed, using CSS sky', e); document.body.classList.add('no-webgl'); }
+    try {
+      initThree();
+      mountSceneControls({ title: 'Shape the weather', label: 'Cloud density', min: 0.3, max: 1.8, step: 0.05, value: 1,
+        pause: paused => { driftPaused = paused; }, format: value => `${Math.round(value * 100)}%`, update: value => {
+          cloudDensity = value;
+          if (material && !renderer.getContext().isContextLost()) { material.uniforms.uDensity.value = value; renderer.render(scene, camera); }
+        } });
+    } catch (e) { console.warn('Aether: WebGL init failed, using CSS sky', e); document.body.classList.add('no-webgl'); }
   }
 
   function initThree() {
@@ -439,6 +449,7 @@
     material = new THREE.ShaderMaterial({
       uniforms: {
         uTime:   { value: 0 },
+        uDensity: { value: cloudDensity },
         uScroll: { value: 0 },
         uRes:    { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
         uMouse:  { value: new THREE.Vector2(0, 0) },
@@ -455,7 +466,7 @@
       fragmentShader: /* glsl */`
         precision highp float;
         varying vec2 vUv;
-        uniform float uTime, uScroll;
+        uniform float uTime, uScroll, uDensity;
         uniform vec2 uRes, uMouse;
         uniform vec3 uColA, uColB, uColC, uSky;
 
@@ -488,7 +499,7 @@
           float deck = smoothstep(1.7, -0.4, p.y + 0.1);
           // the threshold carves real negative space (gaps of sky) → defined, dramatic forms
           float d = (base + detail - 0.5) * deck;
-          return clamp(d*2.4, 0.0, 1.0);
+          return clamp(d*2.4*uDensity + (uDensity - 1.0)*0.16*deck, 0.0, 1.0);
         }
 
         void main(){
@@ -587,7 +598,7 @@
   function loop() {
     raf = requestAnimationFrame(loop);
     if (!running) return;
-    clock.t += 0.016;
+    if (!driftPaused) clock.t += 0.016;
     // ease scroll toward target for buttery camera motion
     scroll += (targetScroll - scroll) * 0.06;
     renderUniforms();

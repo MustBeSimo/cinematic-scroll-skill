@@ -58,7 +58,31 @@ Seven live websites, seven different reasons to use depth. Every flagship is scr
 
 ### More than one aesthetic
 
-The motion grammar stays consistent; the art direction does not. Browse [27 live references](https://mustbesimo.github.io/cinematic-scroll-skill/#flagships), including Renaissance editorial, clinical noir, quiet luxury, brutalist studio, botanical publishing, data cinematic, warm scrapbook, and liquid chrome.
+The motion grammar stays consistent; the art direction does not. Browse the [complete visual collection](https://mustbesimo.github.io/cinematic-scroll-skill/#worlds), including every original editorial and all eleven visual systems.
+
+| Live example | Direction | Code |
+|---|---|---|
+| [Classic Touch](https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/) | Renaissance editorial | [Source](./examples/renaissance/) |
+| [Maya Torres](https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/) | Brutalist creative studio | [Source](./examples/studio/) |
+| [Vantascope](https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/) | Editorial sci-fi | [Source](./examples/noir/) |
+| [Maison Solenne](https://mustbesimo.github.io/cinematic-scroll-skill/examples/luxe/) | Quiet luxury | [Source](./examples/luxe/) |
+| [Bloom](https://mustbesimo.github.io/cinematic-scroll-skill/examples/pop/) | Playful product story | [Source](./examples/pop/) |
+| [Atelier Nocturne](https://mustbesimo.github.io/cinematic-scroll-skill/examples/atelier/) | Kinetic editorial | [Source](./examples/atelier/) |
+| [Digital Wealth](https://mustbesimo.github.io/cinematic-scroll-skill/examples/digital-wealth/) | Financial product story | [Source](./examples/digital-wealth/) |
+| [Kern](https://mustbesimo.github.io/cinematic-scroll-skill/examples/kern-calibration/) | Typography calibration | [Source](./examples/kern-calibration/) |
+| [Meridian](https://mustbesimo.github.io/cinematic-scroll-skill/examples/symmetric-monument/) | symmetric monument | [Source](./examples/symmetric-monument/) |
+| [Vanta Labs](https://mustbesimo.github.io/cinematic-scroll-skill/examples/clinical-noir/) | clinical noir | [Source](./examples/clinical-noir/) |
+| [Polly & Plot](https://mustbesimo.github.io/cinematic-scroll-skill/examples/storybook-geometry/) | storybook geometry | [Source](./examples/storybook-geometry/) |
+| [Obsidian](https://mustbesimo.github.io/cinematic-scroll-skill/examples/temporal-monument/) | temporal monument | [Source](./examples/temporal-monument/) |
+| [Farsight](https://mustbesimo.github.io/cinematic-scroll-skill/examples/atmospheric-sublime/) | atmospheric sublime | [Source](./examples/atmospheric-sublime/) |
+| [Keepsake](https://mustbesimo.github.io/cinematic-scroll-skill/examples/warm-scrapbook/) | warm scrapbook | [Source](./examples/warm-scrapbook/) |
+| [Drift](https://mustbesimo.github.io/cinematic-scroll-skill/examples/naturalistic-drift/) | naturalistic drift | [Source](./examples/naturalistic-drift/) |
+| [Concrete / Orange](https://mustbesimo.github.io/cinematic-scroll-skill/examples/brutalist-kinetic/) | brutalist kinetic | [Source](./examples/brutalist-kinetic/) |
+| [Chroma](https://mustbesimo.github.io/cinematic-scroll-skill/examples/liquid-chrome/) | liquid chrome | [Source](./examples/liquid-chrome/) |
+| [Verdant Press](https://mustbesimo.github.io/cinematic-scroll-skill/examples/botanical-editorial/) | botanical editorial | [Source](./examples/botanical-editorial/) |
+| [Signal](https://mustbesimo.github.io/cinematic-scroll-skill/examples/data-cinematic/) | data cinematic | [Source](./examples/data-cinematic/) |
+| [Wellness](https://mustbesimo.github.io/cinematic-scroll-skill/examples/wellness/) | A slower editorial study | [Source](./examples/wellness/) |
+| [Retro](https://mustbesimo.github.io/cinematic-scroll-skill/examples/retro/) | A playful digital throwback | [Source](./examples/retro/) |
 
 The visual systems live in [`themes/`](./themes/). The components live in [`components/`](./components/). They are starting points, not a fixed house style.
 
@@ -70,7 +94,7 @@ The normal edition is the complete, useful product—not a trial.
 |---|---|
 | Build complete cinematic websites | Build on accumulated project knowledge |
 | Story and motion planning | Intent-based pattern retrieval |
-| 27 references + 11 visual systems | Reuse tracking across builds |
+| 28 references + 11 visual systems | Reuse tracking across builds |
 | Components and Real 3D patterns | Learned variants from your own language |
 | Doctor + five-profile browser proof | Deeper iteration without starting cold |
 | Optional TasteHQ matching | Proprietary Motif Engine |

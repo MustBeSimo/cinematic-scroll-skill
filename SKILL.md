@@ -66,6 +66,10 @@ until it actually runs; an outage is never a passing score.
 ## Phases 1–3 — Direct the story before adding effects
 
 Read [story design](references/story-design.md) for new pages and major redesigns.
+For interactive heroes or flagship improvements, read
+[interactive studies](references/interactive-studies.md). Preserve existing useful
+examples and routes during a showcase redesign. Choose a visitor action with a
+visible, subject-specific consequence; test the scene, not just its surrounding UI.
 Read [taste guardrails](taste-guardrails.md) for craft guidance. The scope, user
 preferences, and accessibility rules here take precedence over legacy blanket
 minima for layers, pins, smooth scrolling, and variation.

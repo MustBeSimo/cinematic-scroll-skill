@@ -1,4 +1,14 @@
 :root { --cs-shell-blue: #5b83ff; --cs-shell-violet: #a474ff; }
+.cs-scene-controls { position:fixed; z-index:10000; right:16px; bottom:78px; width:min(260px,calc(100vw - 32px)); color:#f7f8ff; background:rgba(8,11,23,.92); border:1px solid rgba(220,226,255,.25); border-radius:20px; box-shadow:0 2px 8px #0004,0 18px 50px #1114; font:14px/1.5 system-ui,sans-serif; letter-spacing:normal; }
+.cs-scene-controls summary { padding:12px 16px; cursor:pointer; text-decoration:underline; text-decoration-color:var(--cs-shell-violet); text-underline-offset:4px; }
+.cs-scene-controls > div { padding:0 16px 16px; }
+.cs-scene-controls label { display:grid; grid-template-columns:1fr auto; gap:8px; }
+.cs-scene-controls input { grid-column:1/-1; width:100%; min-height:36px; accent-color:var(--cs-shell-violet); }
+.cs-scene-controls output { color:#bccbff; }
+.cs-scene-controls button + button { margin-left:6px; }
+.cs-scene-controls button { padding:8px 12px; color:#fff; background:#315efb; border:0; border-radius:999px; font:inherit; cursor:pointer; }
+.cs-scene-controls :focus-visible { outline:2px solid #bccbff; outline-offset:3px; }
+.no-webgl .cs-scene-controls { display:none; }
 .repo-home-pill { display: none !important; }
 .cs-flagship-nav {
   position: fixed; z-index: 2147483000; right: max(14px, env(safe-area-inset-right));
