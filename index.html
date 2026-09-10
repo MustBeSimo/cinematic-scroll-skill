@@ -3,154 +3,170 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#f7f8ff" media="(prefers-color-scheme: light)">
-  <title>Cinematic Scroll — make the page people remember</title>
-  <meta name="description" content="A free, open-source Agent Skill for building cinematic scroll-driven websites with real craft, resilient motion, and browser proof.">
-  <meta property="og:title" content="Cinematic Scroll — make the page people remember">
-  <meta property="og:description" content="One sentence in. A cinematic, scroll-driven website out.">
-  <meta property="og:image" content="https://mustbesimo.github.io/cinematic-scroll-skill/assets/video/flagship-ride.poster.jpg">
+  <meta name="theme-color" content="#101417" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
+  <title>Web Design Studio — Distinctive Websites, 3D &amp; Motion</title>
+  <meta name="description" content="Build 3D websites, interactive portfolios and cinematic landing pages with a free agent skill. Explore 28 live examples and install with ClawHub or your coding agent.">
+  <meta property="og:title" content="Web Design Studio — Distinctive Websites, 3D &amp; Motion">
+  <meta property="og:description" content="Build 3D websites, interactive portfolios and cinematic landing pages with a free agent skill. Explore 28 live examples and install with ClawHub or your coding agent.">
+  <meta property="og:image" content="https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/poster.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:image:alt" content="Aureus, a live 3D journey through a reflective chrome vault">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mustbesimo.github.io/cinematic-scroll-skill/">
   <link rel="canonical" href="https://mustbesimo.github.io/cinematic-scroll-skill/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g'%3E%3Cstop stop-color='%231155ff'/%3E%3Cstop offset='1' stop-color='%237a35ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='28' fill='url(%23g)'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%238F6A38'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: light dark;
-      --paper: #f7f8ff; --paper-2: #eef0ff; --ink: #10162d; --muted: #59617b;
-      --line: rgba(16, 22, 45, .18); --glass: rgba(247, 248, 255, .82);
-      --blue: #1155ff; --violet: #7a35ff; --glow: rgba(58, 79, 255, .22);
-      --shadow: 0 2px 8px rgba(30, 43, 95, .08), 0 22px 70px rgba(46, 53, 139, .16);
-      --serif: Iowan Old Style, Baskerville, "Times New Roman", serif;
-      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --paper: #F4EFE6; --paper-2: #FBF8F1; --ink: #1E2326; --muted: #6F6A63;
+      --line: rgba(30, 35, 38, .16); --glass: #F4EFE6;
+      --accent: #8F6A38; --accent-secondary: #6A3037;
+      --shadow: 0 1px 3px #1e232608, 0 8px 22px #1e23260a;
+      --serif: "Cormorant Garamond", Iowan Old Style, Baskerville, "Times New Roman", serif;
+      --sans: "Space Grotesk", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --ease: cubic-bezier(.22, 1, .36, 1);
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --paper: #090d1a; --paper-2: #10152a; --ink: #f4f5ff; --muted: #a3abc8;
-        --line: rgba(224, 228, 255, .17); --glass: rgba(9, 13, 26, .82);
-        --blue: #5c86ff; --violet: #a77cff; --glow: rgba(76, 103, 255, .3);
-        --shadow: 0 2px 10px rgba(0, 0, 0, .25), 0 28px 90px rgba(32, 22, 103, .34);
+        --paper: #101417; --paper-2: #1B2026; --ink: #E9E1D4; --muted: #A49D92;
+        --line: rgba(233, 225, 212, .16); --glass: #101417;
+        --accent: #C08A3E; --accent-secondary: #B57779;
+        --shadow: 0 1px 3px #0002, 0 8px 22px #0002;
       }
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: auto; }
     body {
-      margin: 0; color: var(--ink); background:
-        radial-gradient(circle at 8% -5%, color-mix(in srgb, var(--blue) 20%, transparent), transparent 34rem),
-        radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--violet) 19%, transparent), transparent 30rem), var(--paper);
-      font-family: var(--sans); line-height: 1.45; overflow-x: hidden;
-    }
-    body::before {
-      content: ""; position: fixed; inset: 0; z-index: -1; opacity: .16; pointer-events: none;
-      background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
-      background-size: 54px 54px; mask-image: linear-gradient(to bottom, #000, transparent 72%);
+      margin: 0; color: var(--ink); background: var(--paper);
+      font-family: var(--sans); line-height: 1.5; overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
     a { color: inherit; }
     img, video { display: block; max-width: 100%; }
     button, a { -webkit-tap-highlight-color: transparent; }
-    ::selection { color: white; background: var(--violet); }
-    .skip { position: fixed; left: 1rem; top: -4rem; z-index: 100; padding: .7rem 1rem; border-radius: 999px; color: white; background: var(--blue); }
+    :focus-visible { outline:2px solid var(--accent); outline-offset:4px; }
+    [hidden] { display:none !important; }
+    html { scroll-padding-top:5rem; }
+    ::selection { color: white; background: var(--accent-secondary); }
+    .skip { position: fixed; left: 1rem; top: -4rem; z-index: 100; padding: .7rem 1rem; border-radius: 999px; color: white; background: var(--accent); }
     .skip:focus { top: 1rem; }
     .wrap { width: min(1180px, calc(100% - 2rem)); margin-inline: auto; }
-    .eyebrow { margin: 0 0 .7rem; color: var(--muted); font-size: .72rem; font-weight: 760; letter-spacing: .16em; text-transform: uppercase; }
-    .under { text-decoration: underline; text-decoration-color: var(--violet); text-decoration-thickness: .09em; text-underline-offset: .11em; }
+    .eyebrow { margin: 0 0 .7rem; color: var(--muted); font-size: .72rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; }
+    .under { text-decoration: underline; text-decoration-color: var(--accent-secondary); text-decoration-thickness: .035em; text-underline-offset: .11em; }
     .section { padding: clamp(2.5rem, 4vw, 4rem) 0; border-top: 1px solid var(--line); }
     .section-head { display: grid; grid-template-columns: .85fr 1.15fr; gap: 1.5rem; align-items: end; margin-bottom: 1.5rem; }
     .section-head h2 { max-width: 14ch; }
     .section-head p { max-width: 58ch; margin: 0 0 .35rem; color: var(--muted); }
     h1, h2, h3 { margin: 0; text-wrap: balance; }
-    h1, h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; letter-spacing: .015em; line-height: 1; }
+    h1, h2 { font-family: var(--serif); font-weight: 400; letter-spacing: .015em; line-height: 1; }
     h1 { font-size: clamp(4rem, 7.5vw, 7.4rem); }
     h2 { font-size: clamp(3rem, 5.8vw, 5.6rem); }
     h3 { font-size: 1rem; }
-    .site-head { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(18px) saturate(130%); }
+    .site-head { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--line); background: var(--glass);  }
     .head-row { min-height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-    .brand { text-decoration: none; font-weight: 800; letter-spacing: -.03em; white-space: nowrap; }
-    .brand i { display: inline-block; width: .62rem; aspect-ratio: 1; margin-right: .5rem; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--violet)); box-shadow: 0 0 0 .3rem var(--glow); }
+    .brand { text-decoration: none; font-weight: 500; letter-spacing: -.03em; white-space: nowrap; }
+    .brand i { display: inline-block; width: .62rem; aspect-ratio: 1; margin-right: .5rem; border-radius: 50%; background: var(--accent); }
     .site-head nav { display: flex; align-items: center; gap: .25rem; }
-    .site-head nav a { padding: .48rem .7rem; border-radius: 999px; color: var(--muted); font-size: .78rem; font-weight: 720; text-decoration: none; }
+    .site-head nav a { padding: .48rem .7rem; border-radius: 999px; color: var(--muted); font-size: .78rem; font-weight: 500; text-decoration: none; }
     .site-head nav a:hover, .site-head nav a:focus-visible { color: var(--ink); background: var(--paper-2); outline: none; }
     .site-head .github { border: 1px solid var(--line); color: var(--ink); }
-    .progress { position: absolute; inset: auto 0 -1px; height: 2px; transform: scaleX(0); transform-origin: left; background: linear-gradient(90deg, var(--blue), var(--violet)); }
-    .hero { min-height: calc(100svh - 58px); padding: clamp(3rem, 6vw, 5.5rem) 0 1.25rem; display: flex; align-items: stretch; }
-    .hero-grid { display: grid; grid-template-columns: minmax(0,1.04fr) minmax(0,.96fr); gap: clamp(1rem, 3vw, 3rem); align-items: center; }
-    .hero-grid > * { min-width: 0; }
+    .progress { position: absolute; inset: auto 0 -1px; height: 2px; transform: scaleX(0); transform-origin: left; background: var(--accent); }
+    .hero { padding:clamp(2rem,5vw,4.5rem) 0 2rem; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr); gap: clamp(1rem, 3vw, 3rem); align-items: center; }
+    .hero-grid > *, .section-head > *, .install-panel > * { min-width: 0; }
     .hero-copy { position: relative; z-index: 2; }
-    .status { display: inline-flex; align-items: center; gap: .5rem; padding: .42rem .75rem; margin-bottom: 1.3rem; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: .72rem; font-weight: 720; background: color-mix(in srgb, var(--paper) 72%, transparent); }
-    .status::before { content: ""; width: .46rem; aspect-ratio: 1; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 .24rem var(--glow); }
+    .status { display: inline-flex; align-items: center; gap: .5rem; padding: .42rem .75rem; margin-bottom: 1.3rem; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: .72rem; font-weight: 500; background: color-mix(in srgb, var(--paper) 72%, transparent); }
+    .status::before { content: ""; width: .46rem; aspect-ratio: 1; border-radius: 50%; background: var(--accent);  }
+    .hero h1 { font-size:clamp(3.4rem,5.8vw,5.9rem); text-wrap:initial; }
     .hero h1 span { display: block; }
-    .hero h1 .accent { color: var(--blue); font-style: italic; }
-    .hero-lede { max-width: 54ch; margin: 1.35rem 0 1.4rem; color: var(--muted); font-size: clamp(1rem, 1.8vw, 1.22rem); }
+    .hero h1 .accent { color: var(--ink); font-style: italic; }
+    .hero-lede { max-width: 42ch; margin: 1.15rem 0 1.3rem; color: var(--muted); font-size: clamp(1rem, 1.3vw, 1.08rem); }
     .actions { display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
-    .button { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; min-height: 44px; padding: .7rem 1rem; border: 1px solid var(--line); border-radius: 999px; font-size: .82rem; font-weight: 800; text-decoration: none; transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease); }
-    .button.primary { color: white; border-color: transparent; background: #3155de; box-shadow: 0 12px 36px var(--glow); }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; min-height: 44px; padding: .7rem 1rem; border: 1px solid var(--line); border-radius: 999px; font-size: .82rem; font-weight: 500; text-decoration: none; transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease); }
+    .button.primary { border-color: transparent; background: var(--ink); color: var(--paper); }
     .button.ghost { background: color-mix(in srgb, var(--paper) 72%, transparent); }
+    .hero .button.ghost { border-color:transparent; padding-inline:.25rem; background:none; text-decoration:underline; text-underline-offset:.3em; }
     .hero-note { margin: .85rem 0 0; color: var(--muted); font-size: .72rem; }
-    .hero-media { position: relative; min-height: min(66vw, 690px); overflow: hidden; border: 1px solid var(--line); border-radius: 2.1rem; background: #080b14; box-shadow: var(--shadow); transform: rotate(1.25deg); }
-    .hero-media video { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; }
-    .hero-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(5,8,18,.82)); pointer-events: none; }
-    .media-label { position: absolute; z-index: 2; left: 1rem; right: 1rem; bottom: 1rem; display: flex; align-items: end; justify-content: space-between; color: white; }
-    .media-label b { font-family: var(--serif); font-weight: 400; font-size: clamp(1.7rem, 4vw, 3.6rem); }
-    .media-label span { padding: .42rem .62rem; border: 1px solid rgba(255,255,255,.28); border-radius: 999px; backdrop-filter: blur(10px); font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
+    .hero-feature { margin:0; min-width:0; }
+    .feature-kicker { display:flex; justify-content:space-between; gap:1rem; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:.75rem; }
+    .feature-kicker span:first-child { color:var(--accent); }
+    .hero-media { position:relative; overflow:hidden; border:1px solid var(--line); background:var(--paper-2); aspect-ratio:8/5; }
+    .hero-media video { width:100%; height:100%; object-fit:contain; }
+    .feature-caption { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding-top:.9rem; }
+    .feature-caption h3 { font:400 clamp(1.75rem,2.4vw,2.3rem)/1.1 var(--serif); }
+    .feature-caption p { margin:.35rem 0 0; font-size:.73rem; color:var(--muted); }
+    .feature-actions { display:flex; align-items:center; justify-content:flex-end; gap:.8rem; flex-wrap:wrap; }
+    .feature-actions a,.preview-toggle { min-height:44px; display:inline-flex; align-items:center; color:var(--ink); font:400 .72rem var(--sans); text-underline-offset:.3em; }
+    .preview-toggle { padding:.5rem .8rem; border:1px solid var(--line); border-radius:999px; background:transparent; cursor:pointer; }
+    .preview-toggle:hover { background:var(--paper-2); }
+    .preview-message { color:var(--muted); font-size:.75rem; margin:.5rem 0 0; }
     .proof-strip { padding: 0 0 1.25rem; }
-    .proof-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 1.4rem; overflow: hidden; background: color-mix(in srgb, var(--paper) 72%, transparent); box-shadow: var(--shadow); }
-    .proof-item { padding: 1rem; border-right: 1px solid var(--line); }
+    .proof-grid { display:grid; grid-template-columns:repeat(4,1fr); border-block:1px solid var(--line); }
+    .proof-item { padding:1rem; border-right:1px solid var(--line); display:flex; align-items:baseline; gap:.7rem; }
     .proof-item:last-child { border: 0; }
-    .proof-item strong { display: block; font-family: var(--serif); font-size: 2rem; font-weight: 400; line-height: 1; color: var(--blue); }
+    .proof-item strong { display: block; font-family: var(--serif); font-size: 2rem; font-weight: 400; line-height: 1; color: var(--accent); }
     .proof-item span { color: var(--muted); font-size: .72rem; }
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
-    .step { min-height: 240px; display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem; border: 1px solid var(--line); border-radius: 1.4rem; background: color-mix(in srgb, var(--paper) 78%, transparent); box-shadow: var(--shadow); }
-    .step-no { color: var(--violet); font-family: var(--serif); font-size: 2.2rem; }
+    .step { display:grid; grid-template-columns:2rem 1fr; gap:1rem; padding:1rem .5rem 1rem 0; border-top:1px solid var(--line); }
+    .step-no { color: var(--accent-secondary); font-family: var(--serif); font-size: 2.2rem; }
     .step h3 { margin-bottom: .45rem; font-family: var(--serif); font-size: 2rem; font-weight: 400; }
     .step p { margin: 0; color: var(--muted); font-size: .88rem; }
     .flagship-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: .75rem; }
-    .flagship-card { position: relative; grid-column: span 4; min-height: 410px; overflow: hidden; border: 1px solid var(--line); border-radius: 1.45rem; color: white; background: #080b14; box-shadow: var(--shadow); isolation: isolate; }
-    .flagship-card:first-child, .flagship-card:nth-child(5) { grid-column: span 8; }
+    .flagship-card { position: relative; grid-column: span 4; min-height: 410px; overflow: hidden; border: 1px solid var(--line); border-radius: 2px; color: white; background: #080b14;  isolation: isolate; }
+    .flagship-card:first-child { grid-column: span 8; }
     .flagship-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .75s var(--ease), filter .75s var(--ease); }
     .flagship-card::after { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(5,8,18,.04) 25%, rgba(5,8,18,.92)); }
     .flagship-copy { position: absolute; inset: auto 1rem 1rem; z-index: 1; }
     .flagship-copy span { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; opacity: .72; }
     .flagship-copy h3 { margin: .3rem 0 .25rem; font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 3rem); font-weight: 400; }
     .flagship-copy p { max-width: 46ch; margin: 0 0 .8rem; color: rgba(255,255,255,.76); font-size: .78rem; }
-    .flagship-copy a { display: inline-flex; gap: .45rem; align-items: center; font-size: .76rem; font-weight: 800; text-decoration: underline; text-underline-offset: .28em; }
+    .flagship-copy a { display: inline-flex; gap: .45rem; align-items: center; font-size: .76rem; font-weight: 500; text-decoration: underline; text-underline-offset: .28em; }
     .collection-link { display: flex; justify-content: flex-end; margin-top: 1rem; }
     .editions { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
-    .edition { position: relative; min-height: 370px; padding: clamp(1.4rem, 3vw, 2.3rem); border: 1px solid var(--line); border-radius: 1.6rem; overflow: hidden; background: color-mix(in srgb, var(--paper) 78%, transparent); box-shadow: var(--shadow); }
-    .edition.studio { color: white; border-color: transparent; background: linear-gradient(145deg, #10275e, #5c25b8); }
-    .edition .tag { display: inline-flex; padding: .38rem .62rem; border: 1px solid currentColor; border-radius: 999px; opacity: .72; font-size: .67rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .edition { position: relative; min-height: 370px; padding: clamp(1.4rem, 3vw, 2.3rem); border: 1px solid var(--line); border-radius: 2px; overflow: hidden; background: color-mix(in srgb, var(--paper) 78%, transparent);  }
+    .edition.studio { color: white; border-color: transparent; background: #1E2326; }
+    .edition .tag { display: inline-flex; padding: .38rem .62rem; border: 1px solid currentColor; border-radius: 999px; opacity: .72; font-size: .67rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; }
     .edition h3 { margin: 2.3rem 0 .8rem; font-family: var(--serif); font-size: clamp(2.6rem, 5vw, 4.6rem); font-weight: 400; line-height: .95; }
     .edition > p { max-width: 46ch; color: var(--muted); }
     .edition.studio > p { color: rgba(255,255,255,.72); }
     .edition ul { display: grid; gap: .48rem; padding: 0; margin: 1.35rem 0 1.6rem; list-style: none; font-size: .82rem; }
-    .edition li::before { content: "↳"; margin-right: .55rem; color: var(--violet); }
-    .edition.studio li::before { color: #b7d1ff; }
+    .edition li::before { content: "↳"; margin-right: .55rem; color: var(--accent-secondary); }
+    .edition.studio li::before { color: #C08A3E; }
     .edition .button { position: relative; margin-top: .5rem; }
-    .edition.studio .button { color: #182044; background: white; }
-    .install-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: clamp(1.4rem, 4vw, 3rem); border: 1px solid var(--line); border-radius: 1.7rem; background: linear-gradient(135deg, color-mix(in srgb, var(--blue) 11%, var(--paper)), color-mix(in srgb, var(--violet) 12%, var(--paper))); box-shadow: var(--shadow); }
+    .edition.studio .button { color: #1E2326; background: white; }
+    .install-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: clamp(1.4rem, 4vw, 3rem); border: 1px solid var(--line); border-radius: 2px; background: var(--paper-2);  }
     .install-panel h2 { font-size: clamp(3rem, 6vw, 5.7rem); }
     .install-panel p { color: var(--muted); }
     .command { align-self: center; padding: .8rem; border: 1px solid var(--line); border-radius: 1.1rem; background: color-mix(in srgb, var(--paper) 84%, transparent); }
     .command-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
-    .command code { min-width: 0; overflow-wrap: anywhere; color: var(--blue); font-size: .78rem; }
+    .command code { min-width: 0; overflow-wrap: anywhere; color: var(--accent); font-size: .78rem; }
     .copy { flex: 0 0 auto; padding: .48rem .7rem; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); background: var(--paper); font: 750 .72rem var(--sans); cursor: pointer; }
     .prompt { margin-top: .65rem; padding-top: .65rem; border-top: 1px solid var(--line); color: var(--muted); font-family: var(--serif); font-size: 1rem; }
     footer { padding: 1.25rem 0 2.5rem; border-top: 1px solid var(--line); }
     .footer-row { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; color: var(--muted); font-size: .72rem; }
     .footer-row a { text-decoration: underline; text-underline-offset: .2em; }
-    .world-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.75rem; }
-    .world-card { border:1px solid var(--line); border-radius:1.25rem; overflow:hidden; background:var(--paper-2); }
+    .world-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.75rem 1rem; }
+    .world-card { min-width:0; }
     .world-card a { display:block; text-decoration:none; }
     .world-card img { width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; }
-    .world-caption { padding:.85rem; }
+    .world-caption { padding:.7rem 0 0; }
     .world-caption > span { color:var(--muted); font-size:.72rem; text-transform:capitalize; }
-    .world-caption h3 { margin-top:.3rem; text-decoration:underline; text-decoration-color:var(--violet); text-underline-offset:.2em; }
-    .world-letter { aspect-ratio:16/9; display:grid; place-items:center; font:italic 3rem var(--serif); color:var(--blue); }
+    .world-caption h3 { display:flex; align-items:center; justify-content:space-between; margin-top:.25rem; font:400 1.6rem/1.1 var(--serif); }
+    .world-card a:hover h3,.world-card a:focus-visible h3 { text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:.2em; }
+    .world-caption h3 span { font:400 .8rem var(--sans); }
+    .world-letter { aspect-ratio:16/9; display:grid; place-items:center; font:italic 3rem var(--serif); color:var(--accent); }
     @media(max-width:820px) { .world-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
     @media(max-width:560px) { .world-grid { grid-template-columns:1fr; } }
+    .study-links { display:flex; flex-wrap:wrap; align-items:center; gap:.75rem 2rem; padding-block:1rem; border-top:1px solid var(--line); font-size:.8rem; }
+    .study-links>span { color:var(--muted); margin-right:auto; }
+    .study-links a { text-underline-offset:.3em; min-height:44px; display:inline-flex; align-items:center; }
     .reveal { opacity: 1; transform: none; }
-    .js .reveal { opacity: 0; transform: translateY(22px); transition: opacity .75s var(--ease), transform .75s var(--ease); }
-    .js .reveal.in { opacity: 1; transform: none; }
+    .reveal.is-pending { opacity: 0; transform: translateY(22px); transition: opacity .75s var(--ease), transform .75s var(--ease); }
+    .reveal.in { opacity: 1; transform: none; }
     @media (hover: hover) and (pointer: fine) {
       .button:hover { transform: translateY(-2px); }
       .flagship-card:hover img { transform: scale(1.045); filter: saturate(1.16); }
@@ -158,39 +174,51 @@
     @media (max-width: 820px) {
       .site-head nav a:not(.github) { display: none; }
       .hero { min-height: auto; }
-      .hero-grid, .section-head, .install-panel { grid-template-columns: 1fr; }
-      .hero-media { min-height: 58vh; transform: none; }
+      .hero-grid, .section-head, .install-panel { grid-template-columns: minmax(0,1fr); }
+      .hero-grid { gap:2rem; }
+      .hero-copy { max-width:38rem; }
+      .hero h1 { font-size:clamp(3.4rem,9vw,5.9rem); }
       .proof-grid { grid-template-columns: 1fr 1fr; }
       .proof-item:nth-child(2) { border-right: 0; }
       .proof-item:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
       .steps, .editions { grid-template-columns: 1fr; }
-      .step { min-height: 190px; }
-      .flagship-card, .flagship-card:first-child, .flagship-card:nth-child(5) { grid-column: span 6; min-height: 360px; }
+
+      .flagship-card, .flagship-card:first-child { grid-column: span 6; min-height: 360px; }
     }
     @media (max-width: 560px) {
-      .wrap { width: min(100% - 1rem, 1180px); }
+      .wrap { width: min(100% - 2rem, 1180px); }
       .section { padding: 3.5rem 0; }
       h1 { font-size: clamp(3.4rem, 18vw, 5.4rem); }
-      h2 { font-size: clamp(2.8rem, 15vw, 4.7rem); }
-      .hero-media { min-height: 62vh; border-radius: 1.4rem; }
-      .flagship-card, .flagship-card:first-child, .flagship-card:nth-child(5) { grid-column: 1 / -1; min-height: 410px; }
+      h2 { font-size: clamp(2.35rem, 12vw, 4.2rem); }
+      .site-head nav a:first-child { display:inline-flex; }
+      .site-head nav .github { display:none; }
+      .hero h1 { font-size:clamp(3rem,12.5vw,4.5rem); }
+      .feature-caption { align-items:start; flex-direction:column; gap:.5rem; }
+      .feature-actions { justify-content:flex-start; width:100%; }
+      .feature-actions a { margin-right:auto; }
+      .proof-item { flex-direction:column; gap:.3rem; }
+      .section { padding-block:2.5rem; }
+      .flagship-card, .flagship-card:first-child { grid-column: 1 / -1; min-height: 410px; }
       .edition { min-height: 400px; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition-duration: .01ms !important; }
-      .reveal { opacity: 1; transform: none; }
+      .reveal,.reveal.is-pending { opacity: 1; transform: none; }
     }
   </style>
+<link rel="stylesheet" href="assets/gallery-motion.css">
+<link rel="stylesheet" href="assets/project-catalog.css">
+<script defer src="assets/gallery-motion.js"></script>
 </head>
-<body>
+<body class="catalog-home">
   <script>document.documentElement.classList.add('js')</script>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-head">
     <div class="wrap head-row">
-      <a class="brand" href="#top"><i aria-hidden="true"></i>Cinematic Scroll</a>
+      <a class="brand" href="#top"><i aria-hidden="true"></i>Web Design Studio</a>
       <nav aria-label="Primary navigation">
-        <a href="#worlds">All worlds</a><a href="#flagships">Real 3D</a><a href="#editions">Free / Studio</a>
+        <a href="#flagships">Examples</a><a href="#worlds">Editorials</a><a href="#editions">Free / Pro</a>
         <a class="github" href="https://github.com/MustBeSimo/cinematic-scroll-skill">GitHub ↗</a>
       </nav>
     </div>
@@ -200,91 +228,197 @@
     <section class="hero" id="top">
       <div class="wrap hero-grid">
         <div class="hero-copy reveal">
-          <div class="status">Free · MIT · works with your coding agent</div>
+          <div class="status">Web Design Studio · Free · MIT</div>
           <p class="eyebrow">One sentence in. A cinematic website out.</p>
           <h1>Make the page <span class="accent under">people remember.</span></h1>
-          <p class="hero-lede">Cinematic Scroll is an open Agent Skill for story-led websites: stronger art direction, scroll choreography, resilient motion, real 3D when it earns its place, and proof before handoff.</p>
-          <div class="actions"><a class="button primary" href="#install">Install the free skill <span aria-hidden="true">↓</span></a><a class="button ghost" href="#flagships">Enter the flagships <span aria-hidden="true">↗</span></a></div>
-          <p class="hero-note">No account. No runtime lock-in. No attribution in what you ship.</p>
+          <p class="hero-lede">Give your coding agent the craft to build immersive 3D websites, product stories and editorials—with considered typography, purposeful motion and your own visual identity.</p>
+          <div class="actions"><a class="button primary" href="#install">Install the free skill <span aria-hidden="true">↓</span></a><a class="button ghost" href="#flagships">Explore 3D examples <span aria-hidden="true">↗</span></a></div>
+          <p class="hero-note">Formerly Cinematic Scroll. By Simone Leonelli · W230 Studio.</p>
         </div>
-        <a class="hero-media reveal" href="examples/flagships/" aria-label="Explore the Real 3D flagship collection">
-          <video autoplay muted loop playsinline preload="metadata" poster="assets/video/reel3-hero.poster.jpg"><source src="assets/video/reel3-hero.mp4" type="video/mp4"></video>
-          <div class="media-label"><b>Built with the skill.</b><span>Explore the collection</span></div>
-        </a>
+        <figure class="hero-feature">
+          <div class="feature-kicker"><span>Selected work / 01</span><span>Real 3D · Aureus</span></div>
+          <a class="hero-media" data-gallery-preview="assets/video/aureus-preview.mp4" data-autopreview href="examples/aureus-flythrough/" aria-label="Open Aureus live website"><div class="gallery-depth" data-proximity-visual>
+            <video id="featured-preview" muted loop playsinline preload="none" poster="examples/aureus-flythrough/poster.jpg" aria-label="Aureus live 3D website recording"><source src="assets/video/aureus-preview.mp4" type="video/mp4"></video>
+          </div></a>
+          <figcaption class="feature-caption"><div><h3>Aureus</h3><p>A journey through a liquid chrome vault.</p></div><div class="feature-actions"><a href="examples/aureus-flythrough/">Open the example ↗</a><button class="preview-toggle" data-gallery-pause type="button" aria-controls="featured-preview" aria-pressed="false" hidden>Pause previews</button></div></figcaption>
+          <p class="preview-message" role="status" hidden></p>
+        </figure>
       </div>
     </section>
-    <div class="proof-strip"><div class="wrap proof-grid reveal" aria-label="Project proof points">
-      <div class="proof-item"><strong>7</strong><span>real WebGL flagships</span></div><div class="proof-item"><strong>28</strong><span>live visual references</span></div><div class="proof-item"><strong>5</strong><span>browser proof modes</span></div><div class="proof-item"><strong>0</strong><span>required services</span></div>
-    </div></div>
-    <section class="section" id="how"><div class="wrap">
-      <div class="section-head reveal"><div><p class="eyebrow">The working loop</p><h2>Brief. Build. <span class="under">Prove.</span></h2></div><p>The skill turns an idea into a visual direction, a motion storyboard, and working code. It keeps the experience useful on mobile, with reduced motion, and when JavaScript or WebGL does not arrive.</p></div>
-      <div class="steps"><article class="step reveal"><span class="step-no">01</span><div><h3>Find the story</h3><p>Start from the product, audience, brand, and assets—not a fashionable effect. Choose one signature moment worth remembering.</p></div></article><article class="step reveal"><span class="step-no">02</span><div><h3>Direct the motion</h3><p>Build a readable page first, then layer pins, parallax, video, or 3D against a single choreography and performance budget.</p></div></article><article class="step reveal"><span class="step-no">03</span><div><h3>Ship evidence</h3><p>Run deterministic checks and capture desktop, touch, reduced-motion, and no-JS proof. A broken frame is a failure, not a footnote.</p></div></article></div>
-    </div></section>
-    <section class="section" id="flagships"><div class="wrap">
-      <div class="section-head reveal"><div><p class="eyebrow">Real 3D · live websites</p><h2>Seven ways to make <span class="under">depth matter.</span></h2></div><p>Each flagship uses a different spatial technique and still ships with context-loss handling, bounded rendering, and a designed fallback. Open one and scroll.</p></div>
+    <div class="wrap project-toolbar" hidden><label for="project-search">Explore the collection</label><input id="project-search" type="search" placeholder="Search projects, styles or techniques…"><span id="project-result-count" role="status">28 projects</span></div>
+    <section class="section project-section" id="flagships"><div class="wrap">
+      <div class="section-head collection-heading"><div><p class="eyebrow">01 / Spatial experiences</p><h2>Real <span class="under">3D.</span></h2></div><p>Seven live scenes to step inside, explore and adapt. <span class="project-count" data-count-for="flagships">7 projects</span></p></div>
       <div class="flagship-grid">
-        <article class="flagship-card reveal"><img src="assets/video/flagship-ride.poster.jpg" alt="Aether Four Movements 3D scene" loading="lazy"><div class="flagship-copy"><span>01 · Object / world / field / figure</span><h3>Aether</h3><p>Four spatial movements, one camera rail, with model-ready chapters and WebXR gates.</p><a href="examples/flagship/">Enter Four Movements →</a></div></article>
-        <article class="flagship-card reveal"><img src="assets/immersive-preview.png" alt="Nexus procedural particle universe" loading="lazy"><div class="flagship-copy"><span>02 · Procedural field</span><h3>Nexus</h3><p>Particles, wave physics, and an XR-aware spatial lab.</p><a href="examples/immersive/">Enter Nexus →</a></div></article>
-        <article class="flagship-card reveal"><img src="examples/volumetric-aether/poster.jpg" alt="Volumetric clouds at dawn" loading="lazy"><div class="flagship-copy"><span>03 · Raymarched atmosphere</span><h3>Weather</h3><p>Fly through a self-shadowing cloud field rendered from math.</p><a href="examples/volumetric-aether/">Enter Aether Weather →</a></div></article>
-        <article class="flagship-card reveal"><img src="examples/crystalline-monolith/poster.jpg" alt="Refractive crystalline monolith" loading="lazy"><div class="flagship-copy"><span>04 · Transmission glass</span><h3>Obsidian</h3><p>A refractive object study with physical material and bloom.</p><a href="examples/crystalline-monolith/">Enter Obsidian →</a></div></article>
-        <article class="flagship-card reveal"><img src="examples/gallery-flythrough/poster.jpg" alt="Three-dimensional art gallery" loading="lazy"><div class="flagship-copy"><span>05 · Camera flythrough</span><h3>Atelier Marne</h3><p>A museum you walk by scrolling, lit and curated as a real place.</p><a href="examples/gallery-flythrough/">Walk the gallery →</a></div></article>
-        <article class="flagship-card reveal"><img src="examples/jungle-flythrough/poster.jpg" alt="Overgrown concrete colonnade" loading="lazy"><div class="flagship-copy"><span>06 · Instanced nature</span><h3>Verdant</h3><p>Concrete reclaimed by foliage, god-rays, and drifting pollen.</p><a href="examples/jungle-flythrough/">Enter the bloom →</a></div></article>
-        <article class="flagship-card reveal"><img src="examples/aureus-flythrough/poster.jpg" alt="Liquid chrome vault" loading="lazy"><div class="flagship-copy"><span>07 · Raymarched chrome</span><h3>Aureus</h3><p>A scroll-scrubbed descent through a reflective liquid vault.</p><a href="examples/aureus-flythrough/">Enter the vault →</a></div></article>
+        <article class="flagship-card project-card" data-project="Aureus Raymarched chrome">
+ <a class="gallery-link" data-gallery-preview="assets/video/aureus-preview.mp4" href="examples/aureus-flythrough/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/aureus-flythrough/poster.jpg" alt="Liquid chrome vault" loading="lazy"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">01</span><div class="project-text"><span class="project-category">Raymarched chrome</span><h3>Aureus</h3><p>A descent through a liquid vault of reflective chrome.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-aureus-flythrough">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Stage a camera descent through reflective volumes, with a clear focal path and pauses that let the material read. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-aureus-flythrough">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/aureus-flythrough">View source ↗</a></div></div></details>
+</article>
+        <article class="flagship-card project-card" data-project="Atelier Marne Camera flythrough">
+ <a class="gallery-link" data-gallery-preview="assets/previews/gallery-flythrough.mp4" href="examples/gallery-flythrough/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/gallery-flythrough/poster.jpg" alt="Three-dimensional art gallery" loading="lazy"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">02</span><div class="project-text"><span class="project-category">Camera flythrough</span><h3>Atelier Marne</h3><p>Walk from an intimate art hall through an arch into a tall, sunlit atrium.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-gallery-flythrough">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build a gallery route with three distinct spatial stops and an arch transition. Face the artworks toward the visitor and provide an exposure control. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-gallery-flythrough">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/gallery-flythrough">View source ↗</a></div></div></details>
+</article>
+        <article class="flagship-card project-card" data-project="Verdant Instanced nature">
+ <a class="gallery-link" data-gallery-preview="assets/previews/jungle-flythrough.mp4" href="examples/jungle-flythrough/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/jungle-flythrough/poster.jpg" alt="Overgrown concrete colonnade" loading="lazy"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">03</span><div class="project-text"><span class="project-category">Instanced nature</span><h3>Verdant</h3><p>Leaf, vine and filtered sunlight reclaim a concrete colonnade.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-jungle-flythrough">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Lead the camera along a planted colonnade into a canopy. Use instancing for repeated foliage and let a sunlight control change the scene. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-jungle-flythrough">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/jungle-flythrough">View source ↗</a></div></div></details>
+</article>
+        <article class="flagship-card project-card" data-project="Aether Object / world / field / figure">
+ <a class="gallery-link" data-gallery-preview="assets/previews/flagship.mp4" href="examples/flagship/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/flagship/poster.jpg" alt="Aether Four Movements 3D scene" loading="lazy"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">04</span><div class="project-text"><span class="project-category">Object / world / field / figure</span><h3>Aether</h3><p>An object, a hall, a particle field and a figure form one spatial story.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-flagship">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Connect object, architecture, particle field and figure as four related movements. Hold each subject clearly before moving into the next. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-flagship">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/flagship">View source ↗</a></div></div></details>
+</article>
+        <article class="flagship-card project-card" data-project="Obsidian Transmission glass">
+ <a class="gallery-link" data-gallery-preview="assets/previews/crystalline-monolith.mp4" href="examples/crystalline-monolith/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/crystalline-monolith/poster.jpg" alt="Refractive crystalline monolith" loading="lazy"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">05</span><div class="project-text"><span class="project-category">Transmission glass</span><h3>Obsidian</h3><p>A faceted glass monolith changes from polished to frosted under light.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-crystalline-monolith">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Frame one faceted object against a readable environment. Let visitors compare polished and frosted material states without hiding the object behind copy. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-crystalline-monolith">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/crystalline-monolith">View source ↗</a></div></div></details>
+</article>
+        <article class="flagship-card project-card" data-project="Weather Raymarched atmosphere">
+ <a class="gallery-link" data-gallery-preview="assets/previews/volumetric-aether.mp4" href="examples/volumetric-aether/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/volumetric-aether/poster.jpg" alt="Volumetric clouds at dawn" loading="lazy"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">06</span><div class="project-text"><span class="project-category">Raymarched atmosphere</span><h3>Weather</h3><p>Descend through cloud banks and change the density to open the horizon.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-volumetric-aether">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Create an atmospheric descent with a visible horizon. Connect a density control to cloud volume and shadow, and provide a designed still fallback. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-volumetric-aether">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/volumetric-aether">View source ↗</a></div></div></details>
+</article>
+        <article class="flagship-card project-card" data-project="Nexus Procedural field">
+ <a class="gallery-link" data-gallery-preview="assets/previews/immersive.mp4" href="examples/immersive/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/immersive/poster.jpg" alt="Nexus procedural particle universe" loading="lazy"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">07</span><div class="project-text"><span class="project-category">Procedural field</span><h3>Nexus</h3><p>A spatial studio moves between a galaxy, a wave and a pointer-driven field.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-immersive">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build a spatial studio story around a particle field and a displaced wave. Give the visitor a signal control that visibly changes both. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-immersive">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/immersive">View source ↗</a></div></div></details>
+</article>
       </div><div class="collection-link reveal"><a class="button ghost" href="examples/flagships/">View the complete Real 3D collection →</a></div>
     </div></section>
-    <section class="section" id="worlds"><div class="wrap">
-      <div class="section-head"><div><p class="eyebrow">The complete collection</p><h2>Keep the craft. <span class="under">Change the world.</span></h2></div><p>Explore the original editorials, product stories, creative portfolios, and eleven visual systems. Every example remains free, with its own art direction and source. The creative-studio demo is included here; it is separate from the paid Studio edition.</p></div>
+    <section class="section project-section" id="worlds"><div class="wrap">
+      <div class="section-head collection-heading"><div><p class="eyebrow">02 / Stories &amp; identities</p><h2>Editorial <span class="under">worlds.</span></h2></div><p>Product stories, portfolios and visual systems. <span class="project-count" data-count-for="worlds">21 projects</span></p></div>
       <div class="world-grid">
-        <article class="world-card"><a href="examples/renaissance/"><img src="assets/video/scroll-demo.poster.jpg" alt="Classic Touch — Renaissance editorial" loading="lazy" width="720" height="405"><div class="world-caption"><span>Renaissance editorial</span><h3>Classic Touch <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/studio/"><img src="assets/video/studio-scroll-demo_v2.poster.jpg" alt="Maya Torres — Brutalist creative studio" loading="lazy" width="720" height="405"><div class="world-caption"><span>Brutalist creative studio</span><h3>Maya Torres <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/noir/"><img src="assets/video/noir-scroll-demo.poster.jpg" alt="Vantascope — Editorial sci-fi" loading="lazy" width="720" height="405"><div class="world-caption"><span>Editorial sci-fi</span><h3>Vantascope <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/luxe/"><img src="assets/video/luxe-scroll-demo.poster.jpg" alt="Maison Solenne — Quiet luxury" loading="lazy" width="720" height="405"><div class="world-caption"><span>Quiet luxury</span><h3>Maison Solenne <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/pop/"><img src="assets/video/pop-scroll-demo.poster.jpg" alt="Bloom — Playful product story" loading="lazy" width="720" height="405"><div class="world-caption"><span>Playful product story</span><h3>Bloom <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/atelier/"><img src="assets/video/atelier-scroll-demo.poster.jpg" alt="Atelier Nocturne — Kinetic editorial" loading="lazy" width="720" height="405"><div class="world-caption"><span>Kinetic editorial</span><h3>Atelier Nocturne <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/digital-wealth/"><img src="examples/digital-wealth/poster.jpg" alt="Digital Wealth — Financial product story" loading="lazy" width="720" height="405"><div class="world-caption"><span>Financial product story</span><h3>Digital Wealth <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/kern-calibration/"><img src="examples/kern-calibration/assets/kern-poster.jpg" alt="Kern — Typography calibration" loading="lazy" width="720" height="405"><div class="world-caption"><span>Typography calibration</span><h3>Kern <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/symmetric-monument/"><img src="examples/symmetric-monument/hero.jpg" alt="Meridian — symmetric monument" loading="lazy" width="720" height="405"><div class="world-caption"><span>symmetric monument</span><h3>Meridian <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/clinical-noir/"><img src="examples/clinical-noir/hero.jpg" alt="Vanta Labs — clinical noir" loading="lazy" width="720" height="405"><div class="world-caption"><span>clinical noir</span><h3>Vanta Labs <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/storybook-geometry/"><img src="examples/storybook-geometry/hero.jpg" alt="Polly &amp; Plot — storybook geometry" loading="lazy" width="720" height="405"><div class="world-caption"><span>storybook geometry</span><h3>Polly &amp; Plot <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/temporal-monument/"><img src="examples/temporal-monument/hero.jpg" alt="Obsidian — temporal monument" loading="lazy" width="720" height="405"><div class="world-caption"><span>temporal monument</span><h3>Obsidian <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/atmospheric-sublime/"><img src="examples/atmospheric-sublime/hero.jpg" alt="Farsight — atmospheric sublime" loading="lazy" width="720" height="405"><div class="world-caption"><span>atmospheric sublime</span><h3>Farsight <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/warm-scrapbook/"><img src="examples/warm-scrapbook/hero.jpg" alt="Keepsake — warm scrapbook" loading="lazy" width="720" height="405"><div class="world-caption"><span>warm scrapbook</span><h3>Keepsake <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/naturalistic-drift/"><img src="examples/naturalistic-drift/hero.jpg" alt="Drift — naturalistic drift" loading="lazy" width="720" height="405"><div class="world-caption"><span>naturalistic drift</span><h3>Drift <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/brutalist-kinetic/"><img src="examples/brutalist-kinetic/hero.jpg" alt="Concrete / Orange — brutalist kinetic" loading="lazy" width="720" height="405"><div class="world-caption"><span>brutalist kinetic</span><h3>Concrete / Orange <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/liquid-chrome/"><img src="examples/liquid-chrome/hero.jpg" alt="Chroma — liquid chrome" loading="lazy" width="720" height="405"><div class="world-caption"><span>liquid chrome</span><h3>Chroma <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/botanical-editorial/"><img src="examples/botanical-editorial/hero.jpg" alt="Verdant Press — botanical editorial" loading="lazy" width="720" height="405"><div class="world-caption"><span>botanical editorial</span><h3>Verdant Press <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/data-cinematic/"><img src="examples/data-cinematic/hero.jpg" alt="Signal — data cinematic" loading="lazy" width="720" height="405"><div class="world-caption"><span>data cinematic</span><h3>Signal <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/wellness/"><div class="world-letter" aria-hidden="true">Wellness</div><div class="world-caption"><span>A slower editorial study</span><h3>Wellness <span aria-hidden="true">↗</span></h3></div></a></article>
-        <article class="world-card"><a href="examples/retro/"><div class="world-letter" aria-hidden="true">Retro</div><div class="world-caption"><span>A playful digital throwback</span><h3>Retro <span aria-hidden="true">↗</span></h3></div></a></article>
+        <article class="world-card project-card" data-project="Classic Touch Renaissance editorial">
+ <a class="gallery-link" data-gallery-preview="assets/video/scroll-demo.mp4" href="examples/renaissance/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="assets/video/scroll-demo.poster.jpg" alt="Classic Touch — Renaissance editorial" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">08</span><div class="project-text"><span class="project-category">Renaissance editorial</span><h3>Classic Touch</h3><p>Classical imagery and editorial chapters introduce a studio built around taste.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-renaissance">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Use classical imagery and editorial hierarchy to tell a studio story. Give each chapter a distinct argument and let layered imagery reveal its context. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-renaissance">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/renaissance">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Maya Torres Brutalist creative studio">
+ <a class="gallery-link" data-gallery-preview="assets/video/studio-scroll-demo_v2.mp4" href="examples/studio/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="assets/video/studio-scroll-demo_v2.poster.jpg" alt="Maya Torres — Brutalist creative studio" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">09</span><div class="project-text"><span class="project-category">Brutalist creative studio</span><h3>Maya Torres</h3><p>A creative director’s portfolio pairs oversized type with an expressive work reel.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-studio">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build a creative portfolio with assertive typography and a clear selected-work sequence. Let the work provide the colour and preserve a direct contact action. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-studio">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/studio">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Vantascope Editorial sci-fi">
+ <a class="gallery-link" data-gallery-preview="assets/video/noir-scroll-demo.mp4" href="examples/noir/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="assets/video/noir-scroll-demo.poster.jpg" alt="Vantascope — Editorial sci-fi" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">10</span><div class="project-text"><span class="project-category">Editorial sci-fi</span><h3>Vantascope</h3><p>A fictional science-fiction release follows a signal into the unknown.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-noir">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build suspense from signal to descent to witness. Use restrained light and staged reveals, keeping the release details and access action readable. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-noir">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/noir">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Maison Solenne Quiet luxury">
+ <a class="gallery-link" data-gallery-preview="assets/video/luxe-scroll-demo.mp4" href="examples/luxe/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="assets/video/luxe-scroll-demo.poster.jpg" alt="Maison Solenne — Quiet luxury" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">11</span><div class="project-text"><span class="project-category">Quiet luxury</span><h3>Maison Solenne</h3><p>Provenance, object and atelier unfold in warm ivory and cognac.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-luxe">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Lead from provenance to object to making. Use close material details and quiet transitions; give the object a stable viewing moment before the enquiry. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-luxe">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/luxe">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Bloom Playful product story">
+ <a class="gallery-link" data-gallery-preview="assets/video/pop-scroll-demo.mp4" href="examples/pop/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="assets/video/pop-scroll-demo.poster.jpg" alt="Bloom — Playful product story" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">12</span><div class="project-text"><span class="project-category">Playful product story</span><h3>Bloom</h3><p>A playful productivity app tells its story through focus, flow and community.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-pop">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build a playful app launch around focus, flow and community. Tie colourful motion to a product benefit and make the download action immediately available. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-pop">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/pop">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Atelier Nocturne Kinetic editorial">
+ <a class="gallery-link" data-gallery-preview="assets/video/atelier-scroll-demo.mp4" href="examples/atelier/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="assets/video/atelier-scroll-demo.poster.jpg" alt="Atelier Nocturne — Kinetic editorial" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">13</span><div class="project-text"><span class="project-category">Kinetic editorial</span><h3>Atelier Nocturne</h3><p>A design atelier presents horology, restoration and entertainment projects.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-atelier">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build an editorial portfolio around three contrasting projects. Use one consistent navigation system and let each project have its own image-led reveal. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-atelier">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/atelier">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Digital Wealth Financial product story">
+ <a class="gallery-link" data-gallery-preview="assets/previews/digital-wealth.mp4" href="examples/digital-wealth/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/digital-wealth/poster.jpg" alt="Digital Wealth — Financial product story" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">14</span><div class="project-text"><span class="project-category">Financial product story</span><h3>Digital Wealth</h3><p>A financial product story presented as an editorial landing page.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-digital-wealth">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Explain a financial product through supplied facts and a clear sequence of benefits. Animate comparisons only when the data is provided; keep disclosures readable. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-digital-wealth">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/digital-wealth">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Kern Precision mechanism · video study">
+ <a class="gallery-link" data-gallery-preview="assets/previews/kern-calibration.mp4" href="examples/kern-calibration/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/kern-calibration/assets/kern-poster.jpg" alt="KERN — precision mechanism and video study" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">15</span><div class="project-text"><span class="project-category">Precision mechanism · video study</span><h3>Kern</h3><p>A mechanical instrument is examined through assembly and calibration.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-kern-calibration">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Reveal a mechanism in stages: assembly, friction and signal. Use a diagnostic comparison to explain one real detail, with a static equivalent for every state. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-kern-calibration">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/kern-calibration">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Meridian symmetric monument">
+ <a class="gallery-link" data-gallery-preview="assets/previews/symmetric-monument.mp4" href="examples/symmetric-monument/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/symmetric-monument/hero.jpg" alt="Meridian — symmetric monument" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">16</span><div class="project-text"><span class="project-category">symmetric monument</span><h3>Meridian</h3><p>An architectural study of symmetry, stone and permanence.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-symmetric-monument">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Compose an architectural story around a central axis. Use measured reveals to move from overall mass to material detail while retaining visual balance. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-symmetric-monument">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/symmetric-monument">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Vanta Labs clinical noir">
+ <a class="gallery-link" data-gallery-preview="assets/previews/clinical-noir.mp4" href="examples/clinical-noir/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/clinical-noir/hero.jpg" alt="Vanta Labs — clinical noir" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">17</span><div class="project-text"><span class="project-category">clinical noir</span><h3>Vanta Labs</h3><p>Cold light isolates precision instruments against a dark field.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-clinical-noir">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Present one instrument with controlled light and generous silhouette clearance. Move from signal to method, using motion to isolate a functional detail. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-clinical-noir">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/clinical-noir">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Polly &amp; Plot storybook geometry">
+ <a class="gallery-link" data-gallery-preview="assets/previews/storybook-geometry.mp4" href="examples/storybook-geometry/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/storybook-geometry/hero.jpg" alt="Polly &amp; Plot — storybook geometry" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">18</span><div class="project-text"><span class="project-category">storybook geometry</span><h3>Polly &amp; Plot</h3><p>Primary shapes and playful composition introduce a curious design studio.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-storybook-geometry">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build a playful studio story from bold geometric shapes. Let shapes assemble into meaningful compositions while headings stay readable and selectable. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-storybook-geometry">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/storybook-geometry">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Obsidian temporal monument">
+ <a class="gallery-link" data-gallery-preview="assets/previews/temporal-monument.mp4" href="examples/temporal-monument/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/temporal-monument/hero.jpg" alt="Obsidian — temporal monument" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">19</span><div class="project-text"><span class="project-category">temporal monument</span><h3>Obsidian</h3><p>Horology meets architectural scale in shadow and warm gold.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-temporal-monument">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Connect a timepiece to architectural scale through layered depth and warm light. Give the reveal a readable hold rather than constant camera travel. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-temporal-monument">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/temporal-monument">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Farsight atmospheric sublime">
+ <a class="gallery-link" data-gallery-preview="assets/previews/atmospheric-sublime.mp4" href="examples/atmospheric-sublime/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/atmospheric-sublime/hero.jpg" alt="Farsight — atmospheric sublime" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">20</span><div class="project-text"><span class="project-category">atmospheric sublime</span><h3>Farsight</h3><p>A distant subject emerges through haze, light and open space.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-atmospheric-sublime">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Establish scale with a distant subject and atmospheric layers. Reveal the subject gradually, keeping the essential message available before the reveal finishes. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-atmospheric-sublime">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/atmospheric-sublime">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Keepsake warm scrapbook">
+ <a class="gallery-link" data-gallery-preview="assets/previews/warm-scrapbook.mp4" href="examples/warm-scrapbook/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/warm-scrapbook/hero.jpg" alt="Keepsake — warm scrapbook" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">21</span><div class="project-text"><span class="project-category">warm scrapbook</span><h3>Keepsake</h3><p>Sun-faded photographs and tactile paper form a personal archive.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-warm-scrapbook">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build a personal archive from supplied photographs and captions. Use hand-placed compositions and modest depth without sacrificing reading order on mobile. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-warm-scrapbook">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/warm-scrapbook">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Drift naturalistic drift">
+ <a class="gallery-link" data-gallery-preview="assets/previews/naturalistic-drift.mp4" href="examples/naturalistic-drift/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/naturalistic-drift/hero.jpg" alt="Drift — naturalistic drift" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">22</span><div class="project-text"><span class="project-category">naturalistic drift</span><h3>Drift</h3><p>An outdoor story paced around morning light and quiet observation.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-naturalistic-drift">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Tell an outdoor story through light, leaves and small observed details. Use subtle parallax and calm transitions, with no unnecessary pinned reading sections. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-naturalistic-drift">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/naturalistic-drift">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Concrete / Orange brutalist kinetic">
+ <a class="gallery-link" data-gallery-preview="assets/previews/brutalist-kinetic.mp4" href="examples/brutalist-kinetic/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/brutalist-kinetic/hero.jpg" alt="Concrete / Orange — brutalist kinetic" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">23</span><div class="project-text"><span class="project-category">brutalist kinetic</span><h3>Concrete / Orange</h3><p>Exposed structure and hazard orange frame an industrial goods story.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-brutalist-kinetic">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build an industrial product story with exposed structure and decisive transitions. Use motion to reveal assembly or impact, keeping specifications easy to scan. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-brutalist-kinetic">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/brutalist-kinetic">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Chroma liquid chrome">
+ <a class="gallery-link" data-gallery-preview="assets/previews/liquid-chrome.mp4" href="examples/liquid-chrome/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/liquid-chrome/hero.jpg" alt="Chroma — liquid chrome" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">24</span><div class="project-text"><span class="project-category">liquid chrome</span><h3>Chroma</h3><p>A dark product study built around reflective surfaces and cyan light.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-liquid-chrome">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Use reflective imagery and continuous visual transitions for a product story. Choose authored media or real-time materials according to whether interaction needs them. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-liquid-chrome">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/liquid-chrome">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Verdant Press botanical editorial">
+ <a class="gallery-link" data-gallery-preview="assets/previews/botanical-editorial.mp4" href="examples/botanical-editorial/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/botanical-editorial/hero.jpg" alt="Verdant Press — botanical editorial" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">25</span><div class="project-text"><span class="project-category">botanical editorial</span><h3>Verdant Press</h3><p>Botanical plates, warm paper and green ink shape a publishing story.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-botanical-editorial">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build a publishing story with botanical imagery and a comfortable reading measure. Let page-like reveals pace the work while copy stays in normal document flow. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-botanical-editorial">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/botanical-editorial">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Signal data cinematic">
+ <a class="gallery-link" data-gallery-preview="assets/previews/data-cinematic.mp4" href="examples/data-cinematic/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><img src="examples/data-cinematic/hero.jpg" alt="Signal — data cinematic" loading="lazy" width="720" height="405"><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">26</span><div class="project-text"><span class="project-category">data cinematic</span><h3>Signal</h3><p>An observability story turns readouts into a mission-control presentation.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-data-cinematic">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build a data story from supplied measurements. Reveal charts in reading order, keep axes and units visible, and provide the full values without animation. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-data-cinematic">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/data-cinematic">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Naturally Rooted Wellness Apothecary">
+ <a class="gallery-link" data-gallery-preview="assets/previews/wellness.mp4" href="examples/wellness/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><div class="world-letter" aria-hidden="true">Wellness</div><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">27</span><div class="project-text"><span class="project-category">A slower editorial study</span><h3>Naturally Rooted</h3><p>A field apothecary follows its ingredients from soil to harvest to the still room.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-wellness">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Trace an ingredient from soil through harvest to preparation. Use supplied provenance and product facts, with gentle image reveals and a clear enquiry or shop action. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-wellness">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/wellness">View source ↗</a></div></div></details>
+</article>
+        <article class="world-card project-card" data-project="Novadeck Retro Device launch">
+ <a class="gallery-link" data-gallery-preview="assets/previews/retro.mp4" href="examples/retro/"><div class="gallery-media"><div class="gallery-depth" data-proximity-visual><div class="world-letter" aria-hidden="true">Retro</div><video muted loop playsinline preload="none" aria-hidden="true"></video></div></div><div class="project-info"><span class="project-number">28</span><div class="project-text"><span class="project-category">A playful digital throwback</span><h3>Novadeck</h3><p>A fictional device launch moves from power-on to the core and Hypernet.</p></div><span class="project-open">Open ↗</span></div></a>
+ <details class="project-prompt"><summary>Build prompt <span aria-hidden="true">+</span></summary><div><p class="prompt-label">Adapt this example</p><p id="prompt-retro">Use cinematic-scroll to build a website for [YOUR SUBJECT]. Build a retro device launch with a power-on opening and a clear hardware story. Keep boot effects brief and make product details and ordering available immediately. Use my supplied content and brand. Deliver responsive and reduced-motion versions, keyboard access and working links; verify the result in a browser.</p><div class="prompt-actions"><button type="button" class="copy" data-copy="#prompt-retro">Copy prompt</button><a href="https://github.com/MustBeSimo/cinematic-scroll-skill/tree/main/examples/retro">View source ↗</a></div></div></details>
+</article>
       </div>
     </div></section>
+    <p class="wrap project-empty" hidden>No projects match your search. Try a different name or style.</p>
+    <div class="proof-strip"><div class="wrap proof-grid reveal" aria-label="Project proof points">
+      <div class="proof-item"><strong>7</strong><span>real WebGL flagships</span></div><div class="proof-item"><strong>11</strong><span>visual systems</span></div><div class="proof-item"><strong>5</strong><span>browser proof modes</span></div><div class="proof-item"><strong>0</strong><span>required services</span></div>
+    </div></div>
+    <section class="section" id="how"><div class="wrap">
+      <div class="section-head reveal"><div><p class="eyebrow">The working loop</p><h2>Brief. Build. <span class="under">Prove.</span></h2></div><p>Describe what you want to make. The skill helps your agent shape the story, build it in your project, and check the result across screen sizes and motion preferences.</p></div>
+      <div class="steps"><article class="step reveal"><span class="step-no">01</span><div><h3>Find the story</h3><p>Start with your subject, copy and images. Build the page around what the visitor should understand.</p></div></article><article class="step reveal"><span class="step-no">02</span><div><h3>Direct the motion</h3><p>Use motion to reveal a detail, explain a mechanism or connect one part of the story to the next.</p></div></article><article class="step reveal"><span class="step-no">03</span><div><h3>Ship evidence</h3><p>Inspect the actual page on desktop and mobile. Keep its story and actions available when motion is turned off.</p></div></article></div>
+    </div></section>
+    <aside class="wrap study-links" id="interactions" aria-label="Interaction studies"><span>From the workshop</span><a href="examples/v3-flagship/">FIELD — an optical study ↗</a><a href="examples/effects-lab/">Text and motion studies ↗</a></aside>
     <section class="section" id="editions"><div class="wrap">
       <div class="section-head reveal"><div><p class="eyebrow">Two editions · one craft standard</p><h2>Free builds it. Studio <span class="under">remembers.</span></h2></div><p>The normal skill is the complete, useful edition—not a trial. Studio is for people who want the system to learn from repeated projects and compound their own visual language.</p></div>
       <div class="editions">
-        <article class="edition reveal"><span class="tag">Normal · free forever</span><h3>Build the whole site.</h3><p>Everything needed to direct, implement, and verify a cinematic page.</p><ul><li>Story and motion planning</li><li>28 examples + 11 visual systems</li><li>Components, real 3D patterns, and fallbacks</li><li>Doctor + five-profile browser proof</li><li>Optional TasteHQ brand matching</li></ul><a class="button primary" href="#install">Install free</a></article>
-        <article class="edition studio reveal"><span class="tag">Studio · for repeat practice</span><h3>Build on what you know.</h3><p>Studio adds a proprietary Motif Engine that turns past decisions into useful memory.</p><ul><li>Accumulated project knowledge</li><li>Intent-based pattern retrieval</li><li>Reuse tracking across builds</li><li>Learned variants from your own language</li><li>Deeper iteration without starting cold</li></ul><a class="button" href="https://buy.stripe.com/cNi7sLdNBbief0L0uFfnO09">Explore Studio ↗</a></article>
+        <article class="edition reveal"><span class="tag">Web Design Studio · free forever</span><h3>Build the whole site.</h3><p>Everything needed to direct, implement, and verify a distinctive website.</p><ul><li>Story and motion planning</li><li>Complete examples + 11 visual systems</li><li>Text, proximity, shader media and real 3D</li><li>Doctor + five-profile browser proof</li><li>Optional TasteHQ brand matching</li></ul><a class="button primary" href="#install">Install free</a></article>
+        <article class="edition studio reveal"><span class="tag">Web Design Studio Pro</span><h3>Build on what you know.</h3><p>Pro adds a proprietary Motif Engine that turns past decisions into useful memory.</p><ul><li>Accumulated project knowledge</li><li>Intent-based pattern retrieval</li><li>Reuse tracking across builds</li><li>Learned variants from your own language</li><li>Deeper iteration without starting cold</li></ul><a class="button" href="https://buy.stripe.com/cNi7sLdNBbief0L0uFfnO09">Explore Pro ↗</a></article>
       </div>
     </div></section>
     <section class="section" id="install"><div class="wrap install-panel reveal">
-      <div><p class="eyebrow">Start here</p><h2>Give your agent <span class="under">better taste.</span></h2><p>Install the normal edition, then describe the page you want in plain language. The skill chooses the lightest stack that can carry the story.</p></div>
-      <div class="command"><div class="command-row"><code id="install-command">npx skills add MustBeSimo/cinematic-scroll-skill</code><button class="copy" type="button" data-copy="#install-command">Copy</button></div><div class="prompt">“Use cinematic-scroll to turn this product into a one-page story. Match the brand, create one memorable reveal, and prove the mobile and reduced-motion versions.”</div><div class="actions" style="margin-top:.8rem"><a class="button ghost" href="https://github.com/MustBeSimo/cinematic-scroll-skill">Read the GitHub guide ↗</a><a class="button ghost" href="SKILL.md">Read the skill contract ↗</a></div></div>
+      <div><p class="eyebrow">Start here</p><h2>Give your agent <span class="under">better taste.</span></h2><p>Install Web Design Studio, then describe the page you want in plain language. The established install identifier remains <code>cinematic-scroll</code>.</p></div>
+      <div class="command"><p class="prompt-label">Coding agents</p><div class="command-row"><code id="install-command">npx skills add MustBeSimo/cinematic-scroll-skill</code><button class="copy" type="button" data-copy="#install-command">Copy</button></div><p class="prompt-label">OpenClaw / ClawHub</p><div class="command-row"><code id="clawhub-command">npx clawhub install @mustbesimo/cinematic-scroll</code><button class="copy" type="button" data-copy="#clawhub-command">Copy</button></div><p><a href="https://clawhub.ai/mustbesimo/skills/cinematic-scroll">View package and versions on ClawHub ↗</a></p><div class="prompt">“Use cinematic-scroll to turn this product into a one-page story. Match the brand, create one memorable reveal, and prove the mobile and reduced-motion versions.”</div><div class="actions" style="margin-top:.8rem"><a class="button ghost" href="https://github.com/MustBeSimo/cinematic-scroll-skill">Star on GitHub ↗</a><a class="button ghost" href="SKILL.md">Read the skill contract ↗</a></div></div>
     </div></section>
   </main>
   <footer><div class="wrap footer-row"><span>Made by <a href="https://w230.net">Simone Leonelli</a> · MIT licensed</span><span><a href="bench/">CinematicBench</a> · <a href="stack/">Stack</a> · <a href="https://github.com/MustBeSimo/cinematic-scroll-skill/issues">Issues</a></span></div></footer>
   <script>
     (() => {
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const motion = matchMedia('(prefers-reduced-motion: reduce)');
       const progress = document.querySelector('.progress');
-      const update = () => { const max = document.documentElement.scrollHeight - innerHeight; progress.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`; };
-      addEventListener('scroll', update, { passive: true }); addEventListener('resize', update, { passive: true }); update();
-      const reveals = document.querySelectorAll('.reveal');
-      if (reduced || !('IntersectionObserver' in window)) reveals.forEach(el => el.classList.add('in'));
-      else { const io = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); } }), { rootMargin: '0px 0px -8% 0px', threshold: .08 }); reveals.forEach(el => io.observe(el)); }
-      document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => { const target = document.querySelector(button.dataset.copy); try { await navigator.clipboard.writeText(target.textContent.trim()); button.textContent = 'Copied'; } catch { button.textContent = 'Select + copy'; } setTimeout(() => { button.textContent = 'Copy'; }, 1800); }));
-      const video = document.querySelector('.hero-media video');
-      if (video && reduced) { video.pause(); video.removeAttribute('autoplay'); }
-      document.addEventListener('visibilitychange', () => { if (!video || reduced) return; if (document.hidden) video.pause(); else video.play().catch(() => {}); });
+      const reveals = [...document.querySelectorAll('.reveal')];
+      let observer;
+      if (!motion.matches && 'IntersectionObserver' in window) {
+        observer = new IntersectionObserver(entries => entries.forEach(entry => {
+          if (entry.isIntersecting) { entry.target.classList.remove('is-pending'); entry.target.classList.add('in'); observer.unobserve(entry.target); }
+        }), { threshold: .05 });
+        // The opening is readable immediately; only offscreen content is enhanced.
+        reveals.forEach(el => { if (el.getBoundingClientRect().top > innerHeight) { el.classList.add('is-pending'); observer.observe(el); } });
+      }
+      document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
+        const target = document.querySelector(button.dataset.copy);
+        const originalLabel = button.dataset.copyLabel || button.textContent;
+        button.dataset.copyLabel = originalLabel;
+        try { await navigator.clipboard.writeText(target.textContent.trim()); button.textContent = 'Copied'; }
+        catch {
+          const selection = getSelection(), range = document.createRange();
+          range.selectNodeContents(target); selection.removeAllRanges(); selection.addRange(range);
+          button.textContent = 'Press ⌘C / Ctrl+C';
+        }
+        setTimeout(() => { button.textContent = originalLabel; }, 2200);
+      }));
+
+      motion.addEventListener('change',()=>{if(motion.matches){observer?.disconnect();reveals.forEach(el=>el.classList.remove('is-pending'));}});
     })();
+
   </script>
 </body>
 </html>

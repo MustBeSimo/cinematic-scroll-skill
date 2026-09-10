@@ -33,6 +33,49 @@ the opening with giant type if it obscures the thing the visitor came to see.
 When improving a flagship, show evidence of the scene change itself; new cards,
 navigation, and marketing copy do not establish an improved flagship experience.
 
+## Bundled 3D examples
+
+Start with the scene that fits the subject. Choose camera travel for a place,
+material response for an object, or a changing field for a process. Reuse the
+mechanism and lifecycle; derive palette, typography and composition from the
+user's brand. The showcase's ordering is not a ranking of which scene fits a brief.
+
+| Example | Useful mechanism |
+|---|---|
+| [Aureus](../examples/aureus-flythrough/index.html) | Scroll through reflective chrome volumes |
+| [Atelier Marne](../examples/gallery-flythrough/index.html) | Walk between artwork and sculpture; adjust gallery exposure |
+| [Verdant](../examples/jungle-flythrough/index.html) | Instanced curved foliage, planted borders and adjustable sunlight |
+| [Aether](../examples/flagship/index.html) | Dwell on an object before moving into the next spatial chapter |
+| [Obsidian](../examples/crystalline-monolith/index.html) | Explore the change from polished to frosted transmission glass |
+| [Weather](../examples/volumetric-aether/index.html) | Change the density of rounded, self-shadowing cloud banks |
+| [Nexus](../examples/immersive/index.html) | Tune a particle field and wave displacement, including on mobile |
+
+Five studies use [one demand-aware scene session](../examples/_scene-session.js).
+Aether retains its XR-compatible animation loop. Use elapsed time for drift and
+damping; stop scheduling frames when motion is paused, reduced or hidden. A
+control can request a frame while paused. Reduced motion holds the camera while
+the text continues to scroll. Recover generated environment maps after context
+loss: restoring the renderer alone can leave reflections black.
+
+Run `npm run test:scenes` against a local HTTP server on port 8875 (or set
+`SCENE_PREVIEW_URL`). The browser regression verifies visible scene changes from
+keyboard input while paused, reset, live and initial reduced motion, context
+restoration, narrow layouts and readable no-JS content. Inspect the screenshots
+as well; passing the tests does not establish the quality of a composition.
+
+## A graphical mechanism to adapt
+
+[FIELD's standalone iris](../examples/v3-flagship/README.md) demonstrates a control
+that reveals more of one authored subject. It uses SVG plus the shared scroll clock;
+explicit input still works while continuous motion is paused or reduced. Its
+[interaction regression](../examples/v3-flagship/interaction.test.mjs) checks scene
+changes, reset, static input, and control geometry. Use this route for a graphical
+mechanism; the Next.js FIELD route is a separate real-3D interpretation.
+
+When adapting it, replace the subject and story first. Retain the useful separation
+between visitor-controlled parameters and scroll-controlled viewpoint, rather than
+copying an optical theme into an unrelated brief.
+
 ## Reference studies
 
 MiaAI Lab's [Astra collection](https://miaai-lab.github.io/GPT-6-Astra-100-HTML-Files/)

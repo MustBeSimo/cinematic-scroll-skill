@@ -68,7 +68,7 @@
   @media (max-width: 760px) { .chapters { display: none; } }
 
   main { position: relative; z-index: 2; }
-  .beat { position: relative; height: 100vh; display: flex; align-items: center; padding: 0 clamp(20px,7vw,120px); pointer-events: none; }
+  .beat { position: relative; min-height:100svh; display:flex; align-items:center; padding:100px clamp(20px,7vw,120px) 130px; pointer-events: none; }
   .beat.center { justify-content: center; text-align: center; }
   .beat.right { justify-content: flex-end; }
 
@@ -119,7 +119,22 @@
     .progress span { transform: scaleX(1) !important; }
     .glass { transition: none; }
   }
+
+  .glass { border-radius:3px; border-color:rgba(240,235,220,.2); border-top:2px solid var(--accent); background:rgba(12,14,11,.8); box-shadow:none; backdrop-filter:blur(10px); max-width:410px; padding:30px; }
+  .chapters button { color:rgba(246,239,228,.75); min-height:32px; }
+  .go { text-align:left; text-decoration:underline; text-underline-offset:5px; border-radius:2px; }
+  .stat .l { color:var(--fg-soft); }
+  @media(max-width:600px){
+    .beat { padding:100px 20px 145px; align-items:flex-end; }
+    .glass { width:100%; max-width:100%; padding:24px; }
+    h1,h1.serif { font-size:2.6rem; }
+    .lede { font-size:1rem; }
+    .beat.center .glass { max-width:100%; }
+    .mega { font-size:clamp(3rem,18vw,5.5rem); }
+    footer { padding-bottom:130px; }
+  }
 </style>
+<link rel="stylesheet" href="../_study-shell.css">
 </head>
 <body>
   <aside class="cs-flagship-nav" aria-label="Real 3D flagship collection">
@@ -147,54 +162,54 @@
 <main>
   <!-- BEAT 0 — Atrium / title -->
   <section class="beat" data-beat="0">
-    <div class="glass clickable" data-goto="1">
+    <div class="glass">
       <span class="eyebrow">Permanent collection</span>
-      <h1 class="kinetic">A gallery you walk <em>by scrolling.</em></h1>
-      <p class="lede">No video. No baked frames. The room is rendered live, lit by a real environment — and the camera's pace is exactly your scroll's pace.</p>
+      <h1 class="kinetic">A slower way <em>to see.</em></h1>
+      <p class="lede">Light on plaster. Brass around a canvas. Walk from the intimate first hall into an open atrium, at your own pace.</p>
       <div class="stats">
-        <div class="stat"><div class="n">5</div><div class="l">halls</div></div>
-        <div class="stat"><div class="n">6</div><div class="l">works hung</div></div>
-        <div class="stat"><div class="n">60<span style="font-size:.5em">fps</span></div><div class="l">real-time</div></div>
+        <div class="stat"><div class="n">3</div><div class="l">halls</div></div>
+        <div class="stat"><div class="n">6</div><div class="l">art studies</div></div>
+        <div class="stat"><div class="n">3</div><div class="l">sculptures</div></div>
       </div>
-      <span class="go">Begin the walk <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <button class="go" type="button" data-goto="1">Begin the walk <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </section>
 
   <!-- BEAT 1 — Hall of light -->
   <section class="beat right" data-beat="1">
-    <div class="glass clickable" data-goto="2">
+    <div class="glass">
       <span class="eyebrow">Hall I — Light</span>
       <h2 class="kinetic">Walls that <em>hold the warm.</em></h2>
       <p class="lede">Brass strips wash the plaster; image-based lighting from a real atrium pours over every surface as the camera dollies the length of the hall.</p>
       <div class="chips"><span>image-based light</span><span>brass wash</span><span>live dolly</span></div>
-      <span class="go">Enter Hall II <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <button class="go" type="button" data-goto="2">Enter Hall II <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </section>
 
   <!-- BEAT 2 — The pedestals -->
   <section class="beat" data-beat="2">
-    <div class="glass clickable" data-goto="3">
+    <div class="glass">
       <span class="eyebrow">Hall II — Form</span>
       <h2 class="kinetic">Objects on <em>plinths of shadow.</em></h2>
       <p class="lede">Each piece turns under its own spotlight as you pass — real depth and parallax, every facet catching the reflected room. Not layered images.</p>
       <div class="chips"><span>spotlit plinths</span><span>real reflections</span><span>true parallax</span></div>
-      <span class="go">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <button class="go" type="button" data-goto="3">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </section>
 
   <!-- BEAT 3 — Threshold / archway -->
   <section class="beat center" data-beat="3">
-    <div class="glass clickable" data-goto="4">
+    <div class="glass">
       <span class="eyebrow">Threshold</span>
       <h2 class="kinetic">Through the <em>arch.</em></h2>
       <p class="lede">A darker frame swallows the camera, then opens. Slow down here — let the dust drift.</p>
-      <span class="go">Step through <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <button class="go" type="button" data-goto="4">Step through <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </section>
 
   <!-- BEAT 4 — The atrium reveal -->
   <section class="beat right" data-beat="4">
-    <div class="glass clickable" data-goto="5">
+    <div class="glass">
       <span class="eyebrow">Hall III — Scale</span>
       <h2 class="kinetic">The room <em>opens wide.</em></h2>
       <p class="lede">The ceiling lifts and light pools on the floor — the same engine, a far bigger volume, lit by the same sky.</p>
@@ -202,7 +217,7 @@
         <div class="stat"><div class="n">+50%</div><div class="l">volume</div></div>
         <div class="stat"><div class="n">1</div><div class="l">renderer</div></div>
       </div>
-      <span class="go">To the exit <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <button class="go" type="button" data-goto="5">To the exit <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </section>
 
@@ -224,8 +239,10 @@
 
 <script type="module">
   import * as THREE from 'three';
+  import {createSceneSession} from '../_scene-session.js';
+  import {mountSceneControls} from '../_study-controls.js';
 
-  const reduce  = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = matchMedia('(max-width: 768px)').matches;
   const canvas  = document.getElementById('stage');
   const BEATS = 6;
@@ -255,7 +272,7 @@
     });
   });
 
-  let renderer, scene, camera, raf = 0, running = false, onScreen = true;
+  let renderer, scene, camera, session;
   let progress = 0, target = 0, mx = 0, my = 0, tmx = 0, tmy = 0;
   let keyLightA, keyLightB, curve, dust;
   const spinners = [], pictureLights = [];
@@ -267,10 +284,10 @@
     renderer.setSize(innerWidth, innerHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.18;
+    renderer.toneMappingExposure = 1.05;
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color('#0c0a08');
+    scene.background = new THREE.Color('#211c15');
     scene.fog = new THREE.FogExp2('#120d08', 0.0135);
 
     camera = new THREE.PerspectiveCamera(58, innerWidth/innerHeight, 0.1, 400);
@@ -286,15 +303,12 @@
     keyLightA = new THREE.PointLight('#ffd79a', 30, 38, 2.0); scene.add(keyLightA);
     keyLightB = new THREE.PointLight('#ffe9c8', 16, 28, 2.0); scene.add(keyLightB);
 
-    addEventListener('resize', onResize, { passive: true });
-    if (!isMobile && !reduce) addEventListener('pointermove', onPointer, { passive: true });
-    canvas.addEventListener('webglcontextlost', onLost, false);
-    canvas.addEventListener('webglcontextrestored', onRestored, false);
-    document.addEventListener('visibilitychange', updateRun);
-    new IntersectionObserver((e)=>{ onScreen = e[0].isIntersecting; updateRun(); }, { threshold: 0 }).observe(canvas);
-
+    if (!isMobile) addEventListener('pointermove', onPointer, {passive:true});
+    session = createSceneSession({canvas, frame:loop, resize:onResize, restore:loadEnvironment, motionChange(value) { reduce=value; mx=my=tmx=tmy=0; } });
     placeCamera(0);
-    if (reduce) renderer.render(scene, camera); else { running = true; loop(); }
+    mountSceneControls({title:'Gallery light',label:'Exposure',min:.65,max:1.5,step:.05,value:1.05,format:v=>v.toFixed(2)+'×',
+      update(v){ renderer.toneMappingExposure=v; session.invalidate(); },pause:v=>session.setPaused(v)});
+    session.start();
   }
 
   /* image-based lighting + real reflections from the fal.ai atrium panorama */
@@ -307,7 +321,7 @@
         const rt = pmrem.fromEquirectangular(tex);
         scene.environment = rt.texture;
         pmrem.dispose(); tex.dispose();
-        if (reduce && renderer) renderer.render(scene, camera);
+        session?.invalidate();
       } catch(e){ /* IBL optional — scene still lit by the warm lights */ }
     }, undefined, function(){ /* missing texture is non-fatal */ });
   }
@@ -319,6 +333,10 @@
   const glowMat = (c, i)=> new THREE.MeshStandardMaterial({ color: '#000', emissive: c, emissiveIntensity: i, roughness: 1, metalness: 0 });
   const artTex = new THREE.TextureLoader();
 
+  function poolTexture(){
+    const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');
+    const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'white');g.addColorStop(1,'transparent');x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);
+  }
   function buildGallery(){
     const HALL_W = 9, HALL_H = 6, SEG = 14, SEGS = 7; // 7 zones × 14 deep ≈ 98u
     const wallL = plaster('#d8cbb2'), wallR = plaster('#d2c1a6'), floorMat = woodMat, ceilMat = plaster('#241a10');
@@ -341,6 +359,10 @@
       const right = new THREE.Mesh(new THREE.PlaneGeometry(SEG, h), wallR);
       right.rotation.y = -Math.PI/2; right.position.set(w/2, h/2, z - SEG/2); group.add(right);
 
+      for(const side of [-1,1]){
+        const skirt=new THREE.Mesh(new THREE.BoxGeometry(.08,.22,SEG),woodMat);
+        skirt.position.set(side*(w/2-.05),.11,-s*SEG-SEG/2);group.add(skirt);
+      }
       // ceiling light strip (emissive)
       const strip = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.12, SEG - 2), glowMat('#ffe2ad', 2.4));
       strip.position.set(0, h - 0.2, z - SEG/2); group.add(strip);
@@ -356,9 +378,9 @@
           const canvasMat = new THREE.MeshStandardMaterial({ color: '#1a140d', roughness: 0.62, metalness: 0.0, envMapIntensity: 0.3 });
           const idx = (artIdx % 6) + 1; artIdx++;
           // the painting is self-lit via its emissiveMap (no per-frame spotlight needed — keeps the light count low)
-          artTex.load('assets/art-' + idx + '.jpg', function(t){ t.colorSpace = THREE.SRGBColorSpace; canvasMat.map = t; canvasMat.emissive = new THREE.Color('#4a3720'); canvasMat.emissiveMap = t; canvasMat.emissiveIntensity = 0.8; canvasMat.color = new THREE.Color('#ffffff'); canvasMat.needsUpdate = true; if (reduce && renderer) renderer.render(scene, camera); }, undefined, function(){});
+          artTex.load('assets/art-' + idx + '.jpg', function(t){ t.colorSpace = THREE.SRGBColorSpace; canvasMat.map = t; canvasMat.emissive = new THREE.Color('#4a3720'); canvasMat.emissiveMap = t; canvasMat.emissiveIntensity = 0.8; canvasMat.color = new THREE.Color('#ffffff'); canvasMat.needsUpdate = true; session?.invalidate(); }, undefined, function(){});
           const art = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 2.25), canvasMat);
-          art.rotation.y = side*Math.PI/2; art.position.set(side*(w/2 - 0.22), h/2, fz); group.add(art);
+          art.rotation.y = -side*Math.PI/2; art.position.set(side*(w/2 - 0.22), h/2, fz); group.add(art);
           // a cheap emissive "picture light" bar above the frame (reads as a wash, costs nothing)
           const pin = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 1.6), glowMat('#ffe2ad', 1.8));
           pin.position.set(side*(w/2 - 0.4), h/2 + 1.35, fz); group.add(pin);
@@ -370,12 +392,12 @@
         const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.65, 1.1, 28), plaster('#241c14'));
         ped.position.set(0, 0.55, z - SEG/2); group.add(ped);
         let obj;
-        if (s === 2) obj = new THREE.Mesh(new THREE.TorusKnotGeometry(0.42, 0.13, 160, 20), brass);
+        if (s === 2) obj = new THREE.Mesh(new THREE.TorusKnotGeometry(0.42, 0.13, isMobile ? 72 : 120, 16), brass);
         else if (s === 3) obj = new THREE.Mesh(new THREE.IcosahedronGeometry(0.5, 0), new THREE.MeshStandardMaterial({ color:'#efe3cc', roughness:0.32, metalness:0.3, envMapIntensity:1.1 }));
         else obj = new THREE.Mesh(new THREE.DodecahedronGeometry(0.6, 0), brass);
         obj.position.set(0, 1.5, z - SEG/2);
         obj.userData.spin = true; group.add(obj); spinners.push(obj);
-        const halo = new THREE.Mesh(new THREE.CircleGeometry(1.5, 40), glowMat('#ffcf94', 0.5));
+        const halo = new THREE.Mesh(new THREE.CircleGeometry(1.5, 40), new THREE.MeshBasicMaterial({color:'#e5ba75',map:poolTexture(),transparent:true,opacity:.25,depthWrite:false}));
         halo.rotation.x = -Math.PI/2; halo.position.set(0, 0.02, z - SEG/2); group.add(halo);
       }
 
@@ -423,7 +445,7 @@
 
   function buildPath(){
     const pts = [
-      new THREE.Vector3( 0.0, 1.7,   6),
+      new THREE.Vector3( 0.0, 1.7,  -2),
       new THREE.Vector3( 0.8, 1.7,  -8),
       new THREE.Vector3(-0.9, 1.7, -22),
       new THREE.Vector3( 0.6, 1.7, -36),
@@ -447,12 +469,10 @@
   }
 
   let spinT = 0;
-  function loop(){
-    raf = requestAnimationFrame(loop);
-    if (!running) return;
-    progress += (target - progress) * 0.07;
-    tmx += (mx - tmx) * 0.05; tmy += (my - tmy) * 0.05;
-    spinT += 0.01;
+  function loop({dt,time,reduced,paused}){
+    if (!reduced) progress += (target - progress) * (paused ? 1 : 1-Math.exp(-4.5*dt));
+    tmx += (mx - tmx) * (1-Math.exp(-3*dt)); tmy += (my - tmy) * (1-Math.exp(-3*dt));
+    spinT = time * .6;
     for (const o of spinners) o.rotation.y = spinT + o.position.z;
     if (dust){ // slow vertical/lateral drift
       const arr = dust.geometry.attributes.position.array, base = dust.geometry.userData.base, sd = dust.geometry.userData.seed;
@@ -465,11 +485,9 @@
     placeCamera(progress);
     renderer.render(scene, camera);
   }
-  function updateRun(){ const vis = document.visibilityState === 'visible' && onScreen; if (reduce){ running = false; return; } if (vis && !running){ running = true; if (!raf) loop(); } else if (!vis) running = false; }
-  function onResize(){ if (!renderer) return; camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); if (reduce){ placeCamera(progress); renderer.render(scene, camera); } }
-  function onPointer(e){ mx = (e.clientX/innerWidth)*2 - 1; my = -((e.clientY/innerHeight)*2 - 1); }
-  function onLost(e){ e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
-  function onRestored(){ try { init(); } catch(err){ document.body.classList.add('no-webgl'); } }
+  function onResize(){ if (!renderer) return; camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);  }
+  function onPointer(e){ if(reduce) return; mx = (e.clientX/innerWidth)*2 - 1; my = -((e.clientY/innerHeight)*2 - 1); }
+
 
   /* ── scroll → camera progress + active chapter ── */
   function docProgress(){ const max = document.body.scrollHeight - innerHeight; return max <= 0 ? 0 : Math.min(1, Math.max(0, scrollY / max)); }
@@ -483,9 +501,9 @@
       const cue = document.querySelector('.scroll-cue'); if (cue) cue.style.opacity = target > 0.04 ? '0' : '1';
       // active chapter = nearest beat
       const cur = Math.round(target * (BEATS - 1));
-      chapBtns.forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.goto,10) === cur); });
+      chapBtns.forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.goto,10) === cur); b.setAttribute('aria-current', parseInt(b.dataset.goto,10) === cur ? 'step' : 'false'); });
       ticking = false;
-      if (reduce){ progress = target; placeCamera(progress); if (renderer) renderer.render(scene, camera); }
+      session?.invalidate();
     });
   }, { passive: true });
 
@@ -495,15 +513,13 @@
     entries.forEach(function(en){
       const words = en.target.querySelectorAll('.wd > span');
       const others = en.target.querySelectorAll('.lede, .eyebrow, .stats, .chips, .go');
-      if (en.isIntersecting && en.intersectionRatio > 0.55){
+      if (en.isIntersecting){
         words.forEach(function(w,i){ w.style.transition = 'transform 0.9s ' + (i*0.05) + 's var(--ease-reveal)'; w.style.transform = 'translateY(0)'; });
         others.forEach(function(o,i){ o.style.transition = 'opacity 0.8s ' + (0.1 + i*0.07) + 's var(--ease-reveal), transform 0.8s ' + (0.1 + i*0.07) + 's var(--ease-reveal)'; o.style.opacity = '1'; o.style.transform = 'none'; });
-      } else {
-        words.forEach(function(w){ w.style.transition = 'transform 0.5s var(--ease-reveal)'; w.style.transform = 'translateY(110%)'; });
-        others.forEach(function(o){ o.style.transition = 'opacity 0.4s, transform 0.4s'; o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
+
       }
     });
-  }, { threshold: [0, 0.55, 0.9] });
+  }, { threshold: .12 });
 
   if (!reduce){
     beats.forEach(function(b){

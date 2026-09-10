@@ -116,7 +116,7 @@ openclaw skills install cinematic-scroll
 
 **Or install the full repository:**
 ```bash
-openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v2.7.1
+openclaw skills install git:MustBeSimo/cinematic-scroll-skill@v2.7.5
 ```
 
 **Verify installation:**
@@ -146,7 +146,7 @@ skillspector scan skills/cinematic-scroll --no-llm
 # 3. authenticate (GitHub account ≥ 1 week old) and publish
 clawhub login
 clawhub skill publish skills/cinematic-scroll --slug cinematic-scroll \
-  --name "Cinematic Scroll" --version <X.Y.Z>
+  --name "Web Design Studio" --version <X.Y.Z>
 
 # preview what a sync would do without uploading
 clawhub sync --dry-run

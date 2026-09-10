@@ -3,6 +3,20 @@
 Use a real-time renderer only when viewpoint, lighting, depth, material response, or
 direct manipulation carries meaning that a still image or short video cannot.
 
+## Match the mechanism to the subject
+
+- **A place:** travel between legible camera stops. Use thresholds, light and
+  changes in scale to orient the visitor; keep the camera clear of walls.
+- **An object:** hold a useful silhouette, then change viewpoint or expose layers
+  to explain construction. Keep nearby text outside the silhouette.
+- **A material:** change roughness, transmission or light with a bounded control.
+  The two ends should produce visibly different scene states, including paused.
+- **A process:** connect a parameter such as density to both the simulation and its
+  visible consequence. A changing label alone is not a working interaction.
+
+Choose the mechanism before adapting an example's styling. A museum route need
+not inherit brass walls; a product study need not become a floating chrome orb.
+
 ## Scene contract
 
 A complete scene has:

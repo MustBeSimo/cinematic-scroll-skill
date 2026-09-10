@@ -1,7 +1,16 @@
 {
   "name": "cinematic-scroll",
-  "version": "2.7.1",
-  "description": "Build cinematic scroll-driven, 3D-tilt, parallax, and environment-morphing websites — pinned chapter reveals, hero parallax, depth-image figures, hover-tilt cards, release/launch pages, and editorial microsites. Single self-contained scroll sections (Mode A) or full Shopify-Editions-style Next.js release pages with optional AI-generated visuals via the fal.ai remote API (Mode B — requires your own fal.ai key; makes outbound API calls to fal.ai servers). A cinematic web production studio in an Agent Skill: an optional 5-phase pipeline (Cinematic Audit → Motion Storyboard → Technical Spec → Build → Polish) with taste guardrails, 12 scroll patterns, 11 visual systems, a DTCG design-token contract (design.md + tokens/), a scroll-choreography.json schema, and a 4-dimension audit mode (agent-driven analysis using the agent's browser/fetch access — not a standalone binary). WebXR/AR sessions are user-initiated (feature-gated Enter VR/AR that only starts on an explicit user action), and 3D GLB generation is provided by the Mode B Next.js template (templates/nextjs/scripts/generate-flagship-assets.mjs, run with your own fal.ai key) — neither runs unless the user triggers it. Built with React, Next.js, GSAP, Lenis, fal.ai.",
+  "version": "2.7.6",
+  "interactionRuntime": {
+    "license": "MIT",
+    "reference": "references/interaction-runtime.md",
+    "source": "runtime/",
+    "textTreatments": 6,
+    "shaderFamilies": 4,
+    "quality": "adaptive",
+    "webgpu": "experimental-separate-preview"
+  },
+  "description": "Web Design Studio is an Agent Skill for distinctive websites, interactive 3D and motion. It builds standalone HTML or Next.js experiences with deliberate art direction, scroll choreography, parallax, WebGL/WebXR scenes, responsive fallbacks, design tokens, verification tools and an optional five-phase production workflow. The established cinematic-scroll identifier remains the install and compatibility key.",
   "author": {
     "name": "Simone Leonelli",
     "email": "simone@w230.net"
@@ -87,16 +96,32 @@
     "env"
   ],
   "security": {
-    "note": "All sensitive capabilities are optional and user-initiated. FAL_KEY is a billable secret — store it in a gitignored .env.local or a secret manager, never in source or version control. Audit mode uses the agent's own browser/fetch access to analyze a user-supplied URL (not a local headless binary); the request may trigger analytics or side effects on the target — only audit sites you own or are authorized to test. Mode A output pages load GSAP + ScrollTrigger and three.js from cdn.jsdelivr.net, the three.js Draco decoder and @google/model-viewer from unpkg.com, and Google Fonts from fonts.googleapis.com / fonts.gstatic.com (SRI-pinned where the format allows — ES-module import maps cannot carry SRI) — self-host these if your deployment policy requires it. See manifest.md → Security & Privacy and audit-mode.md.",
+    "note": "All sensitive capabilities are optional and user-initiated. FAL_KEY is a billable secret \u2014 store it in a gitignored .env.local or a secret manager, never in source or version control. Audit mode uses the agent's own browser/fetch access to analyze a user-supplied URL (not a local headless binary); the request may trigger analytics or side effects on the target \u2014 only audit sites you own or are authorized to test. Mode A output pages load GSAP + ScrollTrigger and three.js from cdn.jsdelivr.net, the three.js Draco decoder and @google/model-viewer from unpkg.com, and Google Fonts from fonts.googleapis.com / fonts.gstatic.com (SRI-pinned where the format allows \u2014 ES-module import maps cannot carry SRI) \u2014 self-host these if your deployment policy requires it. See manifest.md \u2192 Security & Privacy and audit-mode.md.",
     "secrets": [
       "FAL_KEY",
       "GENERATE_API_SECRET"
     ],
     "thirdPartyNetworkCalls": [
-      {"when": "Optional TasteHQ brand analysis and verification", "destination": "www.tastehq.w230.net/api/query and /api/score (or explicitly configured compatible service)", "trigger": "in-scope brand matching or a required project taste contract; sends supplied brief/URLs/grammar; no key required by the adapter, no background memory"},
-      {"when": "Mode B image/asset generation", "destination": "fal.ai API", "trigger": "user-initiated, requires FAL_KEY"},
-      {"when": "Audit mode", "destination": "user-supplied URL", "trigger": "user-initiated, explicit confirmation required. Learn mode uses this same browser/fetch access to observe user-authorized URLs; no additional network exception is introduced."},
-      {"when": "Mode A output pages", "destination": "cdn.jsdelivr.net (GSAP + ScrollTrigger, three.js), unpkg.com (three.js Draco decoder, @google/model-viewer), fonts.googleapis.com + fonts.gstatic.com (Google Fonts)", "trigger": "loaded by the generated HTML when opened in a browser — self-host to avoid"}
+      {
+        "when": "Optional TasteHQ brand analysis and verification",
+        "destination": "www.tastehq.w230.net/api/query and /api/score (or explicitly configured compatible service)",
+        "trigger": "in-scope brand matching or a required project taste contract; sends supplied brief/URLs/grammar; no key required by the adapter, no background memory"
+      },
+      {
+        "when": "Mode B image/asset generation",
+        "destination": "fal.ai API",
+        "trigger": "user-initiated, requires FAL_KEY"
+      },
+      {
+        "when": "Audit mode",
+        "destination": "user-supplied URL",
+        "trigger": "user-initiated, explicit confirmation required. Learn mode uses this same browser/fetch access to observe user-authorized URLs; no additional network exception is introduced."
+      },
+      {
+        "when": "Mode A output pages",
+        "destination": "cdn.jsdelivr.net (GSAP + ScrollTrigger, three.js), unpkg.com (three.js Draco decoder, @google/model-viewer), fonts.googleapis.com + fonts.gstatic.com (Google Fonts)",
+        "trigger": "loaded by the generated HTML when opened in a browser \u2014 self-host to avoid"
+      }
     ],
     "disclosure": "manifest.md#security--privacy"
   },

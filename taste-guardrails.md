@@ -3,9 +3,9 @@
 > The difference between slop and craft is anti-convergence.
 > This skill refuses to produce generic parallax.
 
-These rules are non-negotiable. They exist because every broken scroll site violates at least three of them. An agent skill that does not enforce taste produces tasteless output — regardless of how good the prompt is.
+Use these craft references alongside the canonical `SKILL.md`. User direction, project brand contracts, accessibility, and lifecycle requirements take precedence over aesthetic suggestions. Timing, layer counts, and visual variation are starting points to test, not universal acceptance gates.
 
-> **A flat, motionless mobile page is itself a failure mode.** The whole point of this skill is cinematic motion on *every* device, not just desktop. Mobile gets touch-safe, compositor-only, JS-driven motion — scroll-coupled image parallax + scroll-linked entrance reveals (`references/mobile-motion.md`). The banned items below (3D tilt on touch, filter animation, scroll-jacking) constrain *which* motion mobile uses; they never license a dead page. The single exception is `prefers-reduced-motion: reduce` (§1.9), where everything goes static.
+> **Mobile is a complete composition.** Use touch-safe motion when it helps the story and fits the brief. Natural flow and static imagery are valid choices. Reduced motion removes continuous and scroll-driven effects while preserving content and actions.
 
 ---
 
@@ -17,13 +17,15 @@ The following patterns are prohibited in all generated output. No exceptions, no
 **Why:** Filters force a full paint-composite cycle on every frame. On mid-tier mobile GPUs this drops you to 20-30fps instantly. The browser cannot cache filtered layers the same way it caches transform layers.
 **Replacement:** Use crossfades between pre-blurred image assets, or fake depth with opacity + scale layering. If you need a rack-focus effect, crossfade two stacked image layers at different scales — never animate the filter itself.
 
-### 1.2 Never scroll-jack content shorter than 800px
-**Why:** Scroll-jacking (hijacking native scroll behavior for pinned sections) is a contract with the user: you are asking them to surrender control in exchange for a curated experience. If the payoff is less than one viewport tall, the contract is broken. The user feels tricked, not delighted.
-**Replacement:** Let short content flow naturally. Reserve pinning for sections with genuine narrative or visual payoff — title choreography, multi-layer depth reveals, or 3D camera moves.
+### 1.2 Preserve native scrolling
+Do not intercept wheel or touch input to force a sequence. Sticky or pinned staging
+can coexist with native scrolling; use it only when holding the scene helps explain
+the subject. Content height alone does not determine whether a pin is useful.
 
-### 1.3 Never pin more than 3 consecutive sections without a "release viewport"
-**Why:** Three pinned sections in a row creates scroll fatigue. The user loses their sense of progress. Page position stops correlating with scroll position, and the cognitive dissonance builds until they rage-quit.
-**Replacement:** After every 3 pinned sections, insert at least 80vh of free-scrolling "breathing room" — a content section, a footer transition, or a clean chapter break. Let the user feel their scroll wheel working again.
+### 1.3 Release when the beat is complete
+Long sequences of pins can obscure progress. Use natural-flow content between major
+reveals where it helps orientation; do not add empty viewport spacers to meet a quota.
+Test fast scrolling, anchors, and reaching the closing action.
 
 ### 1.4 Never apply parallax to text content below 18px
 **Why:** Small text in motion destroys readability. The eye cannot track parallax-shifted microcopy. It becomes visual noise, not information.
@@ -37,25 +39,29 @@ The following patterns are prohibited in all generated output. No exceptions, no
 **Why:** These properties trigger layout recalculation (the "layout thrash"). The browser must recompute the position of every affected element, then paint, then composite. This is a 3-4ms penalty per frame on desktop, 10-15ms on mobile. At 60fps you have 16.67ms total.
 **Replacement:** Use `transform: scale()` for size changes, `transform: translate()` for position changes. If you need content to reflow, toggle a CSS class and let a `transition` handle it — never drive it from a scroll scrubber.
 
-### 1.7 Never use more than 7 depth layers per chapter
-**Why:** Each parallax layer is a composited layer in the GPU. Seven layers at high resolution consume significant VRAM. Beyond seven, you risk memory pressure that causes the browser to drop layers back to CPU rasterization — catastrophically slow.
-**Replacement:** Be selective. 3-4 layers is often enough if the content is strong. Use opacity and scale to fake additional depth without extra layers. The best parallax feels deep with 4 layers; the worst parallax feels flat with 12.
+### 1.7 Budget actual layer cost
+Use only layers that carry distinct information. Layer count alone does not predict
+GPU memory: dimensions, pixel ratio, textures, and render targets matter. Measure
+substantial scenes and simplify when the target device cannot sustain them.
 
 ### 1.8 Never attach a scroll listener without rAF throttling or a scrub proxy
 **Why:** Raw `scroll` events fire at irregular intervals and can fire multiple times per frame. Reading `scrollY` and updating the DOM synchronously creates inconsistent motion and missed frames.
 **Replacement:** Use Lenis (`requestAnimationFrame`-based smooth scroll), GSAP ScrollTrigger (which internally uses rAF), or a hand-rolled rAF loop that reads scroll position once per frame. Never update layout from inside a raw `addEventListener('scroll')` callback.
 
-### 1.9 Never apply 3D rotation (`rotateX`, `rotateY`, `perspective` tilt) on touch devices or when `prefers-reduced-motion` is active
-**Why:** 3D tilt on touch devices causes motion sickness for a non-trivial percentage of users (vestibular disorders). It also conflicts with native touch gestures — the browser may interpret rotateY as a swipe intent.
-**Replacement:** On touch devices, drop the 3D tilt — but keep the chapter alive with touch-safe, scroll-coupled motion: a lerped image parallax plus scroll-linked entrance reveals (transform + opacity only), JS-driven. A flat, motionless mobile page is a failure mode for this skill — see `references/mobile-motion.md`. This is distinct from `prefers-reduced-motion: reduce`, which is the *only* state where all scroll-driven motion is disabled and static compositions are shown. See the reduced-motion fallback spec in `SKILL.md`.
+### 1.9 Gate pointer tilt and respect motion preferences
+Pointer tilt requires hover and a fine pointer. Narrow/coarse-pointer layouts use a
+complete flow composition with optional modest motion. Reduced motion disables
+parallax, pinning, smoothing, autoplay, and continuous loops. A user-requested static
+page is also valid. See `references/mobile-motion.md` and the canonical `SKILL.md`.
 
 ### 1.10 Never auto-play scroll-driven motion without user interaction
 **Why:** Auto-scrolling or auto-playing pinned sections (via `setInterval`, `ScrollTrigger.to`, or similar) violates user agency. It also breaks screen readers and keyboard navigation.
 **Replacement:** All motion must be scroll-driven or user-triggered. If you want a "playthrough" experience, provide a prominent "Play intro" button that calls `gsap.to(window, { scrollTo: ... })` — once, on user request.
 
-### 1.11 Never use the same easing curve for every animation in a chapter
-**Why:** Uniform easing makes motion feel mechanical — like a PowerPoint transition, not cinema. Real movement has variation: anticipation, overshoot, decay, snap.
-**Replacement:** Vary easings by role. Hero entrances get `power3.out` (dramatic deceleration). Exits get `power2.in` (clean acceleration away). Micro-interactions get `back.out(1.4)` (playful overshoot). Chapter transitions get `power4.inOut` (weighty, deliberate).
+### 1.11 Choose easing by purpose
+Direct scroll scrubbing uses linear progress. Time-based entrances and controls may
+use different curves when their roles warrant it; related motions can share a curve.
+Avoid stacking smoothing systems that make the scene trail the visitor's input.
 
 ### 1.12 Never ship dead code — orphaned CSS selectors or unreachable JS branches
 **Why:** Dead rules and dead branches are dishonest bloat: a `.fig`/`.selector` class no element uses, or an `if (el.hasAttribute('data-tilt'))` branch when nothing carries `data-tilt`, reads as a feature but does nothing — misleading the next reader and inflating the file. (A real QA audit found exactly this shipping in a page.)
@@ -88,33 +94,21 @@ Web scroll is not "web design." It is **digital cinematography**. Every scroll b
 
 ---
 
-## 3. Pacing Rules
+## 3. Pacing decisions
 
-Timing is not a matter of taste. These are working defaults informed by how scroll motion reads perceptually — strong starting points to adjust with intent, not arbitrary numbers.
+Scroll distance does not prescribe reading time: visitors control their own speed.
+Choose pin distance from the transformations and readable holds the content needs.
+There is no universal minimum pin length, chapter count, or release-space quota.
 
-### 3.1 Default rhythm
-**1.2s of scroll distance per 100vh of content.** If a section is 200vh tall, the user should spend approximately 2.4 seconds scrolling through it at normal speed. This is the baseline — adjust ±20% for dramatic effect, but never violate it without explicit intent.
+For each beat, compose start → transformation → readable hold → exit. A useful
+first experiment assigns 0–20% to establishing the scene, 20–55% to transformation,
+55–80% to the hold, and the remainder to release. Adjust after inspecting midpoints,
+fast and slow scroll, reverse scroll, and narrow-screen reading order.
 
-### 3.2 Pin duration minimum
-**150vh.** Anything shorter and the pin feels like a glitch — the user hasn't mentally settled into the fixed frame before it releases. The content hasn't "landed."
-
-### 3.3 Pin duration maximum
-**400vh.** Beyond this, users think the page is broken. They try to scroll harder, check their mouse, assume the tab froze. If your content genuinely needs more than 400vh, split it into two pinned sections with a 50vh breathing room between.
-
-### 3.4 Chapter transition breathing room
-**Minimum 80vh of free-scroll space between pinned chapters.** This is the "cut" between scenes. Without it, chapters bleed into each other and the narrative structure collapses.
-
-### 3.5 Title reveal duration
-**30-40% of the total pin scroll range.** If a section is pinned for 200vh, the title choreography should occupy 60-80vh of that range. The title must finish revealing before the 70% mark of the pin — the final 30% is for the payoff, the "so what" moment.
-
-### 3.6 Stagger offset
-**5-8% per element, maximum 5 elements before overlap.** If you stagger more than 5 elements, the early ones finish before the late ones start — the user perceives it as random, not choreographed. For 6+ elements, group them into visual clusters and stagger the clusters instead.
-
-### 3.7 Scroll snap dead zone
-**Never snap within 10vh of a pin start or end.** The snap point must sit comfortably inside the pinned range, not at the boundary. Boundary snaps feel like the scroll is fighting the user.
-
-### 3.8 Motion density limit
-**No more than 3 simultaneous motion types in any 50vh window.** If you have parallax, title stagger, and a color morph, you cannot also have 3D tilt and a progress HUD animation in the same viewport. The eye cannot process it. Pick the 3 most important motions and let the others rest.
+Keep body copy stable. Group staggered elements by meaning; avoid delaying the last
+word until the visitor has already left. Prefer native free flow between major
+reveals. Snap is optional; if used, check interruption, keyboard navigation, anchors,
+and pin boundaries. Remove overlapping effects when they compete for attention.
 
 ---
 
@@ -122,8 +116,8 @@ Timing is not a matter of taste. These are working defaults informed by how scro
 
 These rules exist to prevent the output from looking like every other scroll-driven website on Awwwards. Convergence is the enemy. Generic parallax, default easings, and center-aligned everything are symptoms of the same disease: lack of intention.
 
-### 4.1 Never use default easing
-`ease`, `ease-in-out`, and `linear` are banned. Every animation must specify a custom `cubic-bezier` or a named GSAP easing with intentional character. Default easing signals default thinking.
+### 4.1 Match easing to the clock
+Use linear progress (`ease: "none"` in GSAP) for directly scrubbed position changes. For time-based entrances and interactions, choose easing to fit the brand. These curves are options, not required defaults:
 - **Hero entrances:** `cubic-bezier(0.16, 1, 0.3, 1)` (dramatic deceleration — the "reveal" feel)
 - **Chapter exits:** `cubic-bezier(0.7, 0, 0.84, 0)` (clean acceleration — the "handoff" feel)
 - **Micro-interactions:** `cubic-bezier(0.34, 1.56, 0.64, 1)` (overshoot — the "playful" feel)
@@ -132,26 +126,24 @@ These rules exist to prevent the output from looking like every other scroll-dri
 ### 4.2 Never center-align all text
 Centered text is the first sign of a template. Use intentional asymmetry: left-align body copy, center only display titles (and not all of them), and occasionally right-align pull quotes or metadata. Asymmetry creates visual tension. Tension creates interest.
 
-### 4.3 Never repeat a depth multiplier
-If Layer 1 moves at 0.2x scroll rate and Layer 2 at 0.5x, Layer 3 cannot be 0.8x followed by Layer 4 at 1.0x in the next chapter. Vary the spacing: 0.15x, 0.4x, 0.7x, 1.0x in one chapter; 0.1x, 0.35x, 0.6x, 0.9x in the next. Repetition of depth ratios creates a rhythmic monotony the user cannot name but will feel.
+### 4.3 Keep depth coherent
+Choose depth relationships that explain the scene. Reuse them for related content;
+change them when the viewpoint or subject changes. Do not vary numbers merely to
+make adjacent chapters different.
 
-### 4.4 Never repeat a transition type between adjacent chapters
-If Chapter 1 uses a whip-pan exit, Chapter 2 cannot use a whip-pan entry. Alternate transition families: fade → slide → scale → rotate. Adjacent chapters using the same transition family feel like a single long chapter that forgot to end.
+### 4.4 Give transitions a narrative purpose
+Repeat a transition when it establishes continuity. Change it when the story makes
+a meaningful turn. A sequence of unrelated effects can weaken an otherwise clear arc.
 
-### 4.5 Always vary title treatment between chapters
-Each chapter must have a distinct title reveal style. Rotate through this vocabulary:
-- **Mask reveal:** `clip-path: inset()` animates to reveal text (dramatic, editorial)
-- **Word stagger:** Each word fades + translates in with 0.08s offset (narrative, literary)
-- **Letter-spacing scrub:** `letter-spacing` expands from `-0.05em` to `0.02em` tied to scroll (refined, luxury)
-- **Scale-down entrance:** Title starts at 1.3x scale, settles to 1.0x with `power2.out` (impactful, bold)
-- **Blur crossfade:** Two title copies crossfade — one sharp, one pre-blurred, swap opacity (soft, atmospheric)
-- **Typewriter reveal:** Characters appear left-to-right with scroll progress (technical, precise)
-- **Split line rise:** Each line of a multi-line title rises from `translateY(40px)` with stagger (editorial, magazine)
+### 4.5 Treat titles as a system
+A consistent mask reveal, word stagger, or split-line rise can establish identity.
+Reserve a different treatment for a meaningful emphasis. Keep semantic text readable
+without splitting or animation, and avoid layout-heavy text scrubbing on hot paths.
 
-Never use the same treatment twice in a row. Never.
-
-### 4.6 Never use the same palette temperature across all chapters
-A site that is warm in Chapter 1, warm in Chapter 2, warm in Chapter 3 feels like a single photograph stretched too thin. Alternate temperature: warm → cool → neutral → warm. The contrast between chapters creates progression. Progression creates narrative.
+### 4.6 Preserve the brand palette
+A single temperature can sustain an entire story. Shift atmosphere only within the
+user's palette and required axes; do not force warm/cool alternation or add colors
+to manufacture variety.
 
 ### 4.7 Depth layers must earn their place
 Every parallax layer must carry distinct visual information. If two layers are visually similar enough that removing one does not change the experience, merge them. Empty parallax is decoration masquerading as design.
@@ -205,15 +197,14 @@ These apply when a build uses real 3D (Three.js / WebGL / `<model-viewer>` / Web
 
 ## 6. Enforcement
 
-These guardrails are referenced in `SKILL.md` and are part of the agent's system prompt. When generating scroll-driven sections, the skill must:
+Use the canonical `SKILL.md` verification workflow. Check readability, brand fit,
+responsive/static compositions, property ownership, lifecycle cleanup, and the
+actual browser experience. Record relevant timing decisions in existing project
+notes; a separate manifest is only needed when the implementation uses one.
 
-1. Check every output against the Banned Patterns list before delivering.
-2. Name the cinematic technique being used (from the Cinematic Vocabulary table) in the code comments. (A developer code-comment convention — it does not constrain the page's user-facing language, which follows the user's request.)
-3. Declare the pin duration, stagger offset, and easing curves in the section manifest.
-4. Verify that no two adjacent chapters share a transition type or title treatment.
-5. Include a reduced-motion fallback for every scroll-driven effect.
-
-**Violating these rules is a bug, not a style choice.**
+Do not fail a page for repeating a coherent title treatment, using linear scrubbing,
+or omitting decorative motion. Do not pass a page solely because it matches these
+suggestions or earns a static heuristic score.
 
 ## Learned additions
 

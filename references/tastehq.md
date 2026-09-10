@@ -47,6 +47,13 @@ gate. Exit 2: unavailable, malformed, unresolved, or incomplete evidence. Inspec
 the report's `response.fixes` for failing axes and concrete changes; do not claim
 success on HTTP failure or substitute a local doctor score for brand fidelity.
 
+Compare extraction findings with browser evidence before changing a design. CSS
+variables, font loading and system color preferences can yield different static
+and rendered observations. Check computed heading/body families, live light/dark
+switches, and narrow-screen geometry; fix actual mismatches without altering the
+target or adding declarations solely to influence the score. Preserve a failing
+external result even when local evidence contradicts some of its findings.
+
 The remote judge must be able to reach the preview URL. It cannot inspect your
 `localhost` or `file://`. Keep local browser evidence and mark required remote
 verification pending if there is no authorized reachable deployment. Never create

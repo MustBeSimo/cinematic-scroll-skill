@@ -1,0 +1,24 @@
+/* A fixed link hit area, then separate scroll and proximity visual layers. */
+.gallery-link{display:block;color:inherit;text-decoration:none;position:relative;isolation:isolate}
+.flagship-card>.gallery-link,.card>.gallery-link{position:absolute;inset:0}
+.flagship-card::after,.card::after{pointer-events:none}
+.gallery-media{position:relative;overflow:hidden;aspect-ratio:16/10;transform-origin:center}
+.gallery-depth{position:relative;width:100%;height:100%;transform-origin:center;overflow:hidden}
+.flagship-card .gallery-media,.card .gallery-media{position:absolute;inset:-12px;aspect-ratio:auto}
+.gallery-media img,.gallery-media video,.hero-media video{display:block;width:100%;height:100%;object-fit:cover}
+.gallery-media img{position:absolute;inset:0;transform:none!important;filter:none!important}
+.gallery-media video{position:absolute;inset:0;opacity:0;transition:opacity .3s ease;pointer-events:none}
+.gallery-media video.is-playing{opacity:1}
+.hero-media .gallery-depth{position:absolute;inset:0}
+.hero-media video{object-fit:contain}
+.flagship-copy,.card .copy{pointer-events:none}
+.gallery-cta{display:inline-flex;min-height:43px;align-items:center;text-decoration:underline;text-underline-offset:4px}
+.card .gallery-cta{border-radius:999px;padding:.68rem 1rem;color:#1e2326;background:#f4efe6;font-size:.78rem}
+.gallery-link:focus-visible,.hero-media:focus-visible{outline:2px solid var(--accent,var(--blue,#8f6a38));outline-offset:4px}
+.world-card .world-caption{position:relative;background:var(--paper);z-index:2}
+.world-card>.gallery-link{overflow:hidden}
+.flagship-card .gallery-link::after,.card .gallery-link::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 24%,rgba(5,8,12,.9));z-index:0}
+.flagship-card::after,.card::after{display:none}
+.flagship-copy,.card .copy{z-index:2}
+@media(prefers-reduced-motion:reduce){.gallery-media,.gallery-depth,.section-head,.hero-copy,.end,.intro{transform:none!important;opacity:1!important}.gallery-media video{transition:none}}
+.hero-media{display:block;width:100%}

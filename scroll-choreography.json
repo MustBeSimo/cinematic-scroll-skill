@@ -3,7 +3,7 @@
   "$id": "cinematic-scroll-choreography",
   "title": "Cinematic Scroll Choreography",
   "description": "Declarative scroll animation choreography that compiles to GSAP ScrollTrigger. Maps scroll position to cinematic camera moves through a typed, validatable schema.",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "object",
   "required": [
     "metadata",
@@ -12,6 +12,23 @@
   ],
   "additionalProperties": false,
   "definitions": {
+    "SignalBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selector", "input", "output"],
+      "description": "Shared runtime signal mapped to a CSS custom property consumed by transform/opacity. Static mode restores staticValue (or from).",
+      "properties": {
+        "selector": {"type": "string", "minLength": 1},
+        "input": {"enum": ["scroll-progress", "scroll-velocity", "pointer-x", "pointer-y", "proximity"]},
+        "output": {"type": "string", "pattern": "^--cinematic-[a-z0-9-]+$"},
+        "from": {"type": "number", "default": 0},
+        "to": {"type": "number", "default": 1},
+        "staticValue": {"type": "number"},
+        "unit": {"enum": ["", "px", "deg", "%"]},
+        "range": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2, "default": [0, 1]},
+        "radius": {"type": "number", "minimum": 0, "default": 120}
+      }
+    },
     "Metadata": {
       "type": "object",
       "required": [
@@ -28,7 +45,7 @@
         "version": {
           "type": "string",
           "pattern": "^\\d+\\.\\d+\\.\\d+$",
-          "description": "Schema version this doc conforms to"
+          "description": "Use 3.0.0 for new documents. The compiler accepts v2 with deprecation and compositor-safe substitutions."
         },
         "targetDevice": {
           "type": "string",
@@ -41,8 +58,8 @@
         },
         "totalScrollRange": {
           "type": "integer",
-          "minimum": 500,
-          "maximum": 10000,
+          "minimum": 0,
+          "maximum": 100000,
           "description": "Total scroll height in vh units"
         },
         "author": {
@@ -91,8 +108,8 @@
         },
         "scrollSmoothing": {
           "type": "number",
-          "default": 0.5,
-          "minimum": 0.1,
+          "default": 0,
+          "minimum": 0,
           "maximum": 1.0,
           "description": "Lenis/GSAP lerp factor"
         },
@@ -119,9 +136,9 @@
         },
         "pinDuration": {
           "type": "integer",
-          "minimum": 150,
-          "maximum": 400,
-          "description": "Pin duration in vh. Range: 150-400 per taste-guardrails.md"
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Pin duration in vh, derived from content. Not a required chapter-length quota."
         },
         "pinSpacing": {
           "type": "boolean",
@@ -434,7 +451,7 @@
             "typewriterReveal",
             "splitLineRise"
           ],
-          "description": "From taste-guardrails.md. Each chapter MUST use a different type."
+          "description": "Choose the treatment the beat needs. letterSpacingScrub is v2 compatibility only; new work uses scaleDownEntrance."
         },
         "scrollRange": {
           "type": "object",
@@ -667,6 +684,10 @@
     }
   },
   "properties": {
+    "signalBindings": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/SignalBinding"}
+    },
     "metadata": {
       "$ref": "#/definitions/Metadata"
     },

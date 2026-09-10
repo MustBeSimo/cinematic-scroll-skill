@@ -127,7 +127,7 @@ When two tiers both satisfy the story, ship the lower one. "Could be 3D" is not 
 
 The pinning rule, stated explicitly:
 
-- **Vanilla Three.js: pin to an exact patch** (`0.160.0`) and load it from a versioned
+- **Vanilla Three.js: pin to an exact patch** (`0.185.0`) and load it from a versioned
   CDN URL via an import map. The URL *is* the lockfile.
 - **React stack: pin with a caret on the wrappers** (`^9.x`, `^10.x`, `^6.x`) but pin Three
   itself, and let the package manager's lockfile freeze the resolved tree. The caret is
@@ -139,18 +139,19 @@ The pinning rule, stated explicitly:
 
 | Package | Version | Stack | Notes |
 |---|---|---|---|
-| `three` | `0.160.0` | both | **exact**, no caret. The whole stack pivots on this. |
-| `@react-three/fiber` | `^9.0` | R3F | React renderer for Three. **v9 is the React 19 line** (v8 is React 18 — using v8 with React 19 fails to resolve). |
-| `@react-three/drei` | `^10.0` | R3F | Helpers: `ScrollControls`, `useScroll`, `Environment`, loaders. **v10 pairs with R3F v9** (v9 pairs with R3F v8). |
-| `@react-three/xr` | `^6.6` | R3F | v6 API: `createXRStore`, `<XR>`, `<XROrigin>` (NOT the old `<VRButton>`/`useXR` v5 shape). Peers `@react-three/fiber >=8`. |
-| `@google/model-viewer` | `3.4.0` | both | `<model-viewer>` web component for AR quick-look on phones. **Pinned exact:** 3.4 peers `three ^0.160`; 3.5 demands `three ^0.163` and would force a Three bump. |
+| `three` / `@types/three` | `0.185.0` | both | Exact; postprocessing 6.39.4 excludes 0.186. |
+| `@react-three/fiber` | `^9.7.0` | R3F | React 19 line; keep its resolved lockfile. |
+| `@react-three/drei` | `^10.7.8` | R3F | Helpers and PMREM environment; pairs with fiber9. |
+| `@react-three/postprocessing` | `^3.1.1` | R3F | Core override6.39.4; do not use with TSL preview. |
+| `@react-three/xr` | `^6.6.30` | R3F | createXRStore, XR store, XROrigin. |
+| Model Viewer | `3.4.0` | independent CDN | Existing AR component owns this separate web component; no duplicate npm peer dependency. |
 
 > **React 19 / Three coupling (the gotcha that bites first).** On a React 19 + Next 15
 > project, the 3D wrappers must be the React-19 majors — `@react-three/fiber@^9` +
 > `@react-three/drei@^10`. Using v8/v9 (the React-18 line) throws `ERESOLVE` on install.
-> Separately, `@google/model-viewer@3.5` raised its Three peer to `^0.163`; staying on
-> `three@0.160` means pinning model-viewer to `3.4.0` exactly. Both facts are enforced by
-> `templates/nextjs/package.json` and verified by `npm install && npm run build`.
+> Model Viewer's npm peer can constrain Three independently. The existing AR
+> component loads its own CDN-pinned web component, so it is not also installed
+> in the npm scene graph. Recheck peer ranges when changing either integration.
 
 > **`@react-three/xr` major-version warning.** v6 is a hard rewrite of v5. If a tutorial
 > shows `<VRButton />`, `<DefaultXRControllers />`, or `<XR>` without a `store` prop, it is
@@ -166,8 +167,8 @@ Three ships ES modules. Use an **import map** so `import { ... } from 'three'` a
 <script type="importmap">
 {
   "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    "three": "https://unpkg.com/three@0.185.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.185.0/examples/jsm/"
   }
 }
 </script>
@@ -187,7 +188,7 @@ Three ships ES modules. Use an **import map** so `import { ... } from 'three'` a
 
 - The `three/addons/` trailing-slash mapping is required — it lets every
   `three/addons/<path>` resolve under the same pinned version. **The version appears in
-  three places (three, addons, model-viewer); they must match.**
+  renderer paths (three and addons); they must match. Model Viewer has its own independent pin.**
 - `unpkg.com` and `cdn.jsdelivr.net` both serve these paths; pick one and keep it
   consistent (mixing CDNs duplicates Three in memory if the URLs differ).
 - For a production build, mirror these into the bundle and drop the import map — but the

@@ -1,0 +1,26 @@
+/* Opted into six studies only. The Aureus presentation remains independent. */
+:root { --study-accent:var(--accent-2,var(--cyan,#c5d8d3)); }
+.cs-flagship-nav { background:rgba(14,18,19,.94); border-color:rgba(235,240,237,.2); box-shadow:none; backdrop-filter:blur(12px); }
+.cs-flagship-nav__mark::before { background:var(--study-accent); box-shadow:none; }
+.cs-flagship-nav__next { background:transparent; color:#eef2ef; border:1px solid rgba(235,240,237,.3); text-decoration:underline; text-underline-offset:4px; }
+.cs-flagship-nav a:hover { filter:none; color:var(--study-accent); }
+.cs-scene-controls { color:#eef2ef; background:rgba(14,18,19,.94); border-color:rgba(235,240,237,.25); box-shadow:none; }
+.cs-scene-controls summary { text-decoration-color:var(--study-accent); }
+.cs-scene-controls input { accent-color:var(--study-accent); }
+.cs-scene-controls button { color:inherit; border-color:rgba(235,240,237,.3); }
+.cs-scene-controls button:disabled { opacity:.55; cursor:default; }
+.cs-scene-controls :focus-visible,.cs-flagship-nav :focus-visible { outline:2px solid var(--study-accent); outline-offset:4px; }
+.hud,#hud { top:76px; }
+.no-webgl .cs-scene-controls { display:none; }
+@media(max-width:600px) {
+ .cs-flagship-nav { max-width:calc(100vw - 24px); right:12px; bottom:12px; }
+ .cs-scene-controls { right:12px; bottom:74px; max-width:calc(100vw - 24px); }
+ .cs-flagship-nav__mark span { font-size:9px; letter-spacing:0; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .lede,.eyebrow,.stats,.chips,.go,.facet,.cut,.cta-title,.cta-cmd,.wd > span { opacity:1!important; transform:none!important; }
+}
+.cs-scene-controls button { background:rgba(235,240,237,.08); border:1px solid rgba(235,240,237,.25); border-radius:4px; padding:7px 9px; }
+.cs-scene-controls output { color:var(--study-accent); }
+.cs-flagship-nav__next:hover,.cs-flagship-nav__next:focus-visible { background:rgba(235,240,237,.12)!important; }
+@media(max-width:540px){.cs-flagship-nav__mark span {display:inline;} .cs-flagship-nav__count {display:none;} }

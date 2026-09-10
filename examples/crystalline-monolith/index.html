@@ -110,9 +110,9 @@
   .eyebrow::before { content: ""; width: clamp(24px,4vw,56px); height: 1px; background: currentColor; }
 
   /* Hero — monolith centred behind, type framing it left/right */
-  #hero { min-height: 100vh; justify-content: center; }
+  #hero { position:relative; min-height:100svh; display:flex; flex-direction:column; justify-content:center; padding:120px clamp(24px,7vw,120px); }
   .hero-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  .hero-title { font-size: clamp(3.6rem,15vw,16rem); font-weight: 900; line-height: 0.82; letter-spacing: -0.05em; }
+  .hero-title { font-size: clamp(3.2rem,8.6vw,8.8rem); font-weight: 900; line-height: 0.82; letter-spacing: -0.05em; }
   .hero-title .word { display: inline-block; overflow: hidden; vertical-align: bottom; }
   .hero-title .word > span { display: inline-block; will-change: transform; }
   .hero-sub { max-width: 38ch; margin-top: clamp(24px,3.4vh,40px); font-size: clamp(1.05rem,1.7vw,1.45rem); color: var(--fg-soft); }
@@ -157,7 +157,16 @@
     .hero-title .word > span, .reveal-line > span { transform: none !important; opacity: 1 !important; }
     .scroll-cue i { animation: none; }
   }
+  @media(max-width:768px){
+    #hero { justify-content:flex-end; min-height:100svh; padding:380px 24px 145px; }
+    .hero-title { font-size:clamp(2.9rem,12vw,4.7rem); }
+    .hero-sub { max-width:35ch; font-size:1.05rem; color:rgba(244,243,246,.85); }
+    .hero-grid { padding:20px 0; background:linear-gradient(transparent,rgba(5,8,9,.9)); }
+    .hero-meta { margin-top:24px; gap:24px; }
+    .scroll-cue {display:none;}
+  }
 </style>
+<link rel="stylesheet" href="../_study-shell.css">
 </head>
 <body>
   <aside class="cs-flagship-nav" aria-label="Real 3D flagship collection">
@@ -191,7 +200,7 @@
       <div class="hero-meta">
         <div>Material <b>Transmission</b></div>
         <div>Environment <b>Procedural</b></div>
-        <div>Stack <b>Tier B</b></div>
+        <div>Cut <b>Faceted</b></div>
       </div>
     </div>
     <div class="scroll-cue"><i></i><span>Rotate</span></div>
@@ -204,7 +213,7 @@
       <span class="reveal-line"><span>It does not leave</span></span>
       <span class="reveal-line"><span>the way it came.</span></span>
     </h2>
-    <p class="lede">A physical material with an index of refraction near <em>1.5</em> samples the framebuffer behind the mesh and bends it through the volume — so the type, the glow, the whole stage pours through the crystal and comes out the far side recoloured.</p>
+    <p class="lede">A physical material with an index of refraction near <em>1.5</em> samples the framebuffer behind the mesh and bends it through the volume — so the lit scene behind the glass reappears through its facets, shifted and recoloured.</p>
     <div class="cuts">
       <span class="cut">IOR 1.5</span><span class="cut">Thickness · absorption</span><span class="cut">Chromatic edge</span><span class="cut">Clearcoat sheen</span>
     </div>
@@ -259,9 +268,10 @@
 
 <script type="module">
   import * as THREE from 'three';
-  import { mountSceneControls } from '../_scene-controls.js';
+  import { mountSceneControls } from '../_study-controls.js';
+  import {createSceneSession} from '../_scene-session.js';
 
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const canvas = document.getElementById('stage-canvas');
 
@@ -270,7 +280,7 @@
     catch (e) { return false; }
   }
 
-  let renderer, scene, camera, crystal, baseGeo, raf = 0, running = false, onScreen = true;
+  let renderer, scene, camera, crystal, baseGeo, session;
   let shardGroup, key, rim, fill;   // orbiting glints + sweeping lights
   let composer = null;          // optional bloom
   let envRT = null, pmrem = null;
@@ -284,9 +294,9 @@
   } else {
     initThree().then(() => {
       mountSceneControls({ title: 'Study the surface', label: 'Frosted finish', min: 0.04, max: 0.8, step: 0.02, value: 0.04,
-        pause: paused => { driftPaused = paused; }, format: value => `${Math.round(value * 100)}%`, update: value => {
+        pause: paused => { driftPaused = paused; session?.setPaused(paused); }, format: value => `${Math.round(value * 100)}%`, update: value => {
           surfaceRoughness = value;
-          if (crystal && !renderer.getContext().isContextLost()) { crystal.material.roughness = value; renderFrame(); }
+          if (crystal && !renderer.getContext().isContextLost()) { crystal.material.roughness = value; session?.invalidate(); }
         } });
     }).catch((e) => { console.warn('Obsidian: init failed, using CSS gem', e); teardown(); document.body.classList.add('no-webgl'); });
   }
@@ -300,30 +310,18 @@
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color('#0a0a0c');
+    scene.background = new THREE.Color('#101718');
 
     camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 7);
 
-    // ── Procedural environment (reflections + the light the glass refracts) ──
-    try {
-      const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
-      pmrem = new THREE.PMREMGenerator(renderer);
-      const room = new RoomEnvironment();
-      envRT = pmrem.fromScene(room, 0.04);
-      scene.environment = envRT.texture;
-      room.dispose?.();
-    } catch (e) {
-      // Fallback environment: a tiny gradient cube so transmission still has something to bend.
-      const cube = makeGradientEnv();
-      scene.environment = cube;
-    }
+    await rebuildEnvironment();
 
     // coloured key + rim lights add chromatic life to the facets; they orbit in the
     // loop so reflections sweep continuously across the glass.
-    key  = new THREE.PointLight('#b9a0ff', 80, 50); key.position.set(5, 6, 6); scene.add(key);
+    key  = new THREE.PointLight('#e7e2cc', 80, 50); key.position.set(5, 6, 6); scene.add(key);
     rim  = new THREE.PointLight('#5ad2c0', 60, 50); rim.position.set(-6, -3, 4); scene.add(rim);
-    fill = new THREE.PointLight('#ff8fb0', 42, 50); fill.position.set(0, -6, -6); scene.add(fill);
+    fill = new THREE.PointLight('#b7c7dc', 32, 50); fill.position.set(0, -6, -6); scene.add(fill);
     scene.add(new THREE.AmbientLight('#20202a', 1.0));
 
     // ── The monolith: faceted refractive glass ──
@@ -337,11 +335,11 @@
       transmission: 1,
       thickness: 2.4,
       ior: 1.5,
-      attenuationColor: new THREE.Color('#b9a0ff'),
+      attenuationColor: new THREE.Color('#9ac8bc'),
       attenuationDistance: 3.2,
       clearcoat: 1,
       clearcoatRoughness: 0.08,
-      iridescence: 0.5,
+      iridescence: 0.18,
       iridescenceIOR: 1.4,
       flatShading: true,
       envMapIntensity: 1.4,
@@ -351,8 +349,8 @@
 
     // a faint inner core (emissive) so the center never reads dead-black
     const core = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(0.7, 0),
-      new THREE.MeshBasicMaterial({ color: '#6b5bd0' })
+      new THREE.IcosahedronGeometry(0.16, 0),
+      new THREE.MeshBasicMaterial({ color: '#bfd5d0' })
     );
     crystal.add(core);
 
@@ -360,14 +358,14 @@
     //    monolith. They catch the bloom and fill the frame with constant 3D motion. ──
     shardGroup = new THREE.Group();
     const shardGeo = new THREE.OctahedronGeometry(0.085, 0);   // one geo, shared
-    const palette = ['#b9a0ff', '#5ad2c0', '#ff8fb0', '#f4f3f6'];
+    const palette = ['#cddbd4', '#5ad2c0', '#d9bc80', '#f4f3f6'];
     // deterministic pseudo-random so resize/restore don't reshuffle the field
     let s = 9241;
     const rnd = () => { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; };
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < (isMobile ? 12 : 24); i++) {
       const col = palette[i % palette.length];
       const m = new THREE.Mesh(shardGeo, new THREE.MeshStandardMaterial({
-        color: col, emissive: col, emissiveIntensity: 1.8, metalness: 0.7, roughness: 0.25,
+        color: col, emissive: col, emissiveIntensity: .35, metalness: 0.7, roughness: 0.25,
       }));
       const r = 3.2 + rnd() * 3.0;
       const a = rnd() * Math.PI * 2;
@@ -387,21 +385,35 @@
         const { UnrealBloomPass } = await import('three/addons/postprocessing/UnrealBloomPass.js');
         composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
-        composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.85, 0.8, 0.82));
+        composer.addPass(new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.22, 0.6, 1.0));
       } catch (e) { composer = null; }
     }
 
-    window.addEventListener('resize', onResize, { passive: true });
-    if (!isMobile && !reduced) window.addEventListener('pointermove', onPointer, { passive: true });
-    canvas.addEventListener('webglcontextlost', onContextLost, false);
-    canvas.addEventListener('webglcontextrestored', onContextRestored, false);
-    document.addEventListener('visibilitychange', updateRun);
-    const io = new IntersectionObserver((ents) => { onScreen = ents[0].isIntersecting; updateRun(); }, { threshold: 0 });
-    io.observe(canvas);
+    if (!isMobile) window.addEventListener('pointermove', onPointer, {passive:true});
+    session = createSceneSession({canvas, frame:loop, resize:onResize, restore:rebuildEnvironment, motionChange(value){
+      reduced=value;
+      mx=my=tmx=tmy=0;
+    }});
+    onResize();
+    session.start();
+  }
 
-    applyScroll();
-    if (reduced) { renderFrame(); }      // single static frame
-    else { running = true; loop(); }
+  async function rebuildEnvironment() {
+    envRT?.dispose();pmrem?.dispose();
+    // ── Procedural environment (reflections + the light the glass refracts) ──
+    try {
+      const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+      pmrem = new THREE.PMREMGenerator(renderer);
+      const room = new RoomEnvironment();
+      envRT = pmrem.fromScene(room, 0.04);
+      scene.environment = envRT.texture;
+      room.dispose?.();
+    } catch (e) {
+      // Fallback environment: a tiny gradient cube so transmission still has something to bend.
+      const cube = makeGradientEnv();
+      scene.environment = cube;
+    }
+
   }
 
   function makeGradientEnv() {
@@ -449,24 +461,22 @@
     // scroll cranes the camera around + pushes in for the close-up; a slow time drift
     // keeps the rig alive even when the page isn't being scrolled.
     const ang = scroll * Math.PI * 1.6 + tmx * 0.5 + Math.sin(t * 0.07) * 0.22;
-    const radius = 7 - scroll * 2.6 + Math.sin(t * 0.11) * 0.25;
+    const radius = (innerWidth <= 768 ? 14.5 : 9.2) - scroll * 1.6 + Math.sin(t * 0.11) * 0.25;
     const height = Math.sin(scroll * Math.PI) * 1.6 - tmy * 0.8 + Math.cos(t * 0.09) * 0.2;
     camera.position.set(Math.sin(ang) * radius, height, Math.cos(ang) * radius);
-    camera.lookAt(0, 0, 0);
+    camera.lookAt(innerWidth <= 768 ? 0 : -1.5, innerWidth <= 768 ? -1.2 : .1, 0);
   }
 
   function renderFrame() {
     if (composer) composer.render(); else renderer.render(scene, camera);
   }
 
-  function loop() {
-    raf = requestAnimationFrame(loop);
-    if (!running) return;
-    if (!driftPaused) t += 0.016;
-    scroll += (targetScroll - scroll) * 0.06;
-    tmx += (mx - tmx) * 0.05; tmy += (my - tmy) * 0.05;
+  function loop({dt,time,reduced,paused}) {
+    t = time;
+    if (!reduced) scroll += (targetScroll - scroll) * (paused ? 1 : 1-Math.exp(-4*dt));
+    tmx += (mx - tmx) * (1-Math.exp(-3*dt)); tmy += (my - tmy) * (1-Math.exp(-3*dt));
     // the monolith turns continuously
-    if (!driftPaused) crystal.rotation.y += 0.004;
+    crystal.rotation.y = t * .24;
     crystal.rotation.x = Math.sin(t * 0.25) * 0.16;
     crystal.rotation.z = Math.cos(t * 0.18) * 0.08;
     // lights orbit → reflections sweep across the facets
@@ -478,7 +488,7 @@
     shardGroup.rotation.x = Math.sin(t * 0.08) * 0.2;
     for (let i = 0; i < shardGroup.children.length; i++) {
       const m = shardGroup.children[i], u = m.userData;
-      if (!driftPaused) { m.rotation.x += 0.02 * u.spin; m.rotation.y += 0.03 * u.spin; }
+      m.rotation.x = t * 1.2 * u.spin; m.rotation.y = t * 1.8 * u.spin;
       m.position.y = u.y0 + Math.sin(t * 0.6 * u.bob + u.ph) * 0.4;
     }
     morphStable();
@@ -486,26 +496,18 @@
     renderFrame();
   }
 
-  function updateRun() {
-    const vis = document.visibilityState === 'visible' && onScreen;
-    if (reduced) { running = false; return; }
-    if (vis && !running) { running = true; if (!raf) loop(); }
-    else if (!vis) { running = false; }
-  }
-
   function onResize() {
     if (!renderer) return;
     camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
     if (composer) composer.setSize(window.innerWidth, window.innerHeight);
-    if (reduced) renderFrame();
+
   }
-  function onPointer(e) { mx = (e.clientX / window.innerWidth) * 2 - 1; my = (e.clientY / window.innerHeight) * 2 - 1; }
-  function onContextLost(e) { e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
-  function onContextRestored() { teardown(); initThree().catch(() => document.body.classList.add('no-webgl')); }
+  function onPointer(e) { if(reduced) return; mx = (e.clientX / window.innerWidth) * 2 - 1; my = (e.clientY / window.innerHeight) * 2 - 1; }
+
 
   function teardown() {
-    cancelAnimationFrame(raf); raf = 0; running = false;
+    session?.dispose();
     try {
       scene && scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose()); } });
       envRT && envRT.dispose(); pmrem && pmrem.dispose();
@@ -520,7 +522,7 @@
   function onScroll() {
     targetScroll = pageProgress();
     if (hudFill) hudFill.style.transform = 'scaleX(' + targetScroll.toFixed(3) + ')';
-    if (reduced && crystal) { scroll = targetScroll; applyScroll(); morphStable(); renderFrame(); }
+    session?.invalidate();
   }
   let ticking = false;
   window.addEventListener('scroll', () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { onScroll(); ticking = false; }); }, { passive: true });
@@ -528,6 +530,7 @@
 
   // ── DOM choreography ──
   function initDOM() {
+    if (reduced) return;
     if (window.gsap) {
       const gsap = window.gsap;
       if (window.ScrollTrigger) gsap.registerPlugin(window.ScrollTrigger);

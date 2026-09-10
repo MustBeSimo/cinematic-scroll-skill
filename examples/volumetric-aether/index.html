@@ -195,7 +195,7 @@
     color: var(--fg-faint);
   }
   .hero-meta b { display: block; color: var(--fg); font-weight: 700; font-size: 1.5em; letter-spacing: 0; margin-top: 6px; }
-  .scroll-cue {
+  .scroll-cue { display:none;
     position: absolute;
     left: clamp(24px, 7vw, 120px);
     bottom: clamp(28px, 4vh, 48px);
@@ -299,6 +299,7 @@
     .scroll-cue i { animation: none; }
   }
 </style>
+<link rel="stylesheet" href="../_study-shell.css">
 </head>
 <body>
   <aside class="cs-flagship-nav" aria-label="Real 3D flagship collection">
@@ -327,11 +328,11 @@
   <header id="hero">
     <p class="eyebrow">Volumetric atmosphere engine</p>
     <h1 class="hero-title" id="hero-title" aria-label="Aether">Aether</h1>
-    <p class="hero-sub">A sky you can fall through. Sixty samples of light per pixel, marched in real time — no model, no texture, only math becoming weather.</p>
+    <p class="hero-sub">Dawn above a sea of cloud. Scroll to descend through the light, or change the density and watch the horizon open.</p>
     <div class="hero-meta">
       <div>Render <b>Raymarched</b></div>
       <div>Assets <b>Zero</b></div>
-      <div>Stack <b>Tier C</b></div>
+      <div>Light <b>Dawn</b></div>
     </div>
     <div class="scroll-cue"><i></i><span>Descend</span></div>
   </header>
@@ -400,9 +401,10 @@
 
 <script type="module">
   import * as THREE from 'three';
-  import { mountSceneControls } from '../_scene-controls.js';
+  import { mountSceneControls } from '../_study-controls.js';
+  import {createSceneSession} from '../_scene-session.js';
 
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const canvas = document.getElementById('aether-canvas');
 
@@ -414,7 +416,7 @@
     } catch (e) { return false; }
   }
 
-  let renderer, scene, camera, material, mesh, raf = 0, onScreen = true, running = false;
+  let renderer, scene, camera, material, mesh, session;
   const clock = { t: 0 };
   let cloudDensity = 1;
   let driftPaused = false;
@@ -427,9 +429,9 @@
     try {
       initThree();
       mountSceneControls({ title: 'Shape the weather', label: 'Cloud density', min: 0.3, max: 1.8, step: 0.05, value: 1,
-        pause: paused => { driftPaused = paused; }, format: value => `${Math.round(value * 100)}%`, update: value => {
+        pause: paused => { driftPaused = paused; session?.setPaused(paused); }, format: value => `${Math.round(value * 100)}%`, update: value => {
           cloudDensity = value;
-          if (material && !renderer.getContext().isContextLost()) { material.uniforms.uDensity.value = value; renderer.render(scene, camera); }
+          if (material && !renderer.getContext().isContextLost()) { material.uniforms.uDensity.value = value; session?.invalidate(); }
         } });
     } catch (e) { console.warn('Aether: WebGL init failed, using CSS sky', e); document.body.classList.add('no-webgl'); }
   }
@@ -451,7 +453,7 @@
         uTime:   { value: 0 },
         uDensity: { value: cloudDensity },
         uScroll: { value: 0 },
-        uRes:    { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+        uRes:    { value: renderer.getDrawingBufferSize(new THREE.Vector2()) },
         uMouse:  { value: new THREE.Vector2(0, 0) },
         // palette morph targets (dawn → high cyan → cosmic violet)
         uColA:   { value: new THREE.Color('#ffb877') },
@@ -490,31 +492,32 @@
 
         // cloud density field, advected by a wind the scroll accelerates
         float density(vec3 p){
-          float wind = uTime*0.12 + uScroll*2.4;
-          p.x += wind; p.z += wind*0.35;
-          float base = fbm(p*0.5);
-          float detail = vnoise(p*2.4) * 0.22;        // cheap high-freq wisps (not a 2nd fbm)
-          // a cloud DECK that sits below the camera: dense low, clear sky above — so we
-          // read billowing tops against open sky instead of flying through uniform soup.
-          float deck = smoothstep(1.7, -0.4, p.y + 0.1);
-          // the threshold carves real negative space (gaps of sky) → defined, dramatic forms
-          float d = (base + detail - 0.5) * deck;
-          return clamp(d*2.4*uDensity + (uDensity - 1.0)*0.16*deck, 0.0, 1.0);
+          p.x += uTime*.08 + uScroll*1.2;
+          // Rounded cumulus cells, eroded by 3D noise. Open channels separate the banks.
+          vec2 cell=floor((p.xz+2.5)/5.0);
+          vec2 local=mod(p.xz+2.5,5.0)-2.5;
+          float variation=hash(vec3(cell,3.7));
+          float radius=1.5+variation*.55;
+          vec3 q=vec3(local.x*.8,p.y+.9-variation*.5,local.y*.8);
+          float body=radius-length(q);
+          float erosion=(fbm(p*2.1)-.45)*.8;
+          float cloud=smoothstep(-.22,.45,body+erosion);
+          return clamp(cloud*uDensity,0.0,1.0);
         }
 
         void main(){
           vec2 uv = (gl_FragCoord.xy - 0.5*uRes.xy) / uRes.y;
           // camera is ALWAYS flying forward (uTime) and descends as you scroll —
           // constant travel gives the clouds real parallax even before you scroll
-          float fly = uTime*0.7 + uScroll*9.0;
-          vec3 ro = vec3(sin(uTime*0.13)*0.8, 1.5 - uScroll*1.6, -4.0 + fly);
+          float fly = uTime*0.16 + uScroll*9.0;
+          vec3 ro = vec3(sin(uTime*0.13)*0.3, 2.4 - uScroll*2.0, -4.0 + fly);
           vec3 rd = normalize(vec3(uv + uMouse*0.05, 1.15));
           // gentle banking roll
           float roll = sin(uTime*0.1)*0.07;
           mat2 rr = mat2(cos(roll), -sin(roll), sin(roll), cos(roll));
           rd.xy = rr * rd.xy;
           // downward tilt deepens with scroll (the descent)
-          float tlt = -0.1 - uScroll*0.16;
+          float tlt = -0.32 - uScroll*0.1;
           mat2 rot = mat2(cos(tlt), -sin(tlt), sin(tlt), cos(tlt));
           rd.yz = rot * rd.yz;
 
@@ -522,7 +525,7 @@
           vec3 sunDir = normalize(vec3(0.22, 0.34 - uScroll*0.34, 0.9));
 
           vec4 sum = vec4(0.0);          // rgb + transmittance accumulation
-          float t = 0.0;
+          float t = 1.5;
           for(int i=0;i<STEPS;i++){
             if(sum.a > 0.99) break;
             vec3 pos = ro + rd*(t + 0.6);
@@ -538,11 +541,11 @@
               vec3 sunlit = mix(uColA, vec3(1.0, 0.86, 0.58), 0.22);   // hot golden top
               vec3 shade  = vec3(0.08, 0.12, 0.30);                    // deep cool shadow
               vec3 lit = mix(shade, sunlit, sh) * (0.5 + ph);
-              float a = den * 0.66;                       // dense, present
+              float a = 1.0-exp(-den*.6);                       // dense, present
               sum.rgb += (1.0 - sum.a) * lit * a;
               sum.a   += (1.0 - sum.a) * a;
             }
-            t += 0.15 + t*0.012;
+            t += 0.24 + t*0.014;
           }
 
           // sky: deep indigo zenith → warm horizon band → bright sun
@@ -558,13 +561,13 @@
           vec3 col = sky*(1.0 - sum.a) + sum.rgb;
           // god-ray shafts toward the sun through thin cloud
           float shaft = pow(mu2, 3.5) * (1.0 - sum.a*0.5);
-          col += uColA * shaft * 0.6;
+          col += uColA * shaft * 0.15;
           // tone: filmic + an S-curve for punch; exposure kept lower so white UI text
           // reads over the cloud everywhere (bold ≠ blown-out)
           col = col / (col + vec3(0.92));
           col = pow(col, vec3(0.86));
           col = mix(col, col*col*(3.0-2.0*col), 0.55);
-          float vig = smoothstep(1.65, 0.18, length(uv));
+          float vig = (1.0-smoothstep(0.18, 1.65, length(uv)));
           col *= 0.78 + 0.22*vig;
           gl_FragColor = vec4(col, 1.0);
         }
@@ -574,19 +577,13 @@
     mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
     scene.add(mesh);
 
-    window.addEventListener('resize', onResize, { passive: true });
-    if (!isMobile && !reduced) window.addEventListener('pointermove', onPointer, { passive: true });
-    canvas.addEventListener('webglcontextlost', onContextLost, false);
-    canvas.addEventListener('webglcontextrestored', onContextRestored, false);
-
-    // gate rAF on visibility + on-screen
-    document.addEventListener('visibilitychange', updateRun);
-    const io = new IntersectionObserver((ents) => { onScreen = ents[0].isIntersecting; updateRun(); }, { threshold: 0 });
-    io.observe(canvas);
-
-    renderUniforms();
-    if (reduced) { renderer.render(scene, camera); }   // single static frame, no loop
-    else { running = true; loop(); }
+    if (!isMobile) window.addEventListener('pointermove', onPointer, {passive:true});
+    session = createSceneSession({canvas, frame:loop, resize:onResize, motionChange(value){
+      reduced=value;
+      material.uniforms.uMouse.value.set(0,0);
+    }});
+    onResize();
+    session.start();
   }
 
   function renderUniforms() {
@@ -595,38 +592,28 @@
     material.uniforms.uTime.value = clock.t;
   }
 
-  function loop() {
-    raf = requestAnimationFrame(loop);
-    if (!running) return;
-    if (!driftPaused) clock.t += 0.016;
+  function loop({dt,time,reduced,paused}) {
+    clock.t = time;
     // ease scroll toward target for buttery camera motion
-    scroll += (targetScroll - scroll) * 0.06;
+    if (!reduced) scroll += (targetScroll - scroll) * (paused ? 1 : 1-Math.exp(-4*dt));
     renderUniforms();
     renderer.render(scene, camera);
-  }
-
-  function updateRun() {
-    const vis = document.visibilityState === 'visible' && onScreen;
-    if (reduced) { running = false; return; }
-    if (vis && !running) { running = true; if (!raf) loop(); }
-    else if (!vis) { running = false; }
   }
 
   function onResize() {
     if (!renderer) return;
     renderer.setSize(window.innerWidth, window.innerHeight);
-    material.uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
+    renderer.getDrawingBufferSize(material.uniforms.uRes.value);
     if (reduced) renderer.render(scene, camera);
   }
   let mx = 0, my = 0;
-  function onPointer(e) {
+  function onPointer(e) { if(reduced) return;
     const nx = (e.clientX / window.innerWidth) * 2 - 1;
     const ny = (e.clientY / window.innerHeight) * 2 - 1;
     mx += (nx - mx) * 0.1; my += (ny - my) * 0.1;
     material.uniforms.uMouse.value.set(mx, -my);
   }
-  function onContextLost(e) { e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
-  function onContextRestored() { try { initThree(); } catch (err) { document.body.classList.add('no-webgl'); } }
+
 
   // ── Scroll → normalized progress (works with or without GSAP) ──
   function pageProgress() {
@@ -637,7 +624,7 @@
   function onScroll() {
     targetScroll = pageProgress();
     if (hudFill) hudFill.style.transform = 'scaleX(' + targetScroll.toFixed(3) + ')';
-    if (reduced && material) { scroll = targetScroll; renderUniforms(); renderer.render(scene, camera); }
+    session?.invalidate();
   }
   let ticking = false;
   window.addEventListener('scroll', () => {

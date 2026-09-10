@@ -1,0 +1,34 @@
+/* Shared structure for both collections; the opening keeps its editorial direction. */
+.catalog-home .project-toolbar{display:flex;gap:1rem;align-items:center;padding-block:1rem;border-block:1px solid var(--line);margin-top:1rem}
+.catalog-home .project-toolbar[hidden],.catalog-home [hidden]{display:none!important}
+.project-toolbar label{font-size:.75rem;color:var(--muted)}
+.project-toolbar input{flex:1;min-width:0;padding:.85rem 1rem;border:1px solid var(--line);border-radius:6px;background:var(--paper-2);color:var(--ink);font:inherit;font-size:.85rem}
+#project-result-count{font-size:.72rem;color:var(--muted);white-space:nowrap}
+.catalog-home .project-section{padding-block:2.5rem}
+.catalog-home #worlds{border-top:1px solid var(--line)}
+.catalog-home .collection-heading{grid-template-columns:1fr 1fr;margin-bottom:1.5rem;align-items:end}
+.catalog-home .collection-heading h2{font-size:clamp(2.8rem,4.3vw,4.5rem);max-width:none}
+.catalog-home .collection-heading>p{font-size:.88rem;max-width:40ch;justify-self:end}
+.project-count{display:block;font-size:.7rem;color:var(--accent);margin-top:.5rem}
+.catalog-home .flagship-grid,.catalog-home .world-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem;align-items:start}
+.catalog-home .project-card,.catalog-home .project-card:first-child{grid-column:auto;min-height:0;overflow:hidden;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);color:var(--ink);box-shadow:0 2px 3px #00000004}
+.catalog-home .project-card>.gallery-link{position:relative;inset:auto;display:block;overflow:hidden}
+.catalog-home .project-card .gallery-media{position:relative;inset:auto;aspect-ratio:16/10;border-bottom:1px solid var(--line)}
+.catalog-home .project-card .gallery-link::after{display:none}
+.catalog-home .project-card img{height:100%;aspect-ratio:auto}
+.project-info{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.85rem;align-items:start;padding:1.15rem;position:relative;background:var(--paper-2);z-index:2}
+.project-number{font:.75rem/1.4 var(--sans);font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:4px;padding:.4rem .5rem;color:var(--accent)}
+.project-category{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.project-text h3{font:400 clamp(1.7rem,2.7vw,2.3rem)/1.05 var(--serif);margin:.35rem 0 .55rem}
+.project-text p{font-size:.8rem;line-height:1.55;color:var(--muted);margin:0}
+.project-open{font-size:.7rem;white-space:nowrap;text-decoration:underline;text-underline-offset:4px;padding:.5rem .2rem}
+.project-prompt{border-top:1px solid var(--line);font-size:.8rem}
+.project-prompt summary{padding:.8rem 1.15rem;cursor:pointer;display:flex;justify-content:space-between;color:var(--muted);list-style:none}
+.project-prompt summary::-webkit-details-marker{display:none}
+.project-prompt[open] summary>span{transform:rotate(45deg)}
+.project-prompt>div{padding:0 1.15rem 1.15rem;line-height:1.65}
+.project-prompt .prompt-label{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.prompt-actions{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:1rem}
+.prompt-actions a{font-size:.7rem;text-underline-offset:3px}
+.project-empty{padding-block:2rem;color:var(--muted)}
+@media(max-width:640px){.catalog-home .flagship-grid,.catalog-home .world-grid{grid-template-columns:1fr}.catalog-home .collection-heading{grid-template-columns:1fr;gap:.65rem}.catalog-home .collection-heading>p{justify-self:start}.project-toolbar{flex-wrap:wrap}.project-toolbar label{width:100%}.project-info{padding:1rem;gap:.6rem}}

@@ -1,0 +1,19 @@
+/* Shared compact composition for the v3 studies, without shrinking hit targets. */
+.v3-lab section{margin-block:clamp(1.5rem,2.5vw,2.5rem)}
+.v3-opening{gap:1.5rem}
+.v3-eyebrow{color:var(--v3-accent);margin-bottom:.75rem}
+@media(prefers-color-scheme:light){.v3-eyebrow{color:#315bb7}}
+.v3-opening p:not(.v3-eyebrow){margin-block:1rem}
+.v3-heading{margin-bottom:1rem}
+.v3-grid article{padding:1.25rem;min-height:14rem}
+.v3-closing{padding-block:2rem}
+.field-react-intro{padding-block:1rem}
+.field-react-intro>p:not(.v3-eyebrow){margin-top:1.25rem}
+.field-react-journey{gap:clamp(1.5rem,3vw,3rem);padding-top:1.5rem}
+.field-react-journey>*{min-width:0}
+.field-react-beat h2{overflow-wrap:anywhere}
+@media(max-width:380px){.field-react .field-react-intro h1{font-size:clamp(3.25rem,14vw,7rem)}}
+.field-react-beat{min-height:clamp(22rem,44vh,32rem);padding-block:1.25rem}
+.field-react-beat>p:last-child{margin-top:1rem}
+@media(max-width:760px),(prefers-reduced-motion:reduce){.field-react-beat{min-height:0;margin-bottom:1rem}}
+@media(max-width:560px){.v3-lab .v3-grid article{min-height:12rem}}

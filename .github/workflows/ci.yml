@@ -88,6 +88,18 @@ jobs:
           node-version: 22
       - name: Install (playwright-core)
         run: npm install --no-audit --no-fund
+      - name: Shared runtime and standalone export
+        run: |
+          npm run runtime:check
+          npm run test:runtime
+          npm run check:lab
+          node tools/cinematic-doctor/cli.mjs examples/effects-lab/index.html --min 90
+      - name: Runtime lifecycle and shader pixels
+        run: |
+          CHROME_PATH="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)"
+          export CHROME_PATH
+          test -n "$CHROME_PATH"
+          npm run test:runtime:browser
       - name: Runtime-proof the components (browser-gated)
         run: |
           CHROME_PATH="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium-browser || command -v chromium || true)"

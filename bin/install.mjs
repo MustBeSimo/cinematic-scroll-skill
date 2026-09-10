@@ -27,12 +27,17 @@ const PAYLOAD = [
   'package.json',      // npm verification commands and the optional browser dependency
   'bin',              // package bin entries remain valid after installation
   'SKILL.md',
+  'AGENTS.md',
+  '.codex/skills/cinematic-scroll',
+  '.cursor/skills/cinematic-scroll',
+  'skills/cinematic-scroll',
   // The v2.6.1 design system — SKILL.md routes to these, so the install is
   // incomplete without them. Must stay in sync with package.json "files".
   'design.md',
   'tokens',
   'themes',
   'components',
+  'runtime',           // shared vanilla/React/Three motion foundation
   'evals',
   'manifest.json',
   'manifest.md',
@@ -40,6 +45,7 @@ const PAYLOAD = [
   'audit-mode.md',
   'learn-mode.md',
   'bench-mode.md',
+  'bench',
   'troubleshooting.md',
   'decision-log.md',
   'scroll-choreography.json',
@@ -59,7 +65,7 @@ const PAYLOAD = [
 
 const args = process.argv.slice(2);
 if (args.includes('--help') || args.includes('-h')) {
-  console.log(`cinematic-scroll-skill — install the skill into your Claude skills directory
+  console.log(`Web Design Studio — install the cinematic-scroll skill into your Claude skills directory
 
 Usage:
   npx cinematic-scroll-skill [--dir <skills-dir>]
@@ -87,7 +93,7 @@ try {
   for (const item of PAYLOAD) {
     const src = join(PKG_ROOT, item);
     if (!existsSync(src)) continue; // tolerate a trimmed npm tarball
-    cpSync(src, join(dest, item), { recursive: true });
+    cpSync(src, join(dest, item), { recursive: true, filter: source => !['node_modules','.next','.verify','.git'].includes(source.split(/[\\/]/).pop()) });
     copied++;
   }
 
@@ -96,7 +102,8 @@ try {
     process.exit(1);
   }
 
-  console.log(`\n✓ Installed the cinematic-scroll skill (${copied} items) →\n  ${dest}\n`);
+  console.log(`\n✓ Installed Web Design Studio (${copied} items) →\n  ${dest}\n`);
+  console.log('Compatibility identifier: cinematic-scroll');
   console.log('Next: restart Claude Code (or your client), then invoke the skill in chat.');
   console.log('Docs & live examples: https://mustbesimo.github.io/cinematic-scroll-skill/');
 } catch (err) {

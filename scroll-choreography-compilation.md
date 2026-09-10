@@ -2,6 +2,45 @@
 
 > How the declarative schema becomes running GSAP ScrollTrigger code.
 
+## v3 runtime contract
+
+New documents use `metadata.version: "3.0.0"`. The web compiler returns a cleanup
+function from `initChoreography(root, {lenis})`, scopes its own GSAP matchMedia
+context and responds to live reduced motion. Narrow layouts remain in flow.
+Native scrolling is the default unless `globals.scrollSmoothing` is nonzero.
+A supplied Lenis instance is observed, never driven twice or destroyed.
+Defaults are timeline-local; teardown never kills another scene's triggers.
+
+`signalBindings` adds typed inputs: `scroll-progress`, `scroll-velocity`,
+`pointer-x`, `pointer-y`, and rectangle-edge `proximity`. Outputs must be named
+`--cinematic-*` custom properties. Consume them only in transform/opacity on a
+dedicated visual wrapper, never in layout or painted background properties.
+
+```json
+{"selector":".lens","input":"proximity","output":"--cinematic-shift",
+ "from":0,"to":12,"unit":"px","radius":160,"staticValue":0}
+```
+
+Put that object in the root `signalBindings` array. The compiler imports
+`./runtime/cinematic.mjs` and `./runtime/choreography.mjs`; copy `runtime/` next
+to the generated module, or rewrite those imports for your app's library path.
+The bindings share GSAP's clock, sleep while idle, and restore owned properties
+on teardown. `range` must ascend; input normalization and clamping are explicit.
+
+V2 input remains accepted with a deprecation comment. On the web target,
+letter-spacing treatments become bounded scaleX transforms, and background
+morphs become opacity-crossfaded paint layers. Those are intentional visual
+substitutions, not pixel-identical v2 rendering. V3 rejects directly animated
+`letterSpacing` / `backgroundColor` and velocity-driven spacing. Finite offline
+video targets retain their existing timeline behavior; signal bindings have no
+pointer/proximity meaning in a film and are not rendered there.
+
+The CLI performs focused validation, **not full JSON-Schema certification**.
+Inspect and run its output. Tests exercise mapping, lifecycle ownership,
+compatibility and invalid inputs; browser evidence is still required per scene.
+The older conceptual pipeline below is background, not a promise of extra
+generated report files or automatic production certification.
+
 ## ▶ It's real: `compile-choreography.mjs`
 
 This pipeline ships as a working, dependency-free Node compiler at the repo root.

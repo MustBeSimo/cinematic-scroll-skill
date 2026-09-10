@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%23416ed4'/%3E%3Cpath d='M22 10a9 9 0 1 0 0 12' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <title>Motion, made tangible — Cinematic Scroll Effects Lab</title>
+  <meta name="description" content="Explore original text choreography, proximity surfaces and shaders. Free source for cinematic websites.">
+  <link rel="stylesheet" href="./lab.css">
+</head>
+<body>
+  <a class="skip" href="#experiments">Skip to experiments</a>
+  <header class="masthead">
+    <a class="wordmark" href="../../">Cinematic <em>Scroll</em><span class="version">v3 / lab</span></a>
+    <nav aria-label="Lab navigation"><a href="#type">Type</a><a href="#surfaces">Surfaces</a><a href="#fields">Fields</a></nav>
+    <a class="source" href="https://github.com/MustBeSimo/cinematic-scroll-skill">Free source <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="experiments">
+    <section class="opening" aria-labelledby="lab-title">
+      <div class="opening-copy">
+        <p class="eyebrow">The interaction collection / 01</p>
+        <h1 id="lab-title" data-cinematic-text="line-mask">Give the web<br>a little <em>feeling.</em></h1>
+        <p class="intro">Words with rhythm. Surfaces that respond. Light you can move through. Explore the ingredients of a cinematic website.</p>
+        <div class="actions"><a class="button" href="#type">Explore the effects <span aria-hidden="true">↓</span></a><span class="note">Open source. Yours to make.</span></div>
+      </div>
+      <div class="hero-art shader-surface" data-cinematic-distort="atmosphere" role="img" aria-label="A blue atmospheric field that responds to the pointer">
+        <div class="orbital orbital-one"></div><div class="orbital orbital-two"></div>
+        <div class="art-label"><span>01 / atmospheric field</span><span>Move closer ↗</span></div>
+        <div class="art-coordinate">38° / 144°</div>
+      </div>
+    </section>
+    <div class="controls" aria-label="Preview settings">
+      <p><span class="status-dot"></span><span id="render-status">Readable without animation</span></p>
+      <label>Rendering <select id="quality"><option value="auto">Adaptive</option><option value="high">High</option><option value="balanced">Balanced</option><option value="low">Low</option><option value="static">Static</option></select></label>
+      <button id="pause" type="button" aria-pressed="false">Pause motion</button>
+    </div>
+    <section id="type" aria-labelledby="type-title">
+      <div class="section-heading"><div><p class="eyebrow">01 / Choreography</p><h2 id="type-title">Type sets the <em>tempo.</em></h2></div><p>Six ways to give language a rhythm.<br>The message always stays readable.</p></div>
+      <div class="type-grid">
+        <article class="type-card"><p class="sample-label">01 / Line mask</p><h3 data-cinematic-text="line-mask">An idea,<br><em>unfolding.</em></h3><p>Measured arrival. A clean frame.</p></article>
+        <article class="type-card"><p class="sample-label">02 / Word cascade</p><h3 data-cinematic-text="word-cascade">Every word<br>finds its place.</h3><p>A sentence in small, deliberate steps.</p></article>
+        <article class="type-card"><p class="sample-label">03 / Character wave</p><h3 data-cinematic-text="character-wave">A gentle<br><em>ripple.</em></h3><p>Energy travels through the line.</p></article>
+        <article class="type-card"><p class="sample-label">04 / Velocity skew</p><h3 data-cinematic-text="velocity-skew">Keep the<br>momentum.</h3><p>Scroll faster. Watch the letters respond.</p></article>
+        <article class="type-card"><p class="sample-label">05 / Scramble</p><h3 data-cinematic-text="scramble">Clarity<br>from chaos.</h3><p>A brief decoding, then a readable hold.</p></article>
+        <article class="type-card"><p class="sample-label">06 / Variable axis</p><h3 class="variable-type" data-cinematic-text="variable-axis">A change<br>of emphasis.</h3><p>Weight becomes part of the reveal.</p></article>
+      </div>
+    </section>
+    <section id="surfaces" aria-labelledby="surface-title">
+      <div class="section-heading"><div><p class="eyebrow">02 / Proximity</p><h2 id="surface-title">Almost touching.</h2></div><p>Move toward the edge.<br>The surface meets you halfway.</p></div>
+      <div class="surface-grid">
+        <article class="surface-card"><div class="magnet-stage"><button class="magnet-button" type="button" data-cinematic-proximity="magnetic"><span data-proximity-visual>Come closer <span aria-hidden="true">↗</span></span></button></div><div class="caption"><h3>Magnetic attraction</h3><p>A fixed hit area, a moving visual.</p></div></article>
+        <article class="surface-card"><div class="depth-stage" data-cinematic-proximity="depth"><div data-proximity-visual class="depth-object"><span class="depth-number">C / 03</span><span class="depth-line"></span><strong>Feel the<br><em>dimension.</em></strong><span class="depth-foot">A surface with a point of view.</span></div></div><div class="caption"><h3>Depth response</h3><p>Light, perspective, a subtle tilt.</p></div></article>
+      </div>
+    </section>
+    <section id="fields" aria-labelledby="field-title">
+      <div class="section-heading"><div><p class="eyebrow">03 / Light & material</p><h2 id="field-title">Beyond the surface.</h2></div><p>Four original shader studies.<br>One shared canvas.</p></div>
+      <div class="shader-grid">
+        <article><div class="shader-surface shader-study" data-cinematic-distort="displacement" role="img" aria-label="Displacement field responds to scroll and pointer"><span class="shader-letter">D</span></div><div class="caption"><h3>Displacement</h3><p>Scroll momentum bends the field.</p></div></article>
+        <article><div class="shader-surface shader-study" data-cinematic-distort="refraction" role="img" aria-label="Refraction lens follows the pointer"><span class="shader-letter">R</span></div><div class="caption"><h3>Refraction</h3><p>A lens catches the edge of colour.</p></div></article>
+        <article><div class="shader-surface shader-study" data-cinematic-distort="atmosphere" role="img" aria-label="Slowly evolving blue atmosphere"><span class="shader-letter">A</span></div><div class="caption"><h3>Atmosphere</h3><p>Layered light, a slowly shifting mood.</p></div></article>
+        <article><div class="shader-surface shader-study" data-cinematic-distort="portal" role="img" aria-label="Circular portal opens with scroll"><span class="shader-letter">P</span></div><div class="caption"><h3>Portal</h3><p>Scroll through a change of perspective.</p></div></article>
+      </div>
+    </section>
+    <section class="closing"><p class="eyebrow">Your next idea starts here.</p><h2>Make something<br><em>worth feeling.</em></h2><a class="button" href="https://github.com/MustBeSimo/cinematic-scroll-skill">Get the free skill ↗</a></section>
+  </main>
+  <footer><a class="wordmark" href="../../">Cinematic <em>Scroll</em></a><p>Motion craft for everyone. MIT licensed.</p><a href="#lab-title">Back to the beginning ↑</a></footer>
+  <script type="module" src="./lab.mjs"></script>
+</body>
+</html>

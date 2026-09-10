@@ -10,6 +10,24 @@ The named, token-driven building blocks of a cinematic-scroll build. Every compo
 
 Catalogue + machine metadata: [`components/manifest.json`](../components/manifest.json).
 
+## Shared v3 foundation
+
+New work uses [the interaction runtime](interaction-runtime.md):
+`CinematicProvider`, `useCinematicSignals`, `useProximity`, `TextChoreography`,
+`MagneticSurface`, `CinematicCanvas`, `DistortedMedia`, and `ScrollCameraRig`.
+The effects lab shows six text treatments, two surface responses and four GLSL
+families; FIELD combines them into a narrative instead of stacking a catalog.
+
+`KineticHeadline`, `TiltCard` and `MagneticCursor` retain their existing props
+but now import `@/lib/cinematic/`. Copy that runtime too, or start with the Next
+template (copies stay synchronized by `tools/sync-runtime.mjs`). Use one outer
+`CinematicProvider` when combining components. Individually used compatibility
+components provide their own boundary; they reuse an existing provider.
+KineticHeadline preserves authored lines/accents and a stable accessible name;
+TiltCard keeps outer hit geometry stable. The cursor never hides the native
+cursor and sleeps when settled. Unique heading IDs replace the old repeated IDs.
+Keep text spacing in markup; do not add the old `.kh-word::after` spacer rule.
+
 ---
 
 ## PinnedReveal
@@ -232,4 +250,3 @@ A custom cursor dot that rAF-lerps toward the pointer and snaps toward magnetic 
 <button class="btn" data-magnetic type="button">Toggle sound</button>
 <!-- 3. The inline script self-gates to fine pointers and runs one rAF lerp loop. -->
 ```
-

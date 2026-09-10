@@ -1,7 +1,7 @@
 {
   "name": "cinematic-scroll-skill",
-  "version": "2.7.1",
-  "description": "Installer for the cinematic-scroll Agent Skill — copies the skill into ~/.claude/skills/ (Claude Code, Cursor, etc.). The skill builds cinematic, scroll-driven websites: pinned chapters, parallax, 3D tilt, environment-morphing backgrounds, full release pages, and a React Three Fiber + WebXR flagship with one-command fal.ai 3D asset generation (auto Draco/WebP compression, rigged dancing figure included).",
+  "version": "2.7.6",
+  "description": "Installer for Web Design Studio, the cinematic-scroll Agent Skill for distinctive websites, interactive 3D, scroll choreography, motion and production-ready fallbacks.",
   "type": "module",
   "bin": {
     "cinematic-scroll-skill": "bin/install.mjs",
@@ -11,10 +11,14 @@
   "files": [
     "bin/",
     "SKILL.md",
+    "AGENTS.md",
+    ".codex/skills/cinematic-scroll/SKILL.md",
+    ".cursor/skills/cinematic-scroll/SKILL.md",
     "design.md",
     "tokens/",
     "themes/",
     "components/",
+    "runtime/",
     "evals/",
     "manifest.json",
     "manifest.md",
@@ -42,13 +46,29 @@
     "examples/*/index.html",
     "examples/*/README.md",
     "examples/*/*.js",
+    "examples/*/*.mjs",
+    "examples/*/*.css",
+    "examples/*/*.template",
     "examples/*/styles.css",
     "examples/*/assets-3d/manifest.json",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "test:workflow": "node --test tools/verify/verify.test.mjs tools/tastehq/tastehq.test.mjs tools/page-proof/matrix.test.mjs tools/check-package.test.mjs",
+    "build:lab": "node tools/export-standalone.mjs examples/effects-lab/page.template --out examples/effects-lab/index.html",
+    "check:lab": "npm run build:lab -- --check",
+    "build:flagship": "node tools/export-standalone.mjs examples/v3-flagship/page.template --out examples/v3-flagship/index.html",
+    "check:flagship": "npm run build:flagship -- --check",
+    "runtime:sync": "node tools/sync-runtime.mjs",
+    "runtime:check": "node tools/sync-runtime.mjs --check",
+    "test:runtime": "node --test runtime/core.test.mjs runtime/choreography.test.mjs",
+    "test:runtime:browser": "node --test runtime/browser.test.mjs",
+    "test:runtime:react": "node --test runtime/react.browser.test.mjs",
+    "test:runtime:assets": "node --test runtime/assets.browser.test.mjs",
+    "test:runtime:field": "node --test runtime/field.browser.test.mjs examples/v3-flagship/interaction.test.mjs",
+    "test:presentation": "node --test runtime/presentation.browser.test.mjs",
+    "test:workflow": "node --test tools/verify/verify.test.mjs tools/tastehq/tastehq.test.mjs tools/page-proof/matrix.test.mjs tools/page-proof/request-failure.test.mjs tools/check-package.test.mjs tools/choreography.test.mjs",
+    "test:home": "node --test tools/page-proof/home.browser.test.mjs",
     "proof:matrix": "node tools/page-proof/matrix.mjs",
     "tastehq": "node tools/tastehq/cli.mjs",
     "doctor": "node tools/cinematic-doctor/cli.mjs",
@@ -68,14 +88,16 @@
     "skill:sync:check": "node tools/skill-sync.mjs --check",
     "bench": "node tools/bench/cli.mjs",
     "bench:selftest": "node tools/bench/score.mjs --selftest && node tools/bench/cli.mjs --selftest && node bench/build-leaderboard.mjs --selftest",
-    "test": "npm run tokens:check && npm run themes:check && npm run links:check && npm run consistency:check && npm run learn:selftest && npm run skill:sync:check && npm run components:doctor && npm run doctor:selftest && npm run evals:run && npm run bench:selftest && npm run test:workflow",
+    "test": "npm run runtime:check && npm run test:runtime && npm run tokens:check && npm run themes:check && npm run links:check && npm run consistency:check && npm run learn:selftest && npm run skill:sync:check && npm run components:doctor && npm run doctor:selftest && npm run evals:run && npm run bench:selftest && npm run test:workflow",
     "build:tokens": "node tools/build-tokens/build.mjs",
     "build:themes": "for f in themes/*.theme.json; do node tools/build-tokens/build.mjs --theme \"$f\"; done",
-    "prepack": "rm -rf templates/nextjs/node_modules templates/nextjs/.next",
+    "prepack": "npm run runtime:check && npm run check:lab && npm run check:flagship",
     "proof": "node tools/page-proof/proof.mjs",
     "proof:components": "node tools/page-proof/proof-components.mjs",
     "clawhub:validate": "node tools/check-clawhub.mjs",
-    "clawhub:scan": "npm run clawhub:validate && skillspector scan skills/cinematic-scroll --no-llm"
+    "clawhub:scan": "npm run clawhub:validate && skillspector scan skills/cinematic-scroll --no-llm",
+    "test:scenes": "node --test tools/page-proof/scenes.browser.test.mjs",
+    "build:gallery": "esbuild assets/gallery-motion.mjs --bundle --format=iife --target=es2020 --outfile=assets/gallery-motion.js"
   },
   "keywords": [
     "claude",
@@ -109,6 +131,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "esbuild": "0.28.2",
     "playwright-core": "1.60.0"
   }
 }

@@ -66,7 +66,7 @@
   @media (max-width: 820px) { .chapters { display: none; } }
 
   main { position: relative; z-index: 2; }
-  .beat { position: relative; height: 100vh; display: flex; align-items: center; padding: 0 clamp(20px,7vw,120px); pointer-events: none; }
+  .beat { position: relative; min-height:100svh; display:flex; align-items:center; padding:100px clamp(20px,7vw,120px) 130px; pointer-events: none; }
   .beat.center { justify-content: center; text-align: center; }
   .beat.right { justify-content: flex-end; }
 
@@ -118,7 +118,22 @@
     .progress span { transform: scaleX(1) !important; }
     .glass { transition: none; }
   }
+
+  .glass { border-radius:3px; border-color:rgba(240,235,220,.2); border-top:2px solid var(--accent); background:rgba(12,14,11,.8); box-shadow:none; backdrop-filter:blur(10px); max-width:410px; padding:30px; }
+  .chapters button { color:rgba(246,239,228,.75); min-height:32px; }
+  .go { text-align:left; text-decoration:underline; text-underline-offset:5px; border-radius:2px; }
+  .stat .l { color:var(--fg-soft); }
+  @media(max-width:600px){
+    .beat { padding:100px 20px 145px; align-items:flex-end; }
+    .glass { width:100%; max-width:100%; padding:24px; }
+    h1,h1.serif { font-size:2.6rem; }
+    .lede { font-size:1rem; }
+    .beat.center .glass { max-width:100%; }
+    .mega { font-size:clamp(3rem,18vw,5.5rem); }
+    footer { padding-bottom:130px; }
+  }
 </style>
+<link rel="stylesheet" href="../_study-shell.css">
 </head>
 <body>
   <aside class="cs-flagship-nav" aria-label="Real 3D flagship collection">
@@ -146,38 +161,38 @@
 <main>
   <!-- BEAT 0 — intro card -->
   <section class="beat" data-beat="0">
-    <div class="glass clickable" data-goto="1">
+    <div class="glass">
       <span class="eyebrow">About us</span>
-      <h1 class="serif kinetic">We transform sterile concrete into thriving <em>urban jungles.</em></h1>
-      <p class="lede">Our designs bring wild nature back to modern cities. Scroll, and walk the bloom — the colonnade ahead is rendered live, lit by a real rainforest sky.</p>
+      <h1 class="serif kinetic">Make room <em>for the wild.</em></h1>
+      <p class="lede">A quiet walk through a reclaimed colonnade. Leaf, vine and filtered sunlight soften the concrete as the city gives way to a canopy.</p>
       <div class="stats">
-        <div class="stat"><div class="n">1.5k+</div><div class="l">instanced leaves</div></div>
-        <div class="stat"><div class="n">5</div><div class="l">light shafts</div></div>
-        <div class="stat"><div class="n">0</div><div class="l">baked frames</div></div>
+        <div class="stat"><div class="n">11</div><div class="l">garden bays</div></div>
+        <div class="stat"><div class="n">6</div><div class="l">sunbeams</div></div>
+        <div class="stat"><div class="n">3</div><div class="l">leaf tones</div></div>
       </div>
-      <span class="go">Walk the colonnade <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <button class="go" type="button" data-goto="1">Walk the colonnade <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </section>
 
   <!-- BEAT 1 — deeper in -->
   <section class="beat right" data-beat="1">
-    <div class="glass clickable" data-goto="2">
+    <div class="glass">
       <span class="eyebrow">The colonnade</span>
       <h2 class="serif kinetic">Concrete, <em>reclaimed.</em></h2>
       <p class="lede">Old arches, taken back by leaf and vine. The camera walks the platform at exactly your scroll's pace, every surface catching the canopy light.</p>
       <div class="chips"><span>image-based light</span><span>instanced vines</span><span>live walk</span></div>
-      <span class="go">Up to the canopy <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <button class="go" type="button" data-goto="2">Up to the canopy <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </section>
 
   <!-- BEAT 2 — light shafts -->
   <section class="beat" data-beat="2">
-    <div class="glass clickable" data-goto="3">
+    <div class="glass">
       <span class="eyebrow">Canopy</span>
       <h2 class="serif kinetic">Light falls <em>in shafts.</em></h2>
       <p class="lede">Real depth, real fog — hundreds of instanced leaves and drifting pollen, not a flat photo. Move your cursor; the world leans with you.</p>
       <div class="chips"><span>god-rays</span><span>drifting pollen</span><span>volumetric fog</span></div>
-      <span class="go">Full power <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      <button class="go" type="button" data-goto="3">Full power <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </section>
 
@@ -206,8 +221,10 @@
 
 <script type="module">
   import * as THREE from 'three';
+  import {createSceneSession} from '../_scene-session.js';
+  import {mountSceneControls} from '../_study-controls.js';
 
-  const reduce  = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = matchMedia('(max-width: 768px)').matches;
   const canvas  = document.getElementById('stage');
   const BEATS = 5;
@@ -229,7 +246,7 @@
     el.addEventListener('click', function(e){ if (el.tagName === 'A') return; e.preventDefault(); gotoBeat(parseInt(el.dataset.goto, 10)); });
   });
 
-  let renderer, scene, camera, raf = 0, running = false, onScreen = true;
+  let renderer, scene, camera, session;
   let progress = 0, t_target = 0, mx = 0, my = 0, tmx = 0, tmy = 0;
   let sun, curve, pollen;
   const leafMeshes = [], vines = [], shafts = [];
@@ -252,9 +269,9 @@
     camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.1, 300);
 
     scene.add(new THREE.AmbientLight('#1d3014', 0.7));
-    scene.add(new THREE.HemisphereLight('#cdec98', '#0c1408', 0.95));
+    scene.add(new THREE.HemisphereLight('#d6e5dd', '#162217', 1.4));
     sun = new THREE.DirectionalLight('#ffeeb0', 1.7);
-    sun.position.set(6, 16, 4); scene.add(sun);
+    sun.position.set(-6, 16, 4); scene.add(sun);
 
     buildStructure();
     buildFoliage();
@@ -263,22 +280,19 @@
     buildPath();
     loadEnvironment();
 
-    addEventListener('resize', onResize, { passive: true });
-    if (!isMobile && !reduce) addEventListener('pointermove', onPointer, { passive: true });
-    canvas.addEventListener('webglcontextlost', onLost, false);
-    canvas.addEventListener('webglcontextrestored', onRestored, false);
-    document.addEventListener('visibilitychange', updateRun);
-    new IntersectionObserver((e)=>{ onScreen = e[0].isIntersecting; updateRun(); }, { threshold: 0 }).observe(canvas);
-
+    if (!isMobile) addEventListener('pointermove', onPointer, {passive:true});
+    session = createSceneSession({canvas, frame:loop, resize:onResize, restore:loadEnvironment, motionChange(value) { reduce=value; mx=my=tmx=tmy=0; } });
     placeCamera(0);
-    if (reduce) renderer.render(scene, camera); else { running = true; loop(); }
+    mountSceneControls({title:'Canopy light',label:'Sunlight',min:.4,max:2.6,step:.05,value:1.7,format:v=>v.toFixed(2)+'×',
+      update(v){ sun.intensity=v; session.invalidate(); },pause:v=>session.setPaused(v)});
+    session.start();
   }
 
   /* image-based lighting from the fal.ai rainforest panorama */
   function loadEnvironment(){
     new THREE.TextureLoader().load('assets/env.jpg', function(tex){
       tex.mapping = THREE.EquirectangularReflectionMapping; tex.colorSpace = THREE.SRGBColorSpace;
-      try { const pmrem = new THREE.PMREMGenerator(renderer); const rt = pmrem.fromEquirectangular(tex); scene.environment = rt.texture; pmrem.dispose(); tex.dispose(); if (reduce && renderer) renderer.render(scene, camera); }
+      try { const pmrem = new THREE.PMREMGenerator(renderer); const rt = pmrem.fromEquirectangular(tex); scene.environment = rt.texture; pmrem.dispose(); tex.dispose(); session?.invalidate(); }
       catch(e){}
     }, undefined, function(){});
   }
@@ -288,11 +302,15 @@
   const DEPTH = 110, BAYS = 11, BAY = DEPTH / BAYS, HALL_W = 7, HALL_H = 6.5;
 
   function buildStructure(){
-    const concrete = new THREE.MeshStandardMaterial({ color: '#9b9a8d', roughness: 0.95, metalness: 0.02, envMapIntensity: 0.6 });
+    const concrete = new THREE.MeshStandardMaterial({ color: '#a3a299', roughness: 0.95, metalness: 0.02, envMapIntensity: 0.6 });
     const dark = new THREE.MeshStandardMaterial({ color: '#414639', roughness: 1.0 });
     const g = new THREE.Group(); scene.add(g);
 
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(HALL_W + 4, DEPTH + 20), new THREE.MeshStandardMaterial({ color: '#55564a', roughness: 1, envMapIntensity: 0.4 }));
+    const paving=document.createElement('canvas');paving.width=paving.height=128;const px=paving.getContext('2d');
+    px.fillStyle='#777a71';px.fillRect(0,0,128,128);px.strokeStyle='#535e50';px.lineWidth=2;px.strokeRect(1,1,126,126);
+    for(let i=0;i<1400;i++){px.fillStyle=`rgba(32,48,32,${rnd()*.12})`;px.fillRect(rnd()*128,rnd()*128,2,2);}
+    const pavingMap=new THREE.CanvasTexture(paving);pavingMap.colorSpace=THREE.SRGBColorSpace;pavingMap.wrapS=pavingMap.wrapT=THREE.RepeatWrapping;pavingMap.repeat.set(5,60);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(HALL_W + 4, DEPTH + 20), new THREE.MeshStandardMaterial({ color:'#9b9e91',map:pavingMap,roughness:.85,envMapIntensity:.4 }));
     floor.rotation.x = -Math.PI/2; floor.position.set(0, 0, -DEPTH/2); g.add(floor);
 
     for (let b = 0; b <= BAYS; b++){
@@ -308,27 +326,36 @@
         slat.position.set(0, HALL_H - 0.05, z - BAY*0.4); g.add(slat);
       }
     }
+    for(const side of [-1,1]){
+      const bed=new THREE.Mesh(new THREE.BoxGeometry(1.1,.24,DEPTH),new THREE.MeshStandardMaterial({color:'#233523',roughness:1}));
+      bed.position.set(side*(HALL_W/2-.65),.12,-DEPTH/2);g.add(bed);
+      const edge=new THREE.Mesh(new THREE.BoxGeometry(.09,.32,DEPTH),concrete);edge.position.set(side*(HALL_W/2-1.22),.16,-DEPTH/2);g.add(edge);
+    }
     // far backdrop — the generated jungle, glowing like the sun at the end of the platform
     const backMat = new THREE.MeshStandardMaterial({ color: '#000', emissive: '#cfe89a', emissiveIntensity: 0.85 });
-    new THREE.TextureLoader().load('assets/backdrop.jpg', function(t){ t.colorSpace = THREE.SRGBColorSpace; backMat.emissiveMap = t; backMat.emissive = new THREE.Color('#ffffff'); backMat.emissiveIntensity = 1.0; backMat.needsUpdate = true; if (reduce && renderer) renderer.render(scene, camera); }, undefined, function(){});
+    new THREE.TextureLoader().load('assets/backdrop.jpg', function(t){ t.colorSpace = THREE.SRGBColorSpace; backMat.emissiveMap = t; backMat.emissive = new THREE.Color('#ffffff'); backMat.emissiveIntensity = 1.0; backMat.needsUpdate = true; session?.invalidate(); }, undefined, function(){});
     const back = new THREE.Mesh(new THREE.PlaneGeometry(44, 28), backMat);
     back.position.set(0, 9, -DEPTH - 6); scene.add(back);
   }
 
   function leafGeo(){
-    const gx = new THREE.BufferGeometry();
-    const v = new Float32Array([ 0,0.5,0,  0.16,0,0,  0,-0.5,0,  -0.16,0,0 ]);
-    gx.setAttribute('position', new THREE.BufferAttribute(v, 3));
-    gx.setIndex([0,1,2, 0,2,3]); gx.computeVertexNormals();
-    return gx;
+    // A curved blade with a raised midrib. Shared across every leaf instance.
+    const vertices=[], indices=[]; const segments=12;
+    for(let i=0;i<=segments;i++){
+      const t=i/segments, y=t-.5, width=Math.pow(Math.sin(Math.PI*t),.8)*.24;
+      const bend=Math.sin(t*Math.PI)*.11;
+      vertices.push(-width,y,bend-.06*Math.sin(t*Math.PI),0,y,bend,width,y,bend-.06*Math.sin(t*Math.PI));
+      if(i<segments){ const a=i*3,b=a+3; indices.push(a,b,a+1,a+1,b,b+1,a+1,b+1,a+2,a+2,b+1,b+2); }
+    }
+    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.setIndex(indices);geo.computeVertexNormals();return geo;
   }
 
   function buildFoliage(){
     const geo = leafGeo();
     const tones = [
-      new THREE.MeshStandardMaterial({ color: '#6a9a3c', roughness: 0.82, side: THREE.DoubleSide, emissive:'#1a2e10', emissiveIntensity:0.3, envMapIntensity: 0.7 }),
-      new THREE.MeshStandardMaterial({ color: '#9ac756', roughness: 0.78, side: THREE.DoubleSide, emissive:'#243d14', emissiveIntensity:0.34, envMapIntensity: 0.7 }),
-      new THREE.MeshStandardMaterial({ color: '#477730', roughness: 0.88, side: THREE.DoubleSide, emissive:'#13260c', emissiveIntensity:0.26, envMapIntensity: 0.6 }),
+      new THREE.MeshStandardMaterial({ color: '#416c3a', roughness: 0.82, side: THREE.DoubleSide, emissive:'#1a2e10', emissiveIntensity:0.3, envMapIntensity: 0.7 }),
+      new THREE.MeshStandardMaterial({ color: '#80a754', roughness: 0.78, side: THREE.DoubleSide, emissive:'#243d14', emissiveIntensity:0.34, envMapIntensity: 0.7 }),
+      new THREE.MeshStandardMaterial({ color: '#264f32', roughness: 0.88, side: THREE.DoubleSide, emissive:'#13260c', emissiveIntensity:0.26, envMapIntensity: 0.6 }),
     ];
     const PER = isMobile ? 240 : 400;
     tones.forEach(function(mat, ti){
@@ -340,9 +367,9 @@
         if (mode < 0.4){ const sx = rnd() < 0.5 ? -1 : 1; x = sx * (rnd() * HALL_W/2); y = HALL_H - rnd() * 3.2; }
         else if (mode < 0.75){ const sx = rnd() < 0.5 ? -1 : 1; x = sx * (HALL_W/2 + (rnd()-0.5) * 1.2); y = rnd() * HALL_H; }
         else { const sx = rnd() < 0.5 ? -1 : 1; x = sx * (HALL_W/2 - rnd() * 1.6); y = rnd() * 1.4; }
-        const s = 0.6 + rnd() * 1.4;
+        const s = 0.45 + rnd() * 1.05;
         dummy.position.set(x, y, z0);
-        dummy.rotation.set(rnd()*Math.PI, rnd()*Math.PI*2, rnd()*Math.PI);
+        dummy.rotation.set((rnd()-.5)*1.2, rnd()*Math.PI*2, (rnd()-.5)*1.8);
         dummy.scale.set(s, s, s); dummy.updateMatrix();
         inst.setMatrixAt(i, dummy.matrix);
       }
@@ -364,9 +391,9 @@
   function buildShafts(){
     const mat = new THREE.MeshBasicMaterial({ color: '#ffe7a0', transparent: true, opacity: 0.09, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
     for (let i = 0; i < 6; i++){
-      const cone = new THREE.Mesh(new THREE.ConeGeometry(2.6, 13, 14, 1, true), mat);
+      const cone = new THREE.Mesh(new THREE.ConeGeometry(2.6, 13, 24, 1, true), mat.clone());
       cone.position.set((rnd()-0.5)*HALL_W, HALL_H + 2.5, -i * (DEPTH/6) - 6);
-      cone.rotation.x = Math.PI; cone.rotation.z = (rnd()-0.5)*0.4;
+      cone.rotation.x = 0; cone.rotation.z = (rnd()-0.5)*0.4;
       cone.userData.base = cone.material.opacity; scene.add(cone); shafts.push(cone);
     }
   }
@@ -416,12 +443,10 @@
   }
 
   let breeze = 0;
-  function loop(){
-    raf = requestAnimationFrame(loop);
-    if (!running) return;
-    progress += (t_target - progress) * 0.07;
-    tmx += (mx - tmx) * 0.05; tmy += (my - tmy) * 0.05;
-    breeze += 0.012;
+  function loop({dt,time,reduced,paused}){
+    if (!reduced) progress += (t_target - progress) * (paused ? 1 : 1-Math.exp(-4.5*dt));
+    tmx += (mx - tmx) * (1-Math.exp(-3*dt)); tmy += (my - tmy) * (1-Math.exp(-3*dt));
+    breeze = time * .72;
     for (const m of leafMeshes) m.rotation.z = Math.sin(breeze + m.userData.phase) * 0.035;
     for (let i = 0; i < shafts.length; i++) shafts[i].material.opacity = shafts[i].userData.base * (0.7 + 0.3*Math.sin(breeze*0.7 + i));
     if (pollen){
@@ -435,11 +460,9 @@
     placeCamera(progress);
     renderer.render(scene, camera);
   }
-  function updateRun(){ const vis = document.visibilityState === 'visible' && onScreen; if (reduce){ running = false; return; } if (vis && !running){ running = true; if (!raf) loop(); } else if (!vis) running = false; }
-  function onResize(){ if (!renderer) return; camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); if (reduce){ placeCamera(progress); renderer.render(scene, camera); } }
-  function onPointer(e){ mx = (e.clientX/innerWidth)*2 - 1; my = -((e.clientY/innerHeight)*2 - 1); }
-  function onLost(e){ e.preventDefault(); running = false; cancelAnimationFrame(raf); raf = 0; }
-  function onRestored(){ try { init(); } catch(err){ document.body.classList.add('no-webgl'); } }
+  function onResize(){ if (!renderer) return; camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);  }
+  function onPointer(e){ if(reduce) return; mx = (e.clientX/innerWidth)*2 - 1; my = -((e.clientY/innerHeight)*2 - 1); }
+
 
   /* ── scroll → camera progress + active chapter ── */
   function docProgress(){ const max = document.body.scrollHeight - innerHeight; return max <= 0 ? 0 : Math.min(1, Math.max(0, scrollY / max)); }
@@ -452,9 +475,9 @@
       document.querySelector('.progress span').style.transform = 'scaleX(' + t_target + ')';
       const cue = document.querySelector('.scroll-cue'); if (cue) cue.style.opacity = t_target > 0.04 ? '0' : '1';
       const cur = Math.round(t_target * (BEATS - 1));
-      chapBtns.forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.goto,10) === cur); });
+      chapBtns.forEach(function(b){ b.classList.toggle('active', parseInt(b.dataset.goto,10) === cur); b.setAttribute('aria-current', parseInt(b.dataset.goto,10) === cur ? 'step' : 'false'); });
       ticking = false;
-      if (reduce){ progress = t_target; placeCamera(progress); if (renderer) renderer.render(scene, camera); }
+      session?.invalidate();
     });
   }, { passive: true });
 
@@ -464,15 +487,13 @@
     entries.forEach(function(en){
       const words = en.target.querySelectorAll('.wd > span');
       const others = en.target.querySelectorAll('.lede, .eyebrow, .stats, .chips, .go');
-      if (en.isIntersecting && en.intersectionRatio > 0.55){
+      if (en.isIntersecting){
         words.forEach(function(w,i){ w.style.transition = 'transform 0.95s ' + (i*0.05) + 's var(--ease-reveal)'; w.style.transform = 'translateY(0)'; });
         others.forEach(function(o,i){ o.style.transition = 'opacity 0.8s ' + (0.12 + i*0.07) + 's var(--ease-reveal), transform 0.8s ' + (0.12 + i*0.07) + 's var(--ease-reveal)'; o.style.opacity = '1'; o.style.transform = 'none'; });
-      } else {
-        words.forEach(function(w){ w.style.transition = 'transform 0.5s var(--ease-reveal)'; w.style.transform = 'translateY(115%)'; });
-        others.forEach(function(o){ o.style.transition = 'opacity 0.4s, transform 0.4s'; o.style.opacity = '0'; o.style.transform = 'translateY(24px)'; });
+
       }
     });
-  }, { threshold: [0, 0.55, 0.9] });
+  }, { threshold: .12 });
 
   if (!reduce){
     beats.forEach(function(b){

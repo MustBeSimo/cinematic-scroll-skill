@@ -36,6 +36,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { inspectLayout } from './layout.mjs';
+import { classifyRequestFailure } from './request-failure.mjs';
 
 const args = process.argv.slice(2);
 if (!args.length || args[0].startsWith('--')) {
@@ -132,7 +133,10 @@ const push = (kind, text) => {
 };
 page.on('console', (m) => { if (m.type() === 'error') push('console', m.text()); });
 page.on('pageerror', (e) => push('pageerror', e.message));
-page.on('requestfailed', (r) => push('request', `${r.url()} ${r.failure()?.errorText ?? ''}`));
+page.on('requestfailed', (r) => {
+  const errorText=r.failure()?.errorText ?? '';
+  push(classifyRequestFailure({javaScriptEnabled:!NO_JS,resourceType:r.resourceType(),errorText}), `${r.url()} ${errorText}`);
+});
 page.on('response', (r) => { if (r.status() >= 400) push('http', `${r.status()} ${r.url()}`); });
 
 const MEASURE_FPS = args.includes('--fps');
@@ -197,13 +201,13 @@ try {
 }
 await browser.close();
 
-const hard = errors.filter((e) => e.kind !== 'media');
+const hard = errors.filter((e) => !['media','disabled-script'].includes(e.kind));
 const verdict = hard.length === 0 ? 'CLEAN' : 'ERRORS';
 const report = { url, viewport: `${VW}x${VH}`, reducedMotion: REDUCED, mobile: MOBILE,
   javaScript: !NO_JS, verdict, errors, shots, ...(fps ? { fps } : {}) };
 fs.writeFileSync(path.join(OUT, 'proof.json'), JSON.stringify(report, null, 2));
 
-console.log(`\npage-proof: ${verdict} — ${hard.length} runtime error(s), ${errors.length - hard.length} media advisories, ${shots.length} shot(s)`);
+console.log(`\npage-proof: ${verdict} — ${hard.length} runtime error(s), ${errors.length - hard.length} advisories, ${shots.length} shot(s)`);
 for (const e of hard.slice(0, 10)) console.log(`  [${e.kind}] ${e.text}`);
 console.log(`report → ${path.join(OUT, 'proof.json')}`);
 process.exit(hard.length ? 1 : 0);

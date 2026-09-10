@@ -33,6 +33,7 @@
    =========================================================================== */
 
 import * as THREE from 'three';
+import {mountSceneControls} from '../_study-controls.js';
 
 const BOOT = window.__FLAGSHIP__ || {
   webglOK: true, reduce: false, isTouch: false,
@@ -45,7 +46,7 @@ const BOOT = window.__FLAGSHIP__ || {
 
 // If WebGL is unavailable the boot script already revealed the CSS fallback.
 // Build the DOM chapters anyway (text/legibility), but never touch WebGL.
-const reduce = BOOT.reduce;
+let reduce = BOOT.reduce;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const smooth = (e0, e1, x) => { if (x <= e0) return 0; if (x >= e1) return 1; const t = (x - e0) / (e1 - e0); return t * t * (3 - 2 * t); };
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -58,7 +59,7 @@ const CHAPTERS = [
   {
     id: 'object', roman: '01', eyebrow: 'MOVEMENT I · THE OBJECT',
     title: [['PRECISION', 0], ['IN FORM', 1]],
-    lede: 'A single artifact, machined from one idea. The camera orbits as the form breathes apart and reassembles — every facet catching the light it was cut for. A premium product, rendered in real time, placeable on your desk at true scale.',
+    lede: 'An instrument of light and metal. Follow the edges, explore the mechanism, then travel into the architecture that surrounds it.',
     morph: 'radial-gradient(120% 90% at 70% 12%, rgba(61,224,255,.10), rgba(61,224,255,0) 55%), radial-gradient(120% 100% at 50% 100%, rgba(5,6,11,.7), rgba(5,6,11,0) 60%)',
     cue: true, ar: true, enter: 'mask',
   },
@@ -95,6 +96,7 @@ const atmos = document.getElementById('atmos');
 const bar = document.getElementById('scrollbar');
 
 function buildDOM() {
+  reel.replaceChildren();
   for (const ch of CHAPTERS) {
     const sec = document.createElement('section');
     sec.id = ch.id;
@@ -258,7 +260,7 @@ async function startEngine() {
 
   // 1 · OBJECT — faceted beveled prism, slow rotate + explode/reassemble
   const objectChapter = buildObjectChapter(track);
-  objectChapter.group.position.copy(anchors[0]).add(new THREE.Vector3(0, 0.1, -1.5));
+  objectChapter.group.position.copy(anchors[0]).add(new THREE.Vector3(BOOT.isMobile() ? 0 : 1.8, 0.1, -1.5));
   scene.add(objectChapter.group);
   groups.push(objectChapter);
 
@@ -279,12 +281,13 @@ async function startEngine() {
 
   // expose hooks for the boot context-loss handlers
   window.__FLAGSHIP_ENGINE__ = {
-    onContextLost() { running = false; },
+    onContextLost() { running = false;renderer.setAnimationLoop(null);loopArmed=false;canvas.dataset.sceneState='lost'; },
     onContextRestored() {
+      scene.environment?.dispose();scene.environment=buildEnvMap(renderer);disposables.push(scene.environment);
       renderer.setPixelRatio(BOOT.pixelRatio());
       renderer.setSize(innerWidth, innerHeight, false);
       running = true;
-      if (!reduce) startLoop(); else renderOnce();
+      if (!reduce && !driftPaused) startLoop(); else renderOnce();
     },
   };
 
@@ -294,7 +297,7 @@ async function startEngine() {
 
   // ── try to upgrade Tier-B chapters from the manifest (zero code change) ──
   // runtime:"procedural" → keep procedural. A real .glb path → load + replace.
-  upgradeFromManifest(manifest, groups, track, scene, mixers).catch(() => { /* keep placeholders */ });
+  upgradeFromManifest(manifest, groups, track, scene, mixers).then(()=>{if(reduce || driftPaused)renderOnce();}).catch(() => { /* keep placeholders */ });
 
   // ── XR + AR affordances — feature-detected BEFORE any button is shown ───
   await mountXRAndAR(renderer, manifest);
@@ -304,6 +307,7 @@ async function startEngine() {
   addEventListener('resize', () => {
     clearTimeout(resizeTO);
     resizeTO = setTimeout(() => {
+      groups[0].group.position.x=BOOT.isMobile()?0:1.8;
       camera.aspect = innerWidth / innerHeight;
       camera.updateProjectionMatrix();
       renderer.setPixelRatio(BOOT.pixelRatio());
@@ -333,26 +337,32 @@ async function startEngine() {
   let current = 0;    // lerped value the camera actually uses
   function readScroll() {
     const max = document.documentElement.scrollHeight - innerHeight;
-    target = max > 0 ? clamp(scrollY / max, 0, 1) : 0;
+    let index=0;
+    sections.forEach((sec,i)=>{if(scrollY>=sec.offsetTop)index=i;});
+    const sec=sections[index];
+    const local=clamp((scrollY-sec.offsetTop)/sec.offsetHeight,0,1);
+    target=clamp((index+smooth(.55,.98,local))/(CHAPTERS.length-1),0,1);
   }
-  addEventListener('scroll', readScroll, { passive: true });
+  addEventListener('scroll', () => { readScroll(); if(driftPaused && !reduce) renderOnce(); }, {passive:true});
   readScroll();
   current = target;
 
   // ── the render loop (XR-safe via setAnimationLoop) ──────────────────────
   let running = true;
   const clock = new THREE.Clock();
+  let sceneTime=0, driftPaused=false, frameCount=0;
   const camTarget = new THREE.Vector3();
   const lookTarget = new THREE.Vector3();
 
   function updateScene(dt, t) {
-    const time = clock.elapsedTime;
+    const time = sceneTime;
     // camera travels the chapter anchors; t in [0,1] maps across (N-1) gaps
     const span = (CHAPTERS.length - 1);
     const f = t * span;                  // 0..span
     const i = clamp(Math.floor(f), 0, span - 1);
     const local = f - i;                 // 0..1 within the current leg
     camTarget.copy(anchors[i]).lerp(anchors[i + 1], smooth(0, 1, local));
+    camTarget.z += BOOT.isMobile() ? 7.4 : 5.8;
     camTarget.x += Math.sin(t * Math.PI * 2) * 0.6;     // gentle lateral drift
     camTarget.y += 0.25 * Math.sin(t * Math.PI * 3);
 
@@ -397,10 +407,10 @@ async function startEngine() {
 
   let loopArmed = false;
   function startLoop() {
-    if (loopArmed) return;
+    if (loopArmed || reduce || driftPaused) return;
     loopArmed = true;
     renderer.setAnimationLoop(() => {
-      if (!running) return;
+      if (!running) { renderer.setAnimationLoop(null);loopArmed=false;return; }
       const dt = Math.min(clock.getDelta(), 0.05);
       const presenting = renderer.xr.isPresenting;
       if (!presenting && (!onScreen || !tabVisible)) {
@@ -409,26 +419,38 @@ async function startEngine() {
         loopArmed = false;
         return;
       }
+      sceneTime += dt;
       current += (target - current) * (reduce ? 1 : 1 - Math.exp(-5.5 * dt));
       updateScene(dt, presenting ? clamp(current, 0, 1) : current);
       renderer.render(scene, camera);
+      canvas.dataset.sceneFrames=String(++frameCount);canvas.dataset.sceneState='running';
     });
   }
   function renderOnce() {
     // reduced motion: compose ONE frame at the current scroll position, hold it
-    current = target;
+    if(!reduce) current = target;
     updateScene(0, current);
     renderer.render(scene, camera);
+    canvas.dataset.sceneFrames=String(++frameCount);canvas.dataset.sceneState=reduce?'reduced':'paused';
   }
 
   if (reduce) {
     // no continuous loop; render a single static frame and re-render only on
     // explicit scroll (still discrete — never a rAF animation).
     renderOnce();
-    addEventListener('scroll', () => { readScroll(); renderOnce(); }, { passive: true });
+
   } else {
     startLoop();
   }
+
+  mountSceneControls({title:'Light the object',label:'Exposure',min:.6,max:1.5,step:.05,value:1.05,format:v=>v.toFixed(2)+'×',
+    update(v){renderer.toneMappingExposure=v;if(reduce || driftPaused)renderOnce();},
+    pause(value){driftPaused=value;renderer.setAnimationLoop(null);loopArmed=false;clock.getDelta();if(value)renderOnce();else startLoop();}
+  });
+  matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>{
+    reduce=e.matches;renderer.setAnimationLoop(null);loopArmed=false;clock.getDelta();
+    if(reduce || driftPaused)renderOnce();else startLoop();
+  });
 
   // ── teardown (kept for completeness / SPA hosting): dispose all GL ───────
   window.__FLAGSHIP_DISPOSE__ = function dispose() {

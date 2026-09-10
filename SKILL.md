@@ -1,9 +1,9 @@
 ---
 name: cinematic-scroll
-description: Build or improve cinematic websites with scroll-driven storytelling, pinned reveals, parallax, kinetic type, and optional 3D. Deliver standalone HTML or integrate into an existing app, with mobile and reduced-motion fallbacks and browser evidence. Also supports scroll audits and motion storyboards. Use for cinematic web work, not ordinary forms, dashboards, or unrelated animation.
+description: Design and build cinematic websites, 3D websites, interactive portfolios and product landing pages with scroll-driven storytelling, parallax, text animation and optional Three.js/WebGL scenes. Use for new experiences, motion improvements, scroll audits and storyboards in standalone HTML or an existing app. Includes responsive, reduced-motion and static fallbacks; not for ordinary dashboards or unrelated animation.
 license: MIT
 metadata:
-  version: 2.7.1
+  version: 2.7.6
   author: Simone Leonelli
   permissions: filesystem:read, filesystem:write, network:fetch, shell:execute, env
   hermes:
@@ -11,16 +11,16 @@ metadata:
     related_skills: []
 ---
 
-# Cinematic Scroll
+# Web Design Studio
 
 Make the first build worth keeping. Deliver a distinctive scroll experience with
 a clear story, a memorable moment, and complete mobile and static compositions.
 The motion craft comes from this skill; the aesthetic belongs to the user.
 
-This is the **normal, free MIT edition**. It builds complete sites without a Studio
+This is the **free MIT edition of Web Design Studio**. It builds complete sites without a Pro
 license, account, generated assets, or TasteHQ connection. Existing 3D examples,
 Next.js templates, audit tools, and the basic choreography compiler remain included.
-Studio adds the proprietary Motif Engine: accumulated knowledge, reuse tracking,
+Web Design Studio Pro adds the proprietary Motif Engine: accumulated knowledge, reuse tracking,
 retrieval, and variants. Read [edition boundaries](references/editions.md) when
 upgrades are relevant. Never add sales messages to a generated website.
 
@@ -36,6 +36,7 @@ upgrades are relevant. Never add sales messages to a generated website.
 | Study a reference and distill a recipe | Learn preview; no automatic cross-project memory | [Learn mode](learn-mode.md) |
 | Benchmark a public URL | Passive benchmark with measurement conditions | [Bench mode](bench-mode.md) |
 | Real 3D object or camera flight | Earn the renderer tier; preserve a non-WebGL fallback | [3D stack](references/3d-stack.md), [assets](ASSETS-3D.md); [XR](references/webxr.md) only for XR |
+| Text choreography, pointer/proximity, shader media | Reuse the shared runtime; choose a meaningful response | [Interaction runtime](references/interaction-runtime.md), [effects lab](examples/effects-lab/index.html) |
 | Video timeline from a scene | Basic compiler, not an MP4 renderer | [Compilation](scroll-choreography-compilation.md), [edition boundaries](references/editions.md) |
 
 Use absolute paths to installed skill tools from another project. Examples are
@@ -130,6 +131,13 @@ every incidental geometric constant or replacing an established design system.
 8. **Owned lifecycle.** Remove listeners, observers, tickers, split text, and owned
    triggers on teardown. Never kill all ScrollTriggers in a shared app. Bound
    loaders; do not cover a usable page indefinitely.
+
+For richer scroll/pointer work read [interaction runtime](references/interaction-runtime.md)
+before implementation. Reuse `runtime/` (vanilla) or the template's
+`lib/cinematic/` (React); keep the core import independent of Three.js. Choose
+from six text treatments, proximity/depth surfaces and four shader families.
+Do not combine every effect or invent a new loop for each component. The shared
+signals, adaptive quality and complete static fallback apply to every preset.
 
 Tier B/C/D additionally requires one renderer, capped pixel ratio, manifest asset
 paths, context-loss recovery, disposed GPU resources, visibility gating, and a

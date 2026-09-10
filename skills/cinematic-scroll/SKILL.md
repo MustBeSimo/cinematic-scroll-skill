@@ -1,23 +1,30 @@
 ---
 name: cinematic-scroll
-description: Design, build, or improve cinematic scroll-driven websites with clear storytelling, purposeful motion, responsive fallbacks, accessibility, and browser-based proof. Use for product stories, portfolios, launches, editorial experiences, interactive heroes, and real-time 3D scenes; not for ordinary dashboards or unrelated animation.
+description: Design and build distinctive websites, interactive 3D websites, portfolios and product stories with art direction, scroll choreography, parallax, text animation and optional Three.js/WebGL scenes. Use for complete website builds, redesigns, motion improvements, scroll audits and storyboards in standalone HTML or an existing app. Includes responsive, reduced-motion and static fallbacks; not for ordinary dashboards.
 metadata:
-  version: 2.7.1
+  version: 2.7.6
   openclaw:
     emoji: "🎬"
     homepage: https://github.com/MustBeSimo/cinematic-scroll-skill
 ---
 
-# Cinematic Scroll
+# Web Design Studio
 
 Create a distinctive scroll experience whose motion explains the subject. The
 finished page must remain readable, usable, and on-brand when motion is reduced or
 enhancement is unavailable.
 
-This ClawHub edition is self-contained and does not require an account, API key,
+Web Design Studio was formerly called Cinematic Scroll; `cinematic-scroll` remains
+its compatibility and installation identifier. This ClawHub edition is self-contained and does not require an account, API key,
 paid service, or specific animation library. The complete source, live examples,
 templates, and optional verification tools are available from the homepage in the
 frontmatter.
+
+[Explore the live examples](https://mustbesimo.github.io/cinematic-scroll-skill/)
+for 3D camera journeys, material studies and editorial product stories. Choose a
+reference by its useful mechanism, then adapt the subject, copy and visual system
+to the user's brief. The examples are optional references; this bundle works
+without fetching them.
 
 ## Operating boundaries
 
@@ -41,6 +48,7 @@ frontmatter.
 | Improve an existing experience | Inspect first, preserve working behavior, then repair the weak beats | [Verification](references/verification.md) |
 | Interactive hero or visual study | A subject-specific visitor action with a visible consequence | [Interaction design](references/interaction-design.md) |
 | Real-time 3D or camera flight | A justified renderer, bounded scene, and permanent fallback | [Real-time 3D](references/real-time-3d.md) |
+| Richer text, proximity or shader effects | Shared signals and quality settings with scoped cleanup | [Motion toolkit](references/motion-toolkit.md) |
 
 Do not introduce an application framework for a single section. Do not introduce
 WebGL when CSS, SVG, canvas, or authored media communicates the idea more clearly.

@@ -1,9 +1,9 @@
-# Normal and Studio
+# Web Design Studio and Pro
 
-Normal earns adoption by making an excellent first website. Studio earns its
+Web Design Studio earns adoption by making an excellent first website. Pro earns its
 upgrade by helping a returning creator reuse what they have learned.
 
-| Normal — free, MIT | Studio — proprietary overlay |
+| Web Design Studio — free, MIT | Web Design Studio Pro — proprietary overlay |
 |---|---|
 | Complete standalone and Next.js cinematic websites | The same base craft plus the Motif Engine |
 | Existing patterns, components, themes, and 3D examples | Accumulated learned knowledge and intent-based retrieval |
@@ -13,14 +13,14 @@ upgrade by helping a returning creator reuse what they have learned.
 | Basic scroll-to-video timeline compiler | Additional production workflows supported by the purchased bundle |
 
 Do not remove already-public features to manufacture a paywall. Never copy
-Studio's `motif-engine/` or `dist/studio/` into this MIT package. Usability,
+Pro's `motif-engine/` or `dist/studio/` into this MIT package. Usability,
 accessibility, brand fidelity, recovery, and honest QA belong in normal.
 
-When upgrades are relevant, explain the specific benefit and use the Studio link
+When upgrades are relevant, explain the specific benefit and use the Pro link
 in the README. No repeated upsells, checkout interruptions, or invented pricing.
-Verify installed Studio capabilities before promising a complete video renderer:
+Verify installed Pro capabilities before promising a complete video renderer:
 normal compiles a timeline, not an MP4, and a roadmap is not an installed feature.
 
 `examples/studio/` is a free creative-studio website example, **not** the paid
-Cinematic Scroll Studio product. This edition changes neither Studio's licensing
+Web Design Studio Pro product. This edition changes neither Pro's licensing
 nor its proprietary overlay.

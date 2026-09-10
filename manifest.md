@@ -1,4 +1,4 @@
-# Cinematic Scroll — Skill Manifest
+# Web Design Studio — Skill Manifest
 
 ## What This Skill Is
 
@@ -47,7 +47,38 @@ Every experience starts from a baseline that works everywhere: static layout, re
 
 ## Version History
 
-### v2.7.1 (Current)
+### v2.7.6 (Current source)
+
+- Rebranded the public product from Cinematic Scroll to Web Design Studio while
+  retaining the established repository, ClawHub slug, package and skill identifiers.
+- Renamed the paid edition Web Design Studio Pro and clarified the broader website,
+  interactive 3D and motion scope.
+
+### v2.7.5
+
+- More precise skill discovery descriptions, a direct ClawHub showcase link and
+  subject-based 3D selection guidance; 28 scene-specific gallery build prompts.
+
+- Two-column project catalog with separate 3D and editorial collections, search,
+  numbered cards, build prompts, source links and complete clickable previews.
+- Automatic Aureus loop, proximity video previews for all 28 examples, and
+  scroll-driven gallery motion with reduced-motion and no-JS fallbacks.
+- Improved six 3D scenes; retained the established Aureus website unchanged.
+
+- MIT shared scroll/pointer/proximity runtime, idle scheduling and adaptive quality.
+- Six accessible text treatments, magnetic/depth surfaces and four shader families.
+- React adapters, scoped asset loading/disposal, WebGL context recovery and an
+  isolated experimental WebGPU/TSL preview with WebGL2 fallback.
+- FIELD narrative and effects lab in standalone and Next.js modes; old examples retained.
+- Prop-compatible headline, tilt and cursor adapters; v3 signal bindings and
+  cleanup-aware choreography compiler with explicit v2 substitutions.
+- Deterministic standalone exports, renderer/browser lifecycle tests and payload checks.
+- Three/types0.185.0 pinned for compatibility with postprocessing6.39.4.
+
+Release metadata is prepared locally. Publication, tag and external brand
+certification are separate gates; source changes do not imply a published release.
+
+### v2.7.1
 
 - Added a dedicated text-only OpenClaw bundle at `skills/cinematic-scroll/`.
 - Added ClawHub format/version validation and a suppression-free NVIDIA SkillSpector CI gate.

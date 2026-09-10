@@ -197,10 +197,10 @@ nav {
 /* ── Chapter 0 — Hero ─────────────────────────────────────── */
 #hero {
   position: relative;
-  height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   padding: clamp(32px, 6vh, 80px) clamp(24px, 6vw, 100px);
 }
 .hero-eyebrow {
@@ -208,7 +208,7 @@ nav {
   font-size: clamp(9px, 0.9vw, 11px);
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--indigo);
+  color: var(--cyan);
   margin-bottom: clamp(20px, 3vh, 40px);
   opacity: 0;
   transform: translateY(16px);
@@ -217,7 +217,7 @@ nav {
 .hero-eyebrow.in { opacity: 1; transform: translateY(0); }
 
 .hero-title {
-  font-size: clamp(3.6rem, 13vw, 13rem);
+  font-size: clamp(3.4rem, 8.5vw, 8.5rem);
   font-weight: 900;
   line-height: 0.88;
   letter-spacing: -0.03em;
@@ -740,8 +740,7 @@ footer {
 /* ── Mobile — ≤768px: static canvas, scroll reveals only ─── */
 @media (max-width: 768px) {
   .cap-grid { grid-template-columns: 1fr; }
-  #nexus-canvas { display: none; }
-  .webgl-fallback { display: block !important; }
+
   .stat-row { gap: 16px; }
 }
 
@@ -776,6 +775,7 @@ footer {
   }
 }
 </style>
+<link rel="stylesheet" href="../_study-shell.css">
 </head>
 <body>
   <aside class="cs-flagship-nav" aria-label="Real 3D flagship collection">
@@ -976,13 +976,11 @@ footer {
             <span class="accent-amber">ATTRACTOR</span>
           </h2>
           <p class="lab-body">
-            500 particles drift toward a moving attractor point — a
-            Lorenz-inspired system updated live every frame. No pre-baked
-            simulation. Pure math, rendered in real-time.
+            Move your pointer through the field. Five hundred particles follow its pull; tune the signal to change the attraction and the height of the waves.
           </p>
           <div class="lab-cta-group">
-            <button class="cta-btn-amber" type="button">ENTER LAB</button>
-            <button id="enter-vr-btn" type="button" aria-label="Enter immersive VR experience">ENTER VR</button>
+            <button class="cta-btn-amber" type="button">TUNE THE FIELD</button>
+
           </div>
         </div>
       </div>
@@ -1006,6 +1004,8 @@ footer {
      ============================================================ -->
 <script type="module">
 import * as THREE from 'three';
+import {createSceneSession} from '../_scene-session.js';
+import {mountSceneControls} from '../_study-controls.js';
 
 // ── Globals ──────────────────────────────────────────────────
 const canvas = document.getElementById('nexus-canvas');
@@ -1013,9 +1013,10 @@ let renderer, scene, camera;
 let galaxyPoints, gridMesh, attractorPoints;
 let gridMaterial, galaxyMaterial, attractorMaterial;
 let uTime = 0;
-let rafId = null;
-let isRunning = false;
-let contextLost = false;
+let session;
+let signalStrength = 1;
+let heldProgress = 0;
+let pointerTarget = null;
 
 // Attractor particle state (500 particles)
 const ATTRACTOR_COUNT = 500;
@@ -1043,13 +1044,6 @@ const CHAPTERS = [
   { id: 'attractor-lab', name: 'ATTRACTOR LAB' },
 ];
 
-if (!canUseWebGL()) {
-  document.body.classList.add('no-webgl');
-} else {
-  initThree();
-  startLoop();
-}
-
 // ── Init Three.js ─────────────────────────────────────────────
 function initThree() {
   renderer = new THREE.WebGLRenderer({
@@ -1058,7 +1052,7 @@ function initThree() {
     alpha: true,
     powerPreference: 'high-performance',
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile.matches ? 1 : 1.5));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x060812, 1);
 
@@ -1071,17 +1065,12 @@ function initThree() {
   buildGrid();
   buildAttractor();
 
-  // Resize handler
-  window.addEventListener('resize', onResize);
 
-  // Context loss / restore
-  canvas.addEventListener('webglcontextlost', onContextLost);
-  canvas.addEventListener('webglcontextrestored', onContextRestored);
 }
 
 // ── Galaxy Field (15 000 particles) ──────────────────────────
 function buildGalaxy() {
-  const N = 15000;
+  const N = isMobile.matches ? 5000 : 12000;
   const positions = new Float32Array(N * 3);
   const phases = new Float32Array(N);
   const sizes = new Float32Array(N);
@@ -1106,19 +1095,21 @@ function buildGalaxy() {
   galaxyMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
-      uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+      uPixelRatio: { value: Math.min(window.devicePixelRatio, isMobile.matches ? 1 : 1.5) },
+      uStrength: {value:signalStrength},
     },
     vertexShader: /* glsl */`
       attribute float aPhase;
       attribute float aSize;
       uniform float uTime;
-      uniform float uPixelRatio;
+      uniform float uPixelRatio, uStrength;
       varying float vAlpha;
       void main() {
         float pulse = aSize * (0.8 + 0.3 * sin(uTime * 1.5 + aPhase));
         gl_PointSize = pulse * uPixelRatio;
         vAlpha = 0.4 + 0.4 * sin(uTime * 0.8 + aPhase + 1.0);
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        vec3 pos=position; pos.y += sin(aPhase)*.24*uStrength; pos.xz *= .85+.15*uStrength;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
       }
     `,
     fragmentShader: /* glsl */`
@@ -1143,7 +1134,8 @@ function buildGalaxy() {
   });
 
   galaxyPoints = new THREE.Points(geo, galaxyMaterial);
-  galaxyPoints.position.set(0, -0.5, -1);
+  galaxyPoints.position.set(2, .5, -2);
+  galaxyPoints.rotation.x = .55;
   scene.add(galaxyPoints);
 }
 
@@ -1155,14 +1147,15 @@ function buildGrid() {
     uniforms: {
       uTime: { value: 0 },
       uOpacity: { value: 0 },
+      uStrength: {value:signalStrength},
     },
     vertexShader: /* glsl */`
-      uniform float uTime;
+      uniform float uTime, uStrength;
       varying float vHeight;
       void main() {
         vec3 pos = position;
-        float disp = sin(pos.x * 2.0 + uTime) * sin(pos.z * 2.0 + uTime) * 0.3;
-        pos.y += disp;
+        float disp = sin(pos.x * 1.4 + uTime) * cos(pos.y * 1.1 + uTime*.7) * .6 * uStrength;
+        pos.z += disp;
         vHeight = disp;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
       }
@@ -1186,7 +1179,7 @@ function buildGrid() {
   });
 
   gridMesh = new THREE.Mesh(geo, gridMaterial);
-  gridMesh.rotation.x = -0.4;
+  gridMesh.rotation.x = -Math.PI*.37;
   gridMesh.position.set(0, -1.5, -2);
   scene.add(gridMesh);
 }
@@ -1236,11 +1229,13 @@ function buildAttractor() {
 
 // ── Update attractor particles each frame ─────────────────────
 function updateAttractor(dt) {
+  const step = Math.min(dt*60, 3);
   // Move the attractor target in a slow orbit
   attractorTarget.x = Math.sin(uTime * 0.3) * 2.0;
   attractorTarget.y = Math.cos(uTime * 0.22) * 1.2;
   attractorTarget.z = -4 + Math.sin(uTime * 0.15) * 0.8;
 
+  if(pointerTarget) { attractorTarget.x=pointerTarget.x; attractorTarget.y=pointerTarget.y; }
   const posAttr = attractorPoints.geometry.getAttribute('position');
   const pos = posAttr.array;
 
@@ -1252,23 +1247,23 @@ function updateAttractor(dt) {
     const dist = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.01;
 
     // Lorenz-like force: attraction + swirl
-    const force = 0.004 / dist;
+    const force = .004 * step * signalStrength / dist;
     attrVel[ix] += dx * force;
     attrVel[iy] += dy * force;
     attrVel[iz] += dz * force;
 
     // Swirl perpendicular component
-    attrVel[ix] += (-dz * 0.0015);
-    attrVel[iz] += (dx * 0.0015);
+    attrVel[ix] += (-dz * .0015 * step);
+    attrVel[iz] += (dx * .0015 * step);
 
     // Damping
-    attrVel[ix] *= 0.97;
-    attrVel[iy] *= 0.97;
-    attrVel[iz] *= 0.97;
+    attrVel[ix] *= Math.pow(.97, step);
+    attrVel[iy] *= Math.pow(.97, step);
+    attrVel[iz] *= Math.pow(.97, step);
 
-    pos[ix] += attrVel[ix];
-    pos[iy] += attrVel[iy];
-    pos[iz] += attrVel[iz];
+    pos[ix] += attrVel[ix] * step;
+    pos[iy] += attrVel[iy] * step;
+    pos[iz] += attrVel[iz] * step;
 
     // Respawn stray particles
     if (dist > 6) {
@@ -1280,34 +1275,6 @@ function updateAttractor(dt) {
   }
   posAttr.needsUpdate = true;
 }
-
-// ── rAF + visibility + IntersectionObserver gates ─────────────
-function startLoop() {
-  if (isRunning) return;
-  isRunning = true;
-  tick();
-}
-
-function stopLoop() {
-  isRunning = false;
-  if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-}
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') stopLoop();
-  else if (!contextLost) startLoop();
-});
-
-// IntersectionObserver gate — stop when canvas is off-screen
-const canvasObserver = new IntersectionObserver(
-  (entries) => {
-    const entry = entries[0];
-    if (entry.isIntersecting) { if (!contextLost) startLoop(); }
-    else stopLoop();
-  },
-  { threshold: 0 }
-);
-canvasObserver.observe(canvas);
 
 // ── Scroll-driven 3D binding ───────────────────────────────────
 
@@ -1334,13 +1301,13 @@ function applyScrollBinding(progress) {
 
   // Galaxy: camera.position.z lerps 8 → 3 as progress 0 → 0.5
   const t = Math.min(1, progress / 0.5);
-  camera.position.z = lerp(8, 3, t);
+  camera.position.z = lerp(10, 7, t);
 
   // Camera subtle rotateY
-  camera.rotation.y = window.scrollY * 0.0003;
+  camera.rotation.y = Math.sin(progress*Math.PI*2)*.12;
 
   // Galaxy group slow rotate
-  if (galaxyPoints) galaxyPoints.rotation.y += 0.0005;
+  if (galaxyPoints) galaxyPoints.rotation.y = uTime*.03;
 
   // Grid opacity: lerp in at scroll 0.2, out at 0.7
   if (gridMaterial) {
@@ -1356,45 +1323,23 @@ function applyScrollBinding(progress) {
   }
 }
 
-// ── Main rAF tick ─────────────────────────────────────────────
-let firstFrame = true;
-function tick() {
-  if (!isRunning || contextLost) return;
-  rafId = requestAnimationFrame(tick);
-
-  // Reduced motion: render one frame then stop
-  if (prefersReducedMotion.matches) {
-    if (!firstFrame) { stopLoop(); return; }
-    firstFrame = false;
-  }
-
-  // Mobile: skip Three.js rendering (CSS gradient handles bg)
-  if (isMobile.matches) { stopLoop(); return; }
-
-  uTime += 0.01;
-
-  // Update Three.js uniforms
-  if (galaxyMaterial) galaxyMaterial.uniforms.uTime.value = uTime;
-  if (gridMaterial)   gridMaterial.uniforms.uTime.value   = uTime;
-  if (attractorMaterial) attractorMaterial.uniforms.uTime.value = uTime;
-
-  // Update attractor only when visible
-  if (attractorMaterial && attractorMaterial.uniforms.uOpacity.value > 0.01) {
-    updateAttractor(0.016);
-  }
-
-  // Scroll binding
-  const progress = getScrollProgress();
-  applyScrollBinding(progress);
-
-  // HUD update
-  const pctEl = document.getElementById('hud-pct');
-  const chEl  = document.getElementById('hud-chapter');
-  if (pctEl) pctEl.textContent = Math.round(progress * 100) + '%';
-  if (chEl)  chEl.textContent  = getCurrentChapterName();
-
-  renderer.render(scene, camera);
+// Scene state is held under reduced motion; DOM progress remains live.
+function tick({dt,time,reduced,paused}) {
+  uTime=time;
+  galaxyMaterial.uniforms.uTime.value=time;
+  gridMaterial.uniforms.uTime.value=time;
+  attractorMaterial.uniforms.uTime.value=time;
+  if(!reduced) heldProgress=getScrollProgress();
+  applyScrollBinding(heldProgress);
+  if(!reduced && !paused && attractorMaterial.uniforms.uOpacity.value>.01) updateAttractor(dt);
+  renderer.render(scene,camera);
 }
+function updateHUD(){
+  document.getElementById('hud-pct').textContent=Math.round(getScrollProgress()*100)+'%';
+  document.getElementById('hud-chapter').textContent=getCurrentChapterName();
+  session?.invalidate();
+}
+addEventListener('scroll',updateHUD,{passive:true});
 
 // ── Resize ────────────────────────────────────────────────────
 function onResize() {
@@ -1402,67 +1347,31 @@ function onResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  if (galaxyMaterial) galaxyMaterial.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, 2);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile.matches ? 1 : 1.5));
+  if (galaxyMaterial) galaxyMaterial.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, isMobile.matches ? 1 : 1.5);
 }
 
-// ── Context loss handling ─────────────────────────────────────
-function onContextLost(e) {
-  e.preventDefault();
-  contextLost = true;
-  stopLoop();
-  // Show CSS fallback
-  document.body.classList.add('no-webgl');
-}
-
-function onContextRestored() {
-  contextLost = false;
-  document.body.classList.remove('no-webgl');
-  // Rebuild the scene
-  if (renderer) {
-    buildGalaxy();
-    buildGrid();
-    buildAttractor();
-    startLoop();
-  }
-}
-
-// ── Dispose on teardown ───────────────────────────────────────
-window.addEventListener('beforeunload', () => {
-  stopLoop();
-  canvasObserver.disconnect();
-  if (galaxyPoints) { galaxyPoints.geometry.dispose(); galaxyMaterial.dispose(); }
-  if (gridMesh)     { gridMesh.geometry.dispose();    gridMaterial.dispose(); }
-  if (attractorPoints) { attractorPoints.geometry.dispose(); attractorMaterial.dispose(); }
-  if (renderer)     renderer.dispose();
-});
-
-// ── WebXR feature gate ────────────────────────────────────────
-async function detectXR() {
-  if (!navigator.xr) return;
+if (!canUseWebGL()) document.body.classList.add('no-webgl');
+else {
   try {
-    const supported = await navigator.xr.isSessionSupported('immersive-vr');
-    if (supported) {
-      const vrBtn = document.getElementById('enter-vr-btn');
-      if (vrBtn) vrBtn.style.display = 'inline-block';
-    }
-  } catch { /* XR not available — silent fail */ }
+    initThree();
+    session=createSceneSession({canvas,frame:tick,resize:onResize});
+    mountSceneControls({title:'Tune the signal',label:'Signal strength',min:.2,max:2,step:.1,value:1,format:v=>v.toFixed(1)+'×',
+      update(v){ signalStrength=v; galaxyMaterial.uniforms.uStrength.value=v; gridMaterial.uniforms.uStrength.value=v;session.invalidate(); },pause:v=>session.setPaused(v)});
+    session.start(); updateHUD();
+    const plane=new THREE.Plane(new THREE.Vector3(0,0,1),4), ray=new THREE.Raycaster(),point=new THREE.Vector3();
+    canvas.addEventListener('pointermove',e=>{
+      if(session.reduced) return;
+      ray.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,1-e.clientY/innerHeight*2),camera);
+      if(ray.ray.intersectPlane(plane,point))pointerTarget=point.clone();
+    });
+    canvas.addEventListener('pointerleave',()=>pointerTarget=null);
+    document.querySelector('.cta-btn-amber').addEventListener('click',()=>{
+      const panel=document.querySelector('.cs-scene-controls');panel.open=true;panel.querySelector('input').focus({preventScroll:true});
+    });
+  } catch(e) { console.warn('Nexus: using the static scene',e);document.body.classList.add('no-webgl'); }
 }
-detectXR();
 
-// XR session request — guarded with navigator.xr + isSessionSupported
-document.getElementById('enter-vr-btn')?.addEventListener('click', async () => {
-  if (!navigator.xr) return;
-  try {
-    const supported = await navigator.xr.isSessionSupported('immersive-vr');
-    if (!supported) return;
-    const session = await navigator.xr.requestSession('immersive-vr');
-    renderer.xr.enabled = true;
-    renderer.xr.setSession(session);
-  } catch (err) {
-    console.warn('WebXR session failed:', err);
-  }
-});
 </script>
 
 <!-- ============================================================

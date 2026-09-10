@@ -169,6 +169,8 @@ assets/doctor-thumb*
 
 # promo asset workspace (generated)
 .promo/
+# Local source footage and private promo drafts; gallery exports live elsewhere.
+assets/Homevideo/
 
 # HeyGen walkthrough workspace (generated frames, stickers, payloads)
 .heygen/

@@ -1,0 +1,3 @@
+export default function OpticalPoster(){return <div className="optical-poster" role="img" aria-label="An optical lens suspended inside concentric blue and violet rings">
+  <svg viewBox="0 0 600 600" aria-hidden="true"><defs><radialGradient id="optical-glow"><stop stopColor="#b3caff"/><stop offset=".35" stopColor="#6277d9"/><stop offset="1" stopColor="#13213e"/></radialGradient></defs><circle cx="300" cy="300" r="145" fill="url(#optical-glow)"/><g fill="none" stroke="#9eaeff"><ellipse cx="300" cy="300" rx="225" ry="165" transform="rotate(-25 300 300)"/><ellipse cx="300" cy="300" rx="180" ry="220" transform="rotate(32 300 300)"/><circle cx="300" cy="300" r="258" strokeWidth=".5"/></g><path d="M300 15v55m0 460v55M15 300h55m460 0h55" stroke="#aac1ff"/></svg>
+</div>;}

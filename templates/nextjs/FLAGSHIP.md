@@ -40,16 +40,22 @@ Open `/flagship` after `npm run dev`.
 Already added to `package.json`. **Do not float the renderer.**
 
 ```jsonc
-"three": "0.160.0",            // EXACT — the whole stack pivots on this
-"@react-three/fiber": "^9.0.0",          // v9 = the React 19 line (v8 is React 18)
-"@react-three/drei": "^10.0.0",          // v10 pairs with fiber v9
-"@react-three/xr": "^6.6.0",  // v6 API: createXRStore + <XR store> + <XROrigin>
-"@react-three/postprocessing": "^3.0.0", // bloom/vignette finish (desktop only)
-"@google/model-viewer": "3.4.0",         // EXACT — 3.5 demands three ^0.163
-// dev: "@types/three": "0.160.0"  // pinned to match three
+"three": "0.185.0",                    // EXACT — postprocessing currently requires <0.186
+"@react-three/fiber": "^9.7.0",         // React 19
+"@react-three/drei": "^10.7.8",
+"@react-three/xr": "^6.6.30",           // createXRStore + <XR store> + <XROrigin>
+"@react-three/postprocessing": "^3.1.1",
+// override: "postprocessing": "6.39.4"
+// dev: "@types/three": "0.185.0"       // matches renderer
+// Model Viewer 3.4 remains CDN-pinned in ModelViewer.tsx, not a duplicate npm dependency.
 ```
 
 Then `npm install` (this template does not vendor `node_modules`).
+
+The v3 `/effects-lab` route exercises the shared motion/GLSL adapters. The
+separate `/webgpu-preview` route uses TSL and an automatic WebGL2 fallback;
+it is experimental and does not import this legacy XR/postprocessing scene.
+See `lib/cinematic/` and the skill's `references/interaction-runtime.md`.
 
 ## Generate real 3D assets with fal.ai (one command)
 

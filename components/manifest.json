@@ -1,6 +1,22 @@
 {
   "$description": "Named component grammar for the cinematic-scroll skill. Each component is token-driven (design.md), ships in both modes, and carries an inline degrade contract. Doctor-verified (Mode A scores >=80).",
-  "version": 1,
+  "version": 2,
+  "interactionRuntime": {
+    "license": "MIT",
+    "reference": "references/interaction-runtime.md",
+    "core": "runtime/index.mjs",
+    "react": "runtime/react.tsx",
+    "three": "runtime/three.tsx",
+    "experimentalWebGPU": "runtime/webgpu.tsx",
+    "assets": "runtime/assets.tsx",
+    "apis": ["CinematicProvider", "useCinematicSignals", "useProximity", "TextChoreography", "MagneticSurface", "DistortedMedia", "CinematicCanvas", "ScrollCameraRig"],
+    "textVariants": ["line-mask", "word-cascade", "character-wave", "velocity-skew", "scramble", "variable-axis"],
+    "surfaceVariants": ["magnetic", "depth"],
+    "shaderPresets": ["displacement", "refraction", "atmosphere", "portal"],
+    "qualityTiers": ["high", "balanced", "low", "static"],
+    "examples": ["examples/effects-lab/index.html", "examples/v3-flagship/index.html"],
+    "templateRoutes": ["/effects-lab", "/v3-flagship", "/webgpu-preview"]
+  },
   "tokenContract": "design.md",
   "components": [
     {
