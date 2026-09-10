@@ -10,12 +10,11 @@ const entries=[...document.querySelectorAll('[data-gallery-preview]')].map(el=>{
  return entry;
 });
 let paused=false;
-const toggle=document.querySelector('[data-gallery-pause]');
-const motionToggles=[...document.querySelectorAll('[data-gallery-pause],[data-motion-toggle]')];
+const motionToggles=[...document.querySelectorAll('[data-gallery-pause]')];
 for(const button of motionToggles){button.hidden=false;button.addEventListener('click',()=>{paused=!paused;for(const control of motionToggles){control.textContent=paused?'Resume motion':'Pause motion';control.setAttribute('aria-pressed',String(paused));}runtime.setQuality(paused?'static':'auto');runtime.wake();});}
 const artVideo=document.querySelector('[data-art-video]');
 const artEntry=artVideo?{el:artVideo,video:artVideo,wanted:false,failed:false,token:0}:null;
-if(artEntry){artEntry.el.dataset.galleryPreview='assets/brand/renaissance-studio-loop.mp4';artVideo.addEventListener('playing',()=>{if(artEntry.wanted)artVideo.classList.add('is-playing');else artVideo.pause();});artVideo.addEventListener('error',()=>{artEntry.failed=true;artVideo.classList.remove('is-playing');});}
+if(artEntry){artEntry.el.dataset.galleryPreview='assets/brand/renaissance-h3-15s.mp4';artVideo.addEventListener('playing',()=>{if(artEntry.wanted)artVideo.classList.add('is-playing');else artVideo.pause();});artVideo.addEventListener('error',()=>{artEntry.failed=true;artVideo.classList.remove('is-playing');});}
 const stickers=[...document.querySelectorAll('[data-sticker]')].map(el=>({el,visual:el.querySelector('[data-sticker-motion]'),rect:null}));
 let artRect=null,stickerTime=0;
 function playback(entry,wanted){

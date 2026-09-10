@@ -37,14 +37,16 @@ key stays local and is never included in exported assets.
 ## Living artwork and integration picker — 2026-09-11
 
 User requested animation within the hero artwork and animated stickers across
-the gallery. `renaissance-studio-loop.mp4` is a 5-second fal.ai Kling 2.5 Turbo Pro
+the gallery. `renaissance-h3-15s.mp4` is a 15-second fal.ai MiniMax H3 Max
 image-to-video study, generated with the original painting as both starting and
 ending image. `motion-source.json` preserves the prompt and model. The locally
 encoded H.264 export is silent, loops only while visible, and preserves the
 painting when decoding fails or reduced motion is requested.
 
 Three linked stickers share the gallery runtime and stop offscreen, when paused,
-or under reduced motion. The hero pause button also pauses gallery previews.
+or under reduced motion. Motion starts automatically when visible. The redundant
+button over the painting was removed at the user's request; the existing control
+below the hero pauses both the artwork and gallery previews.
 The install selector offers peer options for Claude Code, Cursor, Hermes, Kimi
 Code, Gemini CLI, OpenClaw and other agents, with documented installer identifiers
 in `INTEGRATIONS.md`. Browser tests verify command selection and motion lifecycle;

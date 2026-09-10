@@ -41,14 +41,16 @@ test('agent commands, living artwork and stickers have working static fallbacks'
  const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});t.after(()=>browser.close());
  const page=await browser.newPage({viewport:{width:1440,height:900}});await page.goto(base);
  await page.waitForFunction(()=>document.querySelector('[data-art-video]').currentTime>.1);
+ assert.equal(await page.locator('.studio-art button').count(),0);
+ assert.ok(await page.locator('[data-art-video]').evaluate(v=>v.duration>=14.9&&v.duration<=15.1&&v.loop&&v.muted));
  const sticker=page.locator('.studio-seal [data-sticker-motion]');const first=await sticker.getAttribute('style');await page.waitForTimeout(200);assert.notEqual(await sticker.getAttribute('style'),first);
- await page.locator('[data-motion-toggle]').click();await page.waitForTimeout(100);assert.equal(await page.locator('video').evaluateAll(v=>v.every(e=>e.paused)),true);assert.equal(await sticker.evaluate(e=>e.style.transform),'none');
- await page.locator('[data-motion-toggle]').click();await page.waitForFunction(()=>!document.querySelector('[data-art-video]').paused);
+ await page.locator('[data-gallery-pause]').evaluate(b=>b.click());await page.waitForTimeout(100);assert.equal(await page.locator('video').evaluateAll(v=>v.every(e=>e.paused)),true);assert.equal(await sticker.evaluate(e=>e.style.transform),'none');
+ await page.locator('[data-gallery-pause]').evaluate(b=>b.click());await page.waitForFunction(()=>!document.querySelector('[data-art-video]').paused);
  await page.locator('#install').scrollIntoViewIfNeeded();await page.waitForTimeout(200);assert.equal(await page.locator('[data-art-video]').evaluate(v=>v.paused),true);
  for(const agent of ['claude-code','cursor','hermes-agent','kimi-code-cli','gemini-cli','openclaw','']){await page.locator(`[data-agent="${agent}"]`).click();assert.equal(await page.locator('#install-command').textContent(),'npx skills add MustBeSimo/cinematic-scroll-skill'+(agent?' --agent '+agent:''));assert.equal(await page.locator('.agent-picker [aria-pressed="true"]').count(),1);}
  await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  await page.emulateMedia({reducedMotion:'reduce'});await page.evaluate(()=>scrollTo(0,0));await page.waitForTimeout(200);assert.equal(await page.locator('[data-art-video]').evaluate(v=>v.paused),true);assert.equal(await sticker.evaluate(e=>getComputedStyle(e).transform),'none');
- const fallback=await browser.newPage();await fallback.route('**/renaissance-studio-loop.mp4',r=>r.abort());await fallback.goto(base);await fallback.waitForTimeout(300);assert.equal(await fallback.locator('.studio-art-plane img').evaluate(i=>i.complete&&i.naturalWidth>0),true);
+ const fallback=await browser.newPage();await fallback.route('**/renaissance-h3-15s.mp4',r=>r.abort());await fallback.goto(base);await fallback.waitForTimeout(300);assert.equal(await fallback.locator('.studio-art-plane img').evaluate(i=>i.complete&&i.naturalWidth>0),true);
 });
 test('studio navigation works by keyboard, on mobile and without JavaScript',async t=>{
  const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});t.after(()=>browser.close());

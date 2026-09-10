@@ -318,8 +318,7 @@
     return entry;
   });
   var paused = false;
-  var toggle = document.querySelector("[data-gallery-pause]");
-  var motionToggles = [...document.querySelectorAll("[data-gallery-pause],[data-motion-toggle]")];
+  var motionToggles = [...document.querySelectorAll("[data-gallery-pause]")];
   for (const button of motionToggles) {
     button.hidden = false;
     button.addEventListener("click", () => {
@@ -335,7 +334,7 @@
   var artVideo = document.querySelector("[data-art-video]");
   var artEntry = artVideo ? { el: artVideo, video: artVideo, wanted: false, failed: false, token: 0 } : null;
   if (artEntry) {
-    artEntry.el.dataset.galleryPreview = "assets/brand/renaissance-studio-loop.mp4";
+    artEntry.el.dataset.galleryPreview = "assets/brand/renaissance-h3-15s.mp4";
     artVideo.addEventListener("playing", () => {
       if (artEntry.wanted) artVideo.classList.add("is-playing");
       else artVideo.pause();
