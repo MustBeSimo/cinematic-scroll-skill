@@ -1,5 +1,9 @@
 # Platform Compatibility & Installation
 
+For current copy-and-paste commands for Claude Code, Cursor, Hermes, Kimi Code,
+Gemini CLI and OpenClaw, use [the integration guide](INTEGRATIONS.md).
+The version-specific transcripts and instructions below are historical evidence.
+
 This document provides documented installation paths for each platform, with evidence included where terminal transcripts have been recorded.
 
 ## Supported Platforms

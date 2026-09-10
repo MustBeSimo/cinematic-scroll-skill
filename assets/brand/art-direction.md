@@ -33,3 +33,19 @@ their original sources. Navigation text and the wordmark are live HTML.
 No repository, package, install identifier or example route changes. Aureus and
 the other example websites retain their own art direction. The optional provider
 key stays local and is never included in exported assets.
+
+## Living artwork and integration picker — 2026-09-11
+
+User requested animation within the hero artwork and animated stickers across
+the gallery. `renaissance-studio-loop.mp4` is a 5-second fal.ai Kling 2.5 Turbo Pro
+image-to-video study, generated with the original painting as both starting and
+ending image. `motion-source.json` preserves the prompt and model. The locally
+encoded H.264 export is silent, loops only while visible, and preserves the
+painting when decoding fails or reduced motion is requested.
+
+Three linked stickers share the gallery runtime and stop offscreen, when paused,
+or under reduced motion. The hero pause button also pauses gallery previews.
+The install selector offers peer options for Claude Code, Cursor, Hermes, Kimi
+Code, Gemini CLI, OpenClaw and other agents, with documented installer identifiers
+in `INTEGRATIONS.md`. Browser tests verify command selection and motion lifecycle;
+they do not claim native installations in every agent.

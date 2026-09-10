@@ -1,0 +1,12 @@
+{
+  "provider": "fal.ai",
+  "model": "fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
+  "input": {
+    "image_url": "https://mustbesimo.github.io/cinematic-scroll-skill/assets/brand/renaissance-studio.jpg",
+    "tail_image_url": "https://mustbesimo.github.io/cinematic-scroll-skill/assets/brand/renaissance-studio.jpg",
+    "duration": "5",
+    "prompt": "A living Renaissance oil painting, locked camera and unchanged composition. The chartreuse silk ribbon gently stirs in a very light breeze around the small architectural model. Subtle breathing in the linen folds, a tiny natural eye movement. The artisan holds the miniature completely steady. Preserve the exact face, hands, architecture and painted brushwork. Restrained museum cinemagraph. Return to the original pose and ribbon position. No camera movement, no scene transition.",
+    "negative_prompt": "deformed hands, morphing face, warping architecture, camera motion, new objects, text, flicker, rapid motion"
+  },
+  "date": "2026-09-10T22:30:55.736Z"
+}

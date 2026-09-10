@@ -319,17 +319,35 @@
   });
   var paused = false;
   var toggle = document.querySelector("[data-gallery-pause]");
-  if (toggle) {
-    toggle.hidden = false;
-    toggle.textContent = "Pause previews";
-    toggle.addEventListener("click", () => {
+  var motionToggles = [...document.querySelectorAll("[data-gallery-pause],[data-motion-toggle]")];
+  for (const button of motionToggles) {
+    button.hidden = false;
+    button.addEventListener("click", () => {
       paused = !paused;
-      toggle.textContent = paused ? "Resume previews" : "Pause previews";
-      toggle.setAttribute("aria-pressed", String(paused));
+      for (const control of motionToggles) {
+        control.textContent = paused ? "Resume motion" : "Pause motion";
+        control.setAttribute("aria-pressed", String(paused));
+      }
       runtime.setQuality(paused ? "static" : "auto");
       runtime.wake();
     });
   }
+  var artVideo = document.querySelector("[data-art-video]");
+  var artEntry = artVideo ? { el: artVideo, video: artVideo, wanted: false, failed: false, token: 0 } : null;
+  if (artEntry) {
+    artEntry.el.dataset.galleryPreview = "assets/brand/renaissance-studio-loop.mp4";
+    artVideo.addEventListener("playing", () => {
+      if (artEntry.wanted) artVideo.classList.add("is-playing");
+      else artVideo.pause();
+    });
+    artVideo.addEventListener("error", () => {
+      artEntry.failed = true;
+      artVideo.classList.remove("is-playing");
+    });
+  }
+  var stickers = [...document.querySelectorAll("[data-sticker]")].map((el) => ({ el, visual: el.querySelector("[data-sticker-motion]"), rect: null }));
+  var artRect = null;
+  var stickerTime = 0;
   function playback(entry, wanted) {
     if (entry.wanted === wanted) return;
     entry.wanted = wanted;
@@ -355,9 +373,19 @@
   runtime.read(() => {
     for (const e of entries) e.rect = e.el.getBoundingClientRect();
     headingRects = headings.map((el) => el.getBoundingClientRect());
+    for (const e of stickers) e.rect = e.el.getBoundingClientRect();
+    artRect = artVideo?.getBoundingClientRect();
   });
   runtime.subscribe((s) => {
     const allowed = s.visible && !s.reducedMotion && !paused;
+    if (artEntry) playback(artEntry, Boolean(allowed && artRect.bottom > 0 && artRect.top < innerHeight));
+    let animateStickers = false;
+    if (allowed) stickerTime += s.delta;
+    stickers.forEach((entry, i) => {
+      const active = allowed && entry.rect.bottom > 0 && entry.rect.top < innerHeight;
+      animateStickers || (animateStickers = active);
+      entry.visual.style.transform = active ? `translateY(${Math.sin(stickerTime * 1.2 + i) * 4}px) rotate(${Math.sin(stickerTime * 0.75 + i) * 4}deg)` : "none";
+    });
     const visible = entries.filter((e) => e.rect.bottom > 70 && e.rect.top < innerHeight && e.rect.width > 0);
     let chosen = null;
     if (allowed) {
@@ -382,9 +410,17 @@
     if (art) art.style.transform = allowed ? `translate3d(${s.pointer.active && !s.coarsePointer ? (s.pointer.x / innerWidth - 0.5) * 12 : 0}px,${Math.min(s.scroll.y, 600) * 0.03}px,0)` : "none";
     const progress = document.querySelector(".site-head .progress");
     if (progress) progress.style.transform = `scaleX(${s.scroll.progress})`;
+    return animateStickers;
   });
   addEventListener("pagehide", () => {
     for (const e of entries) playback(e, false);
+    if (artEntry) playback(artEntry, false);
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      for (const e of entries) playback(e, false);
+      if (artEntry) playback(artEntry, false);
+    } else runtime.wake();
   });
   addEventListener("pageshow", () => runtime.refresh());
   var directory = document.querySelector(".studio-directory");
@@ -404,6 +440,19 @@
     });
     directory.addEventListener("focusout", (e) => {
       if (!directory.contains(e.relatedTarget)) directory.open = false;
+    });
+  }
+  var picker = document.querySelector(".agent-picker");
+  if (picker) {
+    picker.hidden = false;
+    picker.addEventListener("click", (e) => {
+      const button = e.target.closest("[data-agent]");
+      if (!button) return;
+      for (const option of picker.querySelectorAll("button")) option.setAttribute("aria-pressed", String(option === button));
+      const agent = button.dataset.agent;
+      document.querySelector("#install-command").textContent = "npx skills add MustBeSimo/cinematic-scroll-skill" + (agent ? " --agent " + agent : "");
+      document.querySelector("#agent-install-note").textContent = agent ? `Install for ${button.textContent} in this project.` : "The installer lets you choose from its supported coding agents.";
+      runtime.refresh();
     });
   }
   var search = document.querySelector("#project-search");

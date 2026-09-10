@@ -40,7 +40,7 @@ npx skills add MustBeSimo/cinematic-scroll-skill
 ```
 
 [Inspect the ClawHub package](https://clawhub.ai/mustbesimo/skills/cinematic-scroll)
-or [check agent-specific setup](./COMPATIBILITY.md).
+or [choose Claude Code, Cursor, Hermes, Kimi Code, Gemini CLI or another agent](./INTEGRATIONS.md).
 
 Then ask:
 
