@@ -1,5 +1,5 @@
 ---
-title: Cinematic Scroll — Design Contract
+title: Web Design Studio — Design Contract
 tokens: ./tokens/
 version: 1.0.0
 status: foundation (Phase 1)

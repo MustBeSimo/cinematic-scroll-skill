@@ -6,7 +6,7 @@
 > ships **empty**. The full self-learning art-direction engine — an accumulated
 > visual-language library, reuse telemetry, governed promotion, semantic dedup,
 > and motif-driven storyboard / asset-direction / depth & motion compilers —
-> lives in **Cinematic Scroll Studio** (paid). See the README's *Upgrade* note.
+> lives in **Web Design Studio Pro** (paid). See the README's edition comparison.
 
 > **Activation:** the user asks to *learn from / study / distill patterns from* a URL.
 > Sibling to `audit-mode.md`: audit **scores** a site, learn **distills** it into reusable,
