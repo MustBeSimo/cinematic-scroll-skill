@@ -10,7 +10,7 @@ Formerly **Cinematic Scroll**. The product has a broader name; the established
 [![license](https://img.shields.io/badge/license-MIT-813de4?style=flat-square)](./LICENSE)
 [![stars](https://img.shields.io/github/stars/MustBeSimo/cinematic-scroll-skill?style=flat-square&label=stars)](https://github.com/MustBeSimo/cinematic-scroll-skill/stargazers)
 
-<a href="https://mustbesimo.github.io/cinematic-scroll-skill/"><img src="assets/eleven-worlds-hero.gif" alt="Web Design Studio moving through multiple visual worlds" width="100%"></a>
+<a href="https://mustbesimo.github.io/cinematic-scroll-skill/"><img src="assets/brand/social-preview.jpg" alt="Web Design Studio — the web, with a human touch. Original Renaissance-inspired artwork beside the studio identity." width="100%"></a>
 
 <p align="center">
   <strong>One sentence in. A distinctive, production-ready website out.</strong><br>

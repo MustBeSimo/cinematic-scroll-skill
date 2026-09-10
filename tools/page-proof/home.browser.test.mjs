@@ -37,3 +37,18 @@ test('all galleries have linked proximity previews, autoplay and reduced-motion 
  await mkdir('.verify/gallery-motion',{recursive:true});await page.goto(base);await page.screenshot({path:'.verify/gallery-motion/home.png'});
 });
 test('every gallery destination has a local video clip',async()=>{const manifest=JSON.parse(await readFile('assets/previews/manifest.json','utf8'));assert.equal(Object.keys(manifest).length,28);for(const path of Object.values(manifest))await access(path);});
+test('studio navigation works by keyboard, on mobile and without JavaScript',async t=>{
+ const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});t.after(()=>browser.close());
+ const page=await browser.newPage({viewport:{width:1440,height:900},colorScheme:'light'});await page.goto(base);
+ const menu=page.locator('.studio-directory');const summary=menu.locator('summary');
+ await summary.focus();await page.keyboard.press('Enter');assert.equal(await menu.getAttribute('open'),'');
+ assert.ok(await menu.locator('img').evaluateAll(images=>images.every(i=>i.complete&&i.naturalWidth>0)));
+ await page.keyboard.press('Tab');assert.equal(await page.evaluate(()=>document.activeElement.getAttribute('href')),'#flagships');
+ await page.keyboard.press('Escape');assert.equal(await menu.getAttribute('open'),null);assert.ok(await summary.evaluate(e=>e===document.activeElement));
+ await summary.click();await menu.locator('a[href="#worlds"]').click();assert.equal(await menu.getAttribute('open'),null);assert.equal(new URL(page.url()).hash,'#worlds');
+ await page.goto(base);await page.mouse.move(900,300);await page.evaluate(()=>scrollTo(0,150));await page.waitForTimeout(200);
+ const art=page.locator('.studio-art-plane');assert.ok(!(await art.getAttribute('style')).includes('NaN'));
+ await page.emulateMedia({reducedMotion:'reduce',colorScheme:'dark'});await page.waitForTimeout(200);assert.equal(await art.evaluate(e=>getComputedStyle(e).transform),'none');
+ await page.setViewportSize({width:390,height:844});await summary.click();assert.ok(await menu.locator('a[href="#install"]').isVisible());assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ const plain=await browser.newPage({javaScriptEnabled:false,viewport:{width:390,height:844}});await plain.goto(base);await plain.locator('.studio-directory summary').click();assert.ok(await plain.locator('.directory-install').isVisible());await plain.locator('.directory-link').first().click();assert.equal(new URL(plain.url()).hash,'#flagships');
+});

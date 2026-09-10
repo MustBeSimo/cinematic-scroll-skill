@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101417" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#F4EFE6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1d211c" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f2f2e9" media="(prefers-color-scheme: light)">
   <title>Web Design Studio — Distinctive Websites, 3D &amp; Motion</title>
   <meta name="description" content="Build 3D websites, interactive portfolios and cinematic landing pages with a free agent skill. Explore 28 live examples and install with ClawHub or your coding agent.">
   <meta property="og:title" content="Web Design Studio — Distinctive Websites, 3D &amp; Motion">
   <meta property="og:description" content="Build 3D websites, interactive portfolios and cinematic landing pages with a free agent skill. Explore 28 live examples and install with ClawHub or your coding agent.">
-  <meta property="og:image" content="https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/poster.jpg">
+  <meta property="og:image" content="https://mustbesimo.github.io/cinematic-scroll-skill/assets/brand/social-preview.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:image:alt" content="Aureus, a live 3D journey through a reflective chrome vault">
+  <meta property="og:image:alt" content="Web Design Studio — classical craft for a new medium">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mustbesimo.github.io/cinematic-scroll-skill/">
   <link rel="canonical" href="https://mustbesimo.github.io/cinematic-scroll-skill/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%238F6A38'/%3E%3C/svg%3E">
+  <link rel="icon" href="assets/brand/mark.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
@@ -172,7 +172,7 @@
       .flagship-card:hover img { transform: scale(1.045); filter: saturate(1.16); }
     }
     @media (max-width: 820px) {
-      .site-head nav a:not(.github) { display: none; }
+      .site-head nav > a:not(.github) { display: none; }
       .hero { min-height: auto; }
       .hero-grid, .section-head, .install-panel { grid-template-columns: minmax(0,1fr); }
       .hero-grid { gap:2rem; }
@@ -209,6 +209,7 @@
   </style>
 <link rel="stylesheet" href="assets/gallery-motion.css">
 <link rel="stylesheet" href="assets/project-catalog.css">
+<link rel="stylesheet" href="assets/studio-brand.css">
 <script defer src="assets/gallery-motion.js"></script>
 </head>
 <body class="catalog-home">
@@ -218,7 +219,7 @@
     <div class="wrap head-row">
       <a class="brand" href="#top"><i aria-hidden="true"></i>Web Design Studio</a>
       <nav aria-label="Primary navigation">
-        <a href="#flagships">Examples</a><a href="#worlds">Editorials</a><a href="#editions">Free / Pro</a>
+        <details class="studio-directory"><summary>Explore <span aria-hidden="true">+</span></summary><div class="directory-panel"><div class="directory-title"><span class="eyebrow">The collection / 28 live websites</span><p>Find your<br><em>next direction.</em></p></div><a href="#flagships" class="directory-link"><img src="examples/aureus-flythrough/poster.jpg" alt="" width="320" height="200"><span><small>01 / Seven spatial experiences</small>Step into 3D <b aria-hidden="true">↗</b></span></a><a href="#worlds" class="directory-link"><img src="examples/renaissance/assets/0-prologue.jpg" alt="" width="320" height="200"><span><small>02 / Twenty-one visual worlds</small>Explore the editorials <b aria-hidden="true">↗</b></span></a><a class="directory-install" href="#install">Make something of your own <span aria-hidden="true">↗</span></a></div></details><a href="#editions">Free / Pro</a>
         <a class="github" href="https://github.com/MustBeSimo/cinematic-scroll-skill">GitHub ↗</a>
       </nav>
     </div>
@@ -229,13 +230,15 @@
       <div class="wrap hero-grid">
         <div class="hero-copy reveal">
           <div class="status">Web Design Studio · Free · MIT</div>
-          <p class="eyebrow">One sentence in. A cinematic website out.</p>
-          <h1>Make the page <span class="accent under">people remember.</span></h1>
+          <p class="eyebrow">Art direction meets a new medium.</p>
+          <h1>The web,<br>with <span class="accent under">a human touch.</span></h1>
           <p class="hero-lede">Give your coding agent the craft to build immersive 3D websites, product stories and editorials—with considered typography, purposeful motion and your own visual identity.</p>
           <div class="actions"><a class="button primary" href="#install">Install the free skill <span aria-hidden="true">↓</span></a><a class="button ghost" href="#flagships">Explore 3D examples <span aria-hidden="true">↗</span></a></div>
           <p class="hero-note">Formerly Cinematic Scroll. By Simone Leonelli · W230 Studio.</p>
         </div>
-        <figure class="hero-feature">
+        <div class="studio-art" aria-label="Original Renaissance-inspired studio artwork"><div class="studio-art-plane"><img src="assets/brand/renaissance-studio.jpg" alt="An artisan in draped linen studies an architectural model threaded with a chartreuse ribbon." width="1536" height="1024" fetchpriority="high"></div><a class="studio-seal" href="#flagships"><span>Ideas into<br><em>worlds.</em></span><span aria-hidden="true">↗</span></a><span class="art-caption">Study № 01 — The maker &amp; the medium</span></div>
+      </div>
+      <div class="wrap featured-study"><figure class="hero-feature">
           <div class="feature-kicker"><span>Selected work / 01</span><span>Real 3D · Aureus</span></div>
           <a class="hero-media" data-gallery-preview="assets/video/aureus-preview.mp4" data-autopreview href="examples/aureus-flythrough/" aria-label="Open Aureus live website"><div class="gallery-depth" data-proximity-visual>
             <video id="featured-preview" muted loop playsinline preload="none" poster="examples/aureus-flythrough/poster.jpg" aria-label="Aureus live 3D website recording"><source src="assets/video/aureus-preview.mp4" type="video/mp4"></video>
@@ -378,7 +381,7 @@
     </div></section>
     <aside class="wrap study-links" id="interactions" aria-label="Interaction studies"><span>From the workshop</span><a href="examples/v3-flagship/">FIELD — an optical study ↗</a><a href="examples/effects-lab/">Text and motion studies ↗</a></aside>
     <section class="section" id="editions"><div class="wrap">
-      <div class="section-head reveal"><div><p class="eyebrow">Two editions · one craft standard</p><h2>Free builds it. Studio <span class="under">remembers.</span></h2></div><p>The normal skill is the complete, useful edition—not a trial. Studio is for people who want the system to learn from repeated projects and compound their own visual language.</p></div>
+      <div class="section-head reveal"><div><p class="eyebrow">Two editions · one craft standard</p><h2>Free builds it. Pro <span class="under">remembers.</span></h2></div><p>The normal skill is the complete, useful edition—not a trial. Pro is for people who want the system to learn from repeated projects and compound their own visual language.</p></div>
       <div class="editions">
         <article class="edition reveal"><span class="tag">Web Design Studio · free forever</span><h3>Build the whole site.</h3><p>Everything needed to direct, implement, and verify a distinctive website.</p><ul><li>Story and motion planning</li><li>Complete examples + 11 visual systems</li><li>Text, proximity, shader media and real 3D</li><li>Doctor + five-profile browser proof</li><li>Optional TasteHQ brand matching</li></ul><a class="button primary" href="#install">Install free</a></article>
         <article class="edition studio reveal"><span class="tag">Web Design Studio Pro</span><h3>Build on what you know.</h3><p>Pro adds a proprietary Motif Engine that turns past decisions into useful memory.</p><ul><li>Accumulated project knowledge</li><li>Intent-based pattern retrieval</li><li>Reuse tracking across builds</li><li>Learned variants from your own language</li><li>Deeper iteration without starting cold</li></ul><a class="button" href="https://buy.stripe.com/cNi7sLdNBbief0L0uFfnO09">Explore Pro ↗</a></article>

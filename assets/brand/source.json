@@ -1,0 +1,8 @@
+{
+  "provider": "fal.ai",
+  "model": "fal-ai/flux-2-pro",
+  "prompt": "An original Italian Renaissance oil painting reimagined as a contemporary design studio editorial. Half-length androgynous young artisan in ivory draped linen, dark curling hair, seen from behind in three-quarter profile, studying a small open architectural model held carefully in their hands. Sculptural calm pose, finely painted hands, warm alabaster skin, aged oil paint texture, strong raking daylight from upper left. Behind the figure, a pale cool parchment studio wall with an architectural arch sketched very faintly. Figure and model occupy the right two thirds, left third is empty pale paper. One vivid acid chartreuse ribbon loosely threads through the architectural model, otherwise monochrome ivory and charcoal. Refined museum book art direction, authentic Renaissance painting, not a digital fantasy render. No laptop, no wings, no typography, no lettering, no watermarks. Wide landscape composition.",
+  "seed": 1452906961,
+  "generated": "2026-09-10T17:00:05.535Z",
+  "asset": "renaissance-studio.jpg"
+}
