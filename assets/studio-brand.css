@@ -25,4 +25,5 @@
 @media(prefers-reduced-motion:reduce){.studio-art-plane{transform:none!important}.studio-seal,.directory-link img{transition:none;transform:none!important}}
 
 .brand i{width:23px;height:23px;background:url("brand/mark.svg") center/contain no-repeat;border:0;transform:none;vertical-align:-2px}
+.edition.studio{color:var(--ink);border-color:var(--line)}.edition.studio>p{color:var(--muted)}.edition.studio li::before{color:var(--accent)}.edition.studio .button{background:var(--fluor);color:#242720}
 @media(max-width:640px){.brand i{width:18px;height:18px}}
