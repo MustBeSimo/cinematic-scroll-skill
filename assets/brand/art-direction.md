@@ -24,10 +24,12 @@ Cormorant Garamond carries expressive headings; Space Grotesk carries controls.
 Hero verdict: the painted architectural model opens into a working website.
 The fixed SVG arch scales while the recording counter-scales, so the existing
 runtime animates only transforms and opacity. The artwork is a painting, not a
-claim of real 3D. No new renderer, scroll interception or second animation clock.
+claim of real 3D. The portal uses no renderer, scroll interception or second animation clock.
 
 The sticky sequence is limited to widths above 1024px with a fine pointer and
-normal motion. Native scroll adds clamp(480px,80vh,800px); reversing scroll reverses
+normal motion. Native scroll adds clamp(480px,80vh,800px) plus a 240px entry buffer;
+the buffer slows only the first 45% of progress, keeping the later reveal and
+ordinary page scrolling at their previous pace. Reversing scroll reverses
 the reveal. Touch, reduced motion, paused motion and no JavaScript keep both scenes
 in document flow. Masked controls leave the tab order. Header installation stays
 available throughout. Homepage layout has one canonical stylesheet,
@@ -64,3 +66,24 @@ The install selector offers peer options for Claude Code, Cursor, Hermes, Kimi
 Code, Gemini CLI, OpenClaw and other agents, with documented installer identifiers
 in `INTEGRATIONS.md`. Browser tests verify command selection and motion lifecycle;
 they do not claim native installations in every agent.
+
+## Restored torus background and navigation — 2026-09-11
+
+At the user's request, the circular particle-tunnel flight from e074e6d returns
+behind the collections. `studio-tunnel.mjs` reconstructs the same major-radius
+60 / tube-radius 15 geometry with seeded points, a camera following the circular
+centreline, gentle idle drift and pointer steering. Scroll drives one lap.
+It uses one local WebGL point draw through the existing gallery clock, with no
+Three.js/CDN dependency: 4,800 points desktop, 1,800 touch/low quality, DPR ≤1.5.
+Paper/charcoal and chartreuse replace the old gold/teal colours. The painting
+covers the opening; the tunnel appears when the collections enter view.
+
+Reduced motion, pause, hidden tabs and the covered opening suspend rendering.
+No WebGL, compile failure or context loss leaves the existing readable paper
+composition; context restoration rebuilds resources. The tunnel is decoration,
+not a content dependency. Pointer events pass through it.
+
+Explore closes before explicitly scrolling and focusing the chosen section below
+the header. It restores a collection hidden by search, preserves native fragment
+history and leaves modified clicks alone. Unknown focus destinations cannot close
+the menu before a pending link click completes.

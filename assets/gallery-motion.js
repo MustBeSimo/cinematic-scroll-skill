@@ -51,6 +51,16 @@
       }
     };
   }
+  function seededRandom(seed = 1) {
+    let state = seed >>> 0;
+    return () => {
+      state += 1831565813;
+      let x = state;
+      x = Math.imul(x ^ x >>> 15, x | 1);
+      x ^= x + Math.imul(x ^ x >>> 7, x | 61);
+      return ((x ^ x >>> 14) >>> 0) / 4294967296;
+    };
+  }
 
   // runtime/cinematic.mjs
   function createCinematicRuntime(root, options = {}) {
@@ -295,8 +305,155 @@
     };
   }
 
+  // assets/studio-tunnel.mjs
+  function createStudioTunnel(canvas, { wake = () => {
+  } } = {}) {
+    if (!canvas) return null;
+    let gl, program, buffer, uniforms, ready = false, lost = false, failed = false, phase = 0, lastTime = 0;
+    const theme = matchMedia("(prefers-color-scheme:dark)");
+    const random = seededRandom(230), count = 4800, points = new Float32Array(count * 4);
+    for (let i = 0; i < count; i++) {
+      const u = random() * Math.PI * 2, v = random() * Math.PI * 2, r = 15 * (0.74 + random() * 0.26);
+      points.set([(60 + r * Math.cos(v)) * Math.cos(u), r * Math.sin(v), (60 + r * Math.cos(v)) * Math.sin(u), random()], i * 4);
+    }
+    const vertex = `
+ attribute vec4 point;
+ uniform float angle,aspect,dpr;
+ uniform vec2 pointer;
+ varying float tint,depth;
+ void main(){
+  vec3 radial=vec3(cos(angle),0.,sin(angle));
+  vec3 forward=vec3(-sin(angle),0.,cos(angle));
+  vec3 eye=radial*(60.+pointer.x*3.)+vec3(0.,pointer.y*2.,0.);
+  vec3 relative=point.xyz-eye;
+  depth=dot(relative,forward);
+  float x=dot(relative,radial),y=relative.y;
+  gl_Position=vec4(x*1.14/aspect,y*1.14,depth*.999-.2,depth);
+  gl_PointSize=clamp(110.*dpr/max(depth,.1),1.,7.*dpr);
+  tint=point.w;
+ }`;
+    const fragment = `
+ precision mediump float;
+ uniform vec3 ink,accent;
+ varying float tint,depth;
+ void main(){
+  float radius=length(gl_PointCoord-.5)*2.;
+  float edge=1.-smoothstep(.12,1.,radius);
+  float fog=1.-smoothstep(30.,115.,depth);
+  gl_FragColor=vec4(mix(ink,accent,step(.82,tint)),edge*fog*.65);
+ }`;
+    function state(value) {
+      if (canvas.dataset.state !== value) canvas.dataset.state = value;
+    }
+    function disposeGPU() {
+      if (gl && !lost) {
+        if (buffer) gl.deleteBuffer(buffer);
+        if (program) gl.deleteProgram(program);
+      }
+      buffer = program = null;
+      ready = false;
+    }
+    function init() {
+      if (ready || lost || failed) return;
+      try {
+        gl = canvas.getContext("webgl", { alpha: true, antialias: false, depth: false, powerPreference: "low-power" });
+        if (!gl) throw Error("WebGL unavailable");
+        program = gl.createProgram();
+        for (const [type, source] of [[gl.VERTEX_SHADER, vertex], [gl.FRAGMENT_SHADER, fragment]]) {
+          const shader = gl.createShader(type);
+          gl.shaderSource(shader, source);
+          gl.compileShader(shader);
+          if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            gl.deleteShader(shader);
+            throw Error("Shader unavailable");
+          }
+          gl.attachShader(program, shader);
+          gl.deleteShader(shader);
+        }
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw Error("Program unavailable");
+        gl.useProgram(program);
+        buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
+        const attr = gl.getAttribLocation(program, "point");
+        gl.enableVertexAttribArray(attr);
+        gl.vertexAttribPointer(attr, 4, gl.FLOAT, false, 0, 0);
+        uniforms = Object.fromEntries(["angle", "aspect", "dpr", "pointer", "ink", "accent"].map((key) => [key, gl.getUniformLocation(program, key)]));
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        ready = true;
+      } catch {
+        failed = true;
+        disposeGPU();
+        state("fallback");
+      }
+    }
+    const onLost = (e) => {
+      e.preventDefault();
+      lost = true;
+      ready = false;
+      canvas.style.opacity = "0";
+      state("fallback");
+    };
+    const onRestored = () => {
+      lost = false;
+      failed = false;
+      program = buffer = null;
+      wake();
+    };
+    canvas.addEventListener("webglcontextlost", onLost);
+    canvas.addEventListener("webglcontextrestored", onRestored);
+    return {
+      render(s, visibility, paused2) {
+        const active = s.visible && !s.reducedMotion && !paused2 && s.quality !== "static" && visibility > 0;
+        if (!active) {
+          canvas.style.opacity = "0";
+          lastTime = s.time;
+          state(failed || lost ? "fallback" : "paused");
+          return false;
+        }
+        init();
+        if (!ready) {
+          lastTime = s.time;
+          return false;
+        }
+        const dpr = Math.min(devicePixelRatio, s.coarsePointer || s.quality === "low" ? 1 : 1.5);
+        const width = Math.round(innerWidth * dpr), height = Math.round(innerHeight * dpr);
+        if (canvas.width !== width || canvas.height !== height) {
+          canvas.width = width;
+          canvas.height = height;
+          gl.viewport(0, 0, width, height);
+        }
+        phase += Math.min(0.05, Math.max(0, s.time - lastTime)) * 6e-3;
+        lastTime = s.time;
+        gl.useProgram(program);
+        gl.uniform1f(uniforms.angle, s.scroll.progress * Math.PI * 2 + phase);
+        gl.uniform1f(uniforms.aspect, innerWidth / innerHeight);
+        gl.uniform1f(uniforms.dpr, dpr);
+        gl.uniform2f(uniforms.pointer, s.pointer.active && !s.coarsePointer ? (s.pointer.x / innerWidth - 0.5) * 2 : 0, s.pointer.active && !s.coarsePointer ? (0.5 - s.pointer.y / innerHeight) * 2 : 0);
+        gl.uniform3fv(uniforms.ink, theme.matches ? [0.64, 0.7, 0.55] : [0.24, 0.3, 0.14]);
+        gl.uniform3fv(uniforms.accent, theme.matches ? [0.83, 1, 0.25] : [0.43, 0.56, 0.06]);
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.POINTS, 0, s.coarsePointer || s.quality === "low" ? 1800 : count);
+        canvas.style.opacity = String(clamp(visibility) * (theme.matches ? 0.75 : 0.42));
+        state("playing");
+        return true;
+      },
+      dispose() {
+        disposeGPU();
+        canvas.removeEventListener("webglcontextlost", onLost);
+        canvas.removeEventListener("webglcontextrestored", onRestored);
+        canvas.style.opacity = "0";
+        state("paused");
+      }
+    };
+  }
+
   // assets/gallery-motion.mjs
   var runtime = createCinematicRuntime(document);
+  var tunnel = createStudioTunnel(document.querySelector("#studio-tunnel"), { wake: () => runtime.wake() });
   var hero = document.querySelector(".hero-stage")?.closest(".hero");
   var stage = hero?.querySelector(".hero-stage");
   var portal = hero?.querySelector(".portal-window");
@@ -310,6 +467,8 @@
   var headerHeight = 76;
   var portalProgress = 0;
   var portalEnabled = false;
+  var portalEntryBuffer = 240;
+  hero?.style.setProperty("--portal-entry-buffer", portalEntryBuffer + "px");
   function setPortalMode() {
     if (!hero) return;
     const enabled = portalMedia.matches && !paused;
@@ -419,7 +578,10 @@
     const allowed = s.visible && !s.reducedMotion && !paused;
     if (hero && portalEnabled) {
       const travel = Math.max(1, heroRect.height - stageRect.height);
-      portalProgress = clamp((headerHeight - heroRect.top) / travel);
+      const baseTravel = Math.max(1, travel - portalEntryBuffer);
+      const entryEnd = baseTravel * 0.45 + portalEntryBuffer;
+      const distance = Math.max(0, headerHeight - heroRect.top);
+      portalProgress = clamp(distance < entryEnd ? distance / entryEnd * 0.45 : (distance - portalEntryBuffer) / baseTravel);
       const reveal = clamp((portalProgress - 0.2) / 0.5), ease = reveal ** 2.6;
       const w = stageRect.width, h = stageRect.height;
       const k = 1 + (Math.max(w / 160 * 2.6, h / 220 * 3) - 1) * ease;
@@ -467,11 +629,13 @@
     if (art) art.style.transform = allowed ? `translate3d(${s.pointer.active && !s.coarsePointer ? (s.pointer.x / innerWidth - 0.5) * 12 : 0}px,${Math.min(s.scroll.y, 600) * 0.03}px,0)` : "none";
     const progress = document.querySelector(".site-head .progress");
     if (progress) progress.style.transform = `scaleX(${s.scroll.progress})`;
-    return animateStickers;
+    const tunnelActive = tunnel?.render(s, heroRect ? clamp((innerHeight - heroRect.bottom) / 250) : 0, paused);
+    return animateStickers || tunnelActive;
   });
-  addEventListener("pagehide", () => {
+  addEventListener("pagehide", (event) => {
     for (const e of entries) playback(e, false);
     if (artEntry) playback(artEntry, false);
+    if (!event.persisted) tunnel?.dispose();
   });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
@@ -484,7 +648,24 @@
   if (directory) {
     const summary = directory.querySelector("summary");
     directory.addEventListener("click", (e) => {
-      if (e.target.closest("a")) directory.open = false;
+      const link = e.target.closest('a[href^="#"]');
+      if (!link || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const target = document.getElementById(link.hash.slice(1));
+      if (!target) return;
+      e.preventDefault();
+      directory.open = false;
+      if (target.hidden && search) {
+        search.value = "";
+        search.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      if (!target.hasAttribute("tabindex")) {
+        target.tabIndex = -1;
+        target.addEventListener("blur", () => target.removeAttribute("tabindex"), { once: true });
+      }
+      location.hash = link.hash;
+      target.focus({ preventScroll: true });
+      target.scrollIntoView({ block: "start", behavior: "instant" });
+      runtime.refresh();
     });
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && directory.open) {
@@ -496,7 +677,7 @@
       if (!directory.contains(e.target)) directory.open = false;
     });
     directory.addEventListener("focusout", (e) => {
-      if (!directory.contains(e.relatedTarget)) directory.open = false;
+      if (e.relatedTarget && !directory.contains(e.relatedTarget)) directory.open = false;
     });
   }
   var picker = document.querySelector(".agent-picker");

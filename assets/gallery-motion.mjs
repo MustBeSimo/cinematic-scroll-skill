@@ -1,5 +1,7 @@
 import {createCinematicRuntime,mountProximity,clamp} from '../runtime/index.mjs';
+import {createStudioTunnel} from './studio-tunnel.mjs';
 const runtime=createCinematicRuntime(document);
+const tunnel=createStudioTunnel(document.querySelector('#studio-tunnel'),{wake:()=>runtime.wake()});
 // The portal uses the existing runtime's read/write phases, never another clock.
 const hero=document.querySelector('.hero-stage')?.closest('.hero');
 const stage=hero?.querySelector('.hero-stage');
@@ -10,6 +12,8 @@ const heroCopy=hero?.querySelector('.hero-copy');
 const caption=hero?.querySelector('.feature-caption');
 const portalMedia=matchMedia('(min-width:1025px) and (pointer:fine) and (prefers-reduced-motion:no-preference)');
 let heroRect=null,stageRect=null,headerHeight=76,portalProgress=0,portalEnabled=false;
+const portalEntryBuffer=240;
+hero?.style.setProperty('--portal-entry-buffer',portalEntryBuffer+'px');
 function setPortalMode(){
  if(!hero)return;
  const enabled=portalMedia.matches&&!paused;
@@ -54,7 +58,11 @@ runtime.subscribe(s=>{
  const allowed=s.visible&&!s.reducedMotion&&!paused;
  if(hero&&portalEnabled){
   const travel=Math.max(1,heroRect.height-stageRect.height);
-  portalProgress=clamp((headerHeight-heroRect.top)/travel);
+  // Give the first reveal more wheel travel; preserve the later choreography's pace.
+  const baseTravel=Math.max(1,travel-portalEntryBuffer);
+  const entryEnd=baseTravel*.45+portalEntryBuffer;
+  const distance=Math.max(0,headerHeight-heroRect.top);
+  portalProgress=clamp(distance<entryEnd?distance/entryEnd*.45:(distance-portalEntryBuffer)/baseTravel);
   const reveal=clamp((portalProgress-.2)/.5),ease=reveal**2.6;
   const w=stageRect.width,h=stageRect.height;
   const k=1+(Math.max(w/160*2.6,h/220*3)-1)*ease;
@@ -90,19 +98,36 @@ runtime.subscribe(s=>{
  headings.forEach((el,i)=>{const r=headingRects[i],p=allowed?clamp((r.top-innerHeight*.6)/(innerHeight*.4)):0;el.style.transform=`translate3d(0,${p*28}px,0)`;el.style.opacity=String(1-p*.45);});
  const art=document.querySelector('.studio-art-plane');if(art)art.style.transform=allowed?`translate3d(${s.pointer.active&&!s.coarsePointer?(s.pointer.x/innerWidth-.5)*12:0}px,${Math.min(s.scroll.y,600)*.03}px,0)`:'none';
  const progress=document.querySelector('.site-head .progress');if(progress)progress.style.transform=`scaleX(${s.scroll.progress})`;
- return animateStickers;
+ const tunnelActive=tunnel?.render(s,heroRect?clamp((innerHeight-heroRect.bottom)/250):0,paused);
+ return animateStickers||tunnelActive;
 });
-addEventListener('pagehide',()=>{for(const e of entries)playback(e,false);if(artEntry)playback(artEntry,false);});
+addEventListener('pagehide',event=>{for(const e of entries)playback(e,false);if(artEntry)playback(artEntry,false);if(!event.persisted)tunnel?.dispose();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){for(const e of entries)playback(e,false);if(artEntry)playback(artEntry,false);}else runtime.wake();});
 addEventListener('pageshow',()=>runtime.refresh());
 
 const directory=document.querySelector('.studio-directory');
 if(directory){
  const summary=directory.querySelector('summary');
- directory.addEventListener('click',e=>{if(e.target.closest('a'))directory.open=false;});
+ directory.addEventListener('click',e=>{
+  const link=e.target.closest('a[href^="#"]');
+  if(!link||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+  const target=document.getElementById(link.hash.slice(1));
+  if(!target)return;
+  e.preventDefault();
+  directory.open=false;
+  // Search may have removed this collection from layout. Restore it before anchoring.
+  if(target.hidden&&search){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}));}
+  if(!target.hasAttribute('tabindex')){target.tabIndex=-1;target.addEventListener('blur',()=>target.removeAttribute('tabindex'),{once:true});}
+  location.hash=link.hash;
+  target.focus({preventScroll:true});
+  target.scrollIntoView({block:'start',behavior:'instant'});
+  runtime.refresh();
+ });
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&directory.open){directory.open=false;summary.focus();}});
  document.addEventListener('click',e=>{if(!directory.contains(e.target))directory.open=false;});
- directory.addEventListener('focusout',e=>{if(!directory.contains(e.relatedTarget))directory.open=false;});
+ // A null relatedTarget can precede link activation in browsers that don't focus
+ // clicked links. Let the click/outside-click handler finish that interaction.
+ directory.addEventListener('focusout',e=>{if(e.relatedTarget&&!directory.contains(e.relatedTarget))directory.open=false;});
 }
 
 const picker=document.querySelector('.agent-picker');
