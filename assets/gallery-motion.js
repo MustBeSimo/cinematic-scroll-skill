@@ -467,7 +467,7 @@
   var headerHeight = 76;
   var portalProgress = 0;
   var portalEnabled = false;
-  var portalEntryBuffer = 240;
+  var portalEntryBuffer = 640;
   hero?.style.setProperty("--portal-entry-buffer", portalEntryBuffer + "px");
   function setPortalMode() {
     if (!hero) return;

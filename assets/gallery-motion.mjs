@@ -12,7 +12,10 @@ const heroCopy=hero?.querySelector('.hero-copy');
 const caption=hero?.querySelector('.feature-caption');
 const portalMedia=matchMedia('(min-width:1025px) and (pointer:fine) and (prefers-reduced-motion:no-preference)');
 let heroRect=null,stageRect=null,headerHeight=76,portalProgress=0,portalEnabled=false;
-const portalEntryBuffer=240;
+// Trackpads can easily emit several hundred pixels from one light gesture. Give
+// the opening a deliberate runway before the arch takes over, while keeping the
+// reveal itself on the same base travel so its later pacing stays unchanged.
+const portalEntryBuffer=640;
 hero?.style.setProperty('--portal-entry-buffer',portalEntryBuffer+'px');
 function setPortalMode(){
  if(!hero)return;

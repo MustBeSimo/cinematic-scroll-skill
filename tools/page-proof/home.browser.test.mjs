@@ -48,8 +48,10 @@ test('the architectural reveal reverses and falls back without duplicate film do
  await page.evaluate(()=>scrollTo(0,240));await page.waitForTimeout(150);
  assert.equal(await portal.evaluate(e=>Number(e.style.opacity)),0,'first wheel travel holds the opening before the arch reveal');
  await page.evaluate(()=>scrollTo(0,400));await page.waitForTimeout(150);
+ assert.equal(await portal.evaluate(e=>e.style.transform),initial,'a light trackpad gesture must not rush the portal');
+ await page.evaluate(()=>scrollTo(0,640));await page.waitForTimeout(150);
  assert.notEqual(await portal.evaluate(e=>e.style.transform),initial);
- await page.evaluate(()=>scrollTo(0,840));await page.waitForTimeout(150);
+ await page.evaluate(()=>scrollTo(0,1160));await page.waitForTimeout(150);
  assert.equal(await scene.evaluate(e=>e.inert),false);
  assert.equal(await page.locator('.hero-opening').evaluate(e=>e.inert),true);
  await scene.locator('.feature-caption a').focus();assert.equal(await page.evaluate(()=>document.activeElement.textContent.trim()),'Enter Aureus ↗');
