@@ -10,11 +10,12 @@
 <meta property="og:title" content="BLOOM — your day, but make it fun" />
 <meta property="og:description" content="Gen-Z pop cinematic scroll — candy pink + electric lime, glassy floating UI, fast parallax. Built with the cinematic-scroll Agent Skill." />
 <meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><circle cx=%2216%22 cy=%2216%22 r=%2210%22 fill=%22%23ff543d%22/></svg>" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- Plus Jakarta Sans (bold rounded display + UI), Space Grotesk (mono-ish labels) -->
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
 
 <!-- GSAP + ScrollTrigger (now 100% free) — powers the dedicated "THE DROP" showcase:
      a JUMP-SCARE micro (back.out overshoot, taste-guardrails §2) + a VELOCITY-REACTIVE
@@ -327,6 +328,64 @@
     .drop-rows .vrow{ font-size:13vw; white-space:normal; transform:none!important; }
     .drop-stamp{ transform:none!important; }
   }
+</style>
+<style>
+  /* BLOOM art direction: a pocket-sized editorial activity kit. The phones stay
+     candy-bright; the surrounding world becomes paper, ink and punchy stickers
+     so the product mechanism is the hero at every chapter. */
+  :root{
+    --paper:#f8f2e8; --ink:#18223b; --fg:#18223b; --fg-muted:#526078;
+    --pink:#ff5d7a; --pink-2:#ff9ab0; --violet:#3155d9; --cyan:#a7e8e4;
+    --lime:#d8f05a; --lime-2:#b8d62b; --panel:#fffdf8;
+    --disp:"Plus Jakarta Sans",system-ui,sans-serif;
+    --serif:"DM Serif Display",Georgia,serif;
+    --mono:"Space Grotesk",ui-monospace,monospace;
+  }
+  body{background:var(--paper)!important;color:var(--ink);transition:background .6s ease;}
+  .wash{opacity:.42;mix-blend-mode:multiply;background:radial-gradient(75% 65% at 8% 8%,rgba(216,240,90,.7),transparent 60%),radial-gradient(70% 60% at 96% 90%,rgba(255,93,122,.36),transparent 65%);}
+  .grain{opacity:.035;mix-blend-mode:multiply;}
+  .masthead{padding-top:max(20px,env(safe-area-inset-top));}
+  .masthead .mark{gap:11px;}
+  .masthead .mark .glyph{width:30px;height:30px;border-radius:50% 42% 56% 44%;background:var(--pink);box-shadow:3px 4px 0 var(--ink);transform:rotate(-12deg);}
+  .masthead .mark b{font-family:var(--serif);font-size:24px;letter-spacing:.02em;font-weight:400;}
+  .masthead nav a{color:var(--ink);border:1px solid transparent;}
+  .masthead nav a:hover{border-color:var(--ink);}
+  .masthead nav a.pill{background:var(--ink);color:var(--lime);box-shadow:3px 3px 0 var(--pink);}
+  section{min-height:180vh;}
+  .stage{padding:0 clamp(24px,7vw,112px);}
+  .copytext{max-width:min(57vw,720px);}
+  .eyebrow,.drop-eyebrow{color:var(--ink);background:var(--lime);border:1px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:5px;transform:rotate(-2deg);}
+  h2.giant{font-family:var(--serif);font-weight:400;font-size:clamp(3.7rem,8.6vw,8.6rem);line-height:.86;letter-spacing:-.045em;}
+  h2.giant .w{margin-right:.11em;}
+  h2.giant .w.accent{font-family:var(--disp);font-weight:800;font-size:.72em;letter-spacing:-.06em;color:var(--pink);background:none;-webkit-text-stroke:1px var(--ink);}
+  .lede{margin-top:26px;padding:15px 18px;border-radius:3px;background:var(--panel);border:1px solid var(--ink);box-shadow:5px 5px 0 var(--ink);color:var(--ink);font-size:clamp(.98rem,1.25vw,1.1rem);}
+  .btn{border-radius:5px;padding:14px 21px;}
+  .btn.solid{background:var(--violet);color:#fff;box-shadow:4px 4px 0 var(--ink);}
+  .btn.ghost{background:var(--panel);border:1px solid var(--ink);}
+  .ghost{font-family:var(--serif);font-weight:400;color:var(--pink);opacity:.12;text-transform:none;}
+  .appwrap{right:clamp(28px,8vw,140px);width:clamp(230px,25vw,350px);}
+  .phone{border-radius:28px;border:6px solid var(--ink);box-shadow:13px 15px 0 var(--ink),0 30px 70px -30px rgba(24,34,59,.55);}
+  .figcap{font-size:10px;color:var(--ink);font-weight:700;}
+  .sticker.tag{background:var(--pink);border:2px solid var(--ink);border-radius:4px;box-shadow:4px 5px 0 var(--ink);color:var(--ink);transform:rotate(6deg);}
+  .glasscard{left:auto;right:clamp(24px,31vw,520px);bottom:clamp(34px,8vh,92px);width:min(250px,26vw);background:rgba(255,253,248,.94);border:1px solid var(--ink);border-radius:4px;box-shadow:6px 6px 0 var(--violet);backdrop-filter:none;}
+  .glasscard .t{color:var(--violet);}
+  .glasscard .pulse{background:var(--pink);}
+  .drop-stage{border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);}
+  .drop-stage .dropwash{background:radial-gradient(55% 80% at 82% 15%,rgba(216,240,90,.9),transparent 64%),linear-gradient(135deg,var(--pink) 0%,var(--violet) 100%);}
+  .drop-rows .vrow{font-family:var(--serif);font-weight:400;}
+  .drop-rows .vrow.accent{font-family:var(--disp);font-weight:800;color:var(--lime);background:none;-webkit-text-stroke:1px var(--ink);}
+  .drop-stamp{border:2px solid var(--ink);border-radius:5px;box-shadow:5px 5px 0 var(--ink);}
+  footer{border-top:1px solid var(--ink);padding-top:12vh;}
+  footer .big{font-family:var(--serif);font-weight:400;}
+  footer .big .grad{font-family:var(--disp);font-weight:800;color:var(--pink);background:none;-webkit-text-stroke:1px var(--ink);}
+  footer .fcta{border-radius:5px;background:var(--violet);box-shadow:5px 5px 0 var(--ink);}
+  @media (max-width:680px){
+    .copytext{max-width:none;} h2.giant{font-size:18vw;}
+    .appwrap{width:min(68vw,270px);}
+    .lede{box-shadow:4px 4px 0 var(--ink);}
+    .glasscard{left:auto;right:auto;bottom:auto;width:100%;box-shadow:4px 4px 0 var(--violet);}
+  }
+  @media (prefers-reduced-motion:reduce){.eyebrow,.sticker.tag{transform:none;}}
 </style>
 </head>
 <body>

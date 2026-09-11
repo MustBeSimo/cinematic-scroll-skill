@@ -10,19 +10,12 @@
 <meta property="og:title" content="Classic Touch — The Renaissance Edition" />
 <meta property="og:description" content="Eight chapters on the firm that builds the taste layer for agentic AI. Built with the cinematic-scroll skill — vanilla, no build step." />
 <meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%23F5EFE3'/%3E%3Ctext x='16' y='24' text-anchor='middle' font-size='24' fill='%236B2C2C'%3EQ%3C/text%3E%3C/svg%3E" />
 
 <link rel="preload" as="image" href="./assets/0-prologue.jpg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=EB+Garamond:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-
-<!-- GSAP + ScrollTrigger (now 100% free) — powers the dedicated "The Unveiling" showcase:
-     a GOD-SHOT / OVERHEAD pull-back (taste-guardrails §2) + a SCRUBBED SVG FLOURISH
-     (an illuminated gold rule drawn via stroke-dashoffset, pattern #2). Deferred +
-     feature-detected: if the CDN fails, the hand-rolled rAF engine below still runs and
-     the beat stays at its complete static state. -->
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
 
 <style>
   /* ───────────────────────────────────────────────────────────────
@@ -126,9 +119,11 @@
   @media (max-width: 860px){ .rail { display: none; } }
 
   /* ── Chapters ────────────────────────────────────────────────── */
-  .chapter { position: relative; height: 220vh; }
+  /* One compact hold per plate. The old 220vh track left too much travel
+     between fully composed chapters, especially with a trackpad. */
+  .chapter { position: relative; height: 180vh; }
   .chapter .stage {
-    position: sticky; top: 0; height: 100vh; overflow: hidden;
+    position: sticky; top: 0; height: 100vh; overflow: visible;
     display: grid; align-items: center;
     grid-template-columns: 1fr;
   }
@@ -281,17 +276,12 @@
     .cue .bar, .aicard .dot { animation: none; }
   }
 
-  /* ── GSAP SHOWCASE — "THE UNVEILING" ────────────────────────────────
-     A dedicated viewport demonstrating two techniques the hand-rolled
-     engine doesn't: a GOD-SHOT / OVERHEAD pull-back (taste-guardrails §2 —
-     starts tight on a detail then pulls back, scale 1.5→1 + translateY 20%→0)
-     and a SCRUBBED SVG FLOURISH (an illuminated-manuscript gold rule that
-     draws via stroke-dashoffset, pattern #2). GSAP pins .unveil-stage; the
-     STATIC DEFAULTS below keep the beat whole when GSAP is absent / reduced-
-     motion / mobile (plate at scale 1, flourish fully drawn — no dasharray). */
-  .chapter.showcase { height: auto; }                 /* GSAP pin owns the scroll room */
+  /* ── "THE UNVEILING" — native sticky, on the shared rAF clock ─────── */
+  .chapter.showcase { height: 180vh; }
   .unveil-stage { position: relative; height: 100vh; overflow: hidden;
-    display: grid; place-items: center;
+    display: grid; place-items: center; }
+  .unveil-composition { position: relative; width: 100%; height: 100%; display: grid;
+    place-items: center; will-change: transform, opacity;
     background: radial-gradient(120% 90% at 50% 12%, rgba(184,137,58,0.12), rgba(184,137,58,0) 60%),
                 radial-gradient(90% 70% at 50% 100%, rgba(107,44,44,0.08), rgba(107,44,44,0) 64%); }
   /* the "plate" the god-shot pulls back from — illuminated initial + leaf border */
@@ -321,12 +311,16 @@
     font-family: var(--serif); font-style: italic; font-size: clamp(0.95rem, 1.6vw, 1.15rem);
     color: var(--body); }
   @media (max-width: 860px) {
+    .chapter.showcase { height: auto; }
     .unveil-stage { height: auto; padding: clamp(70px,12vh,110px) 22px; }
+    .unveil-composition { height: auto; }
     .unveil-plate { transform: none !important; width: 100%; }
     .unveil-cap { position: relative; bottom: auto; margin-top: 30px; }
   }
   @media (prefers-reduced-motion: reduce) {
+    .chapter.showcase { height: auto; }
     .unveil-stage { height: auto; padding: 100px 22px; }
+    .unveil-composition { height: auto; }
     .unveil-plate { transform: none !important; }
     .unveil-cap { position: relative; bottom: auto; margin-top: 30px; }
   }
@@ -524,19 +518,19 @@ show.className = 'chapter showcase';
 show.id = 'unveiling';
 show.style.setProperty('--accent', showAccentC);
 show.innerHTML = `
-  <div class="unveil-stage">
-    <div class="unveil-plate" aria-hidden="false">
-      <div class="initial">Q</div>
-      <div class="gloss">Every house rule begins as a <em>single illuminated letter.</em></div>
-      <!-- SCRUBBED SVG FLOURISH (pattern #2): an elegant gold rule drawn via
-           stroke-dashoffset; getTotalLength() read once on init, not per-frame. -->
-      <svg class="unveil-flourish" viewBox="0 0 520 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <path d="M10,32 C70,8 110,8 170,32 C210,50 230,50 260,18 C290,50 310,50 350,32 C410,8 450,8 510,32 M260,18 C260,10 254,6 246,6 M260,18 C260,10 266,6 274,6"/>
-      </svg>
-    </div>
-    <div class="unveil-cap">
-      <span class="eyebrow">Interludio · The Unveiling</span>
-      <span>From a tight detail, the whole page draws back into view.</span>
+  <div class="stage unveil-stage">
+    <div class="unveil-composition">
+      <div class="unveil-plate" aria-hidden="false">
+        <div class="initial">Q</div>
+        <div class="gloss">Every house rule begins as a <em>single illuminated letter.</em></div>
+        <svg class="unveil-flourish" viewBox="0 0 520 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <path d="M10,32 C70,8 110,8 170,32 C210,50 230,50 260,18 C290,50 310,50 350,32 C410,8 450,8 510,32 M260,18 C260,10 254,6 246,6 M260,18 C260,10 266,6 274,6"/>
+        </svg>
+      </div>
+      <div class="unveil-cap">
+        <span class="eyebrow">Interludio · The Unveiling</span>
+        <span>From a tight detail, the whole page draws back into view.</span>
+      </div>
     </div>
   </div>`;
 book.insertBefore(show, book.children[1] || null);   // after prologue (DOM index 0)
@@ -636,9 +630,9 @@ else if (isMobile()) {
 }
 
 /* ── Desktop parallax engine — rAF-throttled, transform/opacity only ──
-   T = unified progress over a section's WHOLE pass (approach → pin → exit),
-   so content is fully composed when the chapter is centered — including the
-   first chapter at load (T ≈ 0.31). Never starts invisible. */
+   T = unified progress over a section's WHOLE pass (approach → pin → exit).
+   The next plate now composes during its physical entrance and the current
+   plate fades only after its sticky hold, so there is no empty handoff. */
 /* cache each section's document-relative top + height (read once at init and on
    debounced resize) so the per-frame loop never touches layout (perf-budget §1).
    rect.top+scrollY is the safe absolute top regardless of offsetParent. */
@@ -646,6 +640,9 @@ let tops = [], heights = [];
 function measure(){ const y = scrollY; tops = sections.map(s=>s.getBoundingClientRect().top + y); heights = sections.map(s=>s.offsetHeight); }
 measure();
 let rTO = 0; window.addEventListener('resize', ()=>{ clearTimeout(rTO); rTO = setTimeout(measure, 150); }, { passive:true });
+const unveilFlourish = document.querySelector('.unveil-flourish path');
+const unveilFlourishLength = unveilFlourish && !isMobile() ? unveilFlourish.getTotalLength() : 0;
+if (unveilFlourishLength) unveilFlourish.style.strokeDasharray = unveilFlourishLength;
 
 function parallax() {
   if (reduce || isMobile()) return;
@@ -656,10 +653,19 @@ function parallax() {
     if (top > vh*1.2 || top + heights[i] < -vh*0.2) return;
     const total = heights[i] + vh;
     const T = clamp((vh - top) / total, 0, 1); // 0 just below → 1 fully past
-    const enter = smooth(0.08, 0.30, T);            // composed by the time it pins
-    const exit  = 1 - smooth(0.66, 0.84, T);        // fades as it scrolls away
+    const pinEnd = heights[i] / total;
+    const enter = smooth(0.02, 0.20, T);            // visible as the plate enters
+    const exit  = 1 - smooth(pinEnd + 0.035, Math.min(0.94, pinEnd + 0.235), T);
     const live  = enter * exit;                      // 0 → 1 → 0
     const drift = 0.46 - T;                          // signed, ~0 at hold
+    // Counter the stage's physical entrance/exit so adjacent compositions
+    // crossfade in the viewport instead of exposing an empty paper interval.
+    const stageTop = top > 0 ? top : (top + heights[i] < vh ? top + heights[i] - vh : 0);
+    const composition = sec.querySelector('.inner, .unveil-composition');
+    if (composition) {
+      composition.style.transform = `translate3d(0, ${(-stageTop).toFixed(1)}px, 0)`;
+      composition.style.opacity = live.toFixed(3);
+    }
 
     // image / figure layer: subtle parallax + scale swell
     const fig = sec.querySelector('.figwrap');
@@ -667,24 +673,24 @@ function parallax() {
       const depth = +fig.dataset.depth;
       const sc = 1.035 - 0.035 * enter;
       fig.style.transform = `translateY(${drift * 150 * depth}px) scale(${sc.toFixed(3)})`;
-      fig.style.opacity = (0.12 + 0.88 * live).toFixed(3);
+      fig.style.opacity = live.toFixed(3);
     }
 
     // copy / title block + per-word stagger
     const copy = sec.querySelector('.copytext');
     if (copy) {
       copy.style.transform = `translateY(${(drift * 80).toFixed(1)}px)`;
-      copy.style.opacity = (0.08 + 0.92 * live).toFixed(3);
+      copy.style.opacity = live.toFixed(3);
       const words = copy.querySelectorAll('h2 .w');
       const n = words.length;
       words.forEach((w, k) => {
-        const t0 = 0.05 + (k / n) * 0.14;            // staggered, all in by ~T=0.29
-        const wp = smooth(t0, t0 + 0.10, T);
+        const t0 = 0.025 + (k / n) * 0.075;          // compact stagger during entrance
+        const wp = smooth(t0, t0 + 0.08, T);
         w.style.opacity = wp.toFixed(3);
         w.style.transform = `translateY(${((1 - wp) * 22).toFixed(1)}px)`;
         w.style.letterSpacing = `${((1 - wp) * 0.18).toFixed(3)}em`;
       });
-      copy.querySelectorAll('.reveal').forEach(r => { r.style.opacity = (smooth(0.10, 0.30, T) * exit).toFixed(3); });
+      copy.querySelectorAll('.reveal').forEach(r => { r.style.opacity = (smooth(0.03, 0.20, T) * exit).toFixed(3); });
     }
 
     // foreground AI card — faster drift (depth > 1)
@@ -692,7 +698,18 @@ function parallax() {
     if (card) {
       const depth = +card.dataset.depth;
       card.style.transform = `translateY(${(drift * 120 * (depth - 1) * 2.6).toFixed(1)}px)`;
-      card.style.opacity = (0.95 * smooth(0.16, 0.36, T) * (1 - smooth(0.62, 0.82, T))).toFixed(3);
+      card.style.opacity = (0.95 * smooth(0.07, 0.23, T) * exit).toFixed(3);
+    }
+
+    // The interlude shares this same scroll clock: pull back, draw, and hold.
+    const unveilPlate = sec.querySelector('.unveil-plate');
+    if (unveilPlate) {
+      const pull = smooth(0.12, 0.46, T);
+      unveilPlate.style.transform = `translateY(${((1 - pull) * 18).toFixed(2)}%) scale(${(1.28 - 0.28 * pull).toFixed(3)})`;
+      if (unveilFlourishLength) unveilFlourish.style.strokeDashoffset = (unveilFlourishLength * (1 - smooth(0.18, 0.48, T))).toFixed(2);
+      const cap = sec.querySelector('.unveil-cap');
+      cap.style.opacity = (smooth(0.22, 0.46, T) * exit).toFixed(3);
+      cap.style.transform = `translateY(${((1 - smooth(0.22, 0.46, T)) * 18).toFixed(1)}px)`;
     }
   });
   ticking = false;
@@ -718,38 +735,6 @@ if (!isTouch && !reduce) {
   });
 }
 
-/* ── GSAP SHOWCASE WIRING — "THE UNVEILING" ─────────────────────────
-   Polls for GSAP (~120 rAF tries); if the CDN never loads, #unveiling stays
-   at its complete static state. matchMedia re-guards desktop + no-reduced-motion
-   so it auto-kills on resize into a small/reduced context. Two cinematic
-   techniques (taste-guardrails §2), each commented at its tween:
-     • GOD-SHOT / OVERHEAD pull-back — plate scale 1.5→1 + translateY 20%→0
-     • SCRUBBED SVG FLOURISH — the gold rule draws via stroke-dashoffset (pattern #2)
-   Only transform + opacity (+ stroke-dashoffset) are animated. */
-(function wireShowcase(tries){
-  if (!window.gsap || !window.ScrollTrigger) {
-    if (tries > 0) requestAnimationFrame(() => wireShowcase(tries - 1));
-    return;
-  }
-  gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.defaults({ scrub: 0.5, fastScrollEnd: true, invalidateOnRefresh: true });
-  const mm = gsap.matchMedia();
-  mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
-    const stage = document.querySelector('#unveiling .unveil-stage');
-    if (!stage) return;
-    const plate    = stage.querySelector('.unveil-plate');
-    const flourish = stage.querySelector('.unveil-flourish path');
-    const cap      = stage.querySelector('.unveil-cap');
-    const len      = flourish.getTotalLength();              // read length once, on init
-    gsap.set(flourish, { strokeDasharray: len, strokeDashoffset: len, willChange: 'stroke-dashoffset' });
-    const tl = gsap.timeline({ scrollTrigger: {
-      trigger: '#unveiling', start: 'top top', end: '+=140%', pin: stage, anticipatePin: 1 } });
-    tl.fromTo(plate,    { scale: 1.5, yPercent: 20 }, { scale: 1, yPercent: 0, ease: 'none' }, 0)  // GOD-SHOT pull-back
-      .to(flourish,     { strokeDashoffset: 0, ease: 'none' }, 0)                                  // SCRUBBED SVG FLOURISH
-      .fromTo(cap,      { opacity: 0, y: 18 }, { opacity: 1, y: 0, ease: 'power2.out', duration: 0.4 }, 0.1);
-    return () => gsap.set([plate, flourish, cap], { clearProps: 'all' });
-  });
-})(120);
 })();
 </script>
 </body>

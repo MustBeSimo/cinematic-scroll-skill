@@ -125,6 +125,22 @@ test('Explore lands on visible sections after filtering, pointer focus loss and 
   await page.close();
  }
 });
+test('Renaissance chapters crossfade in place without empty pin spacers',async t=>{
+ const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});t.after(()=>browser.close());
+ const page=await browser.newPage({viewport:{width:1440,height:900}});const gsap=[];page.on('request',r=>{if(/gsap|ScrollTrigger/i.test(r.url()))gsap.push(r.url());});
+ await page.goto(new URL('examples/renaissance/',base).href);await page.waitForTimeout(250);
+ assert.equal(gsap.length,0,'the interlude must stay on the native chapter clock');
+ assert.equal(await page.locator('#atelier').evaluate(e=>e.offsetHeight/innerHeight),1.8);
+ const y=await page.locator('#atelier').evaluate(e=>e.offsetTop-innerHeight*.5);
+ await page.evaluate(y=>scrollTo({top:y,behavior:'instant'}),y);await page.waitForTimeout(100);
+ const handoff=await page.evaluate(()=>['manifesto','atelier'].map(id=>{const c=document.querySelector(`#${id} .inner`),r=c.getBoundingClientRect();return{top:r.top,opacity:+getComputedStyle(c).opacity};}));
+ assert.ok(Math.abs(handoff[0].top-handoff[1].top)<2,'adjacent compositions share the viewport during handoff');
+ assert.ok(handoff[0].opacity+handoff[1].opacity>1&&handoff[1].opacity>.9,'handoff has no empty frame');
+ await page.emulateMedia({reducedMotion:'reduce'});await page.reload();
+ assert.ok(await page.locator('#atelier').evaluate(e=>e.offsetHeight<innerHeight*1.5));
+ assert.equal(await page.locator('#atelier .stage').evaluate(e=>getComputedStyle(e).position),'relative');
+ assert.equal(await page.locator('#atelier .inner').evaluate(e=>getComputedStyle(e).opacity),'1');
+});
 test('torus camera follows scroll, pauses, recovers its context and degrades without WebGL',async t=>{
  const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});t.after(()=>browser.close());
  const page=await browser.newPage({viewport:{width:1440,height:900}});await page.goto(base);

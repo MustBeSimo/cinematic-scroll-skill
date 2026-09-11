@@ -5,7 +5,10 @@ const existing={renaissance:'assets/video/scroll-demo.mp4',studio:'assets/video/
 const html=await readFile('index.html','utf8');const names=[...new Set([...html.matchAll(/<article class="(?:world-card|flagship-card)[\s\S]*?href="examples\/([^/]+)\//g)].map(m=>m[1]))];
 const manifest=Object.fromEntries(names.map(n=>[n,existing[n]||`assets/previews/${n}.mp4`]));await writeFile('assets/previews/manifest.json',JSON.stringify(manifest,null,2)+'\n');
 const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:['--enable-unsafe-swiftshader']});
-const jobs=names.filter(n=>!existing[n]);
+const requested=process.argv.slice(2);
+const unknown=requested.filter(name=>!names.includes(name));
+if(unknown.length)throw new Error(`Unknown gallery example: ${unknown.join(', ')}`);
+const jobs=requested.length?names.filter(name=>requested.includes(name)):names.filter(name=>!existing[name]);
 await mkdir('.verify/gallery-motion/recordings',{recursive:true});
 async function worker(){while(jobs.length){const name=jobs.shift();const start=Date.now();const context=await browser.newContext({viewport:{width:960,height:600},recordVideo:{dir:'.verify/gallery-motion/recordings',size:{width:960,height:600}}});const page=await context.newPage();
 try{await page.goto(`http://127.0.0.1:8875/examples/${name}/`,{waitUntil:'load',timeout:20000});await page.waitForTimeout(900);const offset=(Date.now()-start)/1000;

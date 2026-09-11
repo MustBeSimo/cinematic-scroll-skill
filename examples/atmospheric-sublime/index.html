@@ -1,5 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>FARSIGHT — atmospheric-sublime · cinematic-scroll v2.6.1</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><circle cx=%2216%22 cy=%2216%22 r=%2210%22 fill=%22%238bbbd9%22/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&display=swap" rel="stylesheet">
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
@@ -213,6 +214,17 @@ nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-sp
   .hero-tilt,.chap-media{transform:none!important}
   .scroll-cue i{animation:none}
 }
+/* FARSIGHT signature: horizon field, cool air, soft geometry and long breath */
+:root{--accent:#b7e7e5;--bg:#0c1d2b;--fg:#e6f1ef;--fg-dim:#9ab8c0;--surface:#173348;--line:#d9f1ef2b;--font-body:"Cormorant Garamond",Georgia,serif;--font-display:"Cormorant Garamond",Georgia,serif;--font-ui:"Space Grotesk",sans-serif}
+body{background:radial-gradient(ellipse at 50% 6%,#31566b 0%,var(--bg) 55%);background-attachment:fixed}
+nav{mix-blend-mode:normal;padding:28px 6vw;border-bottom:1px solid rgba(217,241,239,.16)}nav .mark{font-family:var(--font-ui);letter-spacing:.34em;font-size:.75rem;color:var(--accent)}nav .menu{font-family:var(--font-ui);letter-spacing:.18em;font-size:.62rem;color:var(--fg-dim)}
+.hero{height:145vh}.hero-pin{height:100vh;background:linear-gradient(180deg,#31566b 0%,#123044 55%,var(--bg) 100%)}.hero-bg{inset:-12% -5%;clip-path:ellipse(70% 58% at 50% 43%);opacity:.82}.hero-bg img{filter:saturate(.7) brightness(.92) contrast(.95);transform:scale(1.02)}.hero-grade{opacity:1!important;background:linear-gradient(180deg,rgba(12,29,43,.05),transparent 48%,var(--bg) 100%)}.hero-vig{background:radial-gradient(ellipse at 50% 42%,transparent 35%,rgba(12,29,43,.56) 100%)}
+.hero-inner{left:0;right:0;bottom:13vh;text-align:center}.hero .eyebrow{font-family:var(--font-ui);font-size:.62rem;letter-spacing:.35em;color:var(--accent)}.hero h1{font-family:var(--font-display);font-style:italic;font-weight:500;letter-spacing:.01em;font-size:clamp(4rem,11vw,10rem);line-height:.82}.hero h1 .ln:nth-child(2){display:block;margin-left:10vw}.scroll-cue{justify-content:center;font-family:var(--font-ui);color:var(--accent)}.scroll-cue i{height:48px;background:linear-gradient(var(--accent),transparent)}
+.statement{min-height:125vh;padding:20vh 8vw;align-items:flex-start;text-align:left;justify-content:flex-start}.statement h2{font-family:var(--font-display);font-weight:400;font-style:italic;font-size:clamp(2.5rem,6vw,6rem);line-height:1.02;max-width:12ch}.statement .rule{height:1px;width:150px;background:var(--accent);margin-top:5rem}
+.chapter{grid-template-columns:1fr 1fr;max-width:1280px;gap:12vw;padding:22vh 8vw}.chapter:nth-child(even){direction:rtl}.chap-media{border-radius:48% 52% 45% 55% / 42% 40% 60% 58%;aspect-ratio:4/5;box-shadow:0 35px 100px rgba(0,0,0,.32);overflow:hidden}.chap-media img{filter:saturate(.72) brightness(.9)}.chap-copy{text-align:left;padding-top:3rem}.chapter:nth-child(even) .chap-copy{direction:ltr}.chap-num{font-family:var(--font-display);font-style:italic;font-weight:400;color:var(--accent);-webkit-text-stroke:0;font-size:5rem;top:-4rem;right:auto;left:0}.chap-copy h2{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:clamp(2.8rem,5vw,5.5rem)}.chap-copy p{font-size:1.35rem;line-height:1.45;max-width:24ch}
+.features{grid-template-columns:repeat(3,1fr);max-width:1280px;padding:18vh 8vw 24vh;gap:5vw}.feat{text-align:left}.feat-rule{height:1px;width:100%;background:var(--accent);margin-bottom:1.5rem}.feat h3{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:2rem}.feat p{font-size:1.1rem}
+.cta{min-height:100vh;border-top:1px solid var(--line);background:linear-gradient(180deg,transparent,rgba(72,127,142,.22));}.cta h2{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:clamp(4rem,10vw,10rem)}.cta .mark{font-family:var(--font-ui);color:var(--accent);font-size:.65rem}
+@media(max-width:820px){.hero{height:120vh}.hero-bg{inset:0 -18%;clip-path:ellipse(90% 52% at 50% 40%)}.hero h1 .ln:nth-child(2){margin-left:3vw}.statement{min-height:100vh;padding:16vh 10vw}.chapter{grid-template-columns:1fr;padding:16vh 10vw}.chapter:nth-child(even){direction:ltr}.chap-copy{padding-top:5rem}.features{grid-template-columns:1fr;gap:4rem;padding:14vh 10vw}.cta{min-height:75vh}}
 </style></head>
 <body>
 <div class="progress" aria-hidden="true"><span></span></div>
@@ -275,7 +287,7 @@ nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-sp
   function cinematic(){
     var gsap = window.gsap; gsap.registerPlugin(window.ScrollTrigger);
     var ST = window.ScrollTrigger;
-    ST.defaults({ scrub: 0.6 });
+    ST.defaults({ scrub: 1.35 });
 
     // scroll-progress bar
     gsap.to('.progress span', { scaleX: 1, ease: 'none',
@@ -284,7 +296,7 @@ nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-sp
     // HERO — Ken-Burns push-in + grade deepen + copy lift, pinned (desktop only)
     var heroBg = document.querySelector('.hero-bg img');
     if (canPin) {
-      var htl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=85%', pin: '.hero-pin', scrub: 0.6, anticipatePin: 1 } });
+      var htl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=140%', pin: '.hero-pin', scrub: 1.35, anticipatePin: 1 } });
       htl.to(heroBg, { scale: 1.2, ease: 'none', duration: 1 }, 0)
          .to('.hero-grade', { opacity: 1, ease: 'none', duration: 1 }, 0)
          // copy lifts out and is fully gone by ~38% of the pin — long before the statement enters

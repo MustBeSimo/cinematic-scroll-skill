@@ -1,5 +1,6 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>MERIDIAN — symmetric-monument · cinematic-scroll v2.6.1</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><circle cx=%2216%22 cy=%2216%22 r=%2210%22 fill=%22%23a75d38%22/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&display=swap" rel="stylesheet">
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
@@ -213,6 +214,17 @@ nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-sp
   .hero-tilt,.chap-media{transform:none!important}
   .scroll-cue i{animation:none}
 }
+/* MERIDIAN signature: centered architectural axis, limestone and measured intervals */
+:root{--accent:#a3482f;--bg:#e8dfd0;--fg:#28231f;--fg-dim:#756b5f;--surface:#f3ede3;--line:#28231f2b;--font-body:"Cormorant Garamond",Georgia,serif;--font-display:"Cormorant Garamond",Georgia,serif;--font-ui:"Space Grotesk",sans-serif}
+body{background:var(--bg);background-image:linear-gradient(90deg,transparent calc(50% - .5px),rgba(40,35,31,.13) 50%,transparent calc(50% + .5px))}
+nav{mix-blend-mode:normal;color:var(--fg);padding:24px 5vw;border-bottom:1px solid var(--line)}nav .mark{font-family:var(--font-display);font-size:1.2rem;letter-spacing:.26em;font-weight:600}nav .menu{font-family:var(--font-ui);font-size:.62rem;letter-spacing:.2em;color:var(--fg-dim)}
+.hero{height:125vh}.hero-pin{background:var(--bg);border-bottom:1px solid var(--line)}.hero-bg{inset:7vh 19% 9vh;clip-path:polygon(18% 0,82% 0,100% 8%,100% 92%,82% 100%,18% 100%,0 92%,0 8%);filter:sepia(.16)}.hero-bg img{filter:grayscale(.72) sepia(.2) contrast(1.08);transform:scale(1.02)}.hero-grade{opacity:1!important;background:linear-gradient(180deg,rgba(232,223,208,.15),transparent 38%,rgba(232,223,208,.72) 100%)}.hero-vig{background:linear-gradient(90deg,rgba(232,223,208,.66),transparent 18%,transparent 82%,rgba(232,223,208,.66))}
+.hero-inner{left:0;right:0;bottom:13vh;text-align:center}.hero .eyebrow{color:var(--accent);font-family:var(--font-ui);font-size:.62rem;letter-spacing:.3em}.hero h1{font-family:var(--font-display);font-size:clamp(4rem,10vw,9rem);font-weight:500;letter-spacing:.02em;color:var(--fg)}.hero h1 .ln{display:inline}.hero h1 .ln+ .ln:before{content:' ';}.scroll-cue{justify-content:center;color:var(--accent);font-family:var(--font-ui)}.scroll-cue i{background:var(--accent)}
+.statement{min-height:86vh;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.statement h2{font-family:var(--font-display);font-weight:500;font-size:clamp(2.2rem,5vw,5rem);max-width:17ch;line-height:1.04}.statement .rule{height:1px;background:var(--accent);width:1px;height:72px;margin-top:2.5rem}
+.chapter{grid-template-columns:1fr 1fr;max-width:1180px;gap:10vw;padding:20vh 5vw}.chapter:nth-child(even){direction:ltr}.chap-media{border-radius:0;aspect-ratio:3/4;box-shadow:12px 12px 0 var(--accent);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}.chap-media img{filter:grayscale(.55) sepia(.25)}.chap-copy{text-align:center}.chap-num{font-family:var(--font-display);font-size:7rem;line-height:1;color:transparent;-webkit-text-stroke:1px var(--accent);top:-6rem;right:50%;transform:translateX(50%)}.chap-copy h2{font-family:var(--font-display);font-size:clamp(2.5rem,4vw,4rem);font-weight:500}.chap-copy p{font-size:1.2rem;max-width:30ch;margin:0 auto}
+.features{max-width:1180px;grid-template-columns:repeat(3,1fr);gap:0;padding:14vh 5vw;border-top:1px solid var(--line)}.feat{text-align:center;padding:0 2vw;border-right:1px solid var(--line)}.feat:last-child{border-right:0}.feat-rule{height:1px;width:36px;background:var(--accent);margin:0 auto 1.5rem}.feat h3{font-family:var(--font-display);font-size:1.7rem;font-weight:500}.feat p{font-size:1.05rem}
+.cta{min-height:80vh;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.cta h2{font-family:var(--font-display);font-weight:500;font-size:clamp(3rem,8vw,8rem)}.cta .mark{font-family:var(--font-ui);color:var(--accent);font-size:.66rem}
+@media(max-width:820px){body{background-image:none}.hero-bg{inset:12vh 7vw 18vh}.hero-inner{bottom:10vh}.hero h1 .ln{display:block}.hero h1 .ln+ .ln:before{content:none}.chapter{grid-template-columns:1fr;padding:13vh 10vw}.chapter:nth-child(even){direction:ltr}.chap-copy{padding-top:6rem}.features{grid-template-columns:1fr;gap:2.5rem}.feat{border-right:0;border-bottom:1px solid var(--line);padding:0 0 2rem}.feat:last-child{border-bottom:0}}
 </style></head>
 <body>
 <div class="progress" aria-hidden="true"><span></span></div>
@@ -275,7 +287,7 @@ nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-sp
   function cinematic(){
     var gsap = window.gsap; gsap.registerPlugin(window.ScrollTrigger);
     var ST = window.ScrollTrigger;
-    ST.defaults({ scrub: 0.6 });
+    ST.defaults({ scrub: 1.15 });
 
     // scroll-progress bar
     gsap.to('.progress span', { scaleX: 1, ease: 'none',
@@ -284,7 +296,7 @@ nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-sp
     // HERO — Ken-Burns push-in + grade deepen + copy lift, pinned (desktop only)
     var heroBg = document.querySelector('.hero-bg img');
     if (canPin) {
-      var htl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=85%', pin: '.hero-pin', scrub: 0.6, anticipatePin: 1 } });
+      var htl = gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=118%', pin: '.hero-pin', scrub: 1.15, anticipatePin: 1 } });
       htl.to(heroBg, { scale: 1.2, ease: 'none', duration: 1 }, 0)
          .to('.hero-grade', { opacity: 1, ease: 'none', duration: 1 }, 0)
          // copy lifts out and is fully gone by ~38% of the pin — long before the statement enters
@@ -331,10 +343,11 @@ nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-sp
       scrollTrigger: { trigger: '.cta', start: 'top 76%' } });
 
     // ── rAF: 3D tilt (pointer) + velocity skew, owns .tilt/.hero-tilt transforms ──
+    var tiltEnabled = false; // Meridian keeps its architectural axis perfectly still.
     var tiltEls = [].slice.call(document.querySelectorAll('.tilt, .hero-tilt'));
     var px = 0, py = 0, tx = 0, ty = 0, vel = 0, tvel = 0, lastY = scrollY;
-    if (!touch) addEventListener('pointermove', function(e){ px = (e.clientX / innerWidth) * 2 - 1; py = (e.clientY / innerHeight) * 2 - 1; }, { passive: true });
-    ST.create({ onUpdate: function(self){ tvel = Math.max(-9, Math.min(9, self.getVelocity() / -260)); } });
+    if (tiltEnabled && !touch) addEventListener('pointermove', function(e){ px = (e.clientX / innerWidth) * 2 - 1; py = (e.clientY / innerHeight) * 2 - 1; }, { passive: true });
+    if (tiltEnabled) ST.create({ onUpdate: function(self){ tvel = Math.max(-9, Math.min(9, self.getVelocity() / -260)); } });
     function loop(){
       tx += (px - tx) * 0.06; ty += (py - ty) * 0.06; vel += (tvel - vel) * 0.12; tvel *= 0.9;
       for (var i = 0; i < tiltEls.length; i++){
@@ -344,7 +357,7 @@ nav .menu{font-family:var(--font-ui,Inter,sans-serif);font-size:.78rem;letter-sp
       }
       requestAnimationFrame(loop);
     }
-    if (!touch) requestAnimationFrame(loop);
+    if (tiltEnabled && !touch) requestAnimationFrame(loop);
     addEventListener('load', function(){ ST.refresh(); });
   }
 
