@@ -1,32 +1,43 @@
-# Studio — brutalist creative-director portfolio
+# Studio — brutalist creative-director portfolio ("The Cut")
 
-A second worked example for **cinematic-scroll**, in a deliberately different
-world from the Renaissance demo: **Swiss / brutalist editorial** — oversized
-grotesk type, monochrome + one electric-blue accent, generated stills that
-parallax *under* the type. Fictional persona (**Maya Torres**), no real people
-or brands. Inspired by the spare, type-as-hero language of sites like
-ianaldous.com.
+A worked example for **cinematic-scroll** in a **Swiss / brutalist editorial**
+world: oversized grotesk type, monochrome stills, one electric-blue accent.
+Fictional persona (**Maya Torres**), no real people or brands.
 
-Single self-contained `index.html` — no build step, GitHub-Pages-native.
+**One idea, all the way down: the portfolio is a film edit and the scroll is the
+playhead.** A fixed *deck* reads live timecode / frame count / reel number
+computed from scroll depth; chapters **cut** (not dissolve) between grey, paper
+and ink grounds; and the signature moment — *Selected work* — runs as a pinned
+four-frame **reel**: hard cuts between full-bleed frames, letters rising from
+in-frame progress, a scrubber across the bottom. Two frames are stills, two are
+procedural artwork built in the page (an SVG bar-field identity, a CSS poster
+triptych) — no blank cards anywhere.
 
-## Effects
+Single self-contained `index.html` — zero dependencies, system font stacks,
+no build step, GitHub-Pages-native. The markup is static: with JS off you still
+get every chapter and all four reel frames in flow.
 
-The hand-rolled rAF engine drives the chapter scroll (CSS-sticky pins, giant
-per-word type reveals, figure parallax, grey→white→ink background morph). On
-top of that, **GSAP ScrollTrigger** now powers ONE dedicated showcase beat —
-the **"Selected Work" contact sheet** (`#selected`, inserted after *The Work*):
+## Motion
 
-- **Montage snap** (taste-guardrails §2 *Montage* / scroll-patterns *Landing
-  Sequence*) — the only GSAP-pinned section. A brutalist row of work-cards is
-  advanced by `transform: translateX` on the scrubbed pin timeline and **snaps
-  card→card** (`snapTo: 1/(n-1)`).
-- **Velocity-reactive typography** (scroll-patterns #3) — the section's large
-  display heading **compresses** (`letter-spacing` + `scaleY`) on fast scroll,
-  driven by a lerped velocity tracker via `gsap.quickTo`.
+One rAF scroll clock (`lerp` toward the scroll target, cheap geometry cached off
+the hot path) drives everything, transform/opacity only:
 
-Everything degrades gracefully: with GSAP absent, reduced-motion, or on mobile,
-the contact sheet renders as a static wrapped/stacked grid — no pin, no snap, no
-velocity — and the rest of the page runs on the rAF engine alone.
+- **Slate** — the name rises letter by letter once (nocturne gesture 1);
+  the portrait drifts under it as the page starts.
+- **Belief** — words slide in on opposite axes (gesture 2).
+- **The reel** — sticky stage over a 320vh track; `--f` (in-frame progress) is
+  the only variable each frame's CSS reads: push-in on the still, per-letter
+  rise on the title, bar-field stretch, poster drop. Frames switch with a hard
+  cut. Reduced motion / narrow / no-JS: the stage is a stacked contact sheet.
+- **Craft** — tracking stretches with scroll (gesture 3).
+- **Recognition** — the type *is* the image: it scales up into place (gesture 9).
+- **Invitation** — the headline is the mailto; a visible CTA repeats it.
+- **Colour** — `--bg / --fg / --fg-dim / --line` are mixed per frame from the
+  token palette; each section boundary is an 8vh cut so text and ground always
+  switch as a pair and contrast never dips.
+
+Tokens: the six colour roles and the four motion curves from `tokens/` are
+declared in `:root`; every declaration references a `var()`.
 
 ## Run it
 
@@ -35,8 +46,7 @@ python3 -m http.server 8099    # then open http://localhost:8099/examples/studio
 # …or just open index.html directly.
 ```
 
-The page works **immediately at $0** using CSS/SVG placeholder visuals. To
-upgrade to real AI-generated stills:
+The six stills in `assets/` are already generated. To regenerate them:
 
 ## Generate the images (needs fal.ai access)
 
@@ -63,13 +73,13 @@ node generate.mjs
 node generate.mjs --only 4-recognition
 ```
 
-Images land in `assets/<id>.jpg` and the page picks them up automatically
-(it prefers a real `assets/<id>.jpg`, falls back to the CSS placeholder).
+Images land in `assets/<id>.jpg`; `index.html` references them by path (all six
+are used exactly once — portrait, studio, product, storyboards, trophy, paper).
 
 - **Model:** Nano Banana Pro (`fal-ai/gemini-3-pro-image-preview`), ~$0.15/img.
   Use the cheaper Nano Banana 2 with `MODEL=fal-ai/gemini-3.1-flash-image-preview node generate.mjs`.
-- **Prompts** live in `chapters.js` — the single source of truth for both the
-  generator and the page. Edit copy or prompts in one place.
+- **Prompts** live in `chapters.js` (the generator's data + a readable map of
+  the page). The page's markup is static, so keep copy in sync by hand.
 - **Hygiene:** every prompt forces pure B&W and forbids text/logos/real brands.
   Still, eyeball each result — regenerate any that slip.
 
@@ -78,6 +88,6 @@ Images land in `assets/<id>.jpg` and the page picks them up automatically
 | File | What |
 |------|------|
 | `index.html` | The page — self-contained motion engine + layout |
-| `chapters.js` | Chapter copy + image prompts (shared source of truth) |
+| `chapters.js` | Chapter copy + image prompts for the generator, and a readable map of the page (not imported by it) |
 | `generate.mjs` | fal.ai image generator (run on a networked machine) |
-| `assets/` | Generated stills (`<id>.jpg`) — gitignored until you add them |
+| `assets/` | The six generated stills (`<id>.jpg`), each used once by the page |

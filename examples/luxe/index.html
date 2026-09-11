@@ -3,743 +3,724 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Maison Solenne — Quiet Luxury · cinematic-scroll example</title>
-<meta name="description" content="A restrained, quiet-luxury cinematic-scroll page — warm ivory and sand, refined thin serif display, barely-there parallax, and a letter-spacing title scrub. A worked example for the cinematic-scroll Agent Skill." />
-
-<!-- Open Graph / preview -->
-<meta property="og:title" content="Maison Solenne — Quiet Luxury" />
-<meta property="og:description" content="Four chapters in warm ivory and cognac — long slow pins, letter-spacing title reveals, museum-restraint motion. Built with the cinematic-scroll Agent Skill, no build step." />
+<title>Maison Solenne — One Day of Light · cinematic-scroll example</title>
+<meta name="description" content="A quiet-luxury monograph in warm ivory and cognac: one object followed through one day of light. The scroll is the sun — colour temperature, shadows and the hour are all derived from scroll depth. A worked example for the cinematic-scroll Agent Skill." />
+<meta property="og:title" content="Maison Solenne — One Day of Light" />
+<meta property="og:description" content="A printed-monograph page where scrolling moves the sun across a single object. Zero dependencies, system fonts, one scroll clock." />
 <meta property="og:type" content="website" />
-
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<!-- Cormorant Garamond (thin serif display), EB Garamond (body serif), Jost (mono-ish UI labels) -->
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:wght@400;500&family=Jost:wght@300;400&display=swap" rel="stylesheet" />
-
-<!-- GSAP + ScrollTrigger (now 100% free) — powers the one dedicated "The Object"
-     showcase beat: a PUSH-IN (slow scale 1 → 1.08) + a MATCH-CUT (two captions
-     crossfade by opacity over a perfectly-still composition). Deferred + feature-
-     detected: if the CDN fails, the beat simply stays at its complete static state
-     and the hand-rolled rAF quiet-luxury engine below still runs untouched. -->
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+<link rel="icon" href="data:,">
 
 <style>
   /* ───────────────────────────────────────────────────────────────
      cinematic-scroll · Quiet-Luxury example  (MAISON SOLENNE)
-     Single-file, no build step. GitHub-Pages friendly. Dependency-free rAF core;
-     one showcase beat progressively enhances with deferred GSAP + ScrollTrigger
-     from a pinned CDN (SRI-checked, graceful vanilla fallback). Also loads Google Fonts.
-
-     Visual system: Atmospheric Sublime restraint + Symmetric Monument stillness.
-       Vast negative space · glacial 220vh pins · barely-there parallax
-       (depth multipliers ≤ 0.50; background drifts ~3% over the whole pin).
-     Title treatment: LETTER-SPACING SCRUB — 0.45em → 0em over the first
-       ~30% of each pin (the "refined / luxury" reveal from taste-guardrails).
-     Motion contract: only `transform` and `opacity` mutate per frame; one
-       rAF batch; passive scroll listener; only in-view sections are driven.
-       No `filter`, no glow, no 3D tilt (calm, and avoids motion-sickness).
-     Degrade: reduced-motion AND mobile (≤680px) snap to a clean static
-       mid-state — full opacity, letter-spacing settled, no scrolljack.
+     "ONE DAY OF LIGHT" — the scroll is the sun. A single clock (the hour,
+     06:00 → 19:30) is derived from scroll depth and every visual state is
+     mixed from it per frame: the ground's colour temperature, the wash of
+     window light crossing each plate, the cast shadow lengthening under
+     the object, the Kelvin readout in the folio, the sun on the casement
+     diagram. Set like a printed monograph: folios, plate numbers, a
+     multi-column essay, a specification table — a different grid per
+     chapter. Single file, zero dependencies, system font stacks.
+     Motion contract: transform + opacity only, one rAF clock, lerped.
      ─────────────────────────────────────────────────────────────── */
 
   :root{
-    --ivory:   #F6F1E7;   /* warm ivory ground */
-    --sand:    #ECE3D4;   /* secondary sand ground */
-    --ecru:    #E4D8C4;   /* deepest light ground */
-    --bark:    #36302A;   /* primary text — strong contrast on ivory */
-    --body:    #4E463C;   /* body copy — legible, warm */
-    --muted:   #8A7F6D;   /* labels / captions */
-    --cognac:  #9A6A3C;   /* the single restrained accent */
-    --cognac-2:#7E5530;
-    --line:    rgba(54,48,42,.14);
+    /* six colour roles (design.md §2) */
+    --bg:       #F5F0E6;
+    --surface:  #ECE4D5;
+    --fg:       #2B2622;
+    --fg-dim:   #6B6156;
+    --accent:   #9A6A3C;
+    --line:     rgba(43,38,34,.16);
 
-    --display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-    --serif:   "EB Garamond", Georgia, serif;
-    --ui:      "Jost", system-ui, -apple-system, sans-serif;
+    /* supporting tints — all mixed from the roles above */
+    --accent-deep: #7E5530;
+    --ink-soft:    #45403A;
+    --bg-72:       rgba(245,240,230,.72);
+    --bg-0:        rgba(245,240,230,0);
+    --sun-wash:    rgba(255,238,205,.55);
+    --sun-wash-0:  rgba(255,238,205,0);
+    --cool-tint:   rgba(126,140,156,.9);
+    --warm-tint:   rgba(214,150,80,.9);
+    --dusk-tint:   rgba(70,42,24,.9);
+    --cast:        rgba(43,38,34,.55);
+    --cast-0:      rgba(43,38,34,0);
+    --focus:       #9A6A3C;
+
+    --shadow-plate: 0 34px 70px -34px rgba(43,38,34,.45), inset 0 0 0 1px rgba(43,38,34,.08);
+    --shadow-pill:  0 4px 18px rgba(0,0,0,.30);
+    --pill-bg:      rgba(10,12,16,.72);
+    --pill-bg-hi:   rgba(10,12,16,.86);
+    --pill-line:    rgba(255,255,255,.18);
+    --pill-line-hi: rgba(255,255,255,.34);
+    --pill-fg:      #FFFFFF;
+
+    /* grounds for the fixed sky (three moments of the day, cross-faded by opacity) */
+    --sky-morning: radial-gradient(120% 80% at 18% 0%, rgba(214,222,228,.55), rgba(214,222,228,0) 55%), linear-gradient(180deg, #F1EFE9, #EEEAE0);
+    --sky-noon:    radial-gradient(120% 80% at 22% 0%, rgba(255,252,246,.7), rgba(255,252,246,0) 55%), linear-gradient(180deg, #F5F0E6, #F2EBDE);
+    --sky-dusk:    radial-gradient(120% 90% at 84% 100%, rgba(154,106,60,.30), rgba(154,106,60,0) 60%), linear-gradient(180deg, #EFE3CF, #E6D2B6);
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+
+    /* motion tokens (tokens/motion.tokens.json) */
+    --ease-reveal:  cubic-bezier(.16, 1, .3, 1);
+    --ease-exit:    cubic-bezier(.7, 0, .84, 0);
+    --ease-playful: cubic-bezier(.34, 1.56, .64, 1);
+    --ease-cut:     cubic-bezier(.87, 0, .13, 1);
+    --dur-fast: 300ms; --dur-base: 500ms; --dur-slow: 720ms; --dur-glacial: 1200ms;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, ui-serif, serif;
+    --sans:  ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --gutter: clamp(20px, 5vw, 72px);
   }
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
+  *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   body{
-    background:var(--ivory);
-    color:var(--bark);
+    margin:0; background:var(--bg); color:var(--fg);
     font-family:var(--serif);
-    line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
-    transition:background 1.2s cubic-bezier(.22,1,.36,1);
+    font-size:clamp(1rem, .3vw + .92rem, 1.12rem); line-height:1.55;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    overflow-x:clip;
   }
   a{ color:inherit; }
-  ::selection{ background:rgba(154,106,60,.22); color:var(--bark); }
+  ::selection{ background:var(--fg); color:var(--bg); }
+  :focus-visible{ outline:2px solid var(--focus); outline-offset:4px; border-radius:2px; }
+  h1,h2,h3{ font-weight:400; margin:0; text-wrap:balance; }
+  p{ margin:0; }
+  img{ display:block; max-width:100%; }
 
-  /* ── Fixed atmosphere + grain ────────────────────────────────── */
-  .atmos{
-    position:fixed; inset:0; z-index:-2; pointer-events:none;
-    background:
-      radial-gradient(130% 90% at 22% 8%,  rgba(154,106,60,.06), rgba(154,106,60,0) 58%),
-      radial-gradient(110% 80% at 88% 96%, rgba(54,48,42,.05),   rgba(54,48,42,0)   60%),
-      var(--ivory);
-    transition:background 1.2s cubic-bezier(.22,1,.36,1);
-  }
-  .grain{
-    position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.4;
-    mix-blend-mode:multiply;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
-  }
+  /* ── The sky: three grounds cross-faded per frame from the hour ─── */
+  .sky{ position:fixed; inset:0; z-index:-2; pointer-events:none; }
+  .sky > div{ position:absolute; inset:0; }
+  .sky .morning{ background:var(--sky-morning); opacity:0; }
+  .sky .noon   { background:var(--sky-noon);    opacity:1; }
+  .sky .dusk   { background:var(--sky-dusk);    opacity:0; }
+  .js .sky > div{ will-change:opacity; }
+  .grain{ position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.35; mix-blend-mode:multiply; background-image:var(--grain); }
 
-  /* ── Fixed masthead ──────────────────────────────────────────── */
+  /* ── Masthead ────────────────────────────────────────────────── */
   .masthead{
     position:fixed; top:0; left:0; right:0; z-index:50;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:clamp(18px,2.6vw,30px) clamp(20px,5vw,64px);
-    padding-top:max(clamp(18px,2.6vw,30px), env(safe-area-inset-top));
-    background:linear-gradient(to bottom, var(--ivory) 18%, rgba(246,241,231,.72) 64%, rgba(246,241,231,0));
+    display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+    padding:clamp(16px, 2.2vw, 26px) var(--gutter);
+    padding-top:max(clamp(16px,2.2vw,26px), env(safe-area-inset-top));
+    background:linear-gradient(to bottom, var(--bg) 48%, var(--bg-72) 78%, var(--bg-0));
+    font-family:var(--sans); font-size:.68rem; letter-spacing:.22em; text-transform:uppercase; color:var(--fg-dim);
   }
-  .masthead .mark{ display:flex; align-items:baseline; gap:14px; }
-  .masthead .mark b{
-    font-family:var(--display); font-weight:400; font-size:clamp(17px,2vw,22px);
-    letter-spacing:.30em; text-transform:uppercase; color:var(--bark);
-  }
-  .masthead .mark span{
-    font-family:var(--ui); font-weight:300; font-size:9px; letter-spacing:.36em;
-    text-transform:uppercase; color:var(--cognac);
-  }
-  .masthead nav{ display:flex; gap:clamp(16px,2.6vw,34px); }
-  .masthead nav a{
-    font-family:var(--ui); font-weight:300; font-size:11px; letter-spacing:.26em;
-    text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color .4s;
-  }
-  .masthead nav a:hover{ color:var(--bark); }
-  @media (max-width:680px){ .masthead nav{ display:none; } }
+  .masthead .brand{ display:flex; align-items:baseline; gap:14px; text-decoration:none; }
+  .masthead .brand strong{ color:var(--fg); font-weight:600; letter-spacing:.34em; font-size:.8rem; }
+  .masthead nav{ display:flex; gap:clamp(14px, 2.4vw, 32px); }
+  .masthead nav a{ text-decoration:none; color:var(--fg-dim); transition:color var(--dur-fast) var(--ease-reveal); }
+  @media (hover:hover){ .masthead nav a:hover{ color:var(--fg); } }
+  .masthead nav a:active{ color:var(--fg); }
+  @media (max-width:640px){ .masthead nav{ display:none; } .masthead .brand span{ display:none; } }
 
-  /* ── Quiet progress rail (chapter index) ─────────────────────── */
-  .rail{
-    position:fixed; top:50%; left:clamp(18px,3vw,42px); transform:translateY(-50%);
-    z-index:40; display:flex; flex-direction:column; gap:18px;
-    padding-left:env(safe-area-inset-left);
+  /* ── Folio: the live readout (the instrument of the whole page) ── */
+  .folio{
+    position:fixed; right:var(--gutter); bottom:max(18px, env(safe-area-inset-bottom)); z-index:40;
+    display:flex; align-items:baseline; gap:14px; pointer-events:none;
+    font-family:var(--sans); font-size:.66rem; letter-spacing:.22em; text-transform:uppercase; color:var(--fg-dim);
   }
-  .rail button{
-    display:flex; align-items:center; gap:12px;
-    background:none; border:none; cursor:pointer; color:var(--muted);
-    font-family:var(--ui); font-weight:300; font-size:10px; letter-spacing:.22em;
-    text-transform:uppercase; transition:color .4s; padding:2px 0;
-  }
-  .rail button .tick{ width:18px; height:1px; background:currentColor; opacity:.45; transition:width .5s, opacity .5s; flex:none; }
-  .rail button .nm{ opacity:0; transform:translateX(-4px); transition:opacity .4s, transform .4s; max-width:0; overflow:hidden; white-space:nowrap; }
-  .rail:hover button .nm{ opacity:.7; transform:translateX(0); max-width:160px; }
-  .rail button[aria-current="true"]{ color:var(--bark); }
-  .rail button[aria-current="true"] .tick{ width:40px; opacity:1; background:var(--cognac); }
-  .rail button[aria-current="true"] .nm{ opacity:1; transform:translateX(0); max-width:160px; }
-  @media (max-width:680px){ .rail{ display:none; } }
+  .folio b{ color:var(--fg); font-weight:600; font-size:.8rem; letter-spacing:.1em; font-family:var(--mono); }
+  .folio .note{ white-space:nowrap; }
+  @media (max-width:640px){ .folio{ gap:10px; font-size:.6rem; padding:6px 10px; background:var(--bg-72); right:max(12px, env(safe-area-inset-right)); } .folio .note{ display:none; } }
 
-  /* ── Chapter / pin ───────────────────────────────────────────── */
-  .chapter{ position:relative; height:220vh; }     /* long, slow pin room */
-  .chapter .stage{
-    position:sticky; top:0; height:100vh; overflow:hidden;
+  /* ── Page frame ──────────────────────────────────────────────── */
+  main{ display:block; }
+  .ch{ position:relative; padding:0 var(--gutter); }
+  .wrap{ max-width:1320px; margin:0 auto; }
+  .kicker{
+    font-family:var(--sans); font-size:.68rem; letter-spacing:.3em; text-transform:uppercase; color:var(--accent);
+    display:flex; align-items:center; gap:16px; margin:0 0 26px;
+  }
+  .kicker::before{ content:""; width:40px; height:1px; background:var(--accent); flex:none; }
+  .small{ font-family:var(--sans); font-size:.68rem; letter-spacing:.22em; text-transform:uppercase; color:var(--fg-dim); line-height:2; }
+  .small b{ color:var(--fg); font-weight:600; }
+
+  /* plates — the photographs, with the light layers stacked on top */
+  figure{ margin:0; position:relative; }
+  .plate{
+    position:relative; overflow:hidden; aspect-ratio:4/5; background:var(--surface);
+    box-shadow:var(--shadow-plate);
+  }
+  .plate img{ width:100%; height:100%; object-fit:cover; }
+  .plate.wide{ aspect-ratio:21/9; }
+  .plate.wide img{ object-position:50% 100%; }
+  .plate.square{ aspect-ratio:1; }
+  .plate.square img{ object-position:50% 70%; }
+  /* light layers — transform/opacity only; defaults describe noon */
+  .plate .wash{
+    position:absolute; inset:-20% -45%; pointer-events:none;
+    background:linear-gradient(100deg, var(--sun-wash-0) 38%, var(--sun-wash) 50%, var(--sun-wash-0) 62%);
+    mix-blend-mode:soft-light; opacity:.6; transform:translate3d(0,0,0) rotate(-6deg);
+  }
+  .plate .tint{ position:absolute; inset:0; pointer-events:none; opacity:0; mix-blend-mode:multiply; }
+  .plate .tint.cool{ background:var(--cool-tint); }
+  .plate .tint.warm{ background:var(--warm-tint); }
+  .plate .dusk{ position:absolute; inset:0; pointer-events:none; opacity:0; mix-blend-mode:multiply;
+    background:linear-gradient(200deg, var(--cast-0) 40%, var(--dusk-tint) 130%); }
+  .js .plate .wash, .js .plate .tint, .js .plate .dusk{ will-change:opacity, transform; }
+  figcaption{
+    font-variant-caps:small-caps; letter-spacing:.08em; font-size:.82rem; color:var(--fg-dim);
+    margin-top:14px; display:flex; justify-content:space-between; gap:16px;
+  }
+  figcaption span:last-child{ color:var(--accent); white-space:nowrap; }
+
+  /* ── I · Frontispiece ────────────────────────────────────────── */
+  .front .wrap{
+    min-height:100vh; display:grid; grid-template-columns:1fr; gap:40px; align-items:center;
+    padding:clamp(96px, 14vh, 150px) 0 clamp(48px, 8vh, 96px);
+  }
+  @media (min-width:900px){ .front .wrap{ grid-template-columns:7fr 5fr; gap:clamp(40px, 6vw, 96px); } }
+  .front h1{
+    font-size:clamp(2.9rem, 7.6vw, 7rem); line-height:.95; letter-spacing:-.025em; color:var(--fg);
+  }
+  .front h1 em{ font-style:italic; font-weight:300; color:var(--accent-deep); }
+  .front .standfirst{
+    font-size:clamp(1.05rem, 1.35vw, 1.35rem); line-height:1.45; color:var(--ink-soft);
+    font-style:italic; max-width:40ch; margin-top:30px;
+  }
+  .front .byline{ margin-top:26px; }
+  .front .cue{
+    margin-top:34px; display:inline-flex; align-items:center; gap:14px;
+    background:none; border:0; padding:0; cursor:pointer; color:var(--fg-dim);
+    font-family:var(--sans); font-size:.66rem; letter-spacing:.26em; text-transform:uppercase;
+  }
+  .front .cue .bar{ width:44px; height:1px; background:currentColor; transform-origin:left; transition:transform var(--dur-slow) var(--ease-reveal); }
+  @media (hover:hover){ .front .cue:hover .bar{ transform:scaleX(1.5); } }
+  .front figure{ max-width:520px; justify-self:end; width:100%; }
+
+  /* ── II · Provenance (editorial spread) ──────────────────────── */
+  .prov{ padding-top:clamp(64px, 10vh, 120px); padding-bottom:clamp(48px, 7vh, 88px); }
+  .prov .head{ padding-bottom:clamp(32px, 4vw, 56px); border-bottom:1px solid var(--fg); }
+  .prov h2{ font-size:clamp(2.3rem, 5.2vw, 4.8rem); line-height:1; letter-spacing:-.02em; max-width:18ch; }
+  .prov .spread{ display:grid; grid-template-columns:1fr; gap:40px; padding-top:clamp(32px, 4vw, 56px); align-items:start; }
+  @media (min-width:960px){ .prov .spread{ grid-template-columns:5fr 7fr; gap:clamp(40px, 5vw, 72px); } }
+  .prov .side figure{ max-width:440px; }
+  .aside{ font-size:.9rem; line-height:1.6; color:var(--ink-soft); border-left:1px solid var(--line); padding-left:20px; margin-top:36px; max-width:440px; }
+  .aside h3{ font-family:var(--sans); font-size:.66rem; letter-spacing:.3em; text-transform:uppercase; margin:0 0 12px; color:var(--fg); }
+  .aside dl{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:6px 16px; }
+  .aside dt{ font-variant-caps:small-caps; letter-spacing:.06em; color:var(--fg-dim); }
+  .aside dd{ margin:0; }
+  .columns{ column-count:1; column-gap:44px; column-rule:1px solid var(--line); }
+  @media (min-width:1180px){ .columns{ column-count:2; } }
+  .columns p{ margin:0 0 1.15em; hyphens:auto; orphans:3; widows:3; }
+  .columns p.lead::first-letter{
+    float:left; font-size:5em; line-height:.78; padding:.08em .1em 0 0; color:var(--fg);
+  }
+  .columns h3{ font-family:var(--sans); font-size:.68rem; letter-spacing:.3em; text-transform:uppercase; font-weight:600; color:var(--accent); margin:1.4em 0 .9em; break-after:avoid; }
+  .pull{
+    column-span:all; margin:28px 0 36px; padding:32px 0; border-top:1px solid var(--fg); border-bottom:1px solid var(--line);
+    display:grid; grid-template-columns:1fr; gap:18px; align-items:center;
+  }
+  @media (min-width:900px){ .pull{ grid-template-columns:2fr 1fr; gap:48px; } }
+  .pull blockquote{ margin:0; font-size:clamp(1.5rem, 2.8vw, 2.6rem); line-height:1.12; letter-spacing:-.02em; font-weight:300; font-style:italic; text-wrap:balance; }
+  .pull blockquote::before{ content:"\201C"; color:var(--accent); margin-left:-.45em; }
+  .pull blockquote::after{ content:"\201D"; color:var(--accent); }
+  .pull cite{ font-family:var(--sans); font-style:normal; font-size:.66rem; letter-spacing:.24em; text-transform:uppercase; color:var(--fg-dim); line-height:1.9; }
+  .end-mark{ display:inline-block; width:.5em; height:.5em; background:var(--accent); margin-left:.4em; vertical-align:baseline; }
+
+  /* ── III · The Object (the pinned day) ───────────────────────── */
+  .obj{ padding:0; border-top:1px solid var(--line); }
+  .obj .track{ position:relative; overflow:clip; }   /* clips the cast shadow's transform overflow; clip keeps sticky alive */
+  .obj .stage{
+    position:relative; padding:clamp(48px, 8vh, 112px) var(--gutter) clamp(48px, 8vh, 80px);
     display:grid; align-content:center;
   }
-  .stage .inner{
-    width:min(1200px,90vw); margin:0 auto;
-    display:grid; grid-template-columns:1.05fr .95fr; gap:clamp(36px,6vw,88px);
-    align-items:center; padding:0 clamp(10px,2vw,28px);
+  .obj .grid{ max-width:1320px; margin:0 auto; width:100%; display:grid; grid-template-columns:1fr; gap:34px; align-items:center; }
+  .obj h2{ font-size:clamp(1.7rem, 2.6vw, 2.5rem); line-height:1.08; letter-spacing:-.015em; }
+  .obj .hour-big{ font-family:var(--serif); font-weight:300; font-size:clamp(3.2rem, 6.4vw, 6rem); line-height:1; letter-spacing:-.03em; color:var(--fg); margin-top:clamp(20px, 3vh, 36px); font-variant-numeric:tabular-nums; }
+  .obj .hour-note{ margin-top:10px; }
+  .obj figure{ width:100%; max-width:520px; margin:0 auto; }
+  .obj .plate-wrap{ position:relative; margin:0 auto; isolation:isolate; }
+  .obj .plate{ margin:0 auto; transform-origin:50% 60%; }
+  .js .obj .plate{ will-change:transform; }
+  .obj .cast{
+    position:absolute; left:4%; right:4%; top:100%; height:5.5%; pointer-events:none; z-index:-1;
+    background:radial-gradient(50% 100% at 50% 0%, var(--cast), var(--cast-0) 88%);
+    opacity:.7; transform:translate3d(0,0,0) scaleX(.7); transform-origin:50% 0;
   }
-  .chapter[data-side="left"] .copy{ order:2; }
-  .chapter[data-side="left"] .figure{ order:1; }
-
-  .layer{ will-change:transform, opacity; }
-
-  /* copy column — generous negative space, left-aligned body */
-  .copy .eyebrow{
-    font-family:var(--ui); font-weight:300; font-size:10px; letter-spacing:.40em;
-    text-transform:uppercase; color:var(--cognac); margin-bottom:clamp(22px,3vw,34px); display:block;
+  .obj figcaption{ margin-top:30px; }
+  .js .obj .cast{ will-change:transform, opacity; }
+  .caps{ display:block; }
+  .cap{ padding:14px 0; border-top:1px solid var(--line); }
+  .cap .when{ display:block; font-family:var(--sans); font-size:.66rem; letter-spacing:.26em; text-transform:uppercase; color:var(--accent); margin-bottom:8px; font-variant-numeric:tabular-nums; }
+  .cap p{ font-size:clamp(1rem, 1.15vw, 1.15rem); line-height:1.5; color:var(--ink-soft); max-width:34ch; }
+  @media (min-width:900px){
+    .obj .grid{ grid-template-columns:minmax(200px, .85fr) minmax(0, 1.4fr) minmax(200px, .85fr); gap:clamp(28px, 4vw, 72px); }
+    .obj .plate{ height:min(66vh, 50vw); width:auto; max-width:100%; }
+    .obj figure{ max-width:none; width:fit-content; }
+    .obj .col-r{ justify-self:end; max-width:34ch; }
   }
-  .copy h2{
-    font-family:var(--display); font-weight:300; font-size:clamp(2.6rem,6.4vw,5.6rem);
-    line-height:1.04; letter-spacing:0; color:var(--bark);
-    margin-bottom:clamp(24px,3vw,36px);
-  }
-  .copy h2 .scrub{ display:inline-block; will-change:letter-spacing; }
-  .copy h2 em{ font-style:italic; font-weight:300; color:var(--cognac-2); }
-  .copy .rule{ height:1px; width:120px; background:linear-gradient(to right, var(--cognac), rgba(154,106,60,0)); margin:2px 0 26px; }
-  .copy p.lede{
-    font-family:var(--serif); font-weight:400; font-size:clamp(1.05rem,1.5vw,1.26rem);
-    line-height:1.72; color:var(--body); max-width:44ch;
-  }
-  .copy .meta{
-    margin-top:24px; font-family:var(--ui); font-weight:300; font-size:10px; letter-spacing:.24em;
-    text-transform:uppercase; color:var(--muted);
-  }
-  .copy .cta{
-    margin-top:clamp(28px,3.4vw,42px); display:inline-flex; align-items:center; gap:14px;
-    padding:15px 30px; border-radius:999px; border:1px solid var(--line);
-    background:transparent; color:var(--bark);
-    font-family:var(--ui); font-weight:300; font-size:11px; letter-spacing:.24em; text-transform:uppercase;
-    text-decoration:none; transition:background .5s, color .5s, border-color .5s;
-  }
-  .copy .cta:hover{ background:var(--bark); color:var(--ivory); border-color:var(--bark); }
-
-  /* figure column — the single framed "product moment" */
-  .figure{ position:relative; }
-  .frame{
-    position:relative; width:100%; max-width:480px; margin-inline:auto;
-    aspect-ratio:4/5; border-radius:18px; overflow:hidden;
-    box-shadow:0 40px 90px -50px rgba(54,48,42,.55);
-  }
-  .chapter[data-side="left"] .frame{ margin-left:auto; }
-  .frame .pic{
-    position:absolute; inset:0; background-size:cover; background-position:center;
-    background-color:var(--ecru); border-radius:18px;
-  }
-  /* CSS-only placeholder visual (when no real image is present) — soft warm
-     gradients + subtle grain, so the page reads intentional with zero files. */
-  .frame .pic.placeholder{
-    background-image:
-      radial-gradient(120% 90% at 34% 24%, rgba(255,252,246,.9) 0%, rgba(228,216,196,.6) 46%, rgba(154,106,60,.30) 100%),
-      linear-gradient(155deg, #F3ECDF 0%, #E7DAC6 52%, #C9A878 100%);
-  }
-  .frame .pic.placeholder::before{
-    /* a faint vertical "object" highlight — suggests a framed still life */
-    content:""; position:absolute; left:50%; top:14%; width:34%; height:72%;
-    transform:translateX(-50%); border-radius:120px;
-    background:linear-gradient(180deg, rgba(255,253,248,.55), rgba(154,106,60,.10) 70%, rgba(126,85,48,.18));
-    box-shadow:0 30px 60px -30px rgba(126,85,48,.5);
-  }
-  .frame .pic::after{ /* fine grain over the still */
-    content:""; position:absolute; inset:0; opacity:.35; mix-blend-mode:multiply;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.4'/%3E%3C/svg%3E");
-  }
-  .frame .edge{ position:absolute; inset:0; border-radius:18px; pointer-events:none;
-    box-shadow:inset 0 0 0 1px rgba(54,48,42,.10); }
-
-  .figcap{
-    margin-top:18px; display:flex; align-items:baseline; gap:14px;
-    font-family:var(--ui); font-weight:300; font-size:10px; letter-spacing:.24em;
-    text-transform:uppercase; color:var(--muted);
-  }
-  .figcap .n{ color:var(--cognac); }
-  .figcap .ln{ height:1px; flex:1; background:currentColor; opacity:.25; }
-
-  /* scroll cue (opening chapter only) */
-  .cue{
-    position:absolute; left:50%; bottom:26px; transform:translateX(-50%); z-index:30;
-    display:flex; flex-direction:column; align-items:center; gap:10px; color:var(--muted);
-    background:none; border:none; cursor:pointer;
-    font-family:var(--ui); font-weight:300; font-size:9px; letter-spacing:.30em; text-transform:uppercase;
-  }
-  .cue .bar{ width:1px; height:44px; background:currentColor; opacity:.4; transform-origin:top; animation:cuebar 3.2s infinite ease-in-out; }
-  @keyframes cuebar{ 0%,100%{ transform:scaleY(1); } 50%{ transform:scaleY(.35); } }
-
-  /* colophon / footer */
-  .colophon{ position:relative; padding:clamp(80px,16vh,180px) 24px; text-align:center; }
-  .colophon .vine{ width:120px; height:1px; margin:0 auto 30px; background:linear-gradient(to right, transparent, var(--cognac), transparent); }
-  .colophon h3{ font-family:var(--display); font-weight:300; font-style:italic; font-size:clamp(1.7rem,3.6vw,2.8rem); color:var(--bark); margin-bottom:16px; letter-spacing:.01em; }
-  .colophon p{ font-family:var(--serif); color:var(--body); max-width:52ch; margin:0 auto 10px; }
-  .colophon .src{ font-family:var(--ui); font-weight:300; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); margin-top:24px; }
-  .colophon .src a{ color:var(--cognac-2); text-decoration:none; border-bottom:1px solid rgba(126,85,48,.3); }
-
-  /* ── Mobile (≤680px): no pin, static stacked layout. With JS, each element
-     does a ONE-TIME entrance reveal as it scrolls into view — an Intersection-
-     Observer plus a compositor-only CSS transition (translate3d + opacity),
-     staggered by a small per-element delay for a slow, elegant cascade. NOT
-     scroll-bound, so native momentum scroll stays perfectly smooth (no per-frame
-     JS, no layout reads). NO pin, NO 3D tilt, NO filter, NO letter-spacing scrub.
-     Entrance start-states are applied INLINE by JS (immune to CSS specificity),
-     so everything is VISIBLE by default — a JS failure never hides content; the
-     reduced-motion block below forces it fully static. Deliberately gentler than
-     the other examples (museum restraint). ── */
-  @media (max-width:680px){
-    .chapter{ height:auto; }
-    .chapter .stage{ position:relative; height:auto; min-height:auto; padding:clamp(64px,11vh,104px) 0; perspective:none; }
-    .stage .inner{ grid-template-columns:1fr; gap:30px; width:88vw; }
-    .chapter[data-side="left"] .copy,
-    .chapter[data-side="left"] .figure{ order:initial; }
-    .figure{ order:2 !important; } .copy{ order:1 !important; }
-    .copy h2 .scrub{ letter-spacing:0; }     /* no letter-spacing scrub on mobile */
-    .frame{ max-width:100%; aspect-ratio:5/4; }
-    .layer{ transform:none; opacity:1; will-change:auto; }   /* visible fail-safe + drop promotion */
-    .reveal{ opacity:1; transform:none; }    /* visible fail-safe (no JS) */
-    /* Entrance states are applied INLINE by JS (immune to specificity) — see
-       the mobile branch in the script. No CSS reveal/start-state rules here. */
-    html.m-on .figwrap{ will-change:transform; }   /* re-promote the lerped parallax figure */
+  /* pinned + crossfading captions: desktop, JS, motion allowed */
+  @media (min-width:900px) and (prefers-reduced-motion:no-preference){
+    .js .obj .track{ height:320vh; }
+    .js .obj .stage{ position:sticky; top:0; height:100vh; }
+    .js .caps{ display:grid; }
+    .js .cap{ grid-area:1/1; opacity:0; border-top:0; padding:0; transition:opacity var(--dur-slow) var(--ease-reveal); }
+    .js .cap.on{ opacity:1; }
   }
 
-  /* ── Reduced motion: snap to a readable static mid-state ─────── */
+  /* ── IV · Atelier (specification) ────────────────────────────── */
+  .atl{ padding-top:clamp(56px, 8vh, 100px); padding-bottom:clamp(64px, 10vh, 120px); }
+  .atl h2{ font-size:clamp(2.1rem, 4.4vw, 4rem); line-height:1.02; letter-spacing:-.02em; max-width:20ch; }
+  .atl .head{ display:grid; grid-template-columns:1fr; gap:24px; align-items:end; padding-bottom:clamp(28px, 4vw, 48px); }
+  @media (min-width:900px){ .atl .head{ grid-template-columns:7fr 5fr; gap:48px; } }
+  .atl .head p{ color:var(--ink-soft); max-width:40ch; font-style:italic; }
+  .atl .wideplate .plate{ aspect-ratio:4/3; }
+  @media (min-width:760px){ .atl .wideplate .plate{ aspect-ratio:21/9; } }
+  .atl .spec{ display:grid; grid-template-columns:1fr; gap:40px; padding-top:clamp(40px, 5vw, 72px); align-items:start; }
+  @media (min-width:900px){ .atl .spec{ grid-template-columns:1fr 1fr; gap:clamp(40px, 6vw, 96px); } }
+  table{ border-collapse:collapse; width:100%; font-size:.95rem; }
+  caption{ text-align:left; font-family:var(--sans); font-size:.66rem; letter-spacing:.3em; text-transform:uppercase; color:var(--fg); padding:0 0 14px; }
+  th, td{ text-align:left; vertical-align:top; padding:12px 0; border-top:1px solid var(--line); }
+  th{ font-variant-caps:small-caps; letter-spacing:.06em; font-weight:400; color:var(--fg-dim); width:38%; padding-right:20px; }
+  td em{ color:var(--accent-deep); }
+  tr:last-child th, tr:last-child td{ border-bottom:1px solid var(--fg); }
+  .sun figure{ width:100%; }
+  .sun svg{ display:block; width:100%; height:auto; }
+  .sun .arc{ fill:none; stroke:var(--fg-dim); stroke-width:1; stroke-dasharray:3 5; }
+  .sun .frame{ fill:none; stroke:var(--fg); stroke-width:1.2; }
+  .sun .mull{ stroke:var(--fg); stroke-width:1; opacity:.5; }
+  .sun .lbl{ font-family:var(--sans); font-size:9px; letter-spacing:.18em; fill:var(--fg-dim); }
+  .sun .tick{ stroke:var(--line); stroke-width:1; }
+  .sun .sunmark{ fill:var(--accent); }
+  .sun .halo{ fill:none; stroke:var(--accent); stroke-width:1; opacity:.5; }
+  .sun .beam{ fill:var(--sun-wash); opacity:.7; }
+  .js .sun .sunpos{ will-change:transform; }
+
+  /* ── V · Enquire ─────────────────────────────────────────────── */
+  .enq{ padding-top:clamp(56px, 8vh, 110px); padding-bottom:clamp(64px, 10vh, 120px); }
+  .enq .wrap{ max-width:760px; text-align:center; }
+  .enq .kicker{ justify-content:center; }
+  .enq .kicker::before{ display:none; }
+  .enq h2{ font-size:clamp(2.2rem, 5vw, 4.6rem); line-height:1; letter-spacing:-.02em; }
+  .enq p.lede{ margin:28px auto 0; max-width:46ch; color:var(--ink-soft); font-size:clamp(1.02rem, 1.25vw, 1.2rem); }
+  .cta{
+    margin-top:40px; display:inline-flex; align-items:center; gap:14px; padding:16px 30px;
+    border:1px solid var(--fg); color:var(--fg); background:transparent; text-decoration:none;
+    font-family:var(--sans); font-size:.7rem; letter-spacing:.26em; text-transform:uppercase;
+    transition:background var(--dur-base) var(--ease-reveal), color var(--dur-base) var(--ease-reveal);
+  }
+  @media (hover:hover){ .cta:hover{ background:var(--fg); color:var(--bg); } }
+  .cta:active{ background:var(--fg); color:var(--bg); }
+  .enq .small{ margin-top:30px; display:block; }
+
+  /* colophon */
+  .colophon{
+    margin:0 var(--gutter); max-width:1320px; padding:22px 0 90px; border-top:1px solid var(--fg);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px 32px;
+    font-family:var(--sans); font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--fg-dim);
+  }
+  @media (min-width:1464px){ .colophon{ margin:0 auto; } }
+  .colophon a{ color:var(--accent-deep); text-decoration:none; border-bottom:1px solid var(--line); }
+
+  /* ── Reveals (IntersectionObserver; content is visible without JS) ── */
+  .js .reveal{ opacity:0; transform:translateY(18px); transition:opacity var(--dur-glacial) var(--ease-reveal), transform var(--dur-glacial) var(--ease-reveal); transition-delay:var(--d, 0ms); }
+  .js .reveal.in{ opacity:1; transform:none; }
+
+  /* ── Reduced motion: static, complete, in flow ───────────────── */
   @media (prefers-reduced-motion:reduce){
     html{ scroll-behavior:auto; }
-    .chapter{ height:auto; }
-    .chapter .stage{ position:relative; height:auto; min-height:auto; padding:96px 0; perspective:none; }
-    .stage .inner{ grid-template-columns:1fr; }
-    .layer{ transform:none !important; opacity:1 !important; }
-    .copy h2 .scrub{ letter-spacing:0 !important; opacity:1 !important; }
-    .reveal{ opacity:1 !important; transform:none !important; }
-    .cue .bar{ animation:none; }
+    .js .reveal{ opacity:1; transform:none; transition:none; }
+    .cta, .masthead nav a, .front .cue .bar{ transition:none; }
+    .js .cap{ transition:none; }
   }
 
-  /* ── GSAP SHOWCASE — "THE OBJECT, HELD" ──────────────────────────
-     One dedicated beat demonstrating two restrained techniques the
-     hand-rolled engine doesn't (taste-guardrails §2):
-       • PUSH-IN  — a very slow scale(1 → 1.08) on the framed object over
-                    the pin (intensifying focus; no other foreground motion).
-       • MATCH-CUT — two captions occupy the SAME position; content swaps by
-                    opacity crossfade while the layout holds perfectly still.
-     No 3D tilt, no snap, no velocity, no glow (museum restraint, §1.9).
-     STATIC DEFAULTS below keep the beat whole when GSAP is absent / reduced-
-     motion / mobile: object at rest scale 1, first caption visible, second
-     hidden, all content present. GSAP owns the pin scroll-room at runtime. */
-  .chapter.showcase{ height:auto; }                  /* GSAP pin grants the scroll-room */
-  .show-stage{
-    position:relative; height:100vh; overflow:hidden;
-    display:grid; place-items:center; padding:0 clamp(20px,5vw,64px);
+  /* persistent "back to repo" affordance — present on every live demo page */
+  .repo-home-pill{
+    position:fixed; left:max(14px, env(safe-area-inset-left)); bottom:max(14px, env(safe-area-inset-bottom)); z-index:9999;
+    display:inline-flex; align-items:center; gap:8px; padding:9px 14px 9px 12px; border-radius:999px;
+    font:600 12px/1 var(--mono); letter-spacing:.04em; color:var(--pill-fg); background:var(--pill-bg);
+    border:1px solid var(--pill-line); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); text-decoration:none;
+    box-shadow:var(--shadow-pill);
+    transition:transform var(--dur-fast) var(--ease-reveal), background var(--dur-fast) var(--ease-reveal), border-color var(--dur-fast) var(--ease-reveal);
   }
-  .show-inner{ width:min(720px,90vw); text-align:center; }
-  .show-eyebrow{
-    font-family:var(--ui); font-weight:300; font-size:10px; letter-spacing:.40em;
-    text-transform:uppercase; color:var(--cognac); display:block;
-    margin-bottom:clamp(26px,4vw,44px);
+  .repo-home-pill .arw{ font-size:14px; line-height:1; transition:transform var(--dur-fast) var(--ease-reveal); }
+  @media (hover:hover){
+    .repo-home-pill:hover{ transform:translateY(-2px); background:var(--pill-bg-hi); border-color:var(--pill-line-hi); }
+    .repo-home-pill:hover .arw{ transform:translateX(-3px); }
   }
-  /* the still the PUSH-IN scales (own layer; not driven by the rAF engine) */
-  .show-object{
-    position:relative; width:min(360px,64vw); aspect-ratio:4/5; margin:0 auto;
-    border-radius:18px; overflow:hidden; transform-origin:50% 46%;
-    box-shadow:0 40px 90px -50px rgba(54,48,42,.55);
-    will-change:transform;                           /* one element only */
-    background-image:
-      radial-gradient(120% 90% at 38% 22%, rgba(255,252,246,.92) 0%, rgba(228,216,196,.6) 48%, rgba(154,106,60,.32) 100%),
-      linear-gradient(155deg, #F3ECDF 0%, #E7DAC6 52%, #C9A878 100%);
-    background-color:var(--ecru);
-  }
-  .show-object::before{
-    content:""; position:absolute; left:50%; top:14%; width:34%; height:72%;
-    transform:translateX(-50%); border-radius:120px;
-    background:linear-gradient(180deg, rgba(255,253,248,.55), rgba(154,106,60,.10) 70%, rgba(126,85,48,.18));
-  }
-  .show-object::after{   /* static grain locked to the still */
-    content:""; position:absolute; inset:0; opacity:.32; mix-blend-mode:multiply; pointer-events:none;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='go'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23go)' opacity='0.4'/%3E%3C/svg%3E");
-  }
-  /* MATCH-CUT: both captions share ONE grid cell → identical position; only
-     opacity differs. Static default: first shown, second hidden. */
-  .show-caps{ display:grid; margin-top:clamp(30px,4vw,48px); }
-  .show-cap{
-    grid-area:1 / 1; align-self:start;
-    font-family:var(--display); font-weight:300; font-style:italic;
-    font-size:clamp(1.4rem,3.4vw,2.4rem); line-height:1.2; color:var(--bark);
-  }
-  .show-cap small{
-    display:block; margin-top:14px; font-family:var(--ui); font-weight:300; font-style:normal;
-    font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--muted);
-  }
-  .show-cap.b{ opacity:0; }                          /* second state hidden at rest */
-  .show-cap em{ color:var(--cognac-2); }
-
-  @media (max-width:680px){
-    /* static + stacked: no pin, show both captions, object at rest */
-    .chapter.showcase .show-stage{ height:auto; padding:clamp(72px,13vh,120px) 22px; }
-    .show-object{ transform:none !important; width:min(320px,74vw); }
-    .show-caps{ display:block; }
-    .show-cap{ display:block; opacity:1 !important; }
-    .show-cap.b{ margin-top:24px; }
-  }
-  @media (prefers-reduced-motion:reduce){
-    .show-stage{ height:auto; padding:96px 22px; }
-    .show-object{ transform:none !important; }
-    .show-caps{ display:block; }
-    .show-cap{ opacity:1 !important; }
-    .show-cap.b{ margin-top:24px; }
-  }
+  @media (prefers-reduced-motion:reduce){ .repo-home-pill, .repo-home-pill .arw{ transition:none; } }
 </style>
 </head>
 <body>
-  <!-- Persistent "back to repo" affordance — present on every live demo page. -->
-  <style>
-    .repo-home-pill{position:fixed;left:max(14px,env(safe-area-inset-left));
-      bottom:max(14px,env(safe-area-inset-bottom));z-index:9999;display:inline-flex;
-      align-items:center;gap:8px;padding:9px 14px 9px 12px;border-radius:999px;
-      font:600 12px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.04em;
-      color:#fff;background:rgba(10,12,16,.72);border:1px solid rgba(255,255,255,.18);
-      -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-decoration:none;
-      box-shadow:0 4px 18px rgba(0,0,0,.34);transition:transform .25s cubic-bezier(.22,1,.36,1),background .25s cubic-bezier(.22,1,.36,1),border-color .25s cubic-bezier(.22,1,.36,1)}
-    .repo-home-pill:hover{transform:translateY(-2px);background:rgba(10,12,16,.86);border-color:rgba(255,255,255,.34)}
-    .repo-home-pill .arw{font-size:14px;line-height:1;transition:transform .25s cubic-bezier(.22,1,.36,1)}
-    .repo-home-pill:hover .arw{transform:translateX(-3px)}
-    @media (prefers-reduced-motion:reduce){.repo-home-pill,.repo-home-pill .arw{transition:none}
-      .repo-home-pill:hover{transform:none}.repo-home-pill:hover .arw{transform:none}}
-  </style>
-  <a class="repo-home-pill" href="https://github.com/MustBeSimo/cinematic-scroll-skill"
-     target="_blank" rel="noopener"
-     aria-label="Back to the cinematic-scroll repository on GitHub">
-    <span class="arw" aria-hidden="true">&larr;</span> cinematic-scroll
-  </a>
-  <div class="atmos" id="atmos" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
+<script>document.documentElement.classList.add('js');</script>
 
-  <header class="masthead">
-    <div class="mark">
-      <b>Maison&nbsp;Solenne</b>
-      <span>Paris · MCMXXIV</span>
-    </div>
-    <nav aria-label="Primary">
-      <a href="#provenance">Provenance</a>
-      <a href="#object">The Object</a>
-      <a href="#atelier">Atelier</a>
-      <a href="#audience">Enquire</a>
-    </nav>
-  </header>
+<a class="repo-home-pill" href="https://github.com/MustBeSimo/cinematic-scroll-skill" target="_blank" rel="noopener" aria-label="Back to the cinematic-scroll repository on GitHub">
+  <span class="arw" aria-hidden="true">&larr;</span> cinematic-scroll
+</a>
 
-  <nav class="rail" id="rail" aria-label="Chapters"></nav>
+<div class="sky" aria-hidden="true">
+  <div class="morning" id="skyMorning"></div>
+  <div class="noon"></div>
+  <div class="dusk" id="skyDusk"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
 
-  <main id="book"></main>
+<header class="masthead">
+  <a class="brand" href="#top"><strong>Maison Solenne</strong><span>Monograph I · One day of light</span></a>
+  <nav aria-label="Chapters">
+    <a href="#provenance">Provenance</a>
+    <a href="#object">The Object</a>
+    <a href="#atelier">Atelier</a>
+    <a href="#enquire">Enquire</a>
+  </nav>
+</header>
 
-  <footer class="colophon">
-    <div class="vine"></div>
-    <h3>What is made slowly is kept for a long time.</h3>
-    <p>Four chapters for a maison that does not exist — rendered as a single, build-free HTML page in warm ivory and cognac.</p>
-    <p class="src">
-      By Simone Leonelli · built with the <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a> Agent Skill · fictional maison, no real brands ·
-      one of many possible aesthetics.
-    </p>
-  </footer>
+<main id="top">
 
-<script>
-/* ───────────────────────────────────────────────────────────────
-   Manifest — the page is generated from this array. Edit to retheme.
-   Fictional maison; no real brands or people.
-   title: array of [text, italic?] fragments. The first fragment of each
-          title carries the letter-spacing scrub class (the reveal).
-   ─────────────────────────────────────────────────────────────── */
-const CHAPTERS = [
-  { id:'overture', num:'I', nm:'Overture',
-    eyebrow:'Maison Solenne · Volume I',
-    title:[['The art of', 0],['keeping', 1],['still.', 0]],
-    lede:'A maison founded on a single, unfashionable belief: that the finest objects ask nothing of you. They wait. They weather. They are made once, and made completely — and then they are simply present, for the length of a life.',
-    fig:'I', figLabel:'Frontispiece · warm ivory',
-    meta:'Provenance · est. MCMXXIV',
-    side:'right',
-    morph:'radial-gradient(130% 90% at 22% 8%, rgba(154,106,60,.06), rgba(154,106,60,0) 58%), radial-gradient(110% 80% at 88% 96%, rgba(54,48,42,.05), rgba(54,48,42,0) 60%), #F6F1E7',
-    cue:true,
-    prompt:'overture · still life'
-  },
-  { id:'provenance', num:'II', nm:'Provenance',
-    eyebrow:'Chapter II · Provenance',
-    title:[['A hundred', 0],['unhurried', 1],['years.', 0]],
-    lede:'Four generations in the same three rooms above the rue. No collections, no seasons, no haste — only the slow accumulation of judgement that cannot be bought, briefed, or rushed. The house keeps its own time.',
-    fig:'II', figLabel:'The archive · sand light',
-    meta:'Atelier · rue de Solenne',
-    side:'left',
-    morph:'radial-gradient(130% 90% at 20% 10%, rgba(154,106,60,.07), rgba(154,106,60,0) 56%), radial-gradient(100% 80% at 86% 92%, rgba(54,48,42,.04), rgba(54,48,42,0) 60%), #ECE3D4',
-    prompt:'provenance · archive'
-  },
-  { id:'object', num:'III', nm:'The Object',
-    eyebrow:'Chapter III · The Object',
-    title:[['One object,', 0],['considered', 1],['completely.', 0]],
-    lede:'A single form, returned to until nothing remains to remove. Hand-burnished cognac leather over a frame that will outlast its first owner. No monogram. No hardware that announces itself. The restraint is the luxury.',
-    fig:'III', figLabel:'The object · cognac still',
-    meta:'Made to be kept',
-    side:'right',
-    morph:'radial-gradient(130% 90% at 24% 12%, rgba(154,106,60,.10), rgba(154,106,60,0) 56%), radial-gradient(100% 80% at 88% 90%, rgba(126,85,48,.06), rgba(126,85,48,0) 60%), #E4D8C4',
-    prompt:'the object · product moment'
-  },
-  { id:'audience', num:'IV', nm:'Enquire',
-    eyebrow:'Chapter IV · An Audience',
-    title:[['Request an', 0],['audience', 1],['with the house.', 0]],
-    lede:'We make a small number of pieces each year, by enquiry only. If you would like to commission one — and to wait the time it properly takes — the house keeps a quiet correspondence with those who understand the value of patience.',
-    fig:'IV', figLabel:'The correspondence',
-    meta:'By enquiry only',
-    side:'left',
-    morph:'radial-gradient(130% 90% at 22% 8%, rgba(154,106,60,.06), rgba(154,106,60,0) 58%), radial-gradient(110% 80% at 88% 96%, rgba(54,48,42,.05), rgba(54,48,42,0) 60%), #EFE7D8',
-    cta:'Begin a correspondence',
-    prompt:'audience · the correspondence'
-  },
-];
-
-/* ── helpers ─────────────────────────────────────────────────── */
-const clamp  = (n,a,b)=>Math.max(a,Math.min(b,n));
-const smooth = (a,b,t)=>{ const x=clamp((t-a)/(b-a),0,1); return x*x*(3-2*x); };
-const reduce   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const isMobile = () => window.matchMedia('(max-width: 680px)').matches;
-
-const book  = document.getElementById('book');
-const rail  = document.getElementById('rail');
-const atmos = document.getElementById('atmos');
-
-/* probe a real still; fall back to the CSS placeholder if it 404s */
-function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=>res(true); i.onerror=()=>res(false); i.src=src; }); }
-
-(async () => {
-  for (const ch of CHAPTERS){
-    const imgPath = `assets/${ch.id}.jpg`;
-    const hasImg  = await probe(imgPath);
-    const picCls  = hasImg ? 'pic' : 'pic placeholder';
-    const picStyle= hasImg ? `background-image:url('${imgPath}')` : '';
-
-    // first title fragment carries the letter-spacing scrub
-    const titleHTML = ch.title.map(([txt,it],k)=>{
-      const inner = it ? `<em>${txt}</em>` : txt;
-      return k===0 ? `<span class="scrub">${inner}</span> ` : `${inner} `;
-    }).join('');
-
-    const sec = document.createElement('section');
-    sec.className = 'chapter';
-    sec.id = ch.id;
-    sec.dataset.side = ch.side;
-    sec.innerHTML = `
-      <div class="stage">
-        <div class="inner">
-          <div class="copy">
-            <div class="layer copytext" data-depth="0.50">
-              <span class="eyebrow reveal">${ch.eyebrow}</span>
-              <h2>${titleHTML}</h2>
-              <div class="rule reveal"></div>
-              <p class="lede reveal">${ch.lede}</p>
-              ${ch.cta
-                ? `<a class="cta reveal" href="mailto:audience@example.com?subject=An%20audience%20with%20Maison%20Solenne">${ch.cta} →</a>`
-                : `<p class="meta reveal">${ch.meta}</p>`}
-            </div>
-          </div>
-          <div class="figure">
-            <div class="layer figwrap" data-depth="0.28">
-              <div class="frame">
-                <div class="${picCls}" style="${picStyle}"></div>
-                <div class="edge"></div>
-              </div>
-              <div class="figcap reveal">
-                <span class="n">Fig. ${ch.fig}</span><span class="ln"></span><span>${ch.figLabel}</span>
-              </div>
-            </div>
-          </div>
+  <!-- I · FRONTISPIECE -->
+  <section class="ch front" aria-labelledby="h-front">
+    <div class="wrap">
+      <div>
+        <p class="kicker reveal">Monograph I · Frontispiece</p>
+        <h1 id="h-front" class="reveal" style="--d:120ms">The art of keeping <em>still.</em></h1>
+        <p class="standfirst reveal" style="--d:240ms">One object, followed through one day of light. The house makes fewer than forty pieces a year and asks of the people who keep them only patience. What follows is the day a single piece spends on the bench — from the first grey of the north window to the last of the cognac at dusk.</p>
+        <p class="byline small reveal" style="--d:320ms">Plates <b>Studio Solenne</b><br>Words <b>The house</b><br>Set in the three rooms above the rue de Solenne</p>
+        <button class="cue reveal" type="button" data-goto="provenance" style="--d:420ms"><span>Scroll at the speed of the sun</span><span class="bar" aria-hidden="true"></span></button>
+      </div>
+      <figure class="reveal" style="--d:200ms">
+        <div class="plate">
+          <img src="assets/overture.jpg" alt="A length of pale linen folded on a slab of dark stone, lit softly from a window to the left" width="1024" height="1280" fetchpriority="high">
+          <div class="wash" aria-hidden="true"></div>
+          <div class="tint cool" aria-hidden="true"></div>
+          <div class="tint warm" aria-hidden="true"></div>
+          <div class="dusk" aria-hidden="true"></div>
         </div>
-        ${ch.cue ? `<button class="cue" type="button" data-goto="provenance" aria-label="Scroll to Provenance">
-          <span>Read on</span><span class="bar"></span></button>` : ''}
-      </div>`;
-    book.appendChild(sec);
+        <figcaption><span>Plate I — Linen, folded, on the slab. 06:40, north window.</span><span>Warm ivory</span></figcaption>
+      </figure>
+    </div>
+  </section>
 
-    const b = document.createElement('button');
-    b.type='button'; b.dataset.goto=ch.id;
-    b.innerHTML = `<span style="font-family:var(--display);font-size:12px">${ch.num}</span><span class="nm">${ch.nm}</span><span class="tick"></span>`;
-    rail.appendChild(b);
-  }
-
-  /* ── INSERT THE GSAP SHOWCASE BEAT ("THE OBJECT, HELD") ──────────────
-     Placed right after Chapter III · The Object, so the object is first
-     introduced, then held and considered, before the closing enquiry —
-     and BEFORE sections/railBtns/CHAPTERS are read by the scroll-spy, so the
-     parallel arrays (sections ↔ railBtns ↔ CHAPTERS) stay index-aligned.
-     Pure markup here; motion is wired at the end (desktop + non-reduced only,
-     and only if GSAP actually loaded). Stays static otherwise. */
-  const SHOW_AFTER = 'object';                 // chapter whose index we insert after
-  const anchorSec  = document.getElementById(SHOW_AFTER);
-  const anchorIdx  = CHAPTERS.findIndex(c=>c.id===SHOW_AFTER);   // 2 → insert at 3
-  const showMorph  = 'radial-gradient(130% 90% at 28% 14%, rgba(154,106,60,.12), rgba(154,106,60,0) 56%), radial-gradient(100% 80% at 84% 88%, rgba(126,85,48,.07), rgba(126,85,48,0) 60%), #E8DCC8';
-
-  const show = document.createElement('section');
-  show.className = 'chapter showcase';
-  show.id = 'held';
-  show.innerHTML = `
-    <div class="show-stage">
-      <div class="show-inner">
-        <span class="show-eyebrow">Chapter III · ½ — The Object, Held</span>
-        <div class="show-object" role="img" aria-label="The object, considered in soft light"></div>
-        <div class="show-caps">
-          <p class="show-cap a">One object, considered <em>completely</em>.<small>The form, before it is named</small></p>
-          <p class="show-cap b">Nothing left <em>to remove</em>.<small>The same form, now resolved</small></p>
+  <!-- II · PROVENANCE -->
+  <section class="ch prov" id="provenance" aria-labelledby="h-prov">
+    <div class="wrap">
+      <div class="head">
+        <p class="kicker reveal">II · Provenance</p>
+        <h2 id="h-prov" class="reveal" style="--d:100ms">A hundred unhurried years.</h2>
+      </div>
+      <div class="spread">
+        <div class="side">
+          <figure class="reveal">
+            <div class="plate square">
+              <img src="assets/provenance.jpg" alt="A small bronze seal resting on a sheet of handmade paper on an oak block, window light behind" width="1024" height="1280" loading="lazy">
+              <div class="wash" aria-hidden="true"></div>
+              <div class="tint cool" aria-hidden="true"></div>
+              <div class="tint warm" aria-hidden="true"></div>
+              <div class="dusk" aria-hidden="true"></div>
+            </div>
+            <figcaption><span>Plate II — The house seal, bronze, 1924. 08:10.</span><span>Sand light</span></figcaption>
+          </figure>
+          <aside class="aside reveal" style="--d:140ms">
+            <h3>The register</h3>
+            <dl>
+              <dt>Founded</dt><dd>1924, above the rue de Solenne</dd>
+              <dt>Rooms</dt><dd>Three. The same three.</dd>
+              <dt>Pieces a year</dt><dd>Fewer than forty</dd>
+              <dt>Mark</dt><dd>A bronze seal, inside. No monogram.</dd>
+              <dt>Waiting list</dt><dd>Kept by letter, in the ledger</dd>
+            </dl>
+          </aside>
+        </div>
+        <div class="columns">
+          <p class="lead reveal">The house was founded in 1924 by a saddler's daughter who had noticed, watching her father, that the last hour of any piece of work was the one that decided it — and that the last hour was the one nobody was paid for. She took three rooms above the rue de Solenne, hired two people who could be trusted to be slow, and made a rule that has not been broken since: nothing leaves the atelier until it has been looked at in every light the rooms afford.</p>
+          <p class="reveal">This is a practical rule, not a poetic one. Leather lies. Under the flat grey light of a north window a hide shows its grain honestly; at noon the same hide flattens and forgives; by evening, when the sun comes low through the west casement, every mark of the burnisher stands up like a hill. A seam that passes at nine may fail at five. So the piece waits on the bench for a day, and someone walks past it, and looks.</p>
+          <h3 class="reveal">The ledger</h3>
+          <p class="reveal">Every piece made here is entered by hand in a ledger that now runs to eleven volumes: the date it was begun, the date it was finished, the hide, the hands, and — in a column no other house keeps — the weather. The register is not shown to clients. It exists because the house believes that provenance is a habit before it is a claim, and that a thing written down slowly is harder to lie about later.</p>
+          <div class="pull reveal">
+            <blockquote>Nothing leaves the atelier until it has been looked at in every light the rooms afford.</blockquote>
+            <cite>House rule, 1924<br>Still in force</cite>
+          </div>
+          <p class="reveal">Four generations on, the rooms are the same three rooms. The windows have not been enlarged; the light, which is the only instrument the house has ever trusted, has not been improved. What has changed is the list of people willing to wait. It has become long. The house has responded by making no more than it did before.<span class="end-mark" aria-hidden="true"></span></p>
         </div>
       </div>
-    </div>`;
-  anchorSec.after(show);                         // DOM: directly after Chapter III
+    </div>
+  </section>
 
-  const showBtn = document.createElement('button');
-  showBtn.type = 'button'; showBtn.dataset.goto = 'held';
-  showBtn.innerHTML = `<span style="font-family:var(--display);font-size:12px">·</span><span class="nm">Held</span><span class="tick"></span>`;
-  rail.children[anchorIdx].after(showBtn);       // rail: matching entry, same offset
-  // keep the CHAPTERS lookup aligned with the new section list (spy reads CHAPTERS[idx].morph)
-  CHAPTERS.splice(anchorIdx + 1, 0, { id:'held', nm:'Held', morph:showMorph });
+  <!-- III · THE OBJECT — the pinned day -->
+  <section class="ch obj" id="object" aria-labelledby="h-obj">
+    <div class="track" id="track">
+      <div class="stage">
+        <div class="grid">
+          <div class="col-l">
+            <p class="kicker">III · The Object</p>
+            <h2 id="h-obj">One object, considered in every light.</h2>
+            <p class="hour-big" id="hourBig" aria-hidden="true">12:00</p>
+            <p class="hour-note small" id="hourNote">Noon · flat light · <b>5500 K</b></p>
+          </div>
+          <figure>
+            <div class="plate-wrap">
+              <div class="plate" id="objPlate">
+                <img src="assets/object.jpg" alt="A cognac leather card case standing in a brushed brass cradle on a sand-coloured stone bench against a plaster wall" width="1024" height="1280" loading="lazy">
+                <div class="wash" aria-hidden="true"></div>
+                <div class="tint cool" aria-hidden="true"></div>
+                <div class="tint warm" aria-hidden="true"></div>
+                <div class="dusk" aria-hidden="true"></div>
+              </div>
+              <div class="cast" id="cast" aria-hidden="true"></div>
+            </div>
+            <figcaption><span>Plate III — Card case No. 3, bridle leather on brass.</span><span>Cognac</span></figcaption>
+          </figure>
+          <div class="col-r">
+            <div class="caps" id="caps">
+              <div class="cap on" data-from="0" data-to="12">
+                <span class="when">09:30 — Morning</span>
+                <p>The north window gives a flat, honest light. The grain of the hide reads exactly as it is; nothing is forgiven yet.</p>
+              </div>
+              <div class="cap" data-from="12" data-to="15.5">
+                <span class="when">13:00 — Noon</span>
+                <p>The shadow shortens to almost nothing. This is the light the piece is judged in: every seam, every edge, at the same distance from the eye.</p>
+              </div>
+              <div class="cap" data-from="15.5" data-to="24">
+                <span class="when">17:30 — Evening</span>
+                <p>The sun comes low through the west casement and turns to cognac. The brass takes it first; the leather, a little later, keeps it.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  const sections = [...document.querySelectorAll('.chapter')];
-  const railBtns = [...rail.children];
+  <!-- IV · ATELIER -->
+  <section class="ch atl" id="atelier" aria-labelledby="h-atl">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <p class="kicker reveal">IV · Atelier</p>
+          <h2 id="h-atl" class="reveal" style="--d:100ms">Made in three rooms, judged by one window.</h2>
+        </div>
+        <p class="reveal" style="--d:200ms">By half past five the west casement lays a bar of light across the plaster. It is the last light of the working day and the only one the house fully trusts.</p>
+      </div>
+      <figure class="wideplate reveal">
+        <div class="plate wide">
+          <img src="assets/audience.jpg" alt="A cognac leather ottoman beside a white vase on a stone plinth, a bar of evening window light on the plaster wall" width="1024" height="1280" loading="lazy">
+          <div class="wash" aria-hidden="true"></div>
+          <div class="tint cool" aria-hidden="true"></div>
+          <div class="tint warm" aria-hidden="true"></div>
+          <div class="dusk" aria-hidden="true"></div>
+        </div>
+        <figcaption><span>Plate IV — The second room, 17:40. The west casement.</span><span>Evening</span></figcaption>
+      </figure>
+      <div class="spec">
+        <div class="reveal">
+          <table>
+            <caption>Specification · Card case No. 3</caption>
+            <tbody>
+              <tr><th scope="row">Leather</th><td>Bridle, <em>cognac</em>, vegetable-tanned; hand-burnished edges</td></tr>
+              <tr><th scope="row">Frame</th><td>Brass, unlacquered. It is meant to darken.</td></tr>
+              <tr><th scope="row">Dimensions</th><td>108 × 72 × 22 mm</td></tr>
+              <tr><th scope="row">Hands</th><td>Two. The same two, start to finish.</td></tr>
+              <tr><th scope="row">Time</th><td>Eleven weeks, three of them waiting on the bench</td></tr>
+              <tr><th scope="row">Looked at in</th><td>Every light the rooms afford</td></tr>
+              <tr><th scope="row">Mark</th><td>The house seal, inside, where only the owner sees it</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="sun reveal" style="--d:140ms">
+          <figure>
+            <svg viewBox="0 0 520 300" role="img" aria-labelledby="sunTitle sunDesc">
+              <title id="sunTitle">The day's light across the west casement</title>
+              <desc id="sunDesc">A diagram of the sun's arc over the atelier window from six in the morning to half past seven in the evening; the marker follows the reader's position in the page.</desc>
+              <rect class="frame" x="150" y="70" width="220" height="190"/>
+              <line class="mull" x1="260" y1="70" x2="260" y2="260"/>
+              <line class="mull" x1="150" y1="165" x2="370" y2="165"/>
+              <path class="beam" id="beam" d="M150 260 L370 260 L370 238 L150 250 Z"/>
+              <path class="arc" d="M40 250 A220 220 0 0 1 480 250"/>
+              <g class="ticks">
+                <line class="tick" x1="40" y1="250" x2="40" y2="262"/><text class="lbl" x="30" y="282">06</text>
+                <line class="tick" x1="104" y1="94" x2="98" y2="84"/><text class="lbl" x="72" y="82">09</text>
+                <line class="tick" x1="260" y1="30" x2="260" y2="18"/><text class="lbl" x="250" y="12">12</text>
+                <line class="tick" x1="416" y1="94" x2="422" y2="84"/><text class="lbl" x="424" y="82">15</text>
+                <line class="tick" x1="480" y1="250" x2="480" y2="262"/><text class="lbl" x="472" y="282">18</text>
+              </g>
+              <g class="sunpos" id="sunpos" transform="translate(260 30)">
+                <circle class="halo" r="14"/>
+                <circle class="sunmark" r="5"/>
+              </g>
+            </svg>
+            <figcaption><span>Fig. 4 — The sun over the west casement. The marker is where you are in the day.</span><span>Diagram</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  /* navigation clicks (rail + scroll cue) */
+  <!-- V · ENQUIRE -->
+  <section class="ch enq" id="enquire" aria-labelledby="h-enq">
+    <div class="wrap">
+      <p class="kicker reveal">V · Enquire</p>
+      <h2 id="h-enq" class="reveal" style="--d:100ms">Request an audience with the house.</h2>
+      <p class="lede reveal" style="--d:200ms">The house makes a small number of pieces each year, by enquiry only. If you would like to commission one — and to wait the time it properly takes — the house keeps a quiet correspondence with those who understand the value of patience.</p>
+      <a class="cta reveal" style="--d:300ms" href="mailto:audience@example.com?subject=An%20audience%20with%20Maison%20Solenne">Begin a correspondence <span aria-hidden="true">→</span></a>
+      <span class="small reveal" style="--d:380ms">By letter · fewer than forty pieces a year · the ledger is kept</span>
+    </div>
+  </section>
+
+</main>
+
+<footer class="colophon reveal">
+  <span>Maison Solenne · Monograph I</span>
+  <span>Set in system serif and sans · light composed from scroll</span>
+  <span>By Simone Leonelli · built with the <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a> Agent Skill · fictional maison</span>
+</footer>
+
+<div class="folio" aria-hidden="true">
+  <span class="note" id="folioNote">Noon · flat light</span>
+  <b id="folioHour">12:00</b>
+  <span id="folioK">5500 K</span>
+  <span>p.<b id="pageNo">1</b></span>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const wide   = window.matchMedia('(min-width: 900px)');
+  const clamp  = (n,a,b)=>Math.max(a,Math.min(b,n));
+  const lerp   = (a,b,t)=>a+(b-a)*t;
+
+  /* ── discrete reveals (IntersectionObserver) ─────────────────── */
+  const reveals = document.querySelectorAll('.reveal');
+  if (reduce.matches || !('IntersectionObserver' in window)){
+    reveals.forEach(el=>el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin:'0px 0px -8% 0px', threshold:0.08 });
+    reveals.forEach(el=>io.observe(el));
+  }
+
+  /* navigation cue */
   document.querySelectorAll('[data-goto]').forEach(el=>{
     el.addEventListener('click', ()=>{
-      document.getElementById(el.dataset.goto)?.scrollIntoView({ behavior: reduce ? 'auto':'smooth' });
+      document.getElementById(el.dataset.goto)?.scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth' });
     });
   });
 
-  /* scroll-spy → active rail + background morph.
-     Sections are 220vh — taller than the viewport — so collapse the observer
-     root to a 1px band at the vertical centre via rootMargin: the section
-     straddling screen-centre is the active one (reliable at any height). */
-  let activeIdx = -1;
-  const spy = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if (!e.isIntersecting) return;
-      const idx = sections.indexOf(e.target);
-      if (idx===activeIdx) return;
-      activeIdx = idx;
-      railBtns.forEach((b,j)=> b.setAttribute('aria-current', j===idx ? 'true':'false'));
-      const m = CHAPTERS[idx].morph;
-      atmos.style.background = m;
-      document.body.style.background = m;
-    });
-  }, { threshold:0, rootMargin:'-50% 0px -50% 0px' });
-  sections.forEach(s=> spy.observe(s));
-  // paint initial state immediately
-  railBtns[0].setAttribute('aria-current','true'); activeIdx = 0;
+  /* ── THE CLOCK: scroll depth → hour of day → every visual state ── */
+  const skyMorning = document.getElementById('skyMorning');
+  const skyDusk    = document.getElementById('skyDusk');
+  const hourBig    = document.getElementById('hourBig');
+  const hourNote   = document.getElementById('hourNote');
+  const folioHour  = document.getElementById('folioHour');
+  const folioNote  = document.getElementById('folioNote');
+  const folioK     = document.getElementById('folioK');
+  const pageNo     = document.getElementById('pageNo');
+  const cast       = document.getElementById('cast');
+  const objPlate   = document.getElementById('objPlate');
+  const sunpos     = document.getElementById('sunpos');
+  const beam       = document.getElementById('beam');
+  const caps       = [...document.querySelectorAll('#caps .cap')];
+  const plates     = [...document.querySelectorAll('.plate')].map(p=>({
+    wash:p.querySelector('.wash'), cool:p.querySelector('.tint.cool'),
+    warm:p.querySelector('.tint.warm'), dusk:p.querySelector('.dusk')
+  }));
+  const track = document.getElementById('track');
+  const prov  = document.getElementById('provenance');
+  const atl   = document.getElementById('atelier');
 
-  /* reduced-motion: fully static (content already visible via CSS !important).
-     No scroll-driven motion at all. */
-  if (reduce){
-    return;
+  const H0 = 6, H1 = 19.5;                       // the day the page spans
+  let keys = [];                                  // [scrollY, hour] piecewise-linear, monotonic
+  function measure(){
+    const vh  = innerHeight;
+    const y   = scrollY;
+    const top = el => el.getBoundingClientRect().top + y;
+    const max = document.documentElement.scrollHeight - vh;
+    const tT = top(track), tH = track.offsetHeight;
+    const pinned = wide.matches && !reduce.matches;
+    keys = [
+      [0, H0],
+      [top(prov) - vh*0.6, 7.5],
+      pinned ? [tT, 9.5]                       : [tT - vh*0.5, 9.5],
+      pinned ? [tT + (tH - vh)*0.78, 17.5]     : [tT + tH*0.6, 17.5],
+      pinned ? [tT + tH - vh, 17.5]            : [tT + tH*0.85, 17.5],   // the hold: a stable viewing moment
+      [top(atl) + atl.offsetHeight*0.5, 18.6],
+      [Math.max(max, 1), H1],
+    ];
+    // enforce monotonic scroll positions
+    for (let i=1;i<keys.length;i++) if (keys[i][0] < keys[i-1][0]) keys[i][0] = keys[i-1][0];
   }
-
-  /* ── MOBILE — entrance choreography (smooth; NOT scroll-bound) ─────────────
-     Each element reveals ONCE as it scrolls into view via IntersectionObserver
-     + a compositor-only CSS transition (translate3d + opacity), staggered by a
-     per-element delay for a slow, elegant cascade. No per-frame work and no
-     layout reads in a scroll handler, so native momentum scroll stays buttery.
-     No pin / no 3D tilt / no filter (taste-guardrails §1.9). Tuned GENTLER than
-     the bolder examples — small rise, longer duration, wider stagger — to hold
-     luxe's museum restraint. Start-states are inline, so a JS failure leaves
-     everything visible; reduced-motion returns above and never reaches here. */
-  if (isMobile()){
-    document.documentElement.classList.add('m-on');
-
-    /* one-shot entrance reveals for text (NOT the figure — it gets lerped parallax) */
-    const EASE='cubic-bezier(.16,1,.3,1)', DUR=1000;   // luxe: slower / gentler
-    const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
-      e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
-    } }); },{ rootMargin:'0px 0px -12% 0px', threshold:0 });
-    const reveal=(el,delay)=>{
-      el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
-      el.style.opacity='0'; el.style.transform='translate3d(0,18px,0)'; io.observe(el);   // gentle 18px rise
-    };
-    sections.forEach(sec=>{ let i=0;
-      sec.querySelectorAll('.copy h2 .scrub').forEach(s=> reveal(s,(i++)*100));
-      sec.querySelectorAll('.copy .reveal, .figcap.reveal').forEach(el=> reveal(el,(i++)*100));
-    });
-
-    /* lerped parallax — figure only (vertical), WHISPER-gentle (museum restraint) */
-    const movers=[];
-    document.querySelectorAll('.chapter').forEach(sec=>{
-      const fig=sec.querySelector('.figwrap'); if(fig) movers.push({el:fig, axis:'y', amp:26});  // gentle amp
-    });
-    let centers=[]; const measure=()=>{ centers=movers.map(m=>{ const r=m.el.getBoundingClientRect(); return r.top+scrollY+r.height/2; }); };
-    measure(); addEventListener('resize', measure, {passive:true});
-    const cur=movers.map(()=>0); let raf=0, until=0;
-    const loop=()=>{ const vh=innerHeight, mid=scrollY+vh/2; let moving=false;
-      movers.forEach((m,i)=>{ const target=clamp(-(mid-centers[i])/vh*m.amp, -m.amp, m.amp);
-        cur[i]+=(target-cur[i])*0.10;   // luxe: slower lerp
-        m.el.style.transform = `translate3d(0, ${cur[i].toFixed(2)}px, 0)`;
-        if(Math.abs(target-cur[i])>0.2) moving=true; });
-      raf = (performance.now()<until || moving) ? requestAnimationFrame(loop) : 0; };
-    addEventListener('scroll',()=>{ until=performance.now()+700; if(!raf) raf=requestAnimationFrame(loop); },{passive:true});
-    loop();
-    return;
-  }
-
-  /* ── Desktop parallax — quiet-luxury engine ────────────────────
-     Unified progress T ∈ [0,1] over each section's whole pass
-     (approach → pin → exit), so content is fully composed when the
-     chapter is centred (including chapter I at load). Never starts
-     invisible. Only transform + opacity mutate per frame.
-
-       • figure : BARELY-there drift — depth 0.28, ~3% of viewport over
-                  the whole pin (perceptual depth, no obvious movement)
-                  + a hair of scale settle. No 3D tilt, no filter.
-       • copy   : gentle counter-drift, full block.
-       • title  : LETTER-SPACING SCRUB 0.45em → 0em over the first ~30%.
-       • reveals: eyebrow / rule / lede / caption ease in and hold.            */
-  /* cache each section's document-relative top + height (read once at init and
-     on debounced resize) so the per-frame loop never touches layout (perf-budget
-     §1). rect.top+scrollY is the safe absolute top regardless of offsetParent. */
-  let tops = [], heights = [];
-  function measure(){ const y = scrollY; tops = sections.map(s=>s.getBoundingClientRect().top + y); heights = sections.map(s=>s.offsetHeight); }
-  measure();
-  let rTO = 0; window.addEventListener('resize', ()=>{ clearTimeout(rTO); rTO = setTimeout(measure, 150); }, { passive:true });
-
-  let ticking = false;
-  function parallax(){
-    const vh = window.innerHeight;
-    sections.forEach((sec, i)=>{
-      const top = tops[i] - scrollY;
-      // only drive sections that are actually on/near screen (perf)
-      if (top + heights[i] < -vh*0.2 || top > vh*1.2) return;
-
-      const total = heights[i] + vh;
-      const T     = clamp((vh - top) / total, 0, 1);   // 0 below → 1 past
-      const enter = smooth(0.10, 0.34, T);                  // composed by pin
-      const exit  = 1 - smooth(0.70, 0.90, T);              // fades away late
-      const live  = enter * exit;
-      const drift = 0.46 - T;                               // signed, ~0 at hold
-
-      // figure — barely-there: depth 0.28 × 24px ≈ ~3% of a 760px viewport
-      const fig = sec.querySelector('.figwrap');
-      if (fig){
-        const depth = +fig.dataset.depth;             // 0.28
-        const y  = drift * 24 * (depth / 0.28);       // ~±5–6px across the pin
-        const sc = 1.012 - 0.012 * enter;             // imperceptible settle
-        fig.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0) scale(${sc.toFixed(4)})`;
-        fig.style.opacity   = (0.18 + 0.82 * live).toFixed(3);
-      }
-
-      // copy block — gentle counter-drift
-      const copy = sec.querySelector('.copytext');
-      if (copy){
-        copy.style.transform = `translate3d(0, ${(drift * 30).toFixed(2)}px, 0)`;
-        copy.style.opacity   = (0.16 + 0.84 * live).toFixed(3);
-
-        // title letter-spacing scrub: 0.45em → 0em over the first ~30%
-        const sp = (1 - smooth(0.06, 0.32, T)) * 0.45;
-        copy.querySelectorAll('h2 .scrub').forEach(s=>{ s.style.letterSpacing = `${sp.toFixed(3)}em`; });
-
-        // supporting reveals ease in, then hold (and fade with the exit)
-        const rv = smooth(0.16, 0.40, T) * exit;
-        copy.querySelectorAll('.reveal').forEach(r=>{ r.style.opacity = rv.toFixed(3); });
-      }
-
-      // caption — rides with the figure, a touch later
-      const cap = sec.querySelector('.figcap');
-      if (cap){ cap.style.opacity = (smooth(0.22, 0.46, T) * exit).toFixed(3); }
-    });
-    ticking = false;
-  }
-  function onScroll(){ if (!ticking){ ticking = true; requestAnimationFrame(parallax); } }
-  window.addEventListener('scroll', onScroll, { passive:true });
-  window.addEventListener('resize', ()=>{ ticking = true; requestAnimationFrame(parallax); }, { passive:true });
-  parallax(); // initial paint so nothing starts invisible if scroll never fires
-
-  /* ── GSAP SHOWCASE WIRING — "The Object, Held" ─────────────────────
-     Polls for GSAP (the CDN is deferred); guarded again by matchMedia so it
-     only arms on desktop + no-reduced-motion and auto-reverts on resize into a
-     small / reduced context. Two restrained techniques (taste-guardrails §2):
-       • PUSH-IN   — the framed object scales 1 → 1.08 over the pin (slow zoom
-                     toward the subject; nothing else moves in the foreground).
-       • MATCH-CUT — caption A → caption B by opacity over a perfectly-still
-                     composition (identical position; only the words change).
-     Only transform + opacity mutate. If GSAP never loads, #held stays static. */
-  (function wireShowcase(tries){
-    if (!window.gsap || !window.ScrollTrigger){
-      if (tries > 0) requestAnimationFrame(()=> wireShowcase(tries-1));
-      return;
+  function hourAt(y){
+    if (y <= keys[0][0]) return keys[0][1];
+    for (let i=1;i<keys.length;i++){
+      const [y0,h0] = keys[i-1], [y1,h1] = keys[i];
+      if (y <= y1) return y1===y0 ? h1 : lerp(h0, h1, (y-y0)/(y1-y0));
     }
-    gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.defaults({ scrub:0.5, fastScrollEnd:true, invalidateOnRefresh:true });
-    const mm = gsap.matchMedia();
-    mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
-      const stage = document.querySelector('#held .show-stage');
-      if (!stage) return;
-      const obj  = stage.querySelector('.show-object');
-      const capA = stage.querySelector('.show-cap.a');
-      const capB = stage.querySelector('.show-cap.b');
-      const els  = [obj, capA, capB];
-      const tl = gsap.timeline({ scrollTrigger:{
-        trigger:'#held', start:'top top', end:'+=220%', pin:stage, anticipatePin:1 } });
-      tl.fromTo(obj,  { scale:1 },  { scale:1.08, ease:'none' }, 0)                       // PUSH-IN (§2)
-        .to(capA,     { opacity:0, ease:'none', duration:0.4 }, 0.45)                     // MATCH-CUT: A out
-        .fromTo(capB, { opacity:0 }, { opacity:1, ease:'none', duration:0.4 }, 0.45);     // MATCH-CUT: B in (same cell)
-      return () => gsap.set(els, { clearProps:'all' });   // revert to static defaults
+    return keys[keys.length-1][1];
+  }
+
+  const fmt = h => { const hh = Math.floor(h), mm = Math.floor((h-hh)*60); return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`; };
+  const kelvin = h => h < 12 ? lerp(6400, 5500, (h-6)/6) : lerp(5500, 3100, (h-12)/7.5);
+  const note = h => h < 8 ? 'First light · north window' : h < 11.5 ? 'Morning · north window'
+                  : h < 14.5 ? 'Noon · flat light' : h < 17 ? 'Afternoon · west casement' : 'Evening · cognac';
+
+  let target = 12, cur = 12, raf = 0, lastTxt = '';
+  function render(h){
+    const t   = clamp((h - H0)/(H1 - H0), 0, 1);       // 0 dawn … 1 dusk
+    const e   = Math.sin(Math.PI * t);                   // sun elevation 0…1…0
+    const dir = t*2 - 1;                                 // −1 east (morning) … +1 west (evening)
+    const cool = 0.26 * clamp(1 - (h-6)/6, 0, 1);
+    const warm = 0.30 * clamp((h-14)/5, 0, 1);
+    const dusk = 0.42 * clamp((h-16)/3.5, 0, 1);
+
+    skyMorning.style.opacity = clamp(1 - (h-6)/5, 0, 1).toFixed(3);
+    skyDusk.style.opacity    = clamp((h-14.5)/4.5, 0, 1).toFixed(3);
+
+    const washX = (dir * 48).toFixed(2), washO = (0.35 + 0.45*e).toFixed(3);
+    plates.forEach(p=>{
+      p.wash.style.transform = `translate3d(${washX}%,0,0) rotate(${(-6 + dir*8).toFixed(2)}deg)`;
+      p.wash.style.opacity   = washO;
+      p.cool.style.opacity   = cool.toFixed(3);
+      p.warm.style.opacity   = warm.toFixed(3);
+      p.dusk.style.opacity   = dusk.toFixed(3);
     });
-  })(120);
+
+    // the cast shadow under the object: long at dawn/dusk, short and dark at noon
+    const len = 0.5 + 1.5*(1-e);
+    cast.style.transform = `translate3d(${(-dir*22).toFixed(2)}%,0,0) scaleX(${len.toFixed(3)})`;
+    cast.style.opacity   = (0.45 + 0.45*e).toFixed(3);
+    // an imperceptible push-in over the day: the reader leans closer
+    objPlate.style.transform = `scale(${(1 + 0.035*t).toFixed(4)})`;
+
+    // sun on the casement diagram: arc centre (260,250) r=220, 06→18 left→right
+    const a = Math.PI * (1 - clamp((h-6)/12, 0, 1));
+    sunpos.setAttribute('transform', `translate(${(260 + 220*Math.cos(a)).toFixed(1)} ${(250 - 220*Math.sin(a)).toFixed(1)})`);
+    beam.style.opacity = (0.15 + 0.7*clamp((h-15)/3, 0, 1)).toFixed(3);
+
+    caps.forEach(c=>{ c.classList.toggle('on', h >= +c.dataset.from && h < +c.dataset.to); });
+
+    const txt = fmt(h);
+    if (txt !== lastTxt){
+      lastTxt = txt;
+      hourBig.textContent = txt; folioHour.textContent = txt;
+      const k = `${Math.round(kelvin(h)/100)*100} K`;
+      const n = note(h);
+      folioK.textContent = k; folioNote.textContent = n;
+      hourNote.innerHTML = `${n} · <b>${k}</b>`;
+      pageNo.textContent = String(1 + Math.floor(t*23));
+    }
+  }
+  function loop(){
+    cur += (target - cur) * 0.14;
+    if (Math.abs(target - cur) < 0.002){ cur = target; render(cur); raf = 0; return; }
+    render(cur); raf = requestAnimationFrame(loop);
+  }
+  function onScroll(){ target = hourAt(scrollY); if (!raf) raf = requestAnimationFrame(loop); }
+
+  if (reduce.matches){
+    /* reduced motion: the page rests at one o'clock — complete and still */
+    measure(); render(13); return;
+  }
+  measure(); cur = target = hourAt(scrollY); render(cur);
+  addEventListener('scroll', onScroll, { passive:true });
+  let rTO = 0;
+  addEventListener('resize', ()=>{ clearTimeout(rTO); rTO = setTimeout(()=>{ measure(); onScroll(); }, 120); }, { passive:true });
+  addEventListener('load', ()=>{ measure(); onScroll(); });
+  wide.addEventListener('change', ()=>{ measure(); onScroll(); });
 })();
 </script>
 </body>

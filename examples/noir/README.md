@@ -1,62 +1,84 @@
-# Vantascope — "Signal Clear" redesign
+# Vantascope — "Hollow Star"
 
-A clean **sci-fi editorial** worked example for **cinematic-scroll** (archetype A5, redesigned 2026).
-Aesthetic: warm-white canvas, massive **Oswald** headlines in near-black, **crimson** as the single
-signal accent. Open negative space, architectural grid, **no grain**. A "signal clear" studio —
-the opposite of the old heavy noir look. Same cinematic scroll engine, completely fresh visual system.
+An **editorial sci-fi release page** for **cinematic-scroll** (archetype A5, rebuilt 2026-09).
+A fictional studio, VANTASCOPE, announces *Hollow Star* — a film about a signal that calls
+one person back — across four transmissions.
 
-Between the hero and the descent sits **"The Approach"** — a GSAP ScrollTrigger beat showcasing a
-**dolly-zoom** (Vertigo — the backdrop pushes in while the caption holds) and a **scrubbed signal draw**
-(a crimson waveform draws across the frame via `stroke-dashoffset` as you scroll).
+## The one idea
 
-Visual system: **Signal Clear** — clean, architectural, editorial. Light canvas; every chapter morphs
-to a distinct subtle gradient (electric-blue tint → signal-red tint) keeping the progression readable.
+**The page is a receiver. Scroll is the gain knob.**
 
-Single self-contained `index.html` — no build step, no npm. The hand-rolled rAF cinematic engine has
-**zero JS dependencies**; the one "Approach" beat additionally loads **GSAP + ScrollTrigger** from a CDN
-(deferred, feature-detected). Only other external resource: Google Fonts. GitHub-Pages-native.
+A fixed, procedural **spectrogram waterfall** (`<canvas>`, ~36k cells per frame drawn from a
+seeded noise buffer) fills the viewport. At the top of the page it is pure hiss. As you scroll,
+a single crimson **carrier climbs out of the noise floor**: it wanders and sharpens (Trace →
+Carrier), starts to pulse an on–off cadence — three long, two short — (Cadence), and finally the
+noise collapses and it **locks**. The waterfall is deterministic in scroll position: reverse
+scrolling rewinds it exactly, and nothing moves while you are not scrolling.
 
-- **4 chapters** (Signal · Descent · Witness · Access) + a **GSAP "Approach" showcase beat**
-- **Palette:** warm white `#F5F4F0`, near-black `#0A0B0F`, crimson signal `#E23A4E`, electric blue `#1044F2`
-- **Type:** Oswald (condensed display), Archivo (UI), JetBrains Mono (labels)
+Every HUD readout is computed from the same scroll-derived gain value each frame:
 
-## Run it / preview
+| Readout | Range | Where |
+|---|---|---|
+| SNR | −2.4 → 42.4 dB | top-right, large |
+| Noise floor | −96 → −118 dBm | top-right |
+| Carrier | 1420.7xx → 1420.405 MHz (drift settles on the hydrogen line) | top-right |
+| Status | Noise floor · Trace · Carrier · Cadence · Lock | top-right |
+| Spectrum | live line plot of the newest waterfall row | top-right, under the readout |
+| Gain rail | marker on a tick rail (Noise / Trace / Carrier / Cadence / Lock) | left edge |
+
+World colours (`--world-a`, `--world-b`, `--lock`) are mixed per frame from gain as well —
+teal-black at the noise floor, crimson-black vignette at lock.
+
+Each chapter `<section>` owns a gain range (`data-g0` / `data-g1`), so the receiver state
+always matches the chapter you are reading regardless of viewport height.
+
+## Composition
+
+Desktop chapters are a triptych: **evidence plate · live carrier · story panel**, alternating
+sides so the carrier at 50% is never covered. The four plates in `assets/` are the real
+imagery; the panels carry the story, mono "facts" rows, and — in Transmission IV — the primary
+action (**Request early access**). Release details (premiere, runtime, format) are readable in
+the hero and repeated in the final chapter. Fixed top/bottom scrims let scrolling content fade
+under the masthead and HUD instead of colliding with them.
+
+Type is system stacks only: a heavy sans display (`system-ui` / Helvetica Neue), an editorial
+serif for ledes (`Iowan Old Style` / Palatino), and `ui-monospace` for the instrument.
+
+## Single file, zero dependencies
+
+`index.html` + `assets/*.jpg`. No fonts, no CDN, no GSAP. Motion is one rAF scroll clock with
+a `lerp` toward the scroll-derived target; the loop stops when settled. Only `transform`,
+`opacity` and canvas pixels change per frame. Colour roles and the four signature easings are
+`:root` tokens (`--bg --surface --fg --fg-dim --accent --line`, `--ease-reveal|exit|playful|cut`).
+
+- **Mobile (≤760px):** free-flow single column (plate, then panel), 4px waterfall cells,
+  readout beside the brand, meter/scope hidden, shorter reveal rises.
+- **Reduced motion:** the waterfall is painted once in its locked state, readouts still track
+  position, all reveals are static and visible, the hint loop is off.
+- **No JS:** a CSS noise-grid ground with a static carrier band, initial HUD values in markup,
+  all copy and plates in flow.
+
+## Run it
 
 ```bash
 python3 -m http.server 8099    # then open http://localhost:8099/examples/noir/
-# …or just open index.html directly in a browser.
+# …or open index.html directly — everything is inline.
 ```
-
-Deploys as-is to GitHub Pages at
-`https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/` — all paths are relative.
-
-## Works with ZERO images
-
-The page renders a complete, intentional **CSS-only placeholder** for every still —
-a geometric grid with a clean light-to-blue-grey gradient and a crimson signal rim on the right edge.
-On load it probes for a real `assets/<id>.jpg`; if the file 404s, the placeholder is used.
-Drop real images into `assets/` later and the page picks them up automatically — no code change.
 
 ## Image slots
 
-Generate these as **clean cinematic sci-fi editorial stills**: warm-white or neutral backgrounds,
-architectural geometry, a single crimson signal-line accent, ultra minimal, no grain.
-**No baked-in text or logos** (the page supplies all type).
+All four plates exist. If you regenerate them, keep them **text-free / logo-free**, 4:5,
+1024 × 1280, teal-dark with one crimson accent:
 
-| Slot (probed path)      | Aspect | Target px   | Generation prompt |
-|-------------------------|:------:|:-----------:|-------------------|
-| `assets/0-signal.jpg`   | 4 : 5  | 1024 × 1280 | Cinematic sci-fi editorial still: a lone figure in a long coat seen from behind, standing on a vast white-marble floor, geometric light shafts from above, open architectural space, one thin **crimson** line of light along the right edge, ultra clean, no grain, no text, no logos, 4:5 |
-| `assets/1-descent.jpg`  | 4 : 5  | 1024 × 1280 | Cinematic sci-fi editorial still: a long brutalist corridor, concrete walls, geometric shafts of white overhead light, a single thin **crimson** line along the right wall, a silhouetted figure small at the far end, ultra minimal, no grain, no text, no logos, 4:5 |
-| `assets/2-witness.jpg`  | 4 : 5  | 1024 × 1280 | Cinematic sci-fi editorial still: extreme close portrait, face half-lit by clean white light, one side in cool neutral shadow, a thin **crimson** signal-line along the jaw, ultra clean, architectural background, no grain, no text, no logos, 4:5 |
-| `assets/3-access.jpg`   | 4 : 5  | 1024 × 1280 | Cinematic sci-fi editorial still: a clean white threshold doorway, blinding white light pouring through, a silhouetted figure in the threshold, one thin **crimson** line along the right edge, open negative space, no grain, no text, no logos, 4:5 |
+| Path | Subject |
+|---|---|
+| `assets/0-signal.jpg` | industrial corridor, lone figure walking toward a single red lamp |
+| `assets/1-descent.jpg` | hooded figure descending a wet concrete stairwell |
+| `assets/2-witness.jpg` | sealed helmet and armoured suit, edge-lit in red, rain and fog |
+| `assets/3-access.jpg` | small figure before a towering gate filled with luminous mist |
 
-> The prompts live verbatim in the `CHAPTERS` manifest inside `index.html` (`prompt` field).
-> Keep every still **text-free / logo-free**; all titles, the signal CTA, and labels are drawn by the page.
+## Accessibility
 
-## Accessibility & performance
-
-- Semantic landmarks (`header` / `nav` / `main` / `footer`), `aria-label`s, each still
-  exposed as `role="img"` with a descriptive label.
-- **Compositor-only** scroll: the rAF-batched loop mutates only `transform` / `opacity`; passive scroll listener; 3D only for in-view sections.
-- **Mobile (≤680px)** drops the pin and 3D camera but keeps touch-safe scroll-coupled motion.
-- **Reduced-motion** renders a clean static mid-state — full opacity, no motion.
+One `h1`, headings in order, `header` / `nav` / `main` / `footer` landmarks, descriptive `alt`
+on every plate, `aria-hidden` on canvases and decorative HUD, visible `:focus-visible` rings,
+the primary action is a plain keyboard-reachable link.

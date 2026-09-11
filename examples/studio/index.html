@@ -3,617 +3,614 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Maya Torres — Creative Director · cinematic-scroll example</title>
-<meta name="description" content="A brutalist Swiss-editorial cinematic-scroll page — giant grotesk type, monochrome + electric accent, parallax stills. The second flagship example for the cinematic-scroll Agent Skill." />
-
-<!-- Open Graph -->
+<title>Maya Torres — Creative Director · The Cut</title>
+<meta name="description" content="Maya Torres, creative director. A brutalist portfolio cut like a film: the scroll is the playhead, the type moves with intent, the work runs as a reel." />
 <meta property="og:title" content="Maya Torres — Creative Director" />
-<meta property="og:description" content="Brutalist cinematic scroll — giant type, monochrome, parallax. Built with the cinematic-scroll Agent Skill." />
+<meta property="og:description" content="A portfolio cut like a film. Brutalist type, monochrome stills, one electric accent." />
 <meta property="og:type" content="website" />
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Archivo (grotesk display + UI), JetBrains Mono (labels) -->
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-<!-- GSAP + ScrollTrigger (now 100% free) — powers ONE dedicated showcase beat:
-     a MONTAGE SNAP contact-sheet (taste-guardrails §2 "Montage") + a
-     VELOCITY-REACTIVE heading (scroll-patterns.md #3). Deferred + feature-
-     detected: if the CDN fails, the hand-rolled rAF engine below still runs and
-     the montage stays at its complete static state. -->
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+<link rel="icon" href="data:," />
 
 <style>
+  /* ── tokens (design.md §2 roles + motion.tokens.json curves) ─────────── */
   :root{
-    --ink:#111113; --grey:#E6E6E6; --grey2:#D4D4D6; --white:#FFFFFF;
-    --muted:#6B6B70; --accent:#0F4CFF;
-    --bg:#E6E6E6; --fg:#111113; --fg-muted:#6B6B70; --line:rgba(17,17,19,.16);
+    --bg:#E7E6E3; --surface:#F4F3F0; --fg:#111113; --fg-dim:#5E5E66; --muted:#5E5E66;
+    --accent:#0F4CFF; --line:rgba(17,17,19,.18);
+    --ink:#111113; --white:#FFFFFF; --grey:#E7E6E3; --grey2:#CFCFD3; --ink-dim:#9A9AA2;
+    --line-light:rgba(255,255,255,.22);
+    --shade:rgba(0,0,0,.55); --shade-0:rgba(0,0,0,0);
+    --pill-bg:rgba(10,12,16,.72); --pill-bg-hover:rgba(10,12,16,.86);
+    --pill-line:rgba(255,255,255,.18); --pill-line-hover:rgba(255,255,255,.34);
+    --pill-shadow:rgba(0,0,0,.34);
+    --ease-reveal:cubic-bezier(.16,1,.3,1);
+    --ease-exit:cubic-bezier(.7,0,.84,0);
+    --ease-playful:cubic-bezier(.34,1.56,.64,1);
+    --ease-cut:cubic-bezier(.87,0,.13,1);
+    --dur-fast:300ms; --dur-base:500ms; --dur-slow:720ms; --dur-glacial:1200ms;
+    --font-display:system-ui,-apple-system,"Helvetica Neue",Helvetica,"Inter",Arial,sans-serif;
+    --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --gutter:clamp(18px,5vw,72px);
+    --mast-h:56px;
+    --scroll:0;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:no-preference){ html:focus-within{scroll-behavior:smooth} }
+  html,body{background:var(--bg);color:var(--fg)}
   body{
-    background:var(--bg); color:var(--fg);
-    font-family:'Archivo',system-ui,sans-serif; font-weight:500;
+    font-family:var(--font-display); font-weight:500;
     -webkit-font-smoothing:antialiased; overflow-x:hidden;
-    transition:background .6s linear, color .6s linear;
+    font-feature-settings:"ss01","cv11";
   }
-  ::selection{ background:var(--accent); color:#fff; }
+  ::selection{background:var(--accent);color:var(--white)}
+  img{display:block;max-width:100%}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:4px}
 
-  /* ── fixed masthead ───────────────────────────────────────── */
-  .masthead{
-    position:fixed; inset:0 0 auto 0; z-index:50;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:22px clamp(18px,4vw,56px);
-    mix-blend-mode:difference; color:#fff; /* legible over any morph */
-    pointer-events:none;
+  /* ── masthead ─────────────────────────────────────────────────────────── */
+  .mast{
+    position:fixed;inset:0 0 auto 0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px var(--gutter);color:var(--fg);background:var(--bg);border-bottom:1px solid var(--line);
+    min-height:var(--mast-h);
   }
-  .masthead .mark{ font-weight:800; letter-spacing:-.02em; font-size:16px; pointer-events:auto;}
-  .masthead nav{ display:flex; gap:clamp(14px,2.4vw,34px); font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase; pointer-events:auto;}
-  .masthead nav a{ color:inherit; text-decoration:none; opacity:.85;}
-  @media (max-width:680px){ .masthead nav{ display:none; } }
+  .mast .mark{font-weight:800;letter-spacing:-.02em;font-size:15px;text-decoration:none}
+  .mast nav{display:flex;gap:clamp(14px,2.4vw,34px);font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+  .mast nav a{text-decoration:none;opacity:.8;transition:opacity var(--dur-fast) var(--ease-reveal)}
+  @media (hover:hover){ .mast nav a:hover{opacity:1} }
+  @media (max-width:680px){ .mast nav{display:none} .mast{padding:16px 18px} }
+  main{padding-top:var(--mast-h)}
 
-  /* ── progress + index rail ────────────────────────────────── */
-  .rail{
-    position:fixed; right:clamp(12px,2vw,26px); top:50%; transform:translateY(-50%);
-    z-index:40; display:flex; flex-direction:column; gap:13px;
-    font-family:'JetBrains Mono',monospace; font-size:11px; mix-blend-mode:difference; color:#fff;
+  /* ── deck: the live playhead readout (timecode computed from scroll) ──── */
+  .deck{
+    position:fixed;right:var(--gutter);bottom:max(18px,env(safe-area-inset-bottom));z-index:50;
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--fg);background:var(--bg);padding:10px 14px;display:flex;gap:18px;align-items:baseline;
+    font-variant-numeric:tabular-nums;
   }
-  .rail .r{ display:flex; align-items:center; gap:10px; justify-content:flex-end; opacity:.5; transition:opacity .3s; }
-  .rail .r .ln{ width:22px; height:1px; background:currentColor; transition:width .3s; }
-  .rail .r.on{ opacity:1; }
-  .rail .r.on .ln{ width:46px; background:var(--accent); height:2px; }
-  @media (max-width:680px){ .rail{ display:none; } }
+  .deck .rec{width:8px;height:8px;border-radius:50%;background:var(--accent);align-self:center;
+    transform:scale(calc(.7 + var(--scroll) * .6));}
+  .deck .tc{font-weight:600}
+  @media (max-width:680px){ .deck{right:18px;gap:12px;font-size:10px;padding:8px 10px} .deck .fr{display:none} }
 
-  /* ── chapter section ──────────────────────────────────────── */
-  section{
-    position:relative; min-height:235vh;          /* pin room */
+  /* ── shared type ──────────────────────────────────────────────────────── */
+  .eyebrow{font-family:var(--font-mono);font-size:clamp(10px,.9vw,12px);letter-spacing:.32em;text-transform:uppercase;color:var(--accent)}
+  .giant{
+    font-weight:800;line-height:.88;letter-spacing:-.035em;text-transform:uppercase;
+    font-size:clamp(3.2rem,12.5vw,13rem);text-wrap:balance;
   }
-  .stage{
-    position:sticky; top:0; height:100vh; overflow:hidden;
-    display:grid; grid-template-columns:1fr; align-content:center;
-    padding:0 clamp(18px,5vw,72px);
-    perspective:1400px;                 /* scroll-driven 3D camera depth */
-    perspective-origin:60% 50%;
-  }
-  .figwrap, .copytext, .aicard{ transform-style:preserve-3d; }
-  .figwrap .frame{ transform-style:preserve-3d; }
+  .giant .ln{display:block;max-width:100%}
+  .w{display:inline-block;white-space:pre;width:max-content;max-width:100%}
+  .ch{display:inline-block}
+  .acc{color:var(--accent)}
+  .lede{max-width:44ch;font-size:clamp(1.05rem,1.45vw,1.3rem);line-height:1.5;color:var(--fg-dim);font-weight:500}
+  .meta{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-dim)}
+  section{position:relative;--t:0;--p:0}
 
-  /* giant grotesk type — the hero element */
-  .copytext{ position:relative; z-index:6; max-width:min(92vw,1400px); will-change:transform,opacity; }
-  .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:clamp(10px,1vw,12px); letter-spacing:.34em; text-transform:uppercase; color:var(--accent); margin-bottom:clamp(14px,2vw,26px); }
-  h2.giant{
-    font-weight:900; line-height:.86; letter-spacing:-.03em; text-transform:uppercase;
-    font-size:clamp(2.8rem,11.5vw,11rem);
+  /* ── 00 SLATE (hero) ──────────────────────────────────────────────────── */
+  .slate{min-height:100vh;min-height:100svh;display:grid;grid-template-columns:1fr;align-content:end;
+    padding:0 var(--gutter) clamp(28px,6vh,64px)}
+  .slate .portrait{
+    position:absolute;top:var(--mast-h);right:0;width:clamp(300px,42vw,620px);height:calc(100% - var(--mast-h));
+    overflow:hidden;
   }
-  h2.giant .w{ display:inline-block; margin-right:.12em; will-change:transform,opacity; }
-  h2.giant .w.accent{ color:var(--accent); }
-  .lede{ margin-top:clamp(20px,2.6vw,34px); max-width:46ch; font-size:clamp(1rem,1.5vw,1.32rem); line-height:1.5; color:var(--fg-muted); font-weight:500; }
-
-  /* ghost watermark word sliding across */
-  .ghost{
-    position:absolute; z-index:1; font-weight:900; text-transform:uppercase;
-    font-size:clamp(8rem,30vw,28rem); line-height:.8; letter-spacing:-.04em;
-    color:var(--fg); opacity:.04; white-space:nowrap; pointer-events:none;
-    top:50%; left:50%; transform:translate(-50%,-50%); will-change:transform;
-  }
-
-  /* framed parallax still (under the type) */
-  .figwrap{ position:absolute; z-index:3; right:clamp(18px,5vw,72px); top:50%;
-    width:clamp(280px,38vw,560px); aspect-ratio:4/5; transform:translateY(-50%);
-    will-change:transform,opacity; perspective:1200px; }
-  .frame{ position:relative; width:100%; height:100%; }
-  .pic{
-    position:absolute; inset:0; background-size:cover; background-position:center;
-    background-color:var(--grey2);
-    filter:grayscale(1) contrast(1.06);
-    transition:transform .25s ease-out;
-    box-shadow:0 30px 80px rgba(0,0,0,.28);
-  }
-  /* CSS-only placeholder visual (when no real image present) */
-  .pic.placeholder{
-    background-image:
-      repeating-linear-gradient(135deg, rgba(0,0,0,.05) 0 2px, transparent 2px 7px),
-      radial-gradient(120% 90% at 30% 20%, #fafafa 0%, #cfcfd2 55%, #2a2a2e 100%);
-  }
-  .pic::after{ /* grain */
-    content:""; position:absolute; inset:0; opacity:.5; mix-blend-mode:multiply;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
-  }
-  .figcap{ position:absolute; left:0; bottom:-26px; display:flex; justify-content:space-between; width:100%;
-    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.18em; color:var(--fg-muted); }
-  /* corner brackets */
-  .frame .br{ position:absolute; width:26px; height:26px; border:2px solid var(--accent); }
-  .frame .br.tl{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
-  .frame .br.tr{ top:-1px; right:-1px; border-left:0; border-bottom:0; }
-  .frame .br.bl{ bottom:-1px; left:-1px; border-right:0; border-top:0; }
-  .frame .br.brc{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
-
-  /* floating mono UI card (foreground) */
-  .aicard{ position:absolute; z-index:7; left:clamp(18px,5vw,72px); bottom:clamp(60px,12vh,120px);
-    width:min(300px,72vw); padding:14px 16px; background:rgba(255,255,255,.86);
-    border:1px solid var(--line); backdrop-filter:blur(6px);
-    font-family:'JetBrains Mono',monospace; will-change:transform,opacity; }
-  .aicard .t{ font-size:11px; color:var(--accent); margin-bottom:6px; letter-spacing:.04em; }
-  .aicard .b{ font-size:11px; line-height:1.5; color:var(--ink); }
-  section.dark .aicard{ background:rgba(20,20,22,.82); }
-  section.dark .aicard .b{ color:#e8e8ea; }
-
-  /* ── mobile (<=680px): static stacked layout. With JS, every element does a
-     ONE-TIME entrance reveal as it scrolls into view — IntersectionObserver +
-     a compositor-only transition (translate3d + opacity), staggered per element
-     for a cinematic cascade. NOT scroll-bound, so native momentum scroll stays
-     smooth (no per-frame JS, no layout reads). NO pin, NO 3D tilt, NO filter.
-     Section padding TIGHTENED to ~8vh + figure margins trimmed to cut dead
-     space. Everything is visible by default so a JS failure never hides
-     content; the reduced-motion block below forces it fully static. ── */
+  .slate .portrait img{width:100%;height:100%;object-fit:cover;object-position:62% 0;
+    transform:translateY(calc(var(--scroll) * 60px)) scale(1.04)}
+  .slate .portrait::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(to bottom,var(--bg) 0%,var(--shade-0) 14%),linear-gradient(to right,var(--bg) 0%,var(--shade-0) 22%),linear-gradient(to top,var(--bg) 0%,var(--shade-0) 38%)}
+  .slate .slug{position:absolute;left:var(--gutter);top:calc(var(--mast-h) + clamp(24px,6vh,64px));display:grid;gap:8px}
+  .slate .slug .meta{color:var(--fg-dim)}
+  .slate .head{position:relative;z-index:2;max-width:62vw}
+  .slate h1{margin:14px 0 0}
+  .slate .lede{margin-top:clamp(18px,2.4vw,30px)}
+  .slate .hint{margin-top:clamp(18px,3vh,32px);display:flex;align-items:center;gap:14px;color:var(--fg-dim)}
+  .slate .hint i{display:block;width:60px;height:1px;background:var(--fg-dim);transform-origin:left;
+    transform:scaleX(calc(1 - var(--scroll) * 6))}
+  /* letters rise once (nocturne gesture 1) — JS adds .in; no JS = visible */
+  html.js .fx-rise .ch{transform:translateY(1.05em) rotate(6deg);opacity:0;
+    transition:transform var(--dur-glacial) var(--ease-reveal),opacity var(--dur-slow) var(--ease-reveal);
+    transition-delay:calc(var(--i) * 34ms)}
+  html.js .fx-rise.in .ch{transform:none;opacity:1}
   @media (max-width:680px){
-    section{ min-height:auto; padding:8vh 0; }
-    .stage{ position:static; height:auto; display:block; perspective:none; }
-    /* static/stacked layout — no transform/opacity LOCKS, so inline JS wins */
-    .figwrap{ position:static; width:100%; transform:none; margin:18px 0 24px; aspect-ratio:16/10; }
-    /* ghost stays in flow as a STATIC element (no per-frame drive anymore) */
-    .ghost{ position:static; display:block; opacity:.05; font-size:30vw; line-height:.8;
-      margin:0 0 -4vh -2vw; transform:none; }
-    .aicard{ position:static; margin-top:18px; }
-    h2.giant{ font-size:18vw; }
-    /* VISIBLE fail-safe (no JS / JS error): type + reveals shown, untransformed */
-    .copytext .w{ opacity:1; transform:none; }
-    .reveal{ opacity:1; transform:none; }
-    /* Entrance states are applied INLINE by JS (immune to specificity) — see
-       the mobile branch in the script. No CSS reveal rules needed here. */
-    /* parallaxed layers get a compositor hint only when JS is active */
-    html.m-on .figwrap, html.m-on .ghost{ will-change:transform; }
+    .slate{align-content:end;padding-top:0}
+    .slate .portrait{position:relative;top:auto;height:52svh;margin:0 -18px;width:calc(100% + 36px)}
+    .slate .portrait::after{background:linear-gradient(to top,var(--bg) 0%,var(--shade-0) 40%)}
+    .slate .slug{top:auto;position:relative;left:0;margin:22px 0 18px}
+    .slate .head{max-width:100%}
+    .giant{font-size:clamp(2.6rem,15.5vw,6rem)}
   }
-  /* ── reduced motion: force everything static + visible (wins the cascade) ── */
+
+  /* ── 01 BELIEF — words slide on opposite axes (nocturne gesture 2) ────── */
+  .belief{padding:clamp(80px,16vh,160px) var(--gutter) 0;overflow-x:clip}
+  .belief .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,3vh,40px) clamp(24px,5vw,80px)}
+  .belief .grid > *,.craft .grid > *,.invite .grid > *{min-width:0}
+  .belief .grid > div{grid-column:1 / -1}
+  .belief .grid .lede{grid-column:2}
+  .belief h2{margin-top:16px;font-size:clamp(3rem,9.5vw,10rem)}
+  html.js .fx-slide .w{opacity:0;transition:transform var(--dur-glacial) var(--ease-reveal),opacity var(--dur-slow) var(--ease-reveal);transition-delay:calc(var(--i) * 60ms)}
+  html.js .fx-slide .w:nth-child(odd){transform:translateX(-22vw)}
+  html.js .fx-slide .w:nth-child(even){transform:translateX(22vw)}
+  html.js .fx-slide.in .w{transform:none;opacity:1}
+  .belief .strip{margin-top:clamp(40px,8vh,96px);height:clamp(260px,52vh,560px);overflow:hidden;position:relative}
+  .belief .strip img{width:100%;height:120%;object-fit:cover;object-position:50% 40%;
+    transform:translateY(calc(var(--p) * -16%))}
+  .belief .strip .cap{position:absolute;left:0;bottom:0;padding:14px 16px;background:var(--bg);color:var(--fg)}
+  @media (max-width:680px){ .belief .grid{grid-template-columns:1fr} .belief .grid .lede{grid-column:1} }
+
+  /* ── 02 THE REEL — the signature. DEFAULT = stacked contact sheet in flow
+     (no-JS, narrow, reduced motion all get the complete sequence). With JS on a
+     wide, motion-ok viewport it becomes a pinned stage: hard cuts between four
+     full-bleed frames, letters rising from in-frame progress, a live scrubber. */
+  .reel .stage{background:var(--ink);color:var(--white)}
+  .reel .flow-only{padding:clamp(60px,12vh,120px) var(--gutter) 0;color:var(--white)}
+  .reel .flow-only h2{margin-top:14px}
+  .reel .frame{position:relative;--f:1;display:grid;gap:18px;padding:clamp(40px,8vh,80px) var(--gutter)}
+  .reel .frame .art{position:relative;height:clamp(280px,56svh,620px);overflow:hidden}
+  .reel .frame .art img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;
+    transform:scale(calc(1.02 + var(--f) * .08))}
+  .reel .frame .art::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--shade) 0%,var(--shade-0) 55%)}
+  /* procedural art: 02 identity bar-field (28 bars = 28 markets) */
+  .reel .frame .art.ident{background:var(--ink);display:grid;justify-items:center;align-items:start;padding-top:clamp(48px,10vh,200px)}
+  .reel .frame .art.ident svg{width:min(88vw,1200px);height:min(44vh,520px);fill:var(--white);transform-origin:50% 50%;
+    transform:scaleY(calc(.72 + var(--f) * .34))}
+  .reel .frame .art.ident svg .acc{fill:var(--accent)}
+  /* procedural art: 03 OOH triptych — three pocket-device posters */
+  .reel .frame .art.ooh{background:var(--grey2);display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,30px);
+    padding:clamp(20px,5vw,60px) clamp(24px,8vw,140px);align-items:stretch}
+  .reel .frame .art.ooh::after{background:linear-gradient(to top,var(--ink) 0%,var(--shade-0) 46%)}
+  .reel .frame .art.ooh .poster{position:relative;background:var(--ink);overflow:hidden;
+    transform:translateY(calc((1 - var(--f)) * var(--dy)))}
+  .reel .frame .art.ooh .poster:nth-child(1){--dy:6vh}
+  .reel .frame .art.ooh .poster:nth-child(2){--dy:-4vh}
+  .reel .frame .art.ooh .poster:nth-child(3){--dy:9vh}
+  .reel .frame .art.ooh .dev{position:absolute;left:50%;top:26%;width:34%;aspect-ratio:9/19;border-radius:14% / 7%;
+    transform:translateX(-50%) rotate(calc(-8deg + var(--f) * 8deg));
+    background:linear-gradient(135deg,var(--white) 0%,var(--grey2) 30%,var(--ink-dim) 55%,var(--ink) 100%);
+    box-shadow:0 30px 60px var(--shade)}
+  .reel .frame .art.ooh .dev::after{content:"";position:absolute;inset:6% 7%;border-radius:10% / 5%;background:var(--ink)}
+  .reel .frame .art.ooh .poster:nth-child(2){background:var(--accent)}
+  .reel .frame .art.ooh .poster:nth-child(2) .dev{background:linear-gradient(135deg,var(--white) 0%,var(--grey2) 40%,var(--ink) 100%)}
+  .reel .frame .art.ooh .tag{position:absolute;left:8%;right:8%;top:7%;color:var(--white);font-weight:800;text-transform:uppercase;
+    letter-spacing:-.03em;line-height:.9;font-size:clamp(.9rem,4.4vw,4rem)}
+  .reel .frame .art.ooh .poster:nth-child(2) .tag{color:var(--ink)}
+  .reel .frame .copy{position:relative;z-index:3;color:var(--white)}
+  .reel .frame .copy .meta{color:var(--white);opacity:.75;margin-bottom:12px}
+  .reel .frame h3{font-weight:800;line-height:.88;letter-spacing:-.035em;text-transform:uppercase;font-size:clamp(2.4rem,12vw,12.5rem)}
+  .reel .frame .copy .lede{color:var(--white);opacity:.85;margin-top:16px;max-width:36ch}
+  .reel .hud,.reel .scrub{display:none}
+
+  @media (min-width:681px) and (prefers-reduced-motion:no-preference){
+    html.js .reel{height:calc(100vh + 320vh);height:calc(100svh + 320svh)}
+    html.js .reel .stage{position:sticky;top:var(--mast-h);height:calc(100vh - var(--mast-h));height:calc(100svh - var(--mast-h));overflow:hidden}
+    html.js .reel .flow-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;padding:0}
+    html.js .reel .frame{position:absolute;inset:0;opacity:0;visibility:hidden;--f:0;display:block;padding:0}
+    html.js .reel .frame.on{opacity:1;visibility:visible}
+    html.js .reel .frame .art{position:absolute;inset:0;height:auto}
+    /* letterbox: 2.39:1 cinema bars for the film frames */
+    html.js .reel .frame.film .art::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+      border-top:max(0px,calc((100vh - var(--mast-h) - 100vw / 2.39) / 2)) solid var(--ink);
+      border-bottom:max(0px,calc((100vh - var(--mast-h) - 100vw / 2.39) / 2)) solid var(--ink)}
+    html.js .reel .frame .art.ident{padding-top:clamp(120px,20vh,200px)}
+    html.js .reel .frame .art.ooh{padding:clamp(150px,20vh,220px) clamp(24px,8vw,140px) 0}
+    html.js .reel .frame .art.ooh::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+      background:linear-gradient(to bottom,var(--ink) 0%,var(--shade-0) 26%)}
+    html.js .reel .frame .copy{position:absolute;left:var(--gutter);right:var(--gutter);bottom:clamp(64px,12vh,120px)}
+    /* the frame's title: letters rise per-letter from in-frame progress --f */
+    html.js .reel .frame h3 .ch{--k:clamp(0, calc(var(--f) * 3.2 - var(--i) * .16), 1);
+      transform:translateY(calc((1 - var(--k)) * .9em));opacity:var(--k)}
+    html.js .reel .frame .copy .lede{
+      transform:translateY(calc((1 - clamp(0, calc(var(--f) * 2.4 - .5), 1)) * 24px));
+      opacity:clamp(0, calc(var(--f) * 2.4 - .5), 1)}
+    /* HUD: frame counter, project index, scrubber */
+    html.js .reel .hud{position:absolute;left:var(--gutter);right:var(--gutter);top:clamp(28px,6vh,72px);z-index:4;
+      display:flex;justify-content:space-between;align-items:flex-start;color:var(--white);font-variant-numeric:tabular-nums}
+    html.js .reel .hud .fr{font-weight:800;font-size:clamp(2.6rem,7vw,6.5rem);line-height:.85;letter-spacing:-.04em}
+    html.js .reel .hud .fr small{font-size:.32em;font-weight:600;letter-spacing:0;opacity:.6;vertical-align:top;margin-left:.2em}
+    html.js .reel .hud .idx{display:grid;gap:8px;justify-items:end;font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+    html.js .reel .hud .idx span{opacity:.4;transition:opacity var(--dur-fast) var(--ease-cut)}
+    html.js .reel .hud .idx span.on{opacity:1;color:var(--accent)}
+    html.js .reel .scrub{display:block;position:absolute;left:var(--gutter);right:var(--gutter);bottom:clamp(28px,5vh,44px);z-index:4;height:2px;background:var(--line-light)}
+    html.js .reel .scrub i{position:absolute;inset:0;background:var(--accent);transform-origin:left;transform:scaleX(var(--r,0))}
+    html.js .reel .scrub b{position:absolute;top:-5px;width:1px;height:12px;background:var(--white);opacity:.5}
+  }
+
+  /* ── 03 CRAFT — tracking stretches with scroll (nocturne gesture 3) ────── */
+  .craft{padding:clamp(100px,18vh,200px) var(--gutter) 0}
+  .craft .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:clamp(28px,5vh,56px) clamp(24px,5vw,80px);align-items:start}
+  .craft .grid > .head{grid-column:1 / -1}
+  .craft h2{margin-top:16px;font-size:clamp(2.6rem,9vw,9.5rem)}
+  .craft h2 .ln{letter-spacing:calc(-.035em + var(--p) * .16em);transition:letter-spacing 80ms linear}
+  .craft h2 .ln:last-child{letter-spacing:calc(-.035em + var(--p) * .02em)}
+  .craft .fig{position:relative;overflow:hidden;aspect-ratio:4/3}
+  .craft .fig img{width:100%;height:118%;object-fit:cover;transform:translateY(calc(var(--p) * -14%))}
+  .craft .fig .cap{position:absolute;right:0;bottom:0;padding:14px 16px;background:var(--bg);color:var(--fg)}
+  .craft .lede{margin-top:0}
+  .craft dl{margin-top:clamp(24px,4vh,40px);display:grid;grid-template-columns:auto 1fr;gap:10px 22px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em}
+  .craft dt{color:var(--accent)} .craft dd{color:var(--fg-dim)}
+  @media (max-width:680px){ .craft .grid{grid-template-columns:1fr} .craft h2 .ln{letter-spacing:-.035em!important} }
+
+  /* ── 04 RECOGNITION — the close gesture: type is the image (nocturne 9) ── */
+  .prix{padding:clamp(120px,22vh,240px) var(--gutter) clamp(60px,10vh,120px);display:grid;align-content:center}
+  .prix h2{font-size:clamp(4rem,19vw,22rem);line-height:.82;transform-origin:0 60%;
+    transform:scale(calc(.9 + var(--t) * .1));opacity:calc(.35 + var(--t) * .65);
+    transition:transform 90ms linear,opacity 90ms linear}
+  .prix .list{margin-top:clamp(28px,5vh,56px);display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(18px,3vw,40px);
+    border-top:1px solid var(--line);padding-top:24px}
+  .prix .list div{display:grid;gap:8px}
+  .prix .list strong{font-weight:800;font-size:clamp(1.2rem,2vw,1.6rem);letter-spacing:-.02em;line-height:1.1}
+
+  /* ── 05 INVITATION — the open page ────────────────────────────────────── */
+  .invite{padding:clamp(80px,12vh,140px) var(--gutter) clamp(60px,10vh,120px)}
+  .invite .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vh,56px) clamp(24px,5vw,80px);align-items:start}
+  .invite .grid > .head{grid-column:1 / -1}
+  .invite .fig{position:relative;overflow:hidden;aspect-ratio:4/3}
+  .invite .fig img{width:100%;height:116%;object-fit:cover;transform:translateY(calc(var(--p) * -12%))}
+  .invite h2{margin-top:16px;font-size:clamp(2.8rem,10vw,10.5rem)}
+  .invite h2 a{text-decoration:none;color:var(--accent);display:inline-block;white-space:nowrap;
+    transition:transform var(--dur-fast) var(--ease-playful)}
+  @media (hover:hover){ .invite h2 a:hover{transform:translateX(.08em)} }
+  .invite .cta{margin-top:clamp(22px,3vh,36px);display:inline-flex;align-items:center;gap:14px;
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    padding:16px 22px;background:var(--fg);color:var(--bg);text-decoration:none;
+    transition:transform var(--dur-fast) var(--ease-reveal)}
+  @media (hover:hover){ .invite .cta:hover{transform:translateY(-2px)} }
+  @media (max-width:680px){ .invite .grid{grid-template-columns:1fr} }
+
+  footer{padding:24px var(--gutter) max(80px,10vh);display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;border-top:1px solid var(--line)}
+  footer .meta a{color:inherit}
+
+  /* ── reduced motion: everything static, every readout at rest ─────────── */
   @media (prefers-reduced-motion:reduce){
-    html{ scroll-behavior:auto; }
-    .stage{ perspective:none; }
-    .copytext .w,.copytext .reveal,.figwrap,.ghost,.aicard{
-      opacity:1!important; transform:none!important; letter-spacing:normal!important; }
+    html{scroll-behavior:auto}
+    section{--t:1!important;--p:1!important}
+    html.js .fx-rise .ch,html.js .fx-slide .w{transform:none!important;opacity:1!important;transition:none!important}
+    .slate .portrait img,.belief .strip img,.craft .fig img,.invite .fig img,.slate .hint i,.deck .rec{transform:none!important}
+    .craft h2 .ln,.prix h2{transition:none!important;transform:none!important;letter-spacing:-.035em!important}
+    .mast nav a,.invite h2 a,.invite .cta,.reel .hud .idx span{transition:none!important}
   }
 
-  footer{ padding:14vh clamp(18px,5vw,72px) 16vh; }
-  footer .big{ font-weight:900; text-transform:uppercase; font-size:clamp(2rem,8vw,6rem); line-height:.9; letter-spacing:-.03em; }
-  footer .big a{ color:var(--accent); text-decoration:none; }
-  footer .meta{ margin-top:28px; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.14em; color:var(--fg-muted); text-transform:uppercase; }
-  footer .meta a{ color:inherit; }
-
-  /* ── GSAP SHOWCASE — "SELECTED WORK" CONTACT SHEET ────────────────────
-     The ONE GSAP-pinned beat (studio's normal chapters use CSS sticky, NOT
-     ScrollTrigger pins — so this is the only pin and never stacks >3 deep).
-     Technique 1 · MONTAGE SNAP (taste-guardrails §2 "Montage" / scroll-
-       patterns.md "Landing Sequence"): a horizontal track of N work-cards
-       advanced by transform:translate on the scrubbed pin timeline, snapping
-       card→card.
-     Technique 2 · VELOCITY-REACTIVE typography (pattern #3): the big display
-       heading compresses letter-spacing + scaleY on fast scroll.
-     STATIC DEFAULTS below keep it whole when GSAP is absent / reduced-motion /
-     mobile: the section is normal flow, the track wraps, all cards visible. */
-  section.showcase{ min-height:0; }              /* GSAP pin owns the scroll room when active */
-  .montage{ position:relative; padding:16vh clamp(18px,5vw,72px) 14vh; overflow:hidden; }
-  .montage .head{ margin-bottom:clamp(28px,5vh,56px); }
-  .montage .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:clamp(10px,1vw,12px);
-    letter-spacing:.34em; text-transform:uppercase; color:var(--accent); margin-bottom:clamp(12px,1.6vw,20px); }
-  /* large display heading — the velocity-reactive target (≥48px, never body) */
-  .montage h2.mtitle{ font-weight:900; line-height:.86; letter-spacing:-.02em; text-transform:uppercase;
-    font-size:clamp(3rem,9vw,8rem); transform-origin:left center; }
-  .montage h2.mtitle .accent{ color:var(--accent); }
-  /* contact-sheet track — STATIC DEFAULT: flex-wrap grid (all cards on screen) */
-  .montage .track{ display:flex; flex-wrap:wrap; gap:clamp(14px,2vw,28px); }
-  .mcard{ position:relative; flex:1 1 clamp(200px,18vw,260px); aspect-ratio:4/5;
-    background:var(--white); border:1px solid var(--line); padding:16px 18px;
-    display:flex; flex-direction:column; justify-content:space-between; }
-  .mcard .mi{ font-weight:900; font-size:clamp(2.6rem,5vw,4.4rem); line-height:.9; letter-spacing:-.04em; color:var(--ink); }
-  .mcard .ml{ font-weight:700; font-size:clamp(1rem,1.5vw,1.3rem); line-height:1.12; color:var(--ink); }
-  .mcard .mm{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em;
-    text-transform:uppercase; color:var(--fg-muted); }
-  .mcard .mb{ position:absolute; top:0; left:0; height:3px; width:100%; background:var(--accent); transform-origin:left; }
-  /* accent on the last "open" card */
-  .mcard:last-child{ background:var(--ink); }
-  .mcard:last-child .mi,.mcard:last-child .ml{ color:var(--white); }
-  .mcard:last-child .mm{ color:#9A9AA0; }
-
-  @media (max-width:680px){
-    /* static stacked contact sheet — no pin, no snap, no velocity */
-    .montage{ padding:13vh 22px 11vh; }
-    .montage h2.mtitle{ font-size:14vw; transform:none!important; letter-spacing:-.02em!important; }
-    .montage .track{ flex-direction:column; flex-wrap:nowrap; gap:16px; }
-    .mcard{ flex:1 1 auto; aspect-ratio:16/9; }
+  /* persistent "back to repo" affordance — present on every live demo page */
+  .repo-home-pill{position:fixed;left:max(14px,env(safe-area-inset-left));
+    bottom:max(14px,env(safe-area-inset-bottom));z-index:9999;display:inline-flex;
+    align-items:center;gap:8px;padding:9px 14px 9px 12px;border-radius:999px;
+    font:600 12px/1 var(--font-mono);letter-spacing:.04em;
+    color:var(--white);background:var(--pill-bg);border:1px solid var(--pill-line);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-decoration:none;
+    box-shadow:0 4px 18px var(--pill-shadow);
+    transition:transform var(--dur-fast) var(--ease-reveal),background var(--dur-fast) var(--ease-reveal),border-color var(--dur-fast) var(--ease-reveal)}
+  .repo-home-pill .arw{font-size:14px;line-height:1;transition:transform var(--dur-fast) var(--ease-reveal)}
+  @media (hover:hover){
+    .repo-home-pill:hover{transform:translateY(-2px);background:var(--pill-bg-hover);border-color:var(--pill-line-hover)}
+    .repo-home-pill:hover .arw{transform:translateX(-3px)}
   }
-  @media (prefers-reduced-motion:reduce){
-    .montage h2.mtitle{ transform:none!important; letter-spacing:-.02em!important; }
-  }
+  @media (prefers-reduced-motion:reduce){.repo-home-pill,.repo-home-pill .arw{transition:none}}
 </style>
 </head>
 <body>
-  <!-- Persistent "back to repo" affordance — present on every live demo page. -->
-  <style>
-    .repo-home-pill{position:fixed;left:max(14px,env(safe-area-inset-left));
-      bottom:max(14px,env(safe-area-inset-bottom));z-index:9999;display:inline-flex;
-      align-items:center;gap:8px;padding:9px 14px 9px 12px;border-radius:999px;
-      font:600 12px/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.04em;
-      color:#fff;background:rgba(10,12,16,.72);border:1px solid rgba(255,255,255,.18);
-      -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-decoration:none;
-      box-shadow:0 4px 18px rgba(0,0,0,.34);transition:transform .25s cubic-bezier(.22,1,.36,1),background .25s cubic-bezier(.22,1,.36,1),border-color .25s cubic-bezier(.22,1,.36,1)}
-    .repo-home-pill:hover{transform:translateY(-2px);background:rgba(10,12,16,.86);border-color:rgba(255,255,255,.34)}
-    .repo-home-pill .arw{font-size:14px;line-height:1;transition:transform .25s cubic-bezier(.22,1,.36,1)}
-    .repo-home-pill:hover .arw{transform:translateX(-3px)}
-    @media (prefers-reduced-motion:reduce){.repo-home-pill,.repo-home-pill .arw{transition:none}
-      .repo-home-pill:hover{transform:none}.repo-home-pill:hover .arw{transform:none}}
-  </style>
-  <a class="repo-home-pill" href="https://github.com/MustBeSimo/cinematic-scroll-skill"
-     target="_blank" rel="noopener"
-     aria-label="Back to the cinematic-scroll repository on GitHub">
-    <span class="arw" aria-hidden="true">&larr;</span> cinematic-scroll
-  </a>
+<a class="repo-home-pill" href="https://github.com/MustBeSimo/cinematic-scroll-skill" target="_blank" rel="noopener"
+   aria-label="Back to the cinematic-scroll repository on GitHub"><span class="arw" aria-hidden="true">&larr;</span> cinematic-scroll</a>
 
-<header class="masthead">
-  <div class="mark">MAYA TORRES</div>
-  <nav>
-    <a href="#work">Work</a>
+<header class="mast">
+  <a class="mark" href="#top">MAYA TORRES</a>
+  <nav aria-label="Sections">
+    <a href="#work">Reel</a>
+    <a href="#craft">Craft</a>
     <a href="#recognition">Recognition</a>
     <a href="#contact">Contact</a>
   </nav>
 </header>
 
-<div class="rail" id="rail"></div>
+<aside class="deck" aria-label="Playhead readout" aria-live="off">
+  <i class="rec" aria-hidden="true"></i>
+  <span class="reel-n">Reel 00</span>
+  <span class="tc">TC 00:00:00:00</span>
+  <span class="fr">FR 0000</span>
+</aside>
 
-<main id="app"></main>
+<main id="top">
 
-<footer id="contact">
-  <div class="big">Let’s make work<br>that <a href="mailto:studio@example.com">matters →</a></div>
-  <div class="meta">By Simone Leonelli · built with the <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a> Agent Skill · fictional persona, no real brands · one of many possible aesthetics</div>
+  <!-- 00 · SLATE -->
+  <section class="slate" aria-labelledby="name">
+    <div class="portrait">
+      <img src="assets/0-hero.jpg" width="2752" height="1536" alt="Black-and-white studio portrait of Maya Torres in a dark jacket, lit from one side, looking off-frame." fetchpriority="high" />
+    </div>
+    <div class="slug">
+      <span class="meta">Slate · Take 01 · 24 fps</span>
+      <span class="meta">Global Creative Director · MMXXVI</span>
+    </div>
+    <div class="head">
+      <p class="eyebrow">Creative direction · Brand, film, product</p>
+      <h1 class="giant fx-rise" id="name" data-split="letters"><span class="ln">Maya</span><span class="ln acc">Torres</span></h1>
+      <p class="lede">Two decades turning products into culture — and the last twelve years shaping how the world feels about the objects in its pockets.</p>
+      <p class="hint meta"><i aria-hidden="true"></i>Scroll to run the reel</p>
+    </div>
+  </section>
+
+  <!-- 01 · BELIEF -->
+  <section class="belief" aria-labelledby="belief-h">
+    <div class="grid">
+      <div>
+        <p class="eyebrow">01 · The belief</p>
+        <h2 class="giant fx-slide" id="belief-h" data-split="words"><span class="ln">Great work earns</span><span class="ln">its place <span class="acc">in culture.</span></span></h2>
+      </div>
+      <p class="lede">Creative that does not enter the conversation is decoration. Every brief starts with one question: will anyone outside this room care? If not, we start again.</p>
+    </div>
+    <figure class="strip">
+      <img src="assets/1-belief.jpg" width="2752" height="1536" alt="Empty concrete studio at dawn: tall industrial windows throw long grids of light across the floor toward a single wooden chair." loading="lazy" />
+      <figcaption class="cap meta">Fig. 01 · The studio floor, 06:40</figcaption>
+    </figure>
+  </section>
+
+  <!-- 02 · THE REEL (signature) -->
+  <section class="reel" id="work" aria-labelledby="reel-h">
+    <div class="stage">
+      <div class="flow-only">
+        <p class="eyebrow">02 · The reel</p>
+        <h2 class="giant" id="reel-h"><span class="ln">Selected</span><span class="ln acc">work.</span></h2>
+      </div>
+
+      <div class="hud" aria-hidden="true">
+        <div class="fr"><span class="n">01</span><small>/ 04</small></div>
+        <div class="idx">
+          <span class="on">2014 · Film</span><span>2017 · Brand</span><span>2020 · OOH</span><span>2023 · Film</span>
+        </div>
+      </div>
+
+      <article class="frame film on" data-frame="0">
+        <div class="art"><img src="assets/2-work.jpg" width="2752" height="1536" alt="Macro still of a sculptural brushed-aluminium wearable form floating on black, lit by a single rim light." loading="lazy" /></div>
+        <div class="copy">
+          <p class="meta">01 · 2014 · Wearable launch film · Global</p>
+          <h3 data-split="letters"><span class="ln">Wearable</span></h3>
+          <p class="lede">A launch film that never showed the interface. Ninety seconds of a body in motion and one object that kept up.</p>
+        </div>
+      </article>
+
+      <article class="frame" data-frame="1">
+        <div class="art ident" role="img" aria-label="Procedural identity artwork: twenty-eight vertical bars rising and falling like a waveform, two of them in electric blue.">
+          <svg viewBox="0 0 1200 750" preserveAspectRatio="none" aria-hidden="true">
+            <rect x="9" y="257" width="24" height="236"/><rect x="52" y="226" width="24" height="299"/><rect x="95" y="198" width="24" height="355"/><rect x="138" y="176" width="24" height="398"/><rect x="181" y="165" width="24" height="420"/><rect x="224" y="166" width="24" height="419"/><rect x="267" y="180" width="24" height="390"/><rect x="309" y="208" width="24" height="334"/><rect x="352" y="248" width="24" height="255"/><rect x="395" y="296" width="24" height="158" class="acc"/><rect x="438" y="295" width="24" height="160"/><rect x="481" y="242" width="24" height="267"/><rect x="524" y="193" width="24" height="365"/><rect x="567" y="153" width="24" height="445"/><rect x="609" y="126" width="24" height="498"/><rect x="652" y="114" width="24" height="522"/><rect x="695" y="119" width="24" height="513"/><rect x="738" y="139" width="24" height="473" class="acc"/><rect x="781" y="172" width="24" height="407"/><rect x="824" y="215" width="24" height="321"/><rect x="867" y="263" width="24" height="225"/><rect x="909" y="311" width="24" height="128"/><rect x="952" y="289" width="24" height="173"/><rect x="995" y="251" width="24" height="249"/><rect x="1038" y="223" width="24" height="305"/><rect x="1081" y="206" width="24" height="338"/><rect x="1124" y="201" width="24" height="348"/><rect x="1167" y="207" width="24" height="337"/>
+          </svg>
+        </div>
+        <div class="copy">
+          <p class="meta">02 · 2017 · Audio platform identity · 28 markets</p>
+          <h3 data-split="letters"><span class="ln">Identity</span></h3>
+          <p class="lede">One mark, twenty-eight markets, zero words. The identity is a waveform that every market re-records in its own voice.</p>
+        </div>
+      </article>
+
+      <article class="frame" data-frame="2">
+        <div class="art ooh" role="img" aria-label="Procedural out-of-home artwork: three tall posters, grey, electric blue and grey, each with a tilted pocket device and a one-word headline.">
+          <div class="poster"><div class="dev"></div><div class="tag">Pocket.</div></div>
+          <div class="poster"><div class="dev"></div><div class="tag">Pocket.</div></div>
+          <div class="poster"><div class="dev"></div><div class="tag">Pocket.</div></div>
+        </div>
+        <div class="copy">
+          <p class="meta">03 · 2020 · Pocket-device campaign · OOH · Platform</p>
+          <h3 data-split="letters"><span class="ln">Pocket</span></h3>
+          <p class="lede">Forty thousand posters and one word. The device tilted a few degrees further on every site, so the city itself became the animation.</p>
+        </div>
+      </article>
+
+      <article class="frame film" data-frame="3">
+        <div class="art"><img src="assets/4-recognition.jpg" width="2752" height="1536" alt="A tall glass monolith trophy on a black plinth, backlit so its edges glow against the dark." loading="lazy" /></div>
+        <div class="copy">
+          <p class="meta">04 · 2023 · Grand Prix anthem · Film · Craft</p>
+          <h3 data-split="letters"><span class="ln">Anthem</span></h3>
+          <p class="lede">The anthem film. No product for the first forty seconds — just the people the product was made for. It took the Grand Prix.</p>
+        </div>
+      </article>
+
+      <div class="scrub" aria-hidden="true"><b style="left:25%"></b><b style="left:50%"></b><b style="left:75%"></b><i></i></div>
+    </div>
+  </section>
+
+  <!-- 03 · CRAFT -->
+  <section class="craft" id="craft" aria-labelledby="craft-h">
+    <div class="grid">
+      <div class="head">
+        <p class="eyebrow">03 · The craft</p>
+        <h2 class="giant" id="craft-h"><span class="ln">The messy,</span><span class="ln"><span class="acc">meaningful</span> middle.</span></h2>
+      </div>
+      <div>
+        <p class="lede">I live between the blank page and the final release — leading multidisciplinary teams that feel safe taking real creative risks.</p>
+        <dl>
+          <dt>Team</dt><dd>14 · strategy, design, film, product</dd>
+          <dt>Method</dt><dd>Storyboard first. Deck last.</dd>
+          <dt>Rule</dt><dd>Safe to fail, built to ship.</dd>
+        </dl>
+      </div>
+      <figure class="fig">
+        <img src="assets/3-craft.jpg" width="2752" height="1536" alt="Overhead of a wooden table under a lamp: hands arranging contact sheets, film strips and a hand-drawn storyboard." loading="lazy" />
+        <figcaption class="cap meta">Fig. 03 · Process, in motion</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 04 · RECOGNITION -->
+  <section class="prix" id="recognition" aria-labelledby="prix-h">
+    <p class="eyebrow">04 · Recognition</p>
+    <h2 class="giant" id="prix-h"><span class="ln">Grand</span><span class="ln acc">Prix.</span></h2>
+    <div class="list">
+      <div><strong>Grand Prix</strong><span class="meta">Film · the world's largest creative festival</span></div>
+      <div><strong>Pencil</strong><span class="meta">Cultural impact</span></div>
+      <div><strong>11 metals</strong><span class="meta">Film + craft, 2014–2023</span></div>
+      <div><strong>28 markets</strong><span class="meta">One identity, every voice</span></div>
+    </div>
+  </section>
+
+  <!-- 05 · INVITATION -->
+  <section class="invite" id="contact" aria-labelledby="invite-h">
+    <div class="grid">
+    <div class="head">
+      <p class="eyebrow">05 · The invitation</p>
+      <h2 class="giant" id="invite-h"><span class="ln">Let's make work</span><span class="ln">that <a href="mailto:studio@example.com">matters →</a></span></h2>
+    </div>
+    <div>
+      <p class="lede">Open to select partnerships with ambitious brands and collaborators who believe in brave ideas. The page is blank and the cursor is blinking.</p>
+      <a class="cta" href="mailto:studio@example.com">Start a conversation <span aria-hidden="true">→</span></a>
+    </div>
+    <figure class="fig">
+      <img src="assets/5-invitation.jpg" width="2752" height="1536" alt="A single blank sheet of heavy paper on a dark desk, one shaft of window light falling across it." loading="lazy" />
+    </figure>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span class="meta">Maya Torres · fictional persona, no real brands</span>
+  <span class="meta">Built with the <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a> Agent Skill · by Simone Leonelli</span>
 </footer>
 
-<script type="module">
-import { CHAPTERS, PALETTE, MONTAGE } from './chapters.js';
+<script>
+(function () {
+  'use strict';
+  var root = document.documentElement;
+  root.classList.add('js');
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var narrow = function () { return innerWidth <= 680; };
+  var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+  var smooth = function (t) { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+  var lerp = function (a, b, t) { return a + (b - a) * t; };
 
-const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-const smooth=(e0,e1,x)=>{ if(x<=e0)return 0; if(x>=e1)return 1; const t=(x-e0)/(e1-e0); return t*t*(3-2*t); };
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const isTouch = matchMedia('(pointer: coarse)').matches;
-const isMobile = () => innerWidth <= 680;
-
-const app = document.getElementById('app');
-const rail = document.getElementById('rail');
-
-// preflight: which real images exist? (fall back to CSS placeholder)
-function probe(src){ return new Promise(res=>{ const i=new Image(); i.onload=()=>res(true); i.onerror=()=>res(false); i.src=src; }); }
-
-const ghostWord = t => (t.flat().filter(x=>typeof x==='string').join(' ').split(' ')[0]||'').toUpperCase();
-
-(async () => {
-  for (const ch of CHAPTERS){
-    const sec = document.createElement('section');
-    sec.id = ch.id.replace(/^\d+-/,'');
-    if (ch.depthTextDark) sec.classList.add('dark');
-    sec.dataset.morph = ch.morph;
-    sec.dataset.dark = ch.depthTextDark ? '1':'0';
-
-    const titleHTML = ch.title.map(([chunk,acc]) =>
-      chunk.split(' ').map(w=>`<span class="w${acc?' accent':''}">${w}</span>`).join(' ')
-    ).join(' ');
-
-    const imgPath = `assets/${ch.id}.jpg`;
-    const hasImg = await probe(imgPath);
-    const picStyle = hasImg ? `background-image:url('${imgPath}')` : '';
-    const picClass = hasImg ? 'pic' : 'pic placeholder';
-
-    sec.innerHTML = `
-      <div class="stage">
-        <div class="ghost" data-depth="0.3">${ghostWord(ch.title)}</div>
-        <div class="figwrap" data-depth="0.5">
-          <div class="frame">
-            <span class="br tl"></span><span class="br tr"></span><span class="br bl"></span><span class="br brc"></span>
-            <div class="${picClass}" style="${picStyle}"></div>
-            <div class="figcap"><span>${ch.fig}</span><span>${ch.figLabel}</span></div>
-          </div>
-        </div>
-        <div class="copytext">
-          <div class="eyebrow">${ch.eyebrow}</div>
-          <h2 class="giant">${titleHTML}</h2>
-          <p class="lede reveal">${ch.body}</p>
-        </div>
-        <div class="aicard" data-depth="1.25">
-          <div class="t">${ch.card.tag}</div>
-          <div class="b">${ch.card.body}</div>
-        </div>
-      </div>`;
-    app.appendChild(sec);
-
-    const r = document.createElement('div');
-    r.className='r'; r.dataset.id=ch.id;
-    r.innerHTML = `<span>${ch.id.split('-')[0].padStart(2,'0')}</span><span class="ln"></span>`;
-    rail.appendChild(r);
-  }
-
-  /* ── APPEND THE GSAP SHOWCASE BEAT ("SELECTED WORK" contact sheet) ────
-     Inserted right after THE WORK chapter (2-work) so it reads: work →
-     contact-sheet montage → craft. Built BEFORE sections/rails are collected
-     so the centre-spy and index rail stay index-aligned (the spy uses
-     sections.indexOf against the parallel rails[] array). The montage is the
-     ONE GSAP-pinned section; studio's chapters are CSS-sticky (not pins), so
-     this never creates >3 consecutive ScrollTrigger pins (§1.3) and the
-     chapters on either side give >80vh of free-scroll release. Pure markup
-     here; motion is wired at the end (desktop-only, only if GSAP loaded). */
-  const cardsHTML = MONTAGE.map(c => `
-    <article class="mcard">
-      <span class="mb"></span>
-      <div class="mi">${c.idx}</div>
-      <div>
-        <div class="ml">${c.label}</div>
-        <div class="mm">${c.year} · ${c.meta}</div>
-      </div>
-    </article>`).join('');
-  const show = document.createElement('section');
-  show.className = 'showcase'; show.id = 'selected';
-  show.dataset.morph = '#E6E6E6'; show.dataset.dark = '0';
-  show.innerHTML = `
-    <div class="montage">
-      <div class="head">
-        <div class="eyebrow">SELECTED WORK · CONTACT SHEET</div>
-        <h2 class="mtitle">Twelve years<span class="accent">, on file.</span></h2>
-      </div>
-      <div class="track">${cardsHTML}</div>
-    </div>`;
-  const workSec = [...app.children].find(s => s.id === 'work');
-  app.insertBefore(show, workSec ? workSec.nextSibling : null);   // after 2-work
-  const sr = document.createElement('div');
-  sr.className = 'r'; sr.dataset.id = 'selected';
-  sr.innerHTML = `<span>W</span><span class="ln"></span>`;
-  const workRail = [...rail.children].find(r => r.dataset.id === '2-work');
-  rail.insertBefore(sr, workRail ? workRail.nextSibling : null);
-
-  const sections = [...document.querySelectorAll('section')];
-  const rails = [...rail.querySelectorAll('.r')];
-
-  /* background morph + active rail via whichever section crosses screen-center.
-     NOTE: sections are 235vh — taller than the viewport — so a threshold-based
-     observer (which needs N% of the element visible) can NEVER fire. Instead we
-     collapse the observer root to a 1px band at the vertical center via
-     rootMargin: the section whose body straddles the middle of the screen is the
-     active one. Reliable regardless of section height. */
-  function applyActive(sec){
-    const idx = sections.indexOf(sec);
-    document.body.style.background = sec.dataset.morph;
-    const dark = sec.dataset.dark==='1';
-    document.body.style.setProperty('--fg', dark ? '#FFFFFF':'#111113');
-    document.body.style.setProperty('--fg-muted', dark ? '#9A9AA0':'#6B6B70');
-    rails.forEach((r,i)=> r.classList.toggle('on', i===idx));
-  }
-  const spy = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{ if (e.isIntersecting) applyActive(e.target); });
-  },{ rootMargin: '-50% 0px -50% 0px', threshold: 0 });
-  sections.forEach(s=>spy.observe(s));
-  applyActive(sections[0]); // paint initial state immediately
-
-  /* reduced motion: fully static, no scroll-driven motion (content already
-     visible via the !important CSS block). The scroll-spy above keeps the rail
-     + background morph live; nothing else to drive. */
-  if (reduce){
-    return; // skip every rAF engine
-  }
-
-  /* ── MOBILE — cinematic scroll (JS, works on every engine incl. Safari) ────
-     Safari/iOS reports CSS.supports('animation-timeline','view()') = true but
-     does NOT actually drive scroll-driven animations, so we do not rely on them
-     at all. Instead a single rAF loop (only while scrolling, gated by `until`)
-     drives compositor-only transforms:
-       • figure (.figwrap) PARALLAX on Y + ghost watermark (.ghost) counter-drift
-         on X, each lerped toward a scroll-derived target (eased so it reads as a
-         smooth cinematic drift, not scroll-lag)
-       • title words + copy reveal ONCE on enter (IntersectionObserver)
-     Offsets are cached in measure() (no per-frame getBoundingClientRect).
-     No pin / 3D / filter / layout writes. Content is visible if JS fails. */
-  if (isMobile()){
-    document.documentElement.classList.add('m-on');
-
-    /* one-shot entrance reveals for text */
-    const EASE='cubic-bezier(.16,1,.3,1)', DUR=800;
-    const io=new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){
-      e.target.style.opacity='1'; e.target.style.transform='none'; io.unobserve(e.target);
-    } }); },{ rootMargin:'0px 0px -12% 0px', threshold:0 });
-    const reveal=(el,delay)=>{
-      el.style.transition=`opacity ${DUR}ms ${EASE} ${delay}ms, transform ${DUR}ms ${EASE} ${delay}ms`;
-      el.style.opacity='0'; el.style.transform='translate3d(0,28px,0)'; io.observe(el);
-    };
-    sections.forEach(sec=>{ let i=0;
-      sec.querySelectorAll('h2.giant .w').forEach(t=> reveal(t,(i++)*80));
-      sec.querySelectorAll('.copytext .reveal').forEach(el=> reveal(el,(i++)*80));
-    });
-
-    /* lerped parallax — figure (vertical) + ghost watermark (horizontal counter-drift).
-       .ghost is position:static on mobile (in flow), so an X transform is safe. */
-    const movers=[];
-    document.querySelectorAll('section').forEach(sec=>{
-      const fig=sec.querySelector('.figwrap'); if(fig) movers.push({el:fig, axis:'y', amp:46});
-      const wm=sec.querySelector('.ghost');    if(wm) movers.push({el:wm, axis:'x', amp:56});
-    });
-    let centers=[]; const measure=()=>{ centers=movers.map(m=>{ const r=m.el.getBoundingClientRect(); return r.top+scrollY+r.height/2; }); };
-    measure(); addEventListener('resize', measure, {passive:true});
-    const cur=movers.map(()=>0); let raf=0, until=0;
-    const loop=()=>{ const vh=innerHeight, mid=scrollY+vh/2; let moving=false;
-      movers.forEach((m,i)=>{ const target=clamp(-(mid-centers[i])/vh*m.amp, -m.amp, m.amp);
-        cur[i]+=(target-cur[i])*0.12;
-        m.el.style.transform = m.axis==='y'
-          ? `translate3d(0, ${cur[i].toFixed(2)}px, 0)`
-          : `translate3d(${cur[i].toFixed(2)}px, 0, 0)`;
-        if(Math.abs(target-cur[i])>0.2) moving=true; });
-      raf = (performance.now()<until || moving) ? requestAnimationFrame(loop) : 0; };
-    addEventListener('scroll',()=>{ until=performance.now()+700; if(!raf) raf=requestAnimationFrame(loop); },{passive:true});
-    loop();
-    return; // skip the desktop rAF parallax engine entirely on mobile
-  }
-
-  /* desktop parallax — BOLD cinematic engine.
-     Unified approach→pin→exit timeline T∈[0,1]; never starts invisible.
-     Layers move on different planes with real scroll-driven 3D:
-       • figure: Y-drift + Z-dolly toward viewer + rotateY/rotateX camera swing
-       • giant type: per-word Z-stagger (words arrive at staggered depths) + rotateX settle
-       • ghost watermark: long horizontal sweep, counter-axis to the type
-       • card: faster drift + slight rotateY  */
-  let mx=0,my=0;            // pointer for the live 3D camera, blended with scroll
-  if(!isTouch && !reduce){
-    addEventListener('pointermove',e=>{ mx=(e.clientX/innerWidth-0.5); my=(e.clientY/innerHeight-0.5); },{passive:true});
-  }
-  /* cache each section's document-relative top + height (read once at init and
-     on debounced resize) so the per-frame loop never touches layout (perf-budget
-     §1). rect.top+scrollY is the safe absolute top regardless of offsetParent. */
-  let tops=[], heights=[];
-  function measure(){ const y=scrollY; tops=sections.map(s=>s.getBoundingClientRect().top+y); heights=sections.map(s=>s.offsetHeight); }
-  measure();
-  let rTO=0; addEventListener('resize',()=>{ clearTimeout(rTO); rTO=setTimeout(measure,150); },{passive:true});
-
-  let ticking=false;
-  function parallax(){
-    const vh=innerHeight;
-    sections.forEach((sec,i)=>{
-      const top=tops[i]-scrollY;
-      // perf: skip sections well off-screen
-      if(top>vh*1.2 || top+heights[i]<-vh*0.2) return;
-      const total=heights[i]+vh;
-      const T=clamp((vh-top)/total,0,1);
-      const enter=smooth(0.06,0.32,T);
-      const exit=1-smooth(0.66,0.88,T);
-      const live=enter*exit;
-      const drift=0.46-T;                 // signed, ~0 at hold
-      const onStage = T>0.04 && T<0.96;   // only drive 3D while in view (perf)
-
-      const fig=sec.querySelector('.figwrap');
-      if(fig){ const d=+fig.dataset.depth;
-        // Z-dolly: arrives from -260px toward the viewer; bigger Y travel
-        const z = -260*(1-enter) + drift*120*d;
-        const y = drift*300*d;
-        const sc = 0.9 + 0.1*enter;
-        // scroll-driven camera swing + subtle pointer blend
-        const ry = drift*22 + (onStage? mx*10 : 0);
-        const rx = -drift*12 + (onStage? -my*7 : 0);
-        fig.style.transform =
-          `translateY(calc(-50% + ${y.toFixed(1)}px)) translateZ(${z.toFixed(1)}px) `+
-          `rotateY(${ry.toFixed(2)}deg) rotateX(${rx.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
-        fig.style.opacity=(0.08+0.92*live).toFixed(3);
-      }
-      const ghost=sec.querySelector('.ghost');
-      if(ghost){ const d=+ghost.dataset.depth;
-        // long horizontal sweep + slight scale breathing, deep behind everything
-        ghost.style.transform=
-          `translate(calc(-50% + ${(drift*620*d).toFixed(0)}px),-50%) translateZ(-340px) scale(${(1.06-0.06*enter).toFixed(3)})`;
-      }
-      const copy=sec.querySelector('.copytext');
-      if(copy){
-        // whole block: gentle counter-drift + rotateX settle (type tilts up into place)
-        copy.style.transform=`translateY(${(drift*90).toFixed(1)}px) rotateX(${(drift*7).toFixed(2)}deg)`;
-        copy.style.opacity=(0.05+0.95*live).toFixed(3);
-        const words=copy.querySelectorAll('h2 .w'); const n=words.length;
-        words.forEach((w,k)=>{
-          const t0=0.05+(k/n)*0.20; const wp=smooth(t0,t0+0.14,T);
-          // each word flies in from its own depth + slight Y — staggered 3D arrival
-          const wz=(1-wp)*-220; const wy=(1-wp)*44;
-          w.style.opacity=wp.toFixed(3);
-          w.style.transform=`translateY(${wy.toFixed(1)}px) translateZ(${wz.toFixed(0)}px)`;
-        });
-        const rev=copy.querySelector('.reveal');
-        if(rev) rev.style.opacity=(smooth(0.14,0.34,T)*exit).toFixed(3);
-      }
-      const card=sec.querySelector('.aicard');
-      if(card){ const d=+card.dataset.depth;
-        card.style.transform=`translateY(${(drift*150*(d-1)*2.6).toFixed(1)}px) translateZ(40px) rotateY(${(drift*-10).toFixed(2)}deg)`;
-        card.style.opacity=(0.95*smooth(0.18,0.40,T)*(1-smooth(0.62,0.84,T))).toFixed(3);
-      }
-    });
-    ticking=false;
-  }
-  function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(parallax); } }
-  addEventListener('scroll',onScroll,{passive:true});
-  addEventListener('resize',()=>{ticking=true;requestAnimationFrame(parallax);},{passive:true});
-  // pointer also re-renders so the figure's camera-swing blend stays live at rest
-  if(!isTouch && !reduce) addEventListener('pointermove',onScroll,{passive:true});
-  parallax(); // initial paint
-
-  /* second-order inner micro-tilt on the image itself (adds depth over the
-     figure's scroll camera; lives on .pic so it doesn't fight .figwrap) */
-  if(!isTouch && !reduce){
-    document.querySelectorAll('.frame').forEach(frame=>{
-      const pic=frame.querySelector('.pic');
-      frame.addEventListener('pointermove',ev=>{
-        const r=frame.getBoundingClientRect();
-        const px=(ev.clientX-r.left)/r.width-0.5, py=(ev.clientY-r.top)/r.height-0.5;
-        pic.style.transform=`translateZ(40px) rotateY(${px*7}deg) rotateX(${-py*5}deg)`;
+  /* ---- split text (letters / words) keeping the accessible name intact ---- */
+  function split(el, mode) {
+    var counter = 0;
+    el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
+    function wrap(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (child) {
+        if (child.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          child.textContent.split(/(\s+)/).forEach(function (tok) {
+            if (!tok) return;
+            if (/^\s+$/.test(tok)) { frag.appendChild(document.createTextNode(' ')); return; }
+            var w = document.createElement('span'); w.className = 'w';
+            if (mode === 'letters') {
+              Array.prototype.forEach.call(tok, function (c) {
+                var sp = document.createElement('span'); sp.className = 'ch'; sp.textContent = c;
+                sp.style.setProperty('--i', counter++); w.appendChild(sp);
+              });
+            } else { w.textContent = tok; w.style.setProperty('--i', counter++); }
+            frag.appendChild(w);
+          });
+          child.replaceWith(frag);
+        } else if (child.nodeType === 1) { wrap(child); }
       });
-      frame.addEventListener('pointerleave',()=>{pic.style.transform='translateZ(0) rotateY(0) rotateX(0)';});
-    });
+    }
+    el.querySelectorAll('.ln').forEach(function (line) { wrap(line); line.setAttribute('aria-hidden', 'true'); });
+  }
+  document.querySelectorAll('[data-split]').forEach(function (el) { split(el, el.dataset.split); });
+
+  /* ---- one-shot entrances (hero letters, belief words) ---- */
+  var risers = document.querySelectorAll('.fx-rise, .fx-slide');
+  if (reduce || !('IntersectionObserver' in window)) {
+    risers.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.2 });
+    risers.forEach(function (el) { io.observe(el); });
   }
 
-  /* ── GSAP SHOWCASE WIRING — desktop & non-reduced only (matchMedia-gated so
-     it auto-kills on resize into a small/reduced context). Two cinematic
-     techniques on the #selected contact sheet:
-       • MONTAGE SNAP (taste-guardrails §2 "Montage" / "Landing Sequence") —
-         the card track advances via transform:translateX on the scrubbed pin
-         timeline; ScrollTrigger.snap snaps card→card. NEVER touches left/width.
-       • VELOCITY-REACTIVE typography (scroll-patterns.md #3) — the big display
-         heading compresses letter-spacing + scaleY from a lerped velocity
-         tracker, driven by gsap.quickTo. Large display type only; off on touch.
-     If GSAP never loads, #selected stays at its complete static (wrapped) state. */
-  (function wireShowcase(tries){
-    if(!window.gsap || !window.ScrollTrigger){
-      if(tries>0) requestAnimationFrame(()=>wireShowcase(tries-1));
-      return;
+  /* ---- palette read from the token block, mixed per frame from scroll depth ---- */
+  var cs = getComputedStyle(root);
+  function rgb(name) {
+    var v = cs.getPropertyValue(name).trim();
+    if (v[0] === '#') { var h = v.slice(1); if (h.length === 3) h = h.replace(/./g, '$&$&'); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
+    var m = v.match(/[\d.]+/g); return m ? m.slice(0, 3).map(Number) : [0, 0, 0];
+  }
+  var GREY = rgb('--grey'), WHITE = rgb('--white'), INK = rgb('--ink'), DIM = rgb('--fg-dim'), INKDIM = rgb('--ink-dim');
+  var light = { bg: GREY, fg: INK, dim: DIM, line: 'rgba(17,17,19,.18)' };
+  var paper = { bg: WHITE, fg: INK, dim: DIM, line: 'rgba(17,17,19,.18)' };
+  var dark = { bg: INK, fg: WHITE, dim: INKDIM, line: 'rgba(255,255,255,.22)' };
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
+  // colour stop at each section's centre: slate, belief, reel, craft, prix, invite
+  var stops = [light, paper, dark, light, dark, paper];
+  function mix(a, b, t) { return 'rgb(' + Math.round(lerp(a[0], b[0], t)) + ',' + Math.round(lerp(a[1], b[1], t)) + ',' + Math.round(lerp(a[2], b[2], t)) + ')'; }
+
+  /* ---- deck + reel refs ---- */
+  var deck = { reel: document.querySelector('.deck .reel-n'), tc: document.querySelector('.deck .tc'), fr: document.querySelector('.deck .fr') };
+  var reel = document.querySelector('.reel');
+  var frames = Array.prototype.slice.call(reel.querySelectorAll('.frame'));
+  var hudN = reel.querySelector('.hud .n'), hudIdx = Array.prototype.slice.call(reel.querySelectorAll('.hud .idx span'));
+  var stage = reel.querySelector('.stage');
+  var RUNTIME_FRAMES = 24 * 134; // the whole film is 2:14:00 at 24 fps
+  function timecode(f) {
+    var s = Math.floor(f / 24), fr = f % 24;
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    return pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s / 60) % 60) + ':' + pad(s % 60) + ':' + pad(fr);
+  }
+
+  /* ---- geometry cached off the hot path ---- */
+  var tops = [], heights = [], docH = 1, vh = 1;
+  function measure() {
+    vh = innerHeight;
+    var y = scrollY;
+    tops = sections.map(function (s) { return s.getBoundingClientRect().top + y; });
+    heights = sections.map(function (s) { return s.offsetHeight; });
+    docH = Math.max(1, root.scrollHeight - vh);
+  }
+
+  /* ---- the single scroll clock ---- */
+  var shown = 0, target = 0, raf = 0, lastFrame = -1, lastReel = -1, lastTC = '';
+  function render() {
+    raf = 0;
+    var y = scrollY;
+    target = clamp(y / docH, 0, 1);
+    shown = reduce ? target : lerp(shown, target, 0.16);
+    if (Math.abs(shown - target) < 0.0005) shown = target;
+    root.style.setProperty('--scroll', shown.toFixed(4));
+
+    var mid = y + vh * 0.5, active = 0;
+    for (var i = 0; i < sections.length; i++) {
+      var top = tops[i] - y, h = heights[i];
+      // --t: how centred the section is · --p: 0→1 as it crosses the viewport
+      var t = smooth(1 - Math.abs(top + Math.min(h, vh) / 2 - vh / 2) / (vh * 0.7));
+      var p = clamp((vh - top) / (vh + h), 0, 1);
+      if (!reduce) { sections[i].style.setProperty('--t', t.toFixed(4)); sections[i].style.setProperty('--p', p.toFixed(4)); }
+      if (mid >= tops[i]) active = i;
     }
-    gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.defaults({ scrub:0.5, fastScrollEnd:true, invalidateOnRefresh:true });
-    const mm = gsap.matchMedia();
-    mm.add('(min-width:769px) and (prefers-reduced-motion:no-preference)', () => {
-      const sec   = document.querySelector('#selected');
-      const wrap  = sec && sec.querySelector('.montage');
-      const track = sec && sec.querySelector('.track');
-      const title = sec && sec.querySelector('.mtitle');
-      if(!sec || !track || !title) return;
-      const cards = [...track.children];
-      const n = cards.length;
 
-      /* MONTAGE SNAP — horizontal track laid out in one row for the pinned beat,
-         advanced by translateX across the scrub timeline; snaps card→card.
-         These layout writes are one-time setup (not per-frame), transform-only
-         drives the motion. */
-      gsap.set(track, { display:'flex', flexWrap:'nowrap', willChange:'transform' });
-      gsap.set(cards, { flex:'0 0 clamp(220px,24vw,340px)' });
+    // background / foreground: a CUT at each section boundary — both switch
+    // together over an 8vh window, so text and ground always move as a pair and
+    // contrast never dips (a film cut, not a dissolve)
+    var W = vh * 0.08, from = stops[active], to = from, k = 0;
+    if (active < sections.length - 1) {
+      var edge = tops[active + 1];
+      if (mid > edge - W / 2) { to = stops[active + 1]; k = smooth((mid - (edge - W / 2)) / W); }
+    }
+    if (k === 0 && active > 0) {
+      var edge0 = tops[active];
+      if (mid < edge0 + W / 2) { to = stops[active - 1]; k = smooth(((edge0 + W / 2) - mid) / W); }
+    }
+    root.style.setProperty('--bg', mix(from.bg, to.bg, k));
+    root.style.setProperty('--fg', mix(from.fg, to.fg, k));
+    root.style.setProperty('--fg-dim', mix(from.dim, to.dim, k));
+    root.style.setProperty('--line', k < 0.5 ? from.line : to.line);
 
-      const shift = () => -(track.scrollWidth - wrap.clientWidth);   // cached on refresh
-      const tl = gsap.timeline({ scrollTrigger:{
-        trigger:'#selected', start:'top top', end:'+=' + (n*60) + '%',
-        pin:wrap, anticipatePin:1,
-        snap:{ snapTo: 1/(n-1), duration:{min:.2,max:.5}, ease:'power2.out' } } });
-      tl.fromTo(track, { x:0 }, { x:shift, ease:'none' }, 0);
+    // deck readout: the playhead in real timecode
+    var f = Math.round(shown * RUNTIME_FRAMES), tc = timecode(f);
+    if (tc !== lastTC) { lastTC = tc; deck.tc.textContent = 'TC ' + tc; deck.fr.textContent = 'FR ' + ('000' + f).slice(-4); }
+    if (active !== lastReel) { lastReel = active; deck.reel.textContent = 'Reel 0' + active; }
 
-      /* VELOCITY-REACTIVE typography — lerped velocity tracker (deltaY/dt, lerp
-         0.15, capped) → gsap.quickTo on the heading's letter-spacing + scaleY.
-         Disabled on touch. Transform-based scaleY + letter-spacing (allowed on
-         ≥48px display type only, §1.4). Lives in this section's lifecycle only. */
-      let velRAF = null;
-      if(!isTouch){
-        const setLS = gsap.quickTo(title, 'letterSpacing', { duration:.3, ease:'power2.out' });
-        const setSY = gsap.quickTo(title, 'scaleY',        { duration:.3, ease:'power2.out' });
-        let lastY = scrollY, lastT = performance.now(), vel = 0;
-        const tick = (now) => {
-          const dt = Math.max(now - lastT, 1);
-          const dy = scrollY - lastY;
-          vel += (dy/dt - vel) * 0.15;            // lerp toward instantaneous velocity
-          lastY = scrollY; lastT = now;
-          const v = Math.min(Math.abs(vel), 3);   // cap px/ms
-          setLS((-0.02 - v*0.02) + 'em');         // -0.02em (calm) → ~-0.08em (fast)
-          setSY(1 - v*0.04);                       // scaleY 1 → ~0.88 on fast scroll
-          velRAF = requestAnimationFrame(tick);
-        };
-        velRAF = requestAnimationFrame(tick);
+    // the reel: pinned stage, progress r over the track, hard cuts between frames
+    var ri = sections.indexOf(reel), pinned = !narrow() && !reduce;
+    if (pinned) {
+      var r = clamp((y - tops[ri]) / (heights[ri] - vh), 0, 1);
+      var n = frames.length, idx = Math.min(n - 1, Math.floor(r * n)), inF = clamp(r * n - idx, 0, 1);
+      stage.style.setProperty('--r', r.toFixed(4));
+      frames[idx].style.setProperty('--f', smooth(inF * 1.15).toFixed(4));
+      if (idx !== lastFrame) {
+        frames.forEach(function (fr, j) { fr.classList.toggle('on', j === idx); if (j !== idx) fr.style.setProperty('--f', '0'); });
+        hudN.textContent = '0' + (idx + 1);
+        hudIdx.forEach(function (s, j) { s.classList.toggle('on', j === idx); });
+        lastFrame = idx;
       }
-
-      return () => {
-        if(velRAF) cancelAnimationFrame(velRAF);
-        gsap.set([track, ...cards, title], { clearProps:'all' });
-      };
-    });
-  })(120);
+    }
+    if (!reduce && Math.abs(shown - target) > 0.0005) raf = requestAnimationFrame(render);
+  }
+  function onScroll() { if (!raf) raf = requestAnimationFrame(render); }
+  addEventListener('scroll', onScroll, { passive: true });
+  var rt; addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { measure(); lastFrame = -1; onScroll(); }, 120); }, { passive: true });
+  addEventListener('load', function () { measure(); lastFrame = -1; onScroll(); });
+  measure(); render();
 })();
 </script>
 </body>

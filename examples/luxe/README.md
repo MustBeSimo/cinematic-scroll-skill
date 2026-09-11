@@ -1,15 +1,59 @@
-# Luxe — quiet-luxury maison (Maison Solenne)
+# Luxe — quiet-luxury maison (Maison Solenne) · "One day of light"
 
 A worked example for **cinematic-scroll** in a deliberately restrained world:
-**quiet luxury** — warm ivory and sand grounds, a single muted cognac accent,
-refined thin-serif display type, vast negative space, and *barely-there*
-parallax. The motion is Atmospheric Sublime by way of Symmetric Monument: long 220vh pins, a
-background that drifts only ~3% across the whole pin, and titles that reveal
-through a **letter-spacing scrub** (0.45em → 0em) rather than anything flashy.
+**quiet luxury** — warm ivory and cognac, a printed-monograph typographic system,
+and one idea explored all the way down: **the scroll is the sun.**
+
+A single clock — the hour of day, 06:00 → 19:30 — is derived from scroll depth,
+lerped, and every visual state on the page is mixed from it per frame:
+
+- the ground's colour temperature (three fixed "sky" layers — morning, noon,
+  dusk — cross-faded by opacity);
+- a wash of window light that crosses every photographic plate, with cool
+  morning / warm evening tints and a dusk vignette (opacity only);
+- the cast shadow under the object — long at dawn and dusk, short and dark at
+  noon (`transform: translate + scaleX`);
+- the live folio readout (hour · light · Kelvin · page number);
+- the sun marker on the west-casement diagram in the Atelier chapter (inline SVG).
+
 Fictional maison (**Maison Solenne**) — no real people or brands.
 
-Single self-contained `index.html` — no build step, no npm, no external JS.
-The only external request is Google Fonts. GitHub-Pages-native.
+## The signature moment
+
+**Chapter III · The Object** is a 320vh pinned stage. The card case sits still in
+the centre of the viewport while a working day passes over it: the hour numerals
+tick from 09:30 to 17:30, the plate cools then warms, the shadow swings from
+east to west, and three captions (morning / noon / evening) crossfade in the
+same position. The last ~22% of the pin **holds** at 17:30 — a stable viewing
+moment — before the page releases into the Atelier specification and the enquiry.
+
+## What it demonstrates
+
+- **Continuous scroll-derived state** (not "chapters that fade in"): one passive
+  scroll listener → one rAF loop → `hour = f(scrollY)` via a piecewise-linear
+  keyframe table measured from the real section geometry → everything else is a
+  pure function of `hour`. Only `transform` and `opacity` mutate per frame.
+- **Printed-monograph typography**: folios, plate numbers, a two-column essay
+  with drop cap and a column-spanning pull quote (Provenance), a specification
+  table and a diagram (Atelier), a centred closing page (Enquire). Every chapter
+  has a different grid; nothing repeats a template.
+- **Zero dependencies, zero requests beyond the four plates**: system font stacks
+  (`Iowan Old Style / Palatino / Georgia`, `system-ui`, `ui-monospace`), fluid
+  `clamp()` type, no CDN, no web fonts.
+- **Token contract**: the six colour roles (`--bg --surface --fg --fg-dim
+  --accent --line`) and the four motion curves (`--ease-reveal|exit|playful|cut`
+  from `tokens/motion.tokens.json`) — no literal colours or `cubic-bezier()` in
+  declarations. `:hover` is gated behind `@media (hover:hover)`.
+- **Complete degradation paths**:
+  - **Mobile (< 900px)**: free flow, no pin; the light layers and readouts still
+    follow the scroll; the three captions stack in order.
+  - **Reduced motion**: no pin, no lerp loop, no reveals; the page rests at
+    13:00 with every state composed and readable.
+  - **No JS**: identical content in flow; plates at their noon defaults; the
+    captions listed; readouts at their static defaults.
+- **Accessibility**: one `h1`, ordered headings, descriptive `alt` on all four
+  plates, `:focus-visible`, keyboard-reachable CTA (`mailto:`), decorative
+  layers `aria-hidden`, the SVG diagram titled and described.
 
 ## Run it
 
@@ -19,72 +63,27 @@ python3 -m http.server 8099
 # then open http://localhost:8099/examples/luxe/
 ```
 
-…or just double-click `index.html`. It works **immediately, at $0**, with **zero
-image files**: each chapter probes for a real still and, on 404, renders a
-refined CSS-only placeholder (soft warm gradients + subtle grain) so the page
-looks intentional and complete. Drop real stills in later and the page picks
-them up automatically.
-
-## What it demonstrates
-
-- **Quiet-luxury motion** — depth multipliers ≤ 0.50; the framed still drifts
-  only ~3% of the viewport over the entire 220vh pin (perceptual depth without
-  visible movement). No 3D tilt, no glow, no `filter` animation.
-- **Letter-spacing title reveal** — the refined/luxury treatment from
-  `taste-guardrails.md`: the first title fragment scrubs `0.45em → 0em` over
-  the first ~30% of each pin.
-- **GSAP ScrollTrigger showcase beat** — one dedicated, whisper-quiet section
-  ("The Object, Held", inserted after Chapter III) powered by GSAP
-  ScrollTrigger (deferred from CDN, feature-detected). It demonstrates two
-  restrained techniques from `taste-guardrails.md` §2:
-  - **Push-in** — the framed object scales `1 → 1.08` over the pin (a slow zoom
-    toward the subject), with no other foreground motion.
-  - **Match-cut** — two captions share the exact same position; the words swap
-    by `opacity` crossfade while the composition holds perfectly still.
-
-  No 3D tilt, no snap, no velocity effects (museum restraint). If GSAP fails to
-  load — or under reduced-motion / mobile — the beat degrades to a complete
-  static state (object at rest, both captions shown), and the hand-rolled rAF
-  engine is unaffected.
-- **Compositor-only scroll** — only `transform` and `opacity` mutate per frame,
-  in one rAF batch, behind a passive scroll listener; off-screen sections are
-  skipped.
-- **Background morph + quiet rail** — a fixed warm atmosphere crossfades
-  between four ground tones via an IntersectionObserver scroll-spy; the
-  left-hand progress rail marks the active chapter.
-- **Graceful degradation** — mobile (≤680px) drops the pin and stacks the
-  layout, but keeps the maison's deliberately gentle touch-safe motion — a
-  barely-there lerped parallax plus scroll-linked entrance reveals (no 3D, no
-  scrolljack). Only `prefers-reduced-motion` goes fully static — a clean,
-  stacked, full-opacity mid-state (letter-spacing settled to 0).
+Single self-contained `index.html` plus four JPEG plates in `assets/`.
+Double-click works too (the plates are plain `<img>`, no JS-fetched assets).
 
 ## Image slots
 
-The page is built to look complete with **no files present**. To upgrade a
-chapter, drop a JPEG at the probed path below and reload — no code change. All
-paths are relative, so it works at
-`https://<user>.github.io/cinematic-scroll-skill/examples/luxe/`.
+| Slot | File | Where it appears |
+|------|------|------------------|
+| Plate I | `assets/overture.jpg` | Frontispiece (4:5) |
+| Plate II | `assets/provenance.jpg` | Provenance (square crop) |
+| Plate III | `assets/object.jpg` | The Object — the pinned day (4:5) |
+| Plate IV | `assets/audience.jpg` | Atelier (21:9 crop, bottom-anchored) |
 
-| Slot | Probed file (relative) | Aspect ratio | Target px | Generation prompt |
-|------|------------------------|:------------:|:---------:|-------------------|
-| I — Overture | `assets/overture.jpg` | 4 : 5 | 1024 × 1280 | Quiet-luxury website-interface still life: a single muted object — a folded length of pale ecru linen on warm ivory — centred in vast negative space, photographed in soft north-window light. Warm ivory and sand palette, the faintest restrained cognac warmth, no bright colour, no glow, generous soft shadow, refined and calm. Editorial Swiss-museum restraint. No text, no logos, no people. |
-| II — Provenance | `assets/provenance.jpg` | 4 : 5 | 1024 × 1280 | Quiet-luxury still: a worn leather-bound ledger and a single brass key resting on aged sand-coloured paper, shot from above in soft diffuse light. Muted ecru, bark, and restrained cognac tones, vast negative space around the objects, gentle grain, no hard edges. Calm archival mood, expensive restraint. No text, no logos, no people. |
-| III — The Object | `assets/object.jpg` | 4 : 5 | 1024 × 1280 | Quiet-luxury product moment: one hand-burnished cognac-leather object — a minimal unbranded holdall — standing alone on a warm sand surface, framed in soft directional light against an ivory void. Restrained cognac accent, deep soft shadow, no monogram, no hardware, no shine or glow. Refined thin-serif-era catalogue mood, immense negative space. No text, no logos, no people. |
-| IV — Enquire | `assets/audience.jpg` | 4 : 5 | 1024 × 1280 | Quiet-luxury still: a single sheet of heavy ivory correspondence paper and a fountain pen on a bare warm-ecru desk, one shaft of soft window light, long quiet shadow. Muted ivory, sand, and cognac palette, vast empty space, fine grain, soft radii. Calm, patient, intentional. No writing, no text, no logos, no people. |
-
-> Recommended export: **WebP or optimised JPEG, ≤ 200KB each, ≤ 1280px on the
-> long edge** (per `references/performance-budget.md`). The frame uses
-> `object-fit: cover` (via `background-size: cover`), so off-centre crops are
-> forgiving.
+The light layers (`.wash`, `.tint.cool`, `.tint.warm`, `.dusk`) are stacked on
+every `.plate`; swap the JPEGs and the page re-lights them automatically.
 
 ## Editing
 
-Open `index.html` and edit the `CHAPTERS` array near the bottom — titles
-(`[text, italic?]` fragments; the first fragment carries the scrub), copy,
-ground-tone `morph`, captions, and the rail labels. Drop matching stills into
-`./assets/<id>.jpg`. That is the whole content model.
-
-## Deploy / preview
-
-Static files only — push to a branch and enable GitHub Pages, or
-`python3 -m http.server 8099` locally and open `/examples/luxe/`.
+- **Copy and captions** live directly in the markup (it is a monograph, not a
+  manifest).
+- **The day**: `H0`/`H1` and the `keys` table in `measure()` map scroll positions
+  to hours per section; `render(h)` is the single place where hour → visual
+  state is defined (tints, wash position, shadow length, Kelvin, notes).
+- **Captions in Chapter III**: `data-from` / `data-to` on each `.cap` are the hour
+  ranges that switch them.
