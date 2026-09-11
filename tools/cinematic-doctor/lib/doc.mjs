@@ -80,7 +80,7 @@ function blankCodeComments(code) {
  * @param {string} raw   full HTML source
  * @param {string} file  source path (for reporting)
  */
-export function buildDoc(raw, file = '<input>') {
+export function buildDoc(raw, file = '<input>', externalStyles = []) {
   const html = blankHtmlComments(raw);
 
   // pull <style> then <script> out of the comment-blanked html
@@ -91,7 +91,7 @@ export function buildDoc(raw, file = '<input>') {
   const markup = scriptX.blanked;
 
   // css / js, each with comments blanked, plus their absolute start offsets
-  const css = styleX.blocks.map((b) => ({ text: blankCodeComments(b.content), start: b.start }));
+  const css = [...styleX.blocks,...externalStyles].map((b) => ({ text: blankCodeComments(b.content), start: b.start, external: b.external }));
   const js = scriptX.blocks.map((b) => ({ text: blankCodeComments(b.content), start: b.start }));
 
   const cssText = css.map((b) => b.text).join('\n');
@@ -127,7 +127,7 @@ export function buildDoc(raw, file = '<input>') {
       for (const b of blobs) {
         rx.lastIndex = 0;
         const m = rx.exec(b.text);
-        if (m) return this.lineAt(b.start + m.index);
+        if (m) return this.lineAt(b.start + (b.external ? 0 : m.index));
       }
       return undefined;
     },

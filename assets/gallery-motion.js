@@ -297,6 +297,39 @@
 
   // assets/gallery-motion.mjs
   var runtime = createCinematicRuntime(document);
+  var hero = document.querySelector(".hero-stage")?.closest(".hero");
+  var stage = hero?.querySelector(".hero-stage");
+  var portal = hero?.querySelector(".portal-window");
+  var scene = hero?.querySelector(".hero-feature");
+  var opening = hero?.querySelector(".hero-opening");
+  var heroCopy = hero?.querySelector(".hero-copy");
+  var caption = hero?.querySelector(".feature-caption");
+  var portalMedia = matchMedia("(min-width:1025px) and (pointer:fine) and (prefers-reduced-motion:no-preference)");
+  var heroRect = null;
+  var stageRect = null;
+  var headerHeight = 76;
+  var portalProgress = 0;
+  var portalEnabled = false;
+  function setPortalMode() {
+    if (!hero) return;
+    const enabled = portalMedia.matches && !paused;
+    if (enabled === portalEnabled) return;
+    portalEnabled = enabled;
+    hero.classList.toggle("portal-enabled", enabled);
+    if (!enabled) {
+      portal.style.cssText = "";
+      scene.style.cssText = "";
+      opening.style.cssText = "";
+      heroCopy.style.cssText = "";
+      caption.style.cssText = "";
+      scene.inert = false;
+      opening.inert = false;
+    }
+    runtime.refresh();
+  }
+  portalMedia.addEventListener("change", setPortalMode);
+  hero?.addEventListener("focusin", () => runtime.wake());
+  hero?.addEventListener("focusout", () => runtime.wake());
   var entries = [...document.querySelectorAll("[data-gallery-preview]")].map((el) => {
     const video = el.querySelector("video");
     video.muted = true;
@@ -328,13 +361,15 @@
         control.setAttribute("aria-pressed", String(paused));
       }
       runtime.setQuality(paused ? "static" : "auto");
+      setPortalMode();
       runtime.wake();
     });
   }
+  setPortalMode();
   var artVideo = document.querySelector("[data-art-video]");
   var artEntry = artVideo ? { el: artVideo, video: artVideo, wanted: false, failed: false, token: 0 } : null;
   if (artEntry) {
-    artEntry.el.dataset.galleryPreview = "assets/brand/renaissance-h3-15s.mp4";
+    artEntry.el.dataset.galleryPreview = matchMedia("(max-width:768px), (pointer:coarse)").matches ? "assets/brand/renaissance-h3-15s-mobile.mp4" : "assets/brand/renaissance-h3-15s.mp4";
     artVideo.addEventListener("playing", () => {
       if (artEntry.wanted) artVideo.classList.add("is-playing");
       else artVideo.pause();
@@ -374,10 +409,32 @@
     headingRects = headings.map((el) => el.getBoundingClientRect());
     for (const e of stickers) e.rect = e.el.getBoundingClientRect();
     artRect = artVideo?.getBoundingClientRect();
+    if (hero) {
+      heroRect = hero.getBoundingClientRect();
+      stageRect = stage.getBoundingClientRect();
+      headerHeight = document.querySelector(".site-head").getBoundingClientRect().height;
+    }
   });
   runtime.subscribe((s) => {
     const allowed = s.visible && !s.reducedMotion && !paused;
-    if (artEntry) playback(artEntry, Boolean(allowed && artRect.bottom > 0 && artRect.top < innerHeight));
+    if (hero && portalEnabled) {
+      const travel = Math.max(1, heroRect.height - stageRect.height);
+      portalProgress = clamp((headerHeight - heroRect.top) / travel);
+      const reveal = clamp((portalProgress - 0.2) / 0.5), ease = reveal ** 2.6;
+      const w = stageRect.width, h = stageRect.height;
+      const k = 1 + (Math.max(w / 160 * 2.6, h / 220 * 3) - 1) * ease;
+      const x = w * (0.84 - 0.34 * ease) - 80 * k, y = h * (0.61 - 0.11 * ease) - 110 * k;
+      portal.style.transform = `translate3d(${x}px,${y}px,0) scale(${k})`;
+      portal.style.opacity = String(clamp(reveal * 12));
+      if (scene.style.width !== w + "px") scene.style.width = w + "px";
+      if (scene.style.height !== h + "px") scene.style.height = h + "px";
+      scene.style.transform = `scale(${1 / k}) translate3d(${-x}px,${-y}px,0)`;
+      caption.style.opacity = String(clamp((reveal - 0.72) / 0.28));
+      heroCopy.style.opacity = String(1 - clamp((reveal - 0.2) / 0.24));
+      scene.inert = reveal < 0.99;
+      opening.inert = reveal >= 0.44;
+    }
+    if (artEntry) playback(artEntry, Boolean(allowed && artRect.bottom > 0 && artRect.top < innerHeight && (!portalEnabled || portalProgress < 0.7)));
     let animateStickers = false;
     if (allowed) stickerTime += s.delta;
     stickers.forEach((entry, i) => {
@@ -393,7 +450,8 @@
       if (!chosen && s.coarsePointer) chosen = visible.filter((e) => !e.el.hasAttribute("data-autopreview") && e.rect.top < innerHeight * 0.7 && e.rect.bottom > innerHeight * 0.3).sort((a, b) => Math.abs((a.rect.top + a.rect.bottom) / 2 - innerHeight / 2) - Math.abs((b.rect.top + b.rect.bottom) / 2 - innerHeight / 2))[0];
     }
     for (const e of entries) {
-      playback(e, Boolean(allowed && visible.includes(e) && (e === chosen || e.el.hasAttribute("data-autopreview"))));
+      const behindPortal = portalEnabled && scene?.contains(e.el) && portalProgress <= 0.2;
+      playback(e, Boolean(allowed && !behindPortal && visible.includes(e) && (e === chosen || e.el.hasAttribute("data-autopreview"))));
       const media = e.el.querySelector(".gallery-media");
       if (media) {
         const offset = allowed ? clamp((innerHeight / 2 - (e.rect.top + e.rect.height / 2)) / innerHeight, -1, 1) * 22 : 0;

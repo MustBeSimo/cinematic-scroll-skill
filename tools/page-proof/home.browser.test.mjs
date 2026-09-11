@@ -6,6 +6,7 @@ const base=process.env.HOME_PREVIEW_URL||'http://127.0.0.1:8875/';
 test('all galleries have linked proximity previews, autoplay and reduced-motion fallbacks',async t=>{
  const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});t.after(()=>browser.close());
  const page=await browser.newPage({viewport:{width:1440,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(base);
+ await page.evaluate(()=>scrollTo(0,600));
  await page.waitForFunction(()=>document.querySelector('#featured-preview').currentTime>.1);
  assert.equal(await page.locator('#featured-preview').evaluate(v=>v.loop&&v.muted),true);
  assert.ok((await page.locator('.hero-media').boundingBox()).height>250,'hero has a visible media frame');
@@ -37,6 +38,37 @@ test('all galleries have linked proximity previews, autoplay and reduced-motion 
  await mkdir('.verify/gallery-motion',{recursive:true});await page.goto(base);await page.screenshot({path:'.verify/gallery-motion/home.png'});
 });
 test('every gallery destination has a local video clip',async()=>{const manifest=JSON.parse(await readFile('assets/previews/manifest.json','utf8'));assert.equal(Object.keys(manifest).length,28);for(const path of Object.values(manifest))await access(path);});
+test('the architectural reveal reverses and falls back without duplicate film downloads',async t=>{
+ const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});t.after(()=>browser.close());
+ const page=await browser.newPage({viewport:{width:1440,height:900},colorScheme:'light'});await page.goto(base);
+ await page.waitForFunction(()=>document.querySelector('.hero').classList.contains('portal-enabled'));
+ const portal=page.locator('.portal-window'),scene=page.locator('.hero-feature');
+ const initial=await portal.evaluate(e=>e.style.transform);
+ assert.equal(await scene.evaluate(e=>e.inert),true);
+ await page.evaluate(()=>scrollTo(0,320));await page.waitForTimeout(150);
+ assert.notEqual(await portal.evaluate(e=>e.style.transform),initial);
+ await page.evaluate(()=>scrollTo(0,600));await page.waitForTimeout(150);
+ assert.equal(await scene.evaluate(e=>e.inert),false);
+ assert.equal(await page.locator('.hero-opening').evaluate(e=>e.inert),true);
+ await scene.locator('.feature-caption a').focus();assert.equal(await page.evaluate(()=>document.activeElement.textContent.trim()),'Enter Aureus ↗');
+ await page.locator('.brand').focus();await page.evaluate(()=>scrollTo(0,0));await page.waitForTimeout(150);
+ assert.equal(await portal.evaluate(e=>e.style.transform),initial);
+ assert.equal(await page.locator('.hero-opening').evaluate(e=>e.inert),false);
+ await page.setViewportSize({width:768,height:900});await page.waitForTimeout(150);
+ assert.equal(await page.locator('.hero').evaluate(e=>e.classList.contains('portal-enabled')),false);
+ assert.equal(await scene.evaluate(e=>e.inert),false);
+ assert.equal(await portal.evaluate(e=>e.style.transform),'');
+ await page.setViewportSize({width:1440,height:900});await page.emulateMedia({reducedMotion:'reduce'});await page.waitForTimeout(150);
+ assert.equal(await page.locator('.hero-stage').evaluate(e=>getComputedStyle(e).position),'relative');
+ assert.equal(await page.locator('video').evaluateAll(v=>v.every(e=>e.paused)),true);
+ const phone=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});const films=[];
+ phone.on('request',r=>{if(r.url().includes('renaissance-h3-15s'))films.push(r.url());});await phone.goto(base);
+ await phone.waitForFunction(()=>document.querySelector('[data-art-video]').currentTime>.1);
+ assert.ok(films.length>0);assert.ok(films.every(url=>url.includes('15s-mobile.mp4')));
+ await phone.setViewportSize({width:1100,height:844});await phone.waitForTimeout(150);
+ assert.equal(await phone.locator('.hero').evaluate(e=>e.classList.contains('portal-enabled')),false,'touch remains unpinned at wide widths');
+ assert.ok(films.every(url=>url.includes('15s-mobile.mp4')),'resize does not download a second encode');
+});
 test('agent commands, living artwork and stickers have working static fallbacks',async t=>{
  const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});t.after(()=>browser.close());
  const page=await browser.newPage({viewport:{width:1440,height:900}});await page.goto(base);

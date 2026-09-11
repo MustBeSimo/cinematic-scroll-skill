@@ -25,6 +25,7 @@ import { join, dirname, resolve, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { buildDoc } from './lib/doc.mjs';
+import { localStylesheets } from './lib/stylesheets.mjs';
 import { aggregate, renderScorecard, buildReport } from './lib/scorecard.mjs';
 
 import { analyze as taste } from './checks/taste.mjs';
@@ -42,8 +43,8 @@ const DEFAULT_MIN = 80;
 const CHECKS = [taste, performance, a11y, mobile, tokens, threed, hygiene];
 
 /** Run all checks against one HTML string, returning the aggregate. */
-export function scoreHtml(raw, file = '<input>') {
-  const doc = buildDoc(raw, file);
+export function scoreHtml(raw, file = '<input>', externalStyles = []) {
+  const doc = buildDoc(raw, file, externalStyles);
   const results = CHECKS.map((fn) => fn(doc));
   return aggregate(results);
 }
@@ -51,7 +52,7 @@ export function scoreHtml(raw, file = '<input>') {
 /** Score a single file path. */
 function scoreFile(file) {
   const raw = readFileSync(file, 'utf8');
-  return scoreHtml(raw, file);
+  return scoreHtml(raw, file, localStylesheets(raw,file));
 }
 
 /** Directories that never contain gradeable web builds: dependency trees,
