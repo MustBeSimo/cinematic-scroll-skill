@@ -9,7 +9,12 @@ const out='.verify/3d-refinement/tests';await mkdir(out,{recursive:true});
 test.after(()=>browser.close());
 for(const name of scenes)test(name+' renders, responds to input, and holds motion when requested',{timeout:120000},async t=>{
  const page=await browser.newPage({viewport:{width:1280,height:800}});t.after(()=>page.close());const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const surfaceRequests=[];page.on('response',response=>{if(response.url().includes('/_surface-assets/')&&response.url().endsWith('.jpg'))surfaceRequests.push({url:response.url(),status:response.status()});});
  await page.goto(`${base}/examples/${name}/`,{waitUntil:'networkidle'});
+ if(['gallery-flythrough','jungle-flythrough'].includes(name)){
+  assert.equal(new Set(surfaceRequests.map(r=>r.url)).size,6,'two shared PBR sets load once per scene');
+  assert.ok(surfaceRequests.every(r=>r.status===200),'all diffuse, normal and packed surface maps load');
+ }
  const canvas=page.locator('canvas[data-scene-state]');await canvas.waitFor({timeout:30000});
  await page.locator('.cs-scene-controls summary').click();
  await page.getByRole('button',{name:'Pause drift',exact:true}).click();
@@ -49,4 +54,13 @@ for(const name of scenes)test(name+' renders, responds to input, and holds motio
  assert.ok(await nojs.locator('h1,h2').count(),'a readable no-JS story');
  await nojs.screenshot({path:`${out}/${name}-nojs.png`});
  await writeFile(`${out}/${name}.json`,JSON.stringify({errors,reduceErrors,passed:true},null,2));
+});
+for(const name of ['gallery-flythrough','jungle-flythrough'])test(name+' retains a working scene when every surface map fails',async t=>{
+ const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});t.after(()=>page.close());
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/_surface-assets/*.jpg',route=>route.abort());
+ await page.goto(`${base}/examples/${name}/`,{waitUntil:'networkidle'});
+ await page.locator('canvas[data-scene-state="reduced"]').waitFor();
+ assert.equal(await page.locator('body').evaluate(el=>el.classList.contains('no-webgl')),false);
+ assert.ok(await page.locator('h1').isVisible());assert.deepEqual(errors,[]);
 });

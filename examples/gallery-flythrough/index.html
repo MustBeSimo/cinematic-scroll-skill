@@ -241,6 +241,7 @@
   import * as THREE from 'three';
   import {createSceneSession} from '../_scene-session.js';
   import {mountSceneControls} from '../_study-controls.js';
+  import {createSurfaceLibrary,surfaceUV,bevelBox,disposeSurfaceScene} from '../_surface-materials.js';
 
   let reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = matchMedia('(max-width: 768px)').matches;
@@ -274,7 +275,7 @@
 
   let renderer, scene, camera, session;
   let progress = 0, target = 0, mx = 0, my = 0, tmx = 0, tmy = 0;
-  let keyLightA, keyLightB, curve, dust;
+  let keyLightA, keyLightB, curve, dust, surfaces, gallerySun, environmentTarget;
   const spinners = [], pictureLights = [];
   const tmpV = new THREE.Vector3(), lookV = new THREE.Vector3();
 
@@ -285,10 +286,14 @@
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
+    renderer.shadowMap.enabled=true;
+    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    surfaces=createSurfaceLibrary(renderer,()=>session?.invalidate());
+    woodMat=surfaces.material('wood_floor',{color:'#eee6d8',roughness:.65,clearcoat:.18,clearcoatRoughness:.32,relief:.38,occlusion:.65});
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color('#211c15');
-    scene.fog = new THREE.FogExp2('#120d08', 0.0135);
+    scene.fog = new THREE.FogExp2('#302e29', 0.009);
 
     camera = new THREE.PerspectiveCamera(58, innerWidth/innerHeight, 0.1, 400);
 
@@ -298,10 +303,14 @@
     loadEnvironment();
 
     /* lighting — IBL does most of the fill; these warm lights ride with the camera */
-    scene.add(new THREE.AmbientLight('#4a3722', 0.55));
-    const hemi = new THREE.HemisphereLight('#e2c089', '#161009', 0.7); scene.add(hemi);
-    keyLightA = new THREE.PointLight('#ffd79a', 30, 38, 2.0); scene.add(keyLightA);
-    keyLightB = new THREE.PointLight('#ffe9c8', 16, 28, 2.0); scene.add(keyLightB);
+    scene.add(new THREE.AmbientLight('#f2eee6', 0.16));
+    const hemi = new THREE.HemisphereLight('#e2ebfa', '#6b5440', .75); scene.add(hemi);
+    keyLightA = new THREE.PointLight('#fff0da', 48, 38, 2.0); scene.add(keyLightA);
+    keyLightB = new THREE.PointLight('#e6edff', 24, 28, 2.0); scene.add(keyLightB);
+    gallerySun=new THREE.SpotLight('#fff4df',110,45,.95,.65,1.5);
+    gallerySun.castShadow=true;gallerySun.shadow.mapSize.set(isMobile?512:1024,isMobile?512:1024);
+    gallerySun.shadow.bias=-.0002;gallerySun.shadow.normalBias=.025;
+    scene.add(gallerySun,gallerySun.target);
 
     if (!isMobile) addEventListener('pointermove', onPointer, {passive:true});
     session = createSceneSession({canvas, frame:loop, resize:onResize, restore:loadEnvironment, motionChange(value) { reduce=value; mx=my=tmx=tmy=0; } });
@@ -309,6 +318,7 @@
     mountSceneControls({title:'Gallery light',label:'Exposure',min:.65,max:1.5,step:.05,value:1.05,format:v=>v.toFixed(2)+'×',
       update(v){ renderer.toneMappingExposure=v; session.invalidate(); },pause:v=>session.setPaused(v)});
     session.start();
+    addEventListener('pagehide',event=>{if(!event.persisted){session.dispose();environmentTarget?.dispose();disposeSurfaceScene(scene,renderer);}});
   }
 
   /* image-based lighting + real reflections from the fal.ai atrium panorama */
@@ -319,7 +329,7 @@
       try {
         const pmrem = new THREE.PMREMGenerator(renderer);
         const rt = pmrem.fromEquirectangular(tex);
-        scene.environment = rt.texture;
+        environmentTarget?.dispose();environmentTarget=rt;scene.environment = rt.texture;
         pmrem.dispose(); tex.dispose();
         session?.invalidate();
       } catch(e){ /* IBL optional — scene still lit by the warm lights */ }
@@ -327,9 +337,9 @@
   }
 
   /* materials — envMapIntensity lets the IBL show in the metal/plaster */
-  const plaster = (c)=> new THREE.MeshStandardMaterial({ color: c, roughness: 0.9, metalness: 0.04, envMapIntensity: 0.7 });
-  const woodMat = new THREE.MeshStandardMaterial({ color: '#4a3020', roughness: 0.72, metalness: 0.06, envMapIntensity: 0.6 });
-  const brass   = new THREE.MeshStandardMaterial({ color: '#e6b765', roughness: 0.26, metalness: 0.95, emissive: '#5a3d12', emissiveIntensity: 0.25, envMapIntensity: 1.4 });
+  const plaster = (c)=> surfaces.material('plastered_wall',{color:c,roughness:.92,relief:.35,envMapIntensity:.55});
+  let woodMat;
+  const brass   = new THREE.MeshStandardMaterial({ color: '#bda16c', roughness: 0.3, metalness: .94, envMapIntensity: 1.3 });
   const glowMat = (c, i)=> new THREE.MeshStandardMaterial({ color: '#000', emissive: c, emissiveIntensity: i, roughness: 1, metalness: 0 });
   const artTex = new THREE.TextureLoader();
 
@@ -339,7 +349,7 @@
   }
   function buildGallery(){
     const HALL_W = 9, HALL_H = 6, SEG = 14, SEGS = 7; // 7 zones × 14 deep ≈ 98u
-    const wallL = plaster('#d8cbb2'), wallR = plaster('#d2c1a6'), floorMat = woodMat, ceilMat = plaster('#241a10');
+    const wallL = plaster('#ede7da'), wallR = plaster('#e5e0d5'), floorMat = woodMat, ceilMat = plaster('#6c665c');
     const group = new THREE.Group(); scene.add(group);
     let artIdx = 0;
 
@@ -349,14 +359,15 @@
       const w = wide ? HALL_W + 6 : HALL_W;
       const h = wide ? HALL_H + 3 : HALL_H;
 
-      const floor = new THREE.Mesh(new THREE.PlaneGeometry(w, SEG), floorMat);
+      const floor = new THREE.Mesh(surfaceUV(new THREE.PlaneGeometry(w, SEG),2.4), floorMat);
+      floor.receiveShadow=true;
       floor.rotation.x = -Math.PI/2; floor.position.set(0, 0, z - SEG/2); group.add(floor);
-      const ceil = new THREE.Mesh(new THREE.PlaneGeometry(w, SEG), ceilMat);
+      const ceil = new THREE.Mesh(surfaceUV(new THREE.PlaneGeometry(w, SEG),2), ceilMat);
       ceil.rotation.x = Math.PI/2; ceil.position.set(0, h, z - SEG/2); group.add(ceil);
 
-      const left = new THREE.Mesh(new THREE.PlaneGeometry(SEG, h), wallL);
+      const left = new THREE.Mesh(surfaceUV(new THREE.PlaneGeometry(SEG, h),2), wallL);left.receiveShadow=true;
       left.rotation.y = Math.PI/2; left.position.set(-w/2, h/2, z - SEG/2); group.add(left);
-      const right = new THREE.Mesh(new THREE.PlaneGeometry(SEG, h), wallR);
+      const right = new THREE.Mesh(surfaceUV(new THREE.PlaneGeometry(SEG, h),2), wallR);right.receiveShadow=true;
       right.rotation.y = -Math.PI/2; right.position.set(w/2, h/2, z - SEG/2); group.add(right);
 
       for(const side of [-1,1]){
@@ -372,7 +383,7 @@
         for (let k = 0; k < 2; k++){
           const fz = z - 4 - k*6;
           const side = ((s + k) % 2 === 0) ? -1 : 1;
-          const frame = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2.7, 2.0), brass);
+          const frame = new THREE.Mesh(bevelBox(0.2, 2.7, 2.0,.025), brass);frame.castShadow=true;
           frame.position.set(side*(w/2 - 0.10), h/2, fz); group.add(frame);
           // the canvas — a lit material that receives the painting texture when it loads
           const canvasMat = new THREE.MeshStandardMaterial({ color: '#1a140d', roughness: 0.62, metalness: 0.0, envMapIntensity: 0.3 });
@@ -389,27 +400,25 @@
 
       // central pedestal + rotating object in "form" zones
       if (s === 2 || s === 3 || (wide && s === 5)){
-        const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.65, 1.1, 28), plaster('#241c14'));
+        const ped = new THREE.Mesh(surfaceUV(new THREE.CylinderGeometry(0.55, 0.65, 1.1, 40),1.2), plaster('#9c978a'));ped.castShadow=true;ped.receiveShadow=true;
         ped.position.set(0, 0.55, z - SEG/2); group.add(ped);
         let obj;
         if (s === 2) obj = new THREE.Mesh(new THREE.TorusKnotGeometry(0.42, 0.13, isMobile ? 72 : 120, 16), brass);
         else if (s === 3) obj = new THREE.Mesh(new THREE.IcosahedronGeometry(0.5, 0), new THREE.MeshStandardMaterial({ color:'#efe3cc', roughness:0.32, metalness:0.3, envMapIntensity:1.1 }));
         else obj = new THREE.Mesh(new THREE.DodecahedronGeometry(0.6, 0), brass);
         obj.position.set(0, 1.5, z - SEG/2);
+        obj.castShadow=true;obj.receiveShadow=true;
         obj.userData.spin = true; group.add(obj); spinners.push(obj);
-        const halo = new THREE.Mesh(new THREE.CircleGeometry(1.5, 40), new THREE.MeshBasicMaterial({color:'#e5ba75',map:poolTexture(),transparent:true,opacity:.25,depthWrite:false}));
+        const halo = new THREE.Mesh(new THREE.CircleGeometry(1.1, 40), new THREE.MeshBasicMaterial({color:'#171914',map:poolTexture(),transparent:true,opacity:.3,depthWrite:false}));
         halo.rotation.x = -Math.PI/2; halo.position.set(0, 0.02, z - SEG/2); group.add(halo);
       }
 
       // archway threshold between halls
       if (s === 4){
-        const archMat = plaster('#140d07');
-        const top = new THREE.Mesh(new THREE.BoxGeometry(w, 1.4, 0.6), archMat);
-        top.position.set(0, h - 0.7, z + 0.5); group.add(top);
-        for (const sx of [-1, 1]){
-          const col = new THREE.Mesh(new THREE.BoxGeometry(1.2, h, 0.6), archMat);
-          col.position.set(sx*(w/2 - 0.6), h/2, z + 0.5); group.add(col);
-        }
+        const shape=new THREE.Shape();shape.moveTo(-w/2,0);shape.lineTo(w/2,0);shape.lineTo(w/2,h);shape.lineTo(-w/2,h);shape.closePath();
+        const opening=new THREE.Path();opening.moveTo(-3,0);opening.lineTo(3,0);opening.lineTo(3,3.6);opening.absarc(0,3.6,3,0,Math.PI,false);opening.lineTo(-3,0);shape.holes.push(opening);
+        const arch=new THREE.Mesh(surfaceUV(new THREE.ExtrudeGeometry(shape,{depth:.5,bevelEnabled:true,bevelSize:.06,bevelThickness:.06,bevelSegments:3,steps:1,curveSegments:32}),2),plaster('#d6d0c2'));
+        arch.position.z=z+.5;arch.castShadow=true;arch.receiveShadow=true;group.add(arch);
       }
     }
     // back wall to close the vista
@@ -466,6 +475,7 @@
     camera.rotation.z += tmx * 0.035;   // a touch of mouse-led roll
     if (keyLightA) keyLightA.position.set(tmpV.x, 4.7, tmpV.z - 3);
     if (keyLightB) keyLightB.position.set(tmpV.x, 2.0, tmpV.z - 9);
+    if(gallerySun){gallerySun.position.set(-2.7,5.5,tmpV.z+1);gallerySun.target.position.set(1.2,0,tmpV.z-10);}
   }
 
   let spinT = 0;

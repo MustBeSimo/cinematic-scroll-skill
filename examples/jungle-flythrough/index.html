@@ -223,6 +223,7 @@
   import * as THREE from 'three';
   import {createSceneSession} from '../_scene-session.js';
   import {mountSceneControls} from '../_study-controls.js';
+  import {createSurfaceLibrary,surfaceUV,bevelBox,leafSurface,disposeSurfaceScene} from '../_surface-materials.js';
 
   let reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isMobile = matchMedia('(max-width: 768px)').matches;
@@ -248,30 +249,36 @@
 
   let renderer, scene, camera, session;
   let progress = 0, t_target = 0, mx = 0, my = 0, tmx = 0, tmy = 0;
-  let sun, curve, pollen;
+  let sun, curve, pollen, surfaces, environmentTarget, backgroundTexture;
+  const leafTime={value:0};
   const leafMeshes = [], vines = [], shafts = [];
   const tmpV = new THREE.Vector3(), lookV = new THREE.Vector3(), dummy = new THREE.Object3D();
 
   if (!webglOK()) document.body.classList.add('no-webgl');
 
   function init(){
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: !isMobile, alpha: false, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.0 : 1.5));
     renderer.setSize(innerWidth, innerHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.05;
+    renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    surfaces=createSurfaceLibrary(renderer,()=>session?.invalidate());
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color('#0c1c0c');
-    scene.fog = new THREE.FogExp2('#10240f', 0.023);
+    scene.background = new THREE.Color('#263a31');
+    scene.fog = new THREE.FogExp2('#334b3b', 0.017);
 
     camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.1, 300);
 
-    scene.add(new THREE.AmbientLight('#1d3014', 0.7));
-    scene.add(new THREE.HemisphereLight('#d6e5dd', '#162217', 1.4));
-    sun = new THREE.DirectionalLight('#ffeeb0', 1.7);
-    sun.position.set(-6, 16, 4); scene.add(sun);
+    scene.add(new THREE.AmbientLight('#c9d9c0', .12));
+    scene.add(new THREE.HemisphereLight('#dbe9f1', '#283421', .75));
+    sun = new THREE.DirectionalLight('#fff0ce', 2.5);
+    sun.castShadow=true;sun.shadow.mapSize.set(isMobile?512:1024,isMobile?512:1024);
+    Object.assign(sun.shadow.camera,{left:-13,right:13,top:18,bottom:-18,near:1,far:65});
+    sun.shadow.bias=-.0003;sun.shadow.normalBias=.04;
+    sun.position.set(-8,16,8);scene.add(sun,sun.target);
 
     buildStructure();
     buildFoliage();
@@ -283,16 +290,17 @@
     if (!isMobile) addEventListener('pointermove', onPointer, {passive:true});
     session = createSceneSession({canvas, frame:loop, resize:onResize, restore:loadEnvironment, motionChange(value) { reduce=value; mx=my=tmx=tmy=0; } });
     placeCamera(0);
-    mountSceneControls({title:'Canopy light',label:'Sunlight',min:.4,max:2.6,step:.05,value:1.7,format:v=>v.toFixed(2)+'×',
+    mountSceneControls({title:'Canopy light',label:'Sunlight',min:.4,max:3.8,step:.05,value:2.5,format:v=>v.toFixed(2)+'×',
       update(v){ sun.intensity=v; session.invalidate(); },pause:v=>session.setPaused(v)});
     session.start();
+    addEventListener('pagehide',event=>{if(!event.persisted){session.dispose();environmentTarget?.dispose();backgroundTexture?.dispose();disposeSurfaceScene(scene,renderer);}});
   }
 
   /* image-based lighting from the fal.ai rainforest panorama */
   function loadEnvironment(){
     new THREE.TextureLoader().load('assets/env.jpg', function(tex){
       tex.mapping = THREE.EquirectangularReflectionMapping; tex.colorSpace = THREE.SRGBColorSpace;
-      try { const pmrem = new THREE.PMREMGenerator(renderer); const rt = pmrem.fromEquirectangular(tex); scene.environment = rt.texture; pmrem.dispose(); tex.dispose(); session?.invalidate(); }
+      try { const pmrem = new THREE.PMREMGenerator(renderer); const rt = pmrem.fromEquirectangular(tex); environmentTarget?.dispose();environmentTarget=rt;scene.environment = rt.texture;pmrem.dispose();backgroundTexture?.dispose();backgroundTexture=tex;scene.background=tex;scene.backgroundIntensity=.65;scene.backgroundBlurriness=.06;session?.invalidate(); }
       catch(e){}
     }, undefined, function(){});
   }
@@ -302,34 +310,34 @@
   const DEPTH = 110, BAYS = 11, BAY = DEPTH / BAYS, HALL_W = 7, HALL_H = 6.5;
 
   function buildStructure(){
-    const concrete = new THREE.MeshStandardMaterial({ color: '#a3a299', roughness: 0.95, metalness: 0.02, envMapIntensity: 0.6 });
-    const dark = new THREE.MeshStandardMaterial({ color: '#414639', roughness: 1.0 });
+    const concrete = surfaces.material('concrete_floor_02',{color:'#e1e2d6',roughness:.9,relief:.8,occlusion:.8,envMapIntensity:.35});
+    const dark = surfaces.material('concrete_moss',{color:'#69765f',roughness:.95,relief:.7});
     const g = new THREE.Group(); scene.add(g);
 
-    const paving=document.createElement('canvas');paving.width=paving.height=128;const px=paving.getContext('2d');
-    px.fillStyle='#777a71';px.fillRect(0,0,128,128);px.strokeStyle='#535e50';px.lineWidth=2;px.strokeRect(1,1,126,126);
-    for(let i=0;i<1400;i++){px.fillStyle=`rgba(32,48,32,${rnd()*.12})`;px.fillRect(rnd()*128,rnd()*128,2,2);}
-    const pavingMap=new THREE.CanvasTexture(paving);pavingMap.colorSpace=THREE.SRGBColorSpace;pavingMap.wrapS=pavingMap.wrapT=THREE.RepeatWrapping;pavingMap.repeat.set(5,60);
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(HALL_W + 4, DEPTH + 20), new THREE.MeshStandardMaterial({ color:'#9b9e91',map:pavingMap,roughness:.85,envMapIntensity:.4 }));
+    const floor = new THREE.Mesh(surfaceUV(new THREE.PlaneGeometry(HALL_W + 4, DEPTH + 20),2),surfaces.material('concrete_floor_02',{color:'#b8c1b3',roughness:.68,clearcoat:.28,clearcoatRoughness:.2,relief:.85,occlusion:.85,envMapIntensity:.55}));
+    floor.receiveShadow=true;
     floor.rotation.x = -Math.PI/2; floor.position.set(0, 0, -DEPTH/2); g.add(floor);
+    const joints=new THREE.InstancedMesh(new THREE.BoxGeometry(HALL_W-2.6,.006,.018),new THREE.MeshStandardMaterial({color:'#303b31',roughness:1}),56);
+    for(let i=0;i<56;i++){dummy.position.set(0,.004,8-i*2.1);dummy.rotation.set(0,0,0);dummy.scale.set(1,1,1);dummy.updateMatrix();joints.setMatrixAt(i,dummy.matrix);}g.add(joints);
 
     for (let b = 0; b <= BAYS; b++){
       const z = -b * BAY;
       for (const sx of [-1, 1]){
-        const col = new THREE.Mesh(new THREE.BoxGeometry(0.7, HALL_H, 0.7), concrete);
+        const col = new THREE.Mesh(bevelBox(0.7,HALL_H,0.7,.055),concrete);col.castShadow=true;col.receiveShadow=true;
         col.position.set(sx * HALL_W/2, HALL_H/2, z); g.add(col);
+        const base=new THREE.Mesh(bevelBox(.96,.25,.96,.04),dark);base.position.set(sx*HALL_W/2,.125,z);base.castShadow=true;base.receiveShadow=true;g.add(base);
       }
-      const lintel = new THREE.Mesh(new THREE.BoxGeometry(HALL_W + 0.7, 0.8, 0.7), concrete);
+      const lintel = new THREE.Mesh(bevelBox(HALL_W+.7,.8,.7,.055),concrete);lintel.castShadow=true;lintel.receiveShadow=true;
       lintel.position.set(0, HALL_H - 0.4, z); g.add(lintel);
       if (b % 2 === 0){
-        const slat = new THREE.Mesh(new THREE.BoxGeometry(HALL_W, 0.18, 0.3), dark);
+        const slat = new THREE.Mesh(bevelBox(HALL_W,.18,.3,.025),dark);slat.castShadow=true;
         slat.position.set(0, HALL_H - 0.05, z - BAY*0.4); g.add(slat);
       }
     }
     for(const side of [-1,1]){
-      const bed=new THREE.Mesh(new THREE.BoxGeometry(1.1,.24,DEPTH),new THREE.MeshStandardMaterial({color:'#233523',roughness:1}));
+      const bed=new THREE.Mesh(surfaceUV(new THREE.BoxGeometry(1.1,.24,DEPTH),2),surfaces.material('concrete_moss',{color:'#495740',roughness:1,relief:.9}));bed.receiveShadow=true;
       bed.position.set(side*(HALL_W/2-.65),.12,-DEPTH/2);g.add(bed);
-      const edge=new THREE.Mesh(new THREE.BoxGeometry(.09,.32,DEPTH),concrete);edge.position.set(side*(HALL_W/2-1.22),.16,-DEPTH/2);g.add(edge);
+      const edge=new THREE.Mesh(surfaceUV(new THREE.BoxGeometry(.09,.32,DEPTH),2),concrete);edge.position.set(side*(HALL_W/2-1.22),.16,-DEPTH/2);edge.castShadow=true;edge.receiveShadow=true;g.add(edge);
     }
     // far backdrop — the generated jungle, glowing like the sun at the end of the platform
     const backMat = new THREE.MeshStandardMaterial({ color: '#000', emissive: '#cfe89a', emissiveIntensity: 0.85 });
@@ -340,44 +348,53 @@
 
   function leafGeo(){
     // A curved blade with a raised midrib. Shared across every leaf instance.
-    const vertices=[], indices=[]; const segments=12;
+    const vertices=[], indices=[],uv=[]; const segments=16;
     for(let i=0;i<=segments;i++){
       const t=i/segments, y=t-.5, width=Math.pow(Math.sin(Math.PI*t),.8)*.24;
       const bend=Math.sin(t*Math.PI)*.11;
       vertices.push(-width,y,bend-.06*Math.sin(t*Math.PI),0,y,bend,width,y,bend-.06*Math.sin(t*Math.PI));
+      uv.push(0,t,.5,t,1,t);
       if(i<segments){ const a=i*3,b=a+3; indices.push(a,b,a+1,a+1,b,b+1,a+1,b+1,a+2,a+2,b+1,b+2); }
     }
-    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.setIndex(indices);geo.computeVertexNormals();return geo;
+    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(indices);geo.computeVertexNormals();return geo;
   }
 
   function buildFoliage(){
     const geo = leafGeo();
+    const detail=leafSurface();
     const tones = [
-      new THREE.MeshStandardMaterial({ color: '#416c3a', roughness: 0.82, side: THREE.DoubleSide, emissive:'#1a2e10', emissiveIntensity:0.3, envMapIntensity: 0.7 }),
-      new THREE.MeshStandardMaterial({ color: '#80a754', roughness: 0.78, side: THREE.DoubleSide, emissive:'#243d14', emissiveIntensity:0.34, envMapIntensity: 0.7 }),
-      new THREE.MeshStandardMaterial({ color: '#264f32', roughness: 0.88, side: THREE.DoubleSide, emissive:'#13260c', emissiveIntensity:0.26, envMapIntensity: 0.6 }),
+      new THREE.MeshPhysicalMaterial({...detail,color:'#bdd5a0',roughness:.58,side:THREE.DoubleSide,clearcoat:.24,clearcoatRoughness:.4,emissive:'#213416',emissiveIntensity:.08,envMapIntensity:.6}),
+      new THREE.MeshPhysicalMaterial({...detail,color:'#d5d69d',roughness:.5,side:THREE.DoubleSide,clearcoat:.3,clearcoatRoughness:.35,emissive:'#283315',emissiveIntensity:.08,envMapIntensity:.65}),
+      new THREE.MeshPhysicalMaterial({...detail,color:'#7baf83',roughness:.68,side:THREE.DoubleSide,clearcoat:.18,clearcoatRoughness:.45,envMapIntensity:.55}),
     ];
     const PER = isMobile ? 240 : 400;
+    const stems=[];
     tones.forEach(function(mat, ti){
+      mat.onBeforeCompile=shader=>{shader.uniforms.leafTime=leafTime;shader.vertexShader='uniform float leafTime;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\ntransformed.x += sin(leafTime+instanceMatrix[3].z*.17+position.y*3.)*.045*uv.y*uv.y;');};
       const inst = new THREE.InstancedMesh(geo, mat, PER);
+      inst.castShadow=true;inst.receiveShadow=true;
+      let anchor=new THREE.Vector3(),hanging=false;
       for (let i = 0; i < PER; i++){
-        const bay = Math.floor(rnd() * (BAYS + 1));
-        const z0 = -bay * BAY + (rnd() - 0.5) * BAY * 0.9;
-        const mode = rnd(); let x, y;
-        if (mode < 0.4){ const sx = rnd() < 0.5 ? -1 : 1; x = sx * (rnd() * HALL_W/2); y = HALL_H - rnd() * 3.2; }
-        else if (mode < 0.75){ const sx = rnd() < 0.5 ? -1 : 1; x = sx * (HALL_W/2 + (rnd()-0.5) * 1.2); y = rnd() * HALL_H; }
-        else { const sx = rnd() < 0.5 ? -1 : 1; x = sx * (HALL_W/2 - rnd() * 1.6); y = rnd() * 1.4; }
-        const s = 0.45 + rnd() * 1.05;
-        dummy.position.set(x, y, z0);
-        dummy.rotation.set((rnd()-.5)*1.2, rnd()*Math.PI*2, (rnd()-.5)*1.8);
+        if(i%8===0){
+          const bay=Math.floor(rnd()*(BAYS+1)),side=rnd()<.5?-1:1,mode=rnd();hanging=mode<.3;
+          anchor.set(side*(mode>.65?HALL_W/2-.65:HALL_W/2-.12),hanging?HALL_H-.35:mode>.65?.23:1+rnd()*4.7,-bay*BAY+(mode>.65?(rnd()-.5)*BAY:.18));
+        }
+        const a=i%8/8*Math.PI*2+rnd()*.4,s=.55+rnd()*.65;
+        const direction=new THREE.Vector3(Math.cos(a)*.8,(hanging?-1:1)*(.3+rnd()*.7),Math.sin(a)*.8).normalize();
+        const root=anchor.clone().addScaledVector(direction,.18);
+        dummy.position.copy(root).addScaledVector(direction,s*.5);
+        dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction);dummy.rotateY(rnd()*Math.PI*2);
         dummy.scale.set(s, s, s); dummy.updateMatrix();
         inst.setMatrixAt(i, dummy.matrix);
+        stems.push(anchor.x,anchor.y,anchor.z,root.x,root.y,root.z);
       }
       inst.instanceMatrix.needsUpdate = true; inst.userData.phase = ti;
       scene.add(inst); leafMeshes.push(inst);
     });
+    const stemsGeo=new THREE.BufferGeometry();stemsGeo.setAttribute('position',new THREE.Float32BufferAttribute(stems,3));
+    scene.add(new THREE.LineSegments(stemsGeo,new THREE.LineBasicMaterial({color:'#546441'})));
 
-    const vineMat = new THREE.MeshStandardMaterial({ color: '#527a32', roughness: 0.9, envMapIntensity: 0.5 });
+    const vineMat = surfaces.material('concrete_moss',{color:'#566843',roughness:.95,relief:.5,envMapIntensity:.4});
     const vInst = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.03, 0.03, 1, 5), vineMat, 44);
     for (let i = 0; i < 44; i++){
       const bay = Math.floor(rnd() * (BAYS + 1)); const len = 1.5 + rnd() * 3.0; const x = (rnd() - 0.5) * HALL_W;
@@ -386,10 +403,11 @@
       vInst.setMatrixAt(i, dummy.matrix);
     }
     vInst.instanceMatrix.needsUpdate = true; scene.add(vInst); vines.push(vInst);
+    vInst.castShadow=true;vInst.receiveShadow=true;
   }
 
   function buildShafts(){
-    const mat = new THREE.MeshBasicMaterial({ color: '#ffe7a0', transparent: true, opacity: 0.09, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+    const mat = new THREE.MeshBasicMaterial({ color: '#e5efc9', transparent: true, opacity: 0.028, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
     for (let i = 0; i < 6; i++){
       const cone = new THREE.Mesh(new THREE.ConeGeometry(2.6, 13, 24, 1, true), mat.clone());
       cone.position.set((rnd()-0.5)*HALL_W, HALL_H + 2.5, -i * (DEPTH/6) - 6);
@@ -440,6 +458,7 @@
     camera.position.set(tmpV.x + tmx*0.9, tmpV.y + tmy*0.45, tmpV.z);
     camera.lookAt(lookV.x + tmx*1.2, lookV.y + tmy*0.6, lookV.z);
     camera.rotation.z += tmx * 0.03;
+    if(sun){sun.position.set(-8,16,tmpV.z+6);sun.target.position.set(2,0,tmpV.z-13);}
   }
 
   let breeze = 0;
@@ -447,7 +466,7 @@
     if (!reduced) progress += (t_target - progress) * (paused ? 1 : 1-Math.exp(-4.5*dt));
     tmx += (mx - tmx) * (1-Math.exp(-3*dt)); tmy += (my - tmy) * (1-Math.exp(-3*dt));
     breeze = time * .72;
-    for (const m of leafMeshes) m.rotation.z = Math.sin(breeze + m.userData.phase) * 0.035;
+    leafTime.value=breeze;
     for (let i = 0; i < shafts.length; i++) shafts[i].material.opacity = shafts[i].userData.base * (0.7 + 0.3*Math.sin(breeze*0.7 + i));
     if (pollen){
       const arr = pollen.geometry.attributes.position.array, base = pollen.geometry.userData.base, sd = pollen.geometry.userData.seed;
