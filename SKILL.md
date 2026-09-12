@@ -57,6 +57,11 @@ Honor requested review checkpoints; otherwise finish the work without phase appr
 existing brand assets → reference analysis → suggested visual system. Themes are
 starting points. Preserve required axes when adapting an example with a different look.
 
+**Supplied copy is verbatim.** When the brief provides copy, use it word for word and
+add nothing: no new headings, taglines, promises, claims, prices or quotes. Structure
+and typography may change; the words may not. If a section needs a label the brief
+does not supply, reuse the brief's own section name.
+
 **Optional TasteHQ:** for an in-scope external brand analysis, read
 [the TasteHQ contract](references/tastehq.md). Query `/api/query`, preserve the
 response, and map relevant axes to project tokens. A suggested catalog match does
