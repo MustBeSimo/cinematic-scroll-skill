@@ -178,9 +178,19 @@ The normal edition is the complete, useful product—not a trial.
 | Doctor + five-profile browser proof | Deeper iteration without starting cold |
 | Optional TasteHQ matching | Proprietary Motif Engine |
 
-Use Web Design Studio for as many personal or commercial projects as you like. Use Pro when repeated work should compound into a visual memory.
+### Make every project a head start.
 
-**[Explore Web Design Studio Pro →](https://buy.stripe.com/cNi7sLdNBbief0L0uFfnO09)** · [Compare editions](./references/editions.md) · [See how the stack fits](https://mustbesimo.github.io/web-design-studio/stack/)
+Web Design Studio Pro adds the **Motif Engine**: retrieve patterns by intent,
+build on accumulated project knowledge, and develop variants from your own visual
+language. Bring what you learned into the next brief.
+
+<p>
+  <a href="https://buy.stripe.com/cNi7sLdNBbief0L0uFfnO09"><img src="assets/brand/studio-pro-button.svg" alt="Get Web Design Studio Pro — open checkout" width="320" height="64"></a>
+</p>
+
+[Compare editions](./references/editions.md) · [See how the stack fits](https://mustbesimo.github.io/web-design-studio/stack/)
+
+<sub>The free edition remains available for unlimited personal and commercial projects.</sub>
 
 ## Install
 

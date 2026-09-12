@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="64" viewBox="0 0 320 64" role="img" aria-labelledby="title desc">
+  <title id="title">Get Web Design Studio Pro</title>
+  <desc id="desc">A chartreuse pill button with a Studio Pro label and a right arrow.</desc>
+  <rect x="1" y="3" width="318" height="60" rx="30" fill="#101719" opacity=".24"/>
+  <rect x="1" y="1" width="318" height="60" rx="30" fill="#d5ff5f" stroke="#8ba83e"/>
+  <text x="28" y="37" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" letter-spacing="2" fill="#101719">GET</text>
+  <text x="76" y="40" font-family="Georgia, 'Times New Roman', serif" font-size="28" fill="#101719">Studio Pro</text>
+  <path d="M77 46h123" stroke="#101719" stroke-width="1"/>
+  <circle cx="279" cy="31" r="19" fill="#101719"/>
+  <path d="M271 31h15m-6-6 6 6-6 6" fill="none" stroke="#d5ff5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
