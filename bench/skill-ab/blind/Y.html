@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ferrymead Bakehouse — Bread on the tide.</title>
+<meta name="description" content="Ferrymead Bakehouse: slow sourdough baked in a former ferry hall on a river estuary. Weekly bread subscription, collect Fridays.">
+<style>
+  /* ---------- Tokens ---------- */
+  :root{
+    --bg: #f6efe2;
+    --surface: #ece0c9;
+    --surface-2: #e3d5b8;
+    --fg: #2a2118;
+    --fg-dim: #6a5b47;
+    --accent: #3d6a63;
+    --accent-fg: #f6efe2;
+    --line: rgba(42,33,24,0.16);
+
+    --font-display: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --size-caption: 0.8rem;
+    --size-body: 1.05rem;
+    --size-body-lg: 1.2rem;
+    --size-h4: clamp(1.25rem, 1.05rem + 0.9vw, 1.7rem);
+    --size-h3: clamp(1.55rem, 1.2rem + 1.4vw, 2.3rem);
+    --size-h2: clamp(1.9rem, 1.3rem + 2.4vw, 3.1rem);
+    --size-h1: clamp(2.4rem, 1.5rem + 4vw, 4.6rem);
+
+    --lh-tight: 1.12;
+    --lh-body: 1.65;
+
+    --tracking-wide: 0.08em;
+    --tracking-widest: 0.16em;
+
+    --space-3xs: 0.25rem;
+    --space-2xs: 0.5rem;
+    --space-xs: 0.75rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2.25rem;
+    --space-xl: 3.5rem;
+    --space-2xl: 5.5rem;
+    --space-3xl: 8rem;
+
+    --ease-reveal: cubic-bezier(.16,1,.3,1);
+    --ease-exit: cubic-bezier(.7,0,.84,0);
+    --ease-playful: cubic-bezier(.34,1.56,.64,1);
+    --ease-cut: cubic-bezier(.87,0,.13,1);
+
+    --dur-fast: 300ms;
+    --dur-base: 550ms;
+    --dur-slow: 850ms;
+    --dur-glacial: 1400ms;
+
+    --max-w: 68rem;
+  }
+
+  /* ---------- Reset ---------- */
+  *,*::before,*::after{ box-sizing: border-box; }
+  html{ -webkit-text-size-adjust: 100%; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: var(--size-body);
+    line-height: var(--lh-body);
+    overflow-x: hidden;
+  }
+  img,svg{ display:block; max-width:100%; }
+  h1,h2,h3,h4,p,figure{ margin:0; }
+  a{ color: inherit; }
+  ul{ margin:0; padding:0; list-style:none; }
+  button{ font: inherit; }
+
+  main, section, header, footer { position: relative; }
+
+  .skip-link{
+    position:absolute; left:1rem; top:-4rem;
+    background: var(--accent); color: var(--accent-fg);
+    padding: var(--space-2xs) var(--space-sm);
+    border-radius: 6px;
+    z-index: 1000;
+    transition: top var(--dur-fast) var(--ease-reveal);
+  }
+  .skip-link:focus{ top: 1rem; }
+
+  :focus-visible{ outline: 3px solid var(--accent); outline-offset: 3px; }
+
+  .wrap{
+    max-width: var(--max-w);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  .eyebrow{
+    display:inline-block;
+    font: 600 var(--size-caption) / 1 var(--font-body);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  section{
+    padding-block: var(--space-2xl);
+  }
+
+  .section-head{ max-width: 42rem; }
+  .section-head h2{
+    font: 500 var(--size-h2) / var(--lh-tight) var(--font-display);
+    margin-top: var(--space-xs);
+    color: var(--fg);
+  }
+  .section-head p.lead{
+    margin-top: var(--space-md);
+    font-size: var(--size-body-lg);
+    color: var(--fg-dim);
+    max-width: 42ch;
+  }
+
+  hr.rule{
+    border:0; height:1px; background: var(--line);
+    margin: 0;
+  }
+
+  /* ---------- Reveal (progressive enhancement) ---------- */
+  [data-reveal]{ opacity:1; transform:none; }
+  html.motion [data-reveal].pending{
+    opacity:0;
+    transform: translateY(28px);
+    transition: opacity var(--dur-slow) var(--ease-reveal), transform var(--dur-slow) var(--ease-reveal);
+  }
+  html.motion [data-reveal].pending.in{ opacity:1; transform:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    [data-reveal]{ opacity:1 !important; transform:none !important; transition:none !important; }
+  }
+
+  /* ---------- Header / nav ---------- */
+  .site-header{
+    position: sticky; top:0; z-index: 100;
+    background: rgba(246,239,226,0.88);
+    backdrop-filter: saturate(140%);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-header .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-block: var(--space-sm);
+    gap: var(--space-sm);
+  }
+  .brand{
+    font: 600 1.05rem/1 var(--font-display);
+    letter-spacing: 0.02em;
+  }
+  .brand small{
+    display:block;
+    font: 500 0.62rem/1 var(--font-body);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    margin-top: 0.3rem;
+  }
+  .site-nav ul{ display:flex; gap: clamp(0.75rem, 2vw, 1.5rem); flex-wrap: wrap; }
+  .site-nav a{
+    text-decoration: none;
+    font-size: 0.88rem;
+    color: var(--fg-dim);
+    padding: 0.3rem 0.1rem;
+    border-bottom: 1px solid transparent;
+    transition: color var(--dur-fast) var(--ease-reveal), border-color var(--dur-fast) var(--ease-reveal);
+  }
+  .site-nav a:hover, .site-nav a:focus-visible{ color: var(--fg); border-color: var(--accent); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding-block: clamp(3rem, 10vw, 7rem) clamp(4rem, 12vw, 8rem);
+    overflow: hidden;
+  }
+  .hero__scene{
+    position: absolute; inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hero__scene svg{ width: 100%; height: 100%; }
+  .hero__sky{ fill: var(--surface); }
+  .hero__wave{ fill: var(--surface-2); }
+  .hero__wave--far{ opacity: .65; }
+  .hero__wave-group{ transform: translateX(0); }
+  html.motion .hero__wave-group{
+    animation: driftWave 26s linear infinite;
+  }
+  @keyframes driftWave{
+    from{ transform: translateX(0); }
+    to{ transform: translateX(-33.33%); }
+  }
+  .hero__hall{ fill: var(--fg); opacity: 0.14; }
+
+  .hero__content{
+    position: relative; z-index: 1;
+    display:grid;
+    gap: var(--space-lg);
+  }
+  .hero__title{
+    font: 500 var(--size-h1) / var(--lh-tight) var(--font-display);
+    max-width: 16ch;
+  }
+  .hero__tagline{
+    font: italic 500 var(--size-h4)/1.3 var(--font-display);
+    color: var(--accent);
+  }
+  .hero__intro{
+    font-size: var(--size-body-lg);
+    color: var(--fg-dim);
+    max-width: 46ch;
+  }
+  .hero__cta-row{
+    display:flex; gap: var(--space-md); align-items:center; flex-wrap: wrap;
+  }
+
+  .btn{
+    display:inline-flex; align-items:center; gap: 0.6em;
+    background: var(--accent); color: var(--accent-fg);
+    border: 1px solid var(--accent);
+    padding: 0.85em 1.5em;
+    border-radius: 999px;
+    text-decoration:none;
+    font-weight: 600;
+    font-size: 0.98rem;
+    letter-spacing: 0.01em;
+    transition: transform var(--dur-fast) var(--ease-playful), background var(--dur-fast) var(--ease-reveal);
+  }
+  .btn:hover, .btn:focus-visible{ transform: translateY(-2px); background:#33564f; }
+  .btn--ghost{
+    background: transparent; color: var(--fg); border-color: var(--line);
+  }
+  .btn--ghost:hover, .btn--ghost:focus-visible{ background: var(--surface); transform: translateY(-2px); }
+
+  .scroll-cue{
+    position:absolute; left: clamp(1.25rem,4vw,3rem); bottom: var(--space-lg);
+    display:flex; align-items:center; gap:.6rem;
+    color: var(--fg-dim); font-size: var(--size-caption);
+    letter-spacing: var(--tracking-wide); text-transform:uppercase;
+    z-index:1;
+  }
+  .scroll-cue svg{ width:14px; height:20px; }
+  html.motion .scroll-cue svg{ animation: nudge 2.4s var(--ease-reveal) infinite; }
+  @keyframes nudge{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(5px); }
+  }
+
+  /* ---------- Loaves ---------- */
+  .loaves-grid{
+    margin-top: var(--space-xl);
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-md);
+  }
+  .loaf-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: var(--space-lg) var(--space-md);
+    display:flex; flex-direction:column; gap: var(--space-sm);
+  }
+  .loaf-card svg{ width: 100%; height: 6.5rem; }
+  .loaf-card h3{
+    font: 500 var(--size-h4)/1.2 var(--font-display);
+  }
+  .loaf-card p{ color: var(--fg-dim); font-size: 0.96rem; }
+
+  /* ---------- Subscription ---------- */
+  .sub-layout{
+    margin-top: var(--space-xl);
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: var(--space-2xl);
+    align-items:start;
+  }
+  @media (max-width: 860px){
+    .sub-layout{ grid-template-columns: 1fr; gap: var(--space-xl); }
+  }
+  .steps{ display:grid; gap: var(--space-lg); }
+  .step{ display:grid; grid-template-columns: auto 1fr; gap: var(--space-md); }
+  .step__num{
+    font: 500 var(--size-h4)/1 var(--font-display);
+    color: var(--accent);
+  }
+  .step p{ font-size: var(--size-body-lg); max-width: 40ch; }
+
+  .sub-panel{
+    background: var(--surface-2);
+    border-radius: 20px;
+    padding: var(--space-xl) var(--space-lg);
+    text-align: left;
+  }
+  .sub-panel .eyebrow{ display:block; margin-bottom: var(--space-sm); }
+  .sub-panel h3{
+    font: 500 var(--size-h3)/1.15 var(--font-display);
+    margin-bottom: var(--space-md);
+  }
+  .sub-panel .btn{ width: 100%; justify-content:center; margin-top: var(--space-md); }
+
+  /* ---------- Tide divider ---------- */
+  .tide-divider{
+    position: relative;
+    height: clamp(6rem, 16vw, 11rem);
+    overflow: hidden;
+    background: var(--accent);
+  }
+  .tide-divider svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .tide-divider__fill{ fill: var(--bg); }
+  .tide-divider__mover{ transform: translate3d(0,0,0); }
+
+  /* ---------- The hall / timeline ---------- */
+  .hall{ background: var(--surface); }
+  .timeline{
+    margin-top: var(--space-xl);
+    display:grid; gap:0;
+    max-width: 40rem;
+  }
+  .tl-node{
+    position:relative;
+    padding: 0 0 var(--space-xl) var(--space-lg);
+    border-left: 2px solid var(--line);
+  }
+  .tl-node:last-child{ border-left-color: transparent; padding-bottom:0; }
+  .tl-node::before{
+    content:"";
+    position:absolute; left:-7px; top:0.35rem;
+    width:12px; height:12px; border-radius:50%;
+    background: var(--bg); border: 2px solid var(--accent);
+  }
+  html.motion .tl-node::before{
+    transform: scale(0.4);
+    opacity: 0;
+    transition: transform var(--dur-base) var(--ease-playful), opacity var(--dur-base) var(--ease-reveal);
+  }
+  html.motion .tl-node.in::before{ transform: scale(1); opacity:1; }
+  .tl-year{
+    font: 500 var(--size-h3)/1 var(--font-display);
+    color: var(--accent);
+  }
+  .tl-node p{ margin-top: var(--space-2xs); color: var(--fg-dim); max-width: 34ch; }
+
+  .hall__note{
+    margin-top: var(--space-lg);
+    font: italic 500 var(--size-body-lg)/var(--lh-body) var(--font-display);
+    max-width: 40ch;
+    color: var(--fg);
+    border-left: 3px solid var(--accent);
+    padding-left: var(--space-md);
+  }
+
+  /* ---------- Visit ---------- */
+  .visit-layout{
+    margin-top: var(--space-xl);
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items:center;
+  }
+  @media (max-width: 860px){
+    .visit-layout{ grid-template-columns: 1fr; gap: var(--space-xl); }
+  }
+  .visit-info dl{ display:grid; gap: var(--space-md); }
+  .visit-info dt{
+    font: 600 var(--size-caption)/1 var(--font-body);
+    letter-spacing: var(--tracking-wide); text-transform:uppercase;
+    color: var(--accent);
+  }
+  .visit-info dd{
+    margin:0; margin-top:.35rem;
+    font-size: var(--size-body-lg);
+  }
+  .river-map{ width:100%; height:auto; }
+  .river-map__water{ stroke: var(--accent); }
+  .river-map__pin{ fill: var(--accent); }
+
+  /* ---------- CTA / Footer ---------- */
+  .cta-band{
+    background: var(--fg); color: var(--bg);
+    text-align:left;
+    padding-block: var(--space-2xl);
+  }
+  .cta-band h2{
+    font: 500 var(--size-h2)/var(--lh-tight) var(--font-display);
+    max-width: 18ch;
+  }
+  .cta-band p{ margin-top: var(--space-sm); color: #d9cdb6; max-width: 42ch; }
+  .cta-band .btn-row{ margin-top: var(--space-lg); display:flex; gap: var(--space-md); flex-wrap:wrap; }
+  .cta-band .btn--ghost{ color: var(--bg); border-color: rgba(246,239,226,0.35); }
+  .cta-band .btn--ghost:hover, .cta-band .btn--ghost:focus-visible{ background: rgba(246,239,226,0.1); }
+
+  footer.site-footer{
+    padding-block: var(--space-lg);
+    background: var(--fg); color: #cabfa9;
+    border-top: 1px solid rgba(246,239,226,0.15);
+  }
+  footer.site-footer .wrap{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap: var(--space-sm);
+    font-size: 0.9rem;
+  }
+  footer.site-footer a{ text-decoration: underline; text-underline-offset: 2px; }
+
+  @media (max-width: 480px){
+    .site-header .wrap{ flex-direction:column; align-items:flex-start; gap: var(--space-xs); }
+    .site-nav ul{ gap: var(--space-sm); }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">Ferrymead Bakehouse<small>Bread on the tide</small></div>
+    <nav class="site-nav" aria-label="Section navigation">
+      <ul>
+        <li><a href="#loaves">Loaves</a></li>
+        <li><a href="#subscription">Subscription</a></li>
+        <li><a href="#hall">The hall</a></li>
+        <li><a href="#visit">Visit</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" aria-label="Introduction">
+    <div class="hero__scene" aria-hidden="true">
+      <svg viewBox="0 0 1440 700" preserveAspectRatio="none">
+        <rect class="hero__sky" x="0" y="0" width="1440" height="700"/>
+        <path class="hero__hall" d="M120 480 h340 v-150 l-40 -60 h-260 l-40 60 Z M170 480 v-120 h60 v120 Z M280 480 v-120 h60 v120 Z M390 480 v-120 h50 v120 Z"/>
+        <g class="hero__wave-group">
+          <path class="hero__wave hero__wave--far" d="M-480 560 C -360 520 -240 600 -120 560 C 0 520 120 600 240 560 C 360 520 480 600 600 560 C 720 520 840 600 960 560 C 1080 520 1200 600 1320 560 C 1440 520 1560 600 1680 560 L1680 700 L-480 700 Z"/>
+          <path class="hero__wave" d="M-480 610 C -360 580 -240 640 -120 610 C 0 580 120 640 240 610 C 360 580 480 640 600 610 C 720 580 840 640 960 610 C 1080 580 1200 640 1320 610 C 1440 580 1560 640 1680 610 L1680 700 L-480 700 Z"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wrap hero__content">
+      <p class="eyebrow" data-reveal>A former ferry hall, on the estuary</p>
+      <h1 class="hero__title" data-reveal>Ferrymead Bakehouse</h1>
+      <p class="hero__tagline" data-reveal>Bread on the tide.</p>
+      <p class="hero__intro" data-reveal>We bake slow sourdough in the old ferry hall, with flour from two farms upriver and a starter that is older than the building's new roof.</p>
+      <div class="hero__cta-row" data-reveal>
+        <a class="btn" href="#subscription">Start a subscription</a>
+        <a class="btn btn--ghost" href="#loaves">See the loaves</a>
+      </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true">
+      Scroll
+      <svg viewBox="0 0 14 20" fill="none"><path d="M7 1v16M2 12l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </section>
+
+  <!-- LOAVES -->
+  <section id="loaves" aria-labelledby="loaves-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>The loaves</p>
+        <h2 id="loaves-h" data-reveal>Four things, baked slowly</h2>
+      </div>
+      <div class="loaves-grid">
+        <article class="loaf-card" data-reveal>
+          <svg viewBox="0 0 200 100" aria-hidden="true">
+            <ellipse cx="100" cy="70" rx="80" ry="26" fill="var(--surface-2)"/>
+            <path d="M30 70 C30 30 170 30 170 70" fill="none" stroke="var(--fg)" stroke-width="3"/>
+            <path d="M60 42 Q64 58 60 70 M100 36 Q104 54 100 70 M140 42 Q144 58 140 70" stroke="var(--fg)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+          <h3>Estuary Loaf</h3>
+          <p>Country sourdough, 900 g.</p>
+        </article>
+        <article class="loaf-card" data-reveal>
+          <svg viewBox="0 0 200 100" aria-hidden="true">
+            <ellipse cx="100" cy="70" rx="78" ry="24" fill="#5b4632"/>
+            <path d="M32 70 C32 34 168 34 168 70" fill="none" stroke="var(--fg)" stroke-width="3"/>
+            <g fill="var(--bg)">
+              <circle cx="70" cy="58" r="2"/><circle cx="90" cy="50" r="2"/><circle cx="110" cy="56" r="2"/>
+              <circle cx="130" cy="48" r="2"/><circle cx="60" cy="66" r="2"/><circle cx="145" cy="62" r="2"/>
+            </g>
+          </svg>
+          <h3>Rye Tide</h3>
+          <p>60% rye, caraway, 800 g.</p>
+        </article>
+        <article class="loaf-card" data-reveal>
+          <svg viewBox="0 0 200 100" aria-hidden="true">
+            <ellipse cx="100" cy="70" rx="80" ry="26" fill="var(--surface-2)"/>
+            <path d="M30 70 C30 32 170 32 170 70" fill="none" stroke="var(--fg)" stroke-width="3"/>
+            <g fill="#fff" stroke="var(--fg)" stroke-width=".5">
+              <circle cx="75" cy="46" r="1.6"/><circle cx="95" cy="40" r="1.6"/><circle cx="115" cy="45" r="1.6"/>
+              <circle cx="132" cy="52" r="1.6"/><circle cx="62" cy="55" r="1.6"/><circle cx="145" cy="60" r="1.6"/>
+            </g>
+          </svg>
+          <h3>Saltmarsh</h3>
+          <p>Sea-salt crust, wholemeal, 900 g.</p>
+        </article>
+        <article class="loaf-card" data-reveal>
+          <svg viewBox="0 0 200 100" aria-hidden="true">
+            <g fill="var(--surface-2)" stroke="var(--fg)" stroke-width="2.5">
+              <circle cx="55" cy="66" r="20"/><circle cx="100" cy="66" r="20"/><circle cx="145" cy="66" r="20"/>
+            </g>
+            <g fill="none" stroke="var(--fg)" stroke-width="1.4">
+              <circle cx="55" cy="66" r="9"/><circle cx="100" cy="66" r="9"/><circle cx="145" cy="66" r="9"/>
+            </g>
+          </svg>
+          <h3>Ferry Crumpets</h3>
+          <p>Six per pack, weekends only.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIDE DIVIDER -->
+  <div class="tide-divider" aria-hidden="true">
+    <svg viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path class="tide-divider__fill tide-divider__mover" d="M-720 90 C -600 50 -480 130 -360 90 C -240 50 -120 130 0 90 C 120 50 240 130 360 90 C 480 50 600 130 720 90 C 840 50 960 130 1080 90 C 1200 50 1320 130 1440 90 C 1560 50 1680 130 1800 90 C 1920 50 2040 130 2160 90 L2160 200 L-720 200 Z"/>
+    </svg>
+  </div>
+
+  <!-- SUBSCRIPTION -->
+  <section id="subscription" aria-labelledby="sub-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>The subscription</p>
+        <h2 id="sub-h" data-reveal>A standing order, easily paused</h2>
+      </div>
+      <div class="sub-layout">
+        <ol class="steps">
+          <li class="step" data-reveal>
+            <span class="step__num">01</span>
+            <p>Choose one or two loaves a week.</p>
+          </li>
+          <li class="step" data-reveal>
+            <span class="step__num">02</span>
+            <p>We bake Thursday night, you collect Friday from the hall or one of three pickup points along the river.</p>
+          </li>
+          <li class="step" data-reveal>
+            <span class="step__num">03</span>
+            <p>Pause or cancel any week before Wednesday noon.</p>
+          </li>
+        </ol>
+        <div class="sub-panel" data-reveal>
+          <span class="eyebrow">Ready when you are</span>
+          <h3>Start a subscription</h3>
+          <p style="color:var(--fg-dim)">One email gets you on the list — no forms, no fuss.</p>
+          <a class="btn" href="mailto:hello@ferrymead.example?subject=Start%20a%20subscription">Start a subscription</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE HALL -->
+  <section id="hall" class="hall" aria-labelledby="hall-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>The hall</p>
+        <h2 id="hall-h" data-reveal>Built for ferries, kept for bread</h2>
+      </div>
+      <div class="timeline">
+        <div class="tl-node" data-reveal>
+          <div class="tl-year">1911</div>
+          <p>Built.</p>
+        </div>
+        <div class="tl-node" data-reveal>
+          <div class="tl-year">1974</div>
+          <p>Ferries stopped.</p>
+        </div>
+        <div class="tl-node" data-reveal>
+          <div class="tl-year">2019</div>
+          <p>Ovens lit.</p>
+        </div>
+      </div>
+      <p class="hall__note" data-reveal>The waiting room is now the shop; the ticket office is where the starter lives.</p>
+    </div>
+  </section>
+
+  <!-- VISIT -->
+  <section id="visit" aria-labelledby="visit-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>Visit</p>
+        <h2 id="visit-h" data-reveal>Come by the water</h2>
+      </div>
+      <div class="visit-layout">
+        <div class="visit-info" data-reveal>
+          <dl>
+            <div>
+              <dt>Hours</dt>
+              <dd>Open Friday to Sunday, 7am until we sell out.</dd>
+            </div>
+            <div>
+              <dt>Address</dt>
+              <dd>1 Ferry Lane, Ferrymead.</dd>
+            </div>
+          </dl>
+        </div>
+        <svg class="river-map" data-reveal viewBox="0 0 300 180" role="img" aria-label="Simple map of the river with the bakehouse marked at 1 Ferry Lane">
+          <path class="river-map__water" d="M10 20 C 80 60 40 110 110 130 C 180 150 200 90 280 100" fill="none" stroke-width="18" stroke-linecap="round" opacity="0.25"/>
+          <path class="river-map__water" d="M10 20 C 80 60 40 110 110 130 C 180 150 200 90 280 100" fill="none" stroke-width="2"/>
+          <circle class="river-map__pin" cx="110" cy="130" r="7"/>
+          <text x="122" y="134" font-size="12" fill="var(--fg)" font-family="var(--font-body)">1 Ferry Lane</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band" aria-labelledby="cta-h">
+    <div class="wrap">
+      <h2 id="cta-h" data-reveal>Bread on the tide, every week.</h2>
+      <p data-reveal>We bake slow sourdough in the old ferry hall, with flour from two farms upriver and a starter that is older than the building's new roof.</p>
+      <div class="btn-row" data-reveal>
+        <a class="btn" href="mailto:hello@ferrymead.example?subject=Start%20a%20subscription">Start a subscription</a>
+        <a class="btn btn--ghost" href="#visit">Plan a visit</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Ferrymead Bakehouse · 1 Ferry Lane · <a href="mailto:hello@ferrymead.example">hello@ferrymead.example</a></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = false;
+  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
+
+  document.documentElement.classList.add('js');
+  if (reduce) return;
+
+  document.documentElement.classList.add('motion');
+
+  /* ---- Entrance reveals: one-shot, staggered ---- */
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+  reveals.forEach(function(el){ el.classList.add('pending'); });
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        var parent = el.closest('section') || document.body;
+        if (!parent.__revealCount) parent.__revealCount = 0;
+        var i = parent.__revealCount++;
+        el.style.transitionDelay = (Math.min(i, 5) * 0.07) + 's';
+        el.classList.add('in');
+        io.unobserve(el);
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(function(el){ io.observe(el); });
+  } else {
+    reveals.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ---- Timeline node dots reveal alongside their row ---- */
+  var tlNodes = document.querySelectorAll('.tl-node');
+  if ('IntersectionObserver' in window && tlNodes.length) {
+    var tlIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          tlIo.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    tlNodes.forEach(function(n){ tlIo.observe(n); });
+  }
+
+  /* ---- Tide divider: contained lerped parallax (transform only) ---- */
+  var mover = document.querySelector('.tide-divider__mover');
+  var host = document.querySelector('.tide-divider');
+  if (mover && host) {
+    var center = 0, cur = 0, target = 0, running = false;
+    var measure = function(){
+      var r = host.getBoundingClientRect();
+      center = r.top + window.scrollY + r.height / 2;
+    };
+    measure();
+    window.addEventListener('resize', measure, { passive: true });
+
+    var frame = function(){
+      var vh2 = window.innerHeight / 2;
+      target = (window.scrollY + vh2 - center) * 0.06;
+      cur += (target - cur) * 0.12;
+      mover.style.transform = 'translate3d(' + cur.toFixed(2) + 'px,0,0)';
+      if (Math.abs(target - cur) > 0.15) {
+        requestAnimationFrame(frame);
+      } else {
+        running = false;
+      }
+    };
+    window.addEventListener('scroll', function(){
+      if (!running) { running = true; requestAnimationFrame(frame); }
+    }, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>

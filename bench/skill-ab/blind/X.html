@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ferrymead Bakehouse — Bread on the tide.</title>
+<style>
+  :root {
+    --ink: #1b2b2f;
+    --paper: #f4ede1;
+    --rust: #8a3a1c;
+    --tide: #33504a;
+
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --space-4: 2rem;
+    --space-5: 3rem;
+    --space-6: 4rem;
+    --space-7: 6rem;
+    --space-8: 8rem;
+
+    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1, h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.1;
+    margin: 0 0 var(--space-3);
+  }
+
+  p { margin: 0 0 var(--space-3); }
+
+  a { color: var(--rust); }
+
+  .container {
+    width: 100%;
+    max-width: 68rem;
+    margin: 0 auto;
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+
+  /* Skip link */
+  .skip-link {
+    position: absolute;
+    left: 0;
+    top: -3rem;
+    background: var(--ink);
+    color: var(--paper);
+    padding: var(--space-2) var(--space-3);
+    z-index: 100;
+    transition: top .2s ease;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--rust);
+    outline-offset: 3px;
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(244, 237, 225, 0.92);
+    backdrop-filter: blur(4px);
+    border-bottom: 1px solid rgba(27, 43, 47, 0.15);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    letter-spacing: 0.02em;
+  }
+  nav[aria-label="Section"] ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  nav[aria-label="Section"] a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+  }
+  nav[aria-label="Section"] a:hover {
+    border-bottom-color: var(--rust);
+    color: var(--rust);
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+    overflow: hidden;
+  }
+  .tide-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .tide-lines svg {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .tide-lines .layer-1 { top: 10%; opacity: 0.5; }
+  .tide-lines .layer-2 { top: 45%; opacity: 0.35; }
+  .tide-lines .layer-3 { top: 72%; opacity: 0.6; }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    max-width: 14ch;
+  }
+  .hero .intro {
+    max-width: 62ch;
+    font-size: clamp(1.0625rem, 2.4vw, 1.25rem);
+    color: var(--ink);
+  }
+  .hero .kicker {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--tide);
+    margin: 0 0 var(--space-3);
+  }
+
+  /* Sections */
+  section {
+    padding-top: var(--space-7);
+    padding-bottom: var(--space-7);
+  }
+  section h2 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+  }
+  .section-lede {
+    max-width: 60ch;
+    color: var(--ink);
+  }
+
+  #loaves { border-top: 1px solid rgba(27, 43, 47, 0.15); }
+  #subscription { border-top: 1px solid rgba(27, 43, 47, 0.15); background: rgba(51, 80, 74, 0.06); }
+  #hall { border-top: 1px solid rgba(27, 43, 47, 0.15); }
+  #visit { border-top: 1px solid rgba(27, 43, 47, 0.15); }
+
+  /* Loaves board */
+  .board {
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid rgba(27, 43, 47, 0.25);
+  }
+  .board li {
+    border-bottom: 1px solid rgba(27, 43, 47, 0.25);
+    padding: var(--space-3) 0;
+  }
+  .loaf {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-3);
+    font-size: 1.125rem;
+  }
+  .loaf-name {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+  }
+  .loaf .detail {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--tide);
+    white-space: normal;
+  }
+
+  /* Subscription */
+  .subscription-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+    align-items: start;
+  }
+  @media (min-width: 760px) {
+    .subscription-grid {
+      grid-template-columns: 0.9fr 1.3fr;
+    }
+    .subscription-grid > .sticky-col {
+      position: sticky;
+      top: calc(var(--space-8));
+    }
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: step;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: var(--space-6);
+    max-width: 60ch;
+  }
+  .steps li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    color: var(--rust);
+    letter-spacing: 0.05em;
+  }
+  .cta {
+    display: inline-block;
+    margin-top: var(--space-5);
+    background: var(--rust);
+    color: var(--paper);
+    text-decoration: none;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.9375rem;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--rust);
+  }
+  .cta:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  /* Hall timeline */
+  .timeline {
+    position: relative;
+    margin: var(--space-6) 0;
+    padding-top: var(--space-4);
+  }
+  .timeline-track {
+    position: relative;
+    height: 2px;
+    background: rgba(51, 80, 74, 0.25);
+    margin-bottom: var(--space-4);
+  }
+  .timeline-line {
+    position: absolute;
+    inset: 0;
+    background: var(--tide);
+    transform-origin: left center;
+  }
+  .timeline-marks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    color: var(--tide);
+  }
+  .timeline-marks li span {
+    display: block;
+    font-family: var(--font-body);
+    color: var(--ink);
+    font-size: 0.9375rem;
+    margin-top: 2px;
+  }
+
+  /* Visit */
+  .visit-details address {
+    font-style: normal;
+  }
+  .visit-details p {
+    max-width: 50ch;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid rgba(27, 43, 47, 0.25);
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--tide);
+  }
+  footer a { color: var(--tide); }
+
+  /* Reveal system: default state is the fully visible, final state (no-JS baseline) */
+  .reveal,
+  .reveal-line {
+    opacity: 1;
+    transform: none;
+  }
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .js .reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .js .board li:nth-child(1) { transition-delay: 0s; }
+  .js .board li:nth-child(2) { transition-delay: 0.08s; }
+  .js .board li:nth-child(3) { transition-delay: 0.16s; }
+  .js .board li:nth-child(4) { transition-delay: 0.24s; }
+
+  .js .reveal-line {
+    transform: scaleX(0);
+    transition: transform 1s ease;
+  }
+  .js .reveal-line.in-view {
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js .reveal,
+    .js .reveal-line {
+      transition: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header-inner { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <div class="container header-inner">
+      <div class="brand">Ferrymead Bakehouse</div>
+      <nav aria-label="Section">
+        <ul>
+          <li><a href="#loaves">Loaves</a></li>
+          <li><a href="#subscription">Subscription</a></li>
+          <li><a href="#hall">The hall</a></li>
+          <li><a href="#visit">Visit</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="tide-lines" aria-hidden="true">
+        <svg class="layer-1" viewBox="0 0 1000 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,90 C120,50 230,130 360,90 C480,55 600,125 730,90 C850,58 930,120 1000,90" fill="none" stroke="#33504a" stroke-width="2"/>
+        </svg>
+        <svg class="layer-2" viewBox="0 0 1000 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,70 C140,110 260,30 400,70 C520,105 640,35 780,70 C880,95 940,45 1000,70" fill="none" stroke="#8a3a1c" stroke-width="2"/>
+        </svg>
+        <svg class="layer-3" viewBox="0 0 1000 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,100 C160,60 280,140 420,100 C540,65 660,135 800,100 C900,72 950,128 1000,100" fill="none" stroke="#1b2b2f" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="container hero-content">
+        <p class="kicker">Ferrymead Bakehouse</p>
+        <h1 id="hero-heading">Bread on the tide.</h1>
+        <p class="intro">We bake slow sourdough in the old ferry hall, with flour from two farms upriver and a starter that is older than the building's new roof.</p>
+      </div>
+    </section>
+
+    <section id="loaves" aria-labelledby="loaves-heading">
+      <div class="container">
+        <h2 id="loaves-heading">The loaves</h2>
+        <ul class="board">
+          <li class="reveal">
+            <p class="loaf"><span class="loaf-name">Estuary Loaf</span> <span class="detail">(country sourdough, 900 g)</span></p>
+          </li>
+          <li class="reveal">
+            <p class="loaf"><span class="loaf-name">Rye Tide</span> <span class="detail">(60% rye, caraway, 800 g)</span></p>
+          </li>
+          <li class="reveal">
+            <p class="loaf"><span class="loaf-name">Saltmarsh</span> <span class="detail">(sea-salt crust, wholemeal, 900 g)</span></p>
+          </li>
+          <li class="reveal">
+            <p class="loaf"><span class="loaf-name">Ferry Crumpets</span> <span class="detail">(six per pack, weekends only)</span></p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="subscription" aria-labelledby="sub-heading">
+      <div class="container">
+        <div class="subscription-grid">
+          <div class="sticky-col">
+            <h2 id="sub-heading">The subscription</h2>
+          </div>
+          <div>
+            <ol class="steps">
+              <li>Choose one or two loaves a week.</li>
+              <li>We bake Thursday night, you collect Friday from the hall or one of three pickup points along the river.</li>
+              <li>Pause or cancel any week before Wednesday noon.</li>
+            </ol>
+            <a class="cta" href="mailto:hello@ferrymead.example">Start a subscription</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="hall" aria-labelledby="hall-heading">
+      <div class="container">
+        <h2 id="hall-heading">The hall</h2>
+        <p class="section-lede">Built 1911, ferries stopped in 1974, ovens lit 2019.</p>
+        <div class="timeline">
+          <div class="timeline-track" aria-hidden="true">
+            <div class="timeline-line reveal-line"></div>
+          </div>
+          <ul class="timeline-marks" aria-hidden="true">
+            <li>1911<span>Built</span></li>
+            <li>1974<span>Ferries stopped</span></li>
+            <li>2019<span>Ovens lit</span></li>
+          </ul>
+        </div>
+        <p class="section-lede">The waiting room is now the shop; the ticket office is where the starter lives.</p>
+      </div>
+    </section>
+
+    <section id="visit" aria-labelledby="visit-heading">
+      <div class="container visit-details">
+        <h2 id="visit-heading">Visit</h2>
+        <p>Open Friday to Sunday, 7am until we sell out.</p>
+        <address>1 Ferry Lane, Ferrymead.</address>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Ferrymead Bakehouse &middot; 1 Ferry Lane &middot; <a href="mailto:hello@ferrymead.example">hello@ferrymead.example</a></p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      document.documentElement.classList.add('js');
+
+      var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var revealEls = document.querySelectorAll('.reveal, .reveal-line');
+      if ('IntersectionObserver' in window && revealEls.length) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in-view');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.2 });
+        revealEls.forEach(function (el) { observer.observe(el); });
+      } else {
+        revealEls.forEach(function (el) { el.classList.add('in-view'); });
+      }
+
+      if (!reduced) {
+        var layer1 = document.querySelector('.tide-lines .layer-1');
+        var layer2 = document.querySelector('.tide-lines .layer-2');
+        var layer3 = document.querySelector('.tide-lines .layer-3');
+        var ticking = false;
+
+        function update() {
+          var y = window.scrollY;
+          if (layer1) layer1.style.transform = 'translateY(' + Math.min(y * 0.05, 24) + 'px)';
+          if (layer2) layer2.style.transform = 'translateY(' + Math.min(y * 0.09, 40) + 'px)';
+          if (layer3) layer3.style.transform = 'translateY(' + Math.min(y * 0.13, 56) + 'px)';
+          ticking = false;
+        }
+
+        window.addEventListener('scroll', function () {
+          if (!ticking) {
+            requestAnimationFrame(update);
+            ticking = true;
+          }
+        }, { passive: true });
+      }
+    })();
+  </script>
+</body>
+</html>

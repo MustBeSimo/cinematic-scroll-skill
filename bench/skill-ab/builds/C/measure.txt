@@ -1,0 +1,24 @@
+bytes=   25468
+copy_phrases_missing=6/22
+  missing: country sourdough, 900 g
+  missing: sea-salt crust, wholemeal, 900 g
+  missing: six per pack, weekends only
+  missing: Built 1911
+  missing: ferries stopped in 1974
+  missing: ovens lit 2019
+external_urls=0
+ext_src_any=0
+reduced_motion_query=2
+page_proof_exit=0
+  profile=desktop status=? errors=0 layout_issues=0
+  profile=mobile status=? errors=0 layout_issues=0
+  profile=reduced-motion status=? errors=0 layout_issues=0
+  profile=mobile-reduced-motion status=? errors=0 layout_issues=0
+  profile=no-js status=? errors=0 layout_issues=0
+doctor=85
+turns=28 cost_usd=0.713 is_error=false stop=end_turn in_tok=30 cache_read=1004638 out_tok=23890
+exit=0 wall_s=308
+layout_probe (independent, heuristic):
+  390px overflowX=0px clippedText=0 smallP=5 invisibleTextAfterScroll=0 h1=1 height=5501
+  1440px overflowX=0px clippedText=0 smallP=5 invisibleTextAfterScroll=0 h1=1 height=4526
+copy_phrases_missing_ci=3/22: Built 1911 | ferries stopped in 1974 | ovens lit 2019

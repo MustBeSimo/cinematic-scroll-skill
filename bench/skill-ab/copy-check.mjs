@@ -1,0 +1,6 @@
+import fs from "node:fs";
+let h = fs.readFileSync(process.argv[2], "utf8");
+let t = h.replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&#39;|&rsquo;|’/g, "'").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").toLowerCase();
+const ph = ["Ferrymead Bakehouse","Bread on the tide","We bake slow sourdough in the old ferry hall, with flour from two farms upriver and a starter that is older than the building's new roof","Estuary Loaf","country sourdough, 900 g","Rye Tide","60% rye, caraway, 800 g","Saltmarsh","sea-salt crust, wholemeal, 900 g","Ferry Crumpets","six per pack, weekends only","Choose one or two loaves a week","We bake Thursday night, you collect Friday from the hall or one of three pickup points along the river","Pause or cancel any week before Wednesday noon","Built 1911","ferries stopped in 1974","ovens lit 2019","The waiting room is now the shop; the ticket office is where the starter lives","Open Friday to Sunday, 7am until we sell out","1 Ferry Lane, Ferrymead","Start a subscription","hello@ferrymead.example"];
+const miss = ph.filter(p => !t.includes(p.toLowerCase()));
+console.log(`copy_phrases_missing_ci=${miss.length}/22` + (miss.length ? ": " + miss.join(" | ") : ""));

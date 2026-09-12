@@ -1,0 +1,18 @@
+bytes=   14890
+copy_phrases_missing=0/22
+external_urls=0
+ext_src_any=0
+reduced_motion_query=2
+page_proof_exit=0
+  profile=desktop status=? errors=0 layout_issues=0
+  profile=mobile status=? errors=0 layout_issues=0
+  profile=reduced-motion status=? errors=0 layout_issues=0
+  profile=mobile-reduced-motion status=? errors=0 layout_issues=0
+  profile=no-js status=? errors=0 layout_issues=0
+doctor=80
+turns=8 cost_usd=0.344 is_error=false stop=end_turn in_tok=16 cache_read=323393 out_tok=18779
+exit=0 wall_s=178
+layout_probe (independent, heuristic):
+  390px overflowX=0px clippedText=0 smallP=2 invisibleTextAfterScroll=0 h1=1 height=3040
+  1440px overflowX=0px clippedText=0 smallP=2 invisibleTextAfterScroll=0 h1=1 height=2716
+copy_phrases_missing_ci=0/22

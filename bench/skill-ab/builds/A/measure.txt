@@ -1,0 +1,25 @@
+bytes=   20715
+copy_phrases_missing=7/22
+  missing: country sourdough, 900 g
+  missing: sea-salt crust, wholemeal, 900 g
+  missing: six per pack, weekends only
+  missing: Built 1911
+  missing: ferries stopped in 1974
+  missing: ovens lit 2019
+  missing: Open Friday to Sunday, 7am until we sell out
+external_urls=0
+ext_src_any=0
+reduced_motion_query=4
+page_proof_exit=0
+  profile=desktop status=? errors=0 layout_issues=0
+  profile=mobile status=? errors=0 layout_issues=0
+  profile=reduced-motion status=? errors=0 layout_issues=0
+  profile=mobile-reduced-motion status=? errors=0 layout_issues=0
+  profile=no-js status=? errors=0 layout_issues=0
+doctor=80
+turns=8 cost_usd=0.427 is_error=false stop=end_turn in_tok=16 cache_read=278411 out_tok=17668
+exit=0 wall_s=173
+layout_probe (independent, heuristic):
+  390px overflowX=0px clippedText=0 smallP=6 invisibleTextAfterScroll=0 h1=1 height=6411
+  1440px overflowX=0px clippedText=0 smallP=6 invisibleTextAfterScroll=0 h1=1 height=6325
+copy_phrases_missing_ci=4/22: Built 1911 | ferries stopped in 1974 | ovens lit 2019 | Open Friday to Sunday, 7am until we sell out

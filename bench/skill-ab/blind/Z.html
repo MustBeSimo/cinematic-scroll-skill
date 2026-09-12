@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ferrymead Bakehouse — Bread on the tide.</title>
+<meta name="description" content="Ferrymead Bakehouse: slow sourdough baked in a former ferry hall on the estuary. Weekly bread subscription.">
+<style>
+  :root{
+    --cream:#f6ecdd;
+    --flour:#fbf5ea;
+    --paper:#efe2ca;
+    --ink:#2b2018;
+    --ink-soft:#4a3b2c;
+    --crust:#7a3d1c;
+    --crust-dark:#3f2110;
+    --rust:#af5b22;
+    --tide:#2c5b60;
+    --tide-deep:#163338;
+    --tide-pale:#bcd6d3;
+    --line: rgba(43,32,24,0.16);
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+
+  html{
+    -webkit-text-size-adjust:100%;
+    scroll-behavior:smooth;
+  }
+
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+    max-width:100%;
+  }
+
+  img,svg{ max-width:100%; display:block; }
+
+  a{ color:inherit; }
+
+  h1,h2,h3{
+    font-family:var(--serif);
+    font-weight:400;
+    margin:0;
+    color:var(--crust-dark);
+  }
+
+  p{ margin:0; }
+
+  .visually-hidden{
+    position:absolute;
+    width:1px;height:1px;
+    padding:0;margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+    border:0;
+  }
+
+  .skip-link{
+    position:absolute;
+    left:1rem; top:-4rem;
+    background:var(--crust-dark);
+    color:var(--flour);
+    padding:.75rem 1.25rem;
+    border-radius:0 0 .4rem .4rem;
+    z-index:100;
+    transition:top .2s ease;
+  }
+  .skip-link:focus{ top:0; }
+
+  /* ---------- fixed cinematic backdrop ---------- */
+  .tide-backdrop{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background:
+      linear-gradient(180deg,
+        #f8f0e2 0%,
+        #f3e6cf 20%,
+        #e7cfa9 42%,
+        #cf9f6d 58%,
+        #8a6a4d 72%,
+        var(--tide) 88%,
+        var(--tide-deep) 100%);
+    background-size:100% 420vh;
+    background-position:0 0;
+    pointer-events:none;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference){
+      .tide-backdrop{
+        animation: tideshift linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0% 100%;
+      }
+    }
+  }
+  @keyframes tideshift{
+    from{ background-position:0 0; }
+    to{ background-position:0 -320vh; }
+  }
+
+  /* ---------- header ---------- */
+  header.site{
+    position:sticky;
+    top:0;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    padding:.85rem clamp(1rem,4vw,2.5rem);
+    background:rgba(246,236,221,0.86);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    font-family:var(--serif);
+    font-size:clamp(1rem,2.4vw,1.25rem);
+    letter-spacing:.02em;
+    color:var(--crust-dark);
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  header.site nav{
+    display:flex;
+    gap:clamp(.75rem,2vw,1.5rem);
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  header.site nav a{
+    font-size:.92rem;
+    text-decoration:none;
+    color:var(--ink-soft);
+    padding:.3rem .1rem;
+    border-bottom:1px solid transparent;
+  }
+  header.site nav a:hover,
+  header.site nav a:focus-visible{
+    border-bottom-color:var(--rust);
+  }
+  header.site nav a.btn-small{
+    background:var(--crust);
+    color:var(--flour);
+    padding:.5rem 1rem;
+    border-radius:2rem;
+    border-bottom:none;
+  }
+  header.site nav a.btn-small:hover,
+  header.site nav a.btn-small:focus-visible{
+    background:var(--crust-dark);
+  }
+
+  /* ---------- generic section shell ---------- */
+  section{
+    position:relative;
+    padding:clamp(4rem,10vh,7rem) clamp(1.25rem,6vw,3rem);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:100svh;
+    text-align:center;
+  }
+  .section-inner{
+    max-width:52rem;
+    width:100%;
+    margin:0 auto;
+  }
+  .eyebrow{
+    display:inline-block;
+    font-family:var(--sans);
+    font-size:.78rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--rust);
+    margin-bottom:1rem;
+  }
+  .section-lede{
+    font-size:clamp(1.5rem,3.4vw,2.2rem);
+    font-family:var(--serif);
+    color:var(--crust-dark);
+    margin-bottom:1.5rem;
+    line-height:1.3;
+  }
+  .body-copy{
+    font-size:clamp(1.02rem,1.6vw,1.18rem);
+    color:var(--ink-soft);
+    max-width:38rem;
+    margin:0 auto;
+  }
+
+  /* reveal-on-scroll, CSS-only, progressively enhanced */
+  .reveal{ opacity:1; transform:none; }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference){
+      .reveal{
+        animation: fadeUp linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 28%;
+      }
+    }
+  }
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(28px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100svh;
+    padding-top:clamp(5rem,14vh,8rem);
+    color:var(--crust-dark);
+  }
+  .hero .eyebrow{ color:var(--crust); }
+  .hero h1{
+    font-size:clamp(2.4rem,8vw,5.2rem);
+    letter-spacing:-0.01em;
+    line-height:1.02;
+  }
+  .hero .tagline{
+    margin-top:1rem;
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:clamp(1.15rem,2.6vw,1.6rem);
+    color:var(--crust);
+  }
+  .hero .hero-intro{
+    margin-top:2rem;
+    font-size:clamp(1rem,1.8vw,1.2rem);
+    color:var(--ink-soft);
+    max-width:36rem;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .hero-art{
+    width:100%;
+    max-width:640px;
+    margin:clamp(2.5rem,6vh,4rem) auto 0;
+  }
+  .scroll-cue{
+    margin-top:clamp(2rem,6vh,3.5rem);
+    display:inline-flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.4rem;
+    font-size:.78rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .scroll-cue svg{ width:18px; height:26px; }
+  @media (prefers-reduced-motion: no-preference){
+    .scroll-cue svg .cue-dot{ animation:cuemove 1.8s ease-in-out infinite; }
+  }
+  @keyframes cuemove{
+    0%{ transform:translateY(0); opacity:1; }
+    60%{ transform:translateY(10px); opacity:0; }
+    61%{ transform:translateY(0); opacity:0; }
+    100%{ transform:translateY(0); opacity:1; }
+  }
+
+  /* ---------- intro ---------- */
+  .intro{ color:var(--ink); }
+  .intro blockquote{
+    margin:0;
+    font-family:var(--serif);
+    font-size:clamp(1.4rem,3.2vw,2.1rem);
+    line-height:1.5;
+    color:var(--crust-dark);
+    max-width:42rem;
+  }
+
+  /* ---------- loaves ---------- */
+  .loaves{ background:transparent; }
+  .loaf-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:clamp(1.25rem,3vw,2rem);
+    width:100%;
+    max-width:64rem;
+    margin-top:2.5rem;
+    text-align:left;
+  }
+  .loaf-card{
+    background:rgba(251,245,234,0.72);
+    border:1px solid var(--line);
+    border-radius:1rem;
+    padding:1.5rem 1.4rem 1.75rem;
+    display:flex;
+    flex-direction:column;
+    gap:.9rem;
+  }
+  .loaf-card svg{ width:100%; height:auto; max-height:110px; }
+  .loaf-card h3{
+    font-size:1.25rem;
+    color:var(--crust-dark);
+  }
+  .loaf-card p{
+    font-size:.98rem;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- subscription ---------- */
+  .subscription{ color:var(--flour); }
+  .subscription .eyebrow{ color:var(--tide-pale); }
+  .subscription .section-lede,
+  .subscription .body-copy{ color:var(--flour); }
+  .sub-steps{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:1.5rem;
+    width:100%;
+    max-width:52rem;
+    margin-top:2.5rem;
+    text-align:left;
+  }
+  .sub-step{
+    border-left:2px solid rgba(251,245,234,0.45);
+    padding-left:1.1rem;
+  }
+  .sub-step .step-label{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:1.05rem;
+    color:var(--tide-pale);
+    display:block;
+    margin-bottom:.35rem;
+  }
+  .sub-step p{
+    font-size:.96rem;
+    color:rgba(251,245,234,0.9);
+  }
+
+  /* ---------- hall / history ---------- */
+  .hall{ color:var(--flour); }
+  .hall .eyebrow{ color:var(--tide-pale); }
+  .hall .section-lede,
+  .hall .body-copy{ color:var(--flour); }
+  .timeline{
+    width:100%;
+    max-width:44rem;
+    margin-top:3rem;
+    display:flex;
+    flex-direction:column;
+    gap:2.25rem;
+  }
+  .timeline-row{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:1.25rem;
+    align-items:start;
+    text-align:left;
+    position:relative;
+  }
+  .timeline-year{
+    font-family:var(--serif);
+    font-size:clamp(1.4rem,3vw,1.9rem);
+    color:var(--tide-pale);
+    min-width:4.5ch;
+  }
+  .timeline-row p{
+    color:rgba(251,245,234,0.92);
+    font-size:1rem;
+    padding-top:.35rem;
+  }
+  .timeline-note{
+    margin-top:1rem;
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:clamp(1.1rem,2.2vw,1.35rem);
+    color:var(--flour);
+    max-width:36rem;
+  }
+
+  /* ---------- visit ---------- */
+  .visit{ color:var(--flour); }
+  .visit .eyebrow{ color:var(--tide-pale); }
+  .visit .section-lede{ color:var(--flour); }
+  .visit-card{
+    margin-top:1.5rem;
+    display:inline-flex;
+    flex-direction:column;
+    gap:.5rem;
+    font-size:clamp(1.05rem,2vw,1.25rem);
+    color:var(--flour);
+  }
+  .visit-card strong{ font-family:var(--serif); font-weight:400; font-size:1.2em; }
+
+  /* ---------- cta ---------- */
+  .cta{ min-height:70svh; color:var(--flour); }
+  .cta .eyebrow{ color:var(--tide-pale); }
+  .cta .section-lede{ color:var(--flour); }
+  .btn{
+    display:inline-block;
+    margin-top:1rem;
+    background:var(--rust);
+    color:var(--flour);
+    text-decoration:none;
+    font-size:1.05rem;
+    padding:1rem 2.2rem;
+    border-radius:3rem;
+    border:1px solid rgba(251,245,234,0.4);
+    transition:background .2s ease, transform .2s ease;
+  }
+  .btn:hover,
+  .btn:focus-visible{
+    background:var(--crust);
+    transform:translateY(-2px);
+  }
+
+  /* ---------- footer ---------- */
+  footer{
+    padding:2.5rem clamp(1.25rem,6vw,3rem) 3rem;
+    text-align:center;
+    color:var(--flour);
+    font-size:.92rem;
+    letter-spacing:.02em;
+  }
+  footer .foot-mark{
+    display:block;
+    font-family:var(--serif);
+    font-size:1.1rem;
+    margin-bottom:.5rem;
+    color:var(--flour);
+  }
+
+  /* ---------- wave divider ---------- */
+  .wave{
+    width:100%;
+    line-height:0;
+  }
+  .wave svg{ width:100%; height:auto; display:block; }
+
+  @media (max-width:480px){
+    header.site nav a:not(.btn-small){ display:none; }
+    .timeline-row{ grid-template-columns:1fr; gap:.35rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#loaves">Skip to content</a>
+<div class="tide-backdrop" aria-hidden="true"></div>
+
+<header class="site">
+  <a class="brand" href="#top">Ferrymead Bakehouse</a>
+  <nav aria-label="Primary">
+    <a href="#loaves">Loaves</a>
+    <a href="#subscription">Subscription</a>
+    <a href="#hall">The hall</a>
+    <a href="#visit">Visit</a>
+    <a class="btn-small" href="#cta">Subscribe</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" aria-label="Introduction">
+    <div class="section-inner">
+      <p class="eyebrow">Ferrymead Bakehouse</p>
+      <h1>Bread on the tide.</h1>
+      <p class="hero-intro">We bake slow sourdough in the old ferry hall, with flour from two farms upriver and a starter that is older than the building&rsquo;s new roof.</p>
+
+      <div class="hero-art" aria-hidden="true">
+        <svg viewBox="0 0 640 220" preserveAspectRatio="xMidYMax meet" role="img" aria-hidden="true">
+          <!-- ferry hall silhouette -->
+          <g fill="none" stroke="#7a3d1c" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M60 190 L60 100 L120 60 L520 60 L580 100 L580 190" />
+            <line x1="30" y1="190" x2="610" y2="190" stroke-width="3"/>
+            <rect x="150" y="95" width="34" height="50" rx="2"/>
+            <rect x="215" y="95" width="34" height="50" rx="2"/>
+            <rect x="280" y="95" width="34" height="50" rx="2"/>
+            <rect x="345" y="95" width="34" height="50" rx="2"/>
+            <rect x="410" y="95" width="34" height="50" rx="2"/>
+            <rect x="285" y="145" width="70" height="45" rx="2"/>
+            <circle cx="320" cy="82" r="12"/>
+            <line x1="320" y1="70" x2="320" y2="60" />
+          </g>
+          <!-- tide line -->
+          <path d="M0 205 Q 40 195 80 205 T 160 205 T 240 205 T 320 205 T 400 205 T 480 205 T 560 205 T 640 205" fill="none" stroke="#2c5b60" stroke-width="3" opacity="0.55"/>
+          <path d="M0 214 Q 40 206 80 214 T 160 214 T 240 214 T 320 214 T 400 214 T 480 214 T 560 214 T 640 214" fill="none" stroke="#2c5b60" stroke-width="2" opacity="0.3"/>
+        </svg>
+      </div>
+
+      <span class="scroll-cue" aria-hidden="true">
+        Scroll
+        <svg viewBox="0 0 18 26"><rect x="1" y="1" width="16" height="24" rx="8" fill="none" stroke="#4a3b2c" stroke-width="1.4"/><circle class="cue-dot" cx="9" cy="8" r="2.4" fill="#4a3b2c"/></svg>
+      </span>
+    </div>
+  </section>
+
+  <!-- ================= INTRO / QUOTE ================= -->
+  <section class="intro reveal" aria-label="About">
+    <div class="section-inner">
+      <blockquote>
+        &ldquo;We bake slow sourdough in the old ferry hall, with flour from two farms upriver and a starter that is older than the building&rsquo;s new roof.&rdquo;
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ================= LOAVES ================= -->
+  <section class="loaves" id="loaves" aria-label="The loaves">
+    <div class="section-inner reveal">
+      <p class="eyebrow">The loaves</p>
+      <h2 class="section-lede">Four things, baked well.</h2>
+    </div>
+
+    <div class="loaf-grid">
+
+      <article class="loaf-card reveal">
+        <svg viewBox="0 0 160 100" role="img" aria-label="Illustration of a round country sourdough loaf">
+          <ellipse cx="80" cy="62" rx="58" ry="30" fill="#c98b4e" stroke="#7a3d1c" stroke-width="2"/>
+          <path d="M40 45 Q80 30 120 45" fill="none" stroke="#5c3115" stroke-width="2"/>
+          <path d="M35 55 Q80 40 125 55" fill="none" stroke="#5c3115" stroke-width="2"/>
+          <path d="M32 66 Q80 52 128 66" fill="none" stroke="#5c3115" stroke-width="2"/>
+        </svg>
+        <h3>Estuary Loaf</h3>
+        <p>Country sourdough, 900&nbsp;g.</p>
+      </article>
+
+      <article class="loaf-card reveal">
+        <svg viewBox="0 0 160 100" role="img" aria-label="Illustration of a dark rye loaf with caraway seeds">
+          <rect x="26" y="38" width="108" height="46" rx="14" fill="#6b4225" stroke="#3f2110" stroke-width="2"/>
+          <path d="M40 38 Q80 24 120 38" fill="none" stroke="#3f2110" stroke-width="2"/>
+          <g fill="#f6ecdd">
+            <circle cx="55" cy="58" r="1.6"/>
+            <circle cx="70" cy="66" r="1.6"/>
+            <circle cx="85" cy="55" r="1.6"/>
+            <circle cx="98" cy="64" r="1.6"/>
+            <circle cx="112" cy="57" r="1.6"/>
+            <circle cx="63" cy="72" r="1.6"/>
+            <circle cx="105" cy="72" r="1.6"/>
+          </g>
+        </svg>
+        <h3>Rye Tide</h3>
+        <p>60% rye, caraway, 800&nbsp;g.</p>
+      </article>
+
+      <article class="loaf-card reveal">
+        <svg viewBox="0 0 160 100" role="img" aria-label="Illustration of a sea-salt crusted wholemeal loaf">
+          <circle cx="80" cy="60" r="34" fill="#d9a86a" stroke="#7a3d1c" stroke-width="2"/>
+          <path d="M56 44 L104 76 M104 44 L56 76 M80 30 L80 90 M62 34 L98 86 M98 34 L62 86" stroke="#7a3d1c" stroke-width="1.3" opacity="0.55"/>
+          <g fill="#fbf5ea" stroke="#7a3d1c" stroke-width="0.6">
+            <circle cx="68" cy="50" r="1.8"/>
+            <circle cx="90" cy="55" r="1.8"/>
+            <circle cx="78" cy="70" r="1.8"/>
+            <circle cx="95" cy="68" r="1.8"/>
+            <circle cx="63" cy="66" r="1.8"/>
+          </g>
+        </svg>
+        <h3>Saltmarsh</h3>
+        <p>Sea-salt crust, wholemeal, 900&nbsp;g.</p>
+      </article>
+
+      <article class="loaf-card reveal">
+        <svg viewBox="0 0 160 100" role="img" aria-label="Illustration of a stack of crumpets">
+          <g stroke="#7a3d1c" stroke-width="2">
+            <ellipse cx="80" cy="70" rx="46" ry="12" fill="#e0b073"/>
+            <ellipse cx="80" cy="58" rx="46" ry="12" fill="#e6bb82"/>
+            <ellipse cx="80" cy="46" rx="46" ry="12" fill="#eccb99"/>
+          </g>
+          <g fill="#7a3d1c" opacity="0.7">
+            <circle cx="62" cy="44" r="1.6"/>
+            <circle cx="78" cy="42" r="1.6"/>
+            <circle cx="94" cy="45" r="1.6"/>
+            <circle cx="70" cy="49" r="1.6"/>
+            <circle cx="88" cy="50" r="1.6"/>
+          </g>
+        </svg>
+        <h3>Ferry Crumpets</h3>
+        <p>Six per pack, weekends only.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <div class="wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0 40 C 240 10, 480 70, 720 40 C 960 10, 1200 70, 1440 40 L1440 80 L0 80 Z" fill="var(--tide)"/></svg>
+  </div>
+
+  <!-- ================= SUBSCRIPTION ================= -->
+  <section class="subscription" id="subscription" style="background:var(--tide);" aria-label="The subscription">
+    <div class="section-inner reveal">
+      <p class="eyebrow">The subscription</p>
+      <h2 class="section-lede">Choose one or two loaves a week.</h2>
+      <p class="body-copy">We bake Thursday night, you collect Friday from the hall or one of three pickup points along the river. Pause or cancel any week before Wednesday noon.</p>
+
+      <div class="sub-steps">
+        <div class="sub-step">
+          <span class="step-label">Choose</span>
+          <p>One or two loaves a week &mdash; your call.</p>
+        </div>
+        <div class="sub-step">
+          <span class="step-label">Thursday night</span>
+          <p>We bake in the old ferry hall.</p>
+        </div>
+        <div class="sub-step">
+          <span class="step-label">Friday</span>
+          <p>Collect from the hall or one of three river pickup points.</p>
+        </div>
+        <div class="sub-step">
+          <span class="step-label">Any week</span>
+          <p>Pause or cancel before Wednesday noon.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE HALL ================= -->
+  <section class="hall" id="hall" style="background:var(--tide-deep);" aria-label="The hall">
+    <div class="section-inner reveal">
+      <p class="eyebrow">The hall</p>
+      <h2 class="section-lede">A ferry terminal, slowly.</h2>
+
+      <div class="timeline">
+        <div class="timeline-row">
+          <span class="timeline-year">1911</span>
+          <p>The hall is built.</p>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-year">1974</span>
+          <p>The ferries stop.</p>
+        </div>
+        <div class="timeline-row">
+          <span class="timeline-year">2019</span>
+          <p>The ovens are lit.</p>
+        </div>
+      </div>
+
+      <p class="timeline-note">The waiting room is now the shop; the ticket office is where the starter lives.</p>
+    </div>
+  </section>
+
+  <!-- ================= VISIT ================= -->
+  <section class="visit" id="visit" style="background:var(--tide-deep);" aria-label="Visit">
+    <div class="section-inner reveal">
+      <p class="eyebrow">Visit</p>
+      <h2 class="section-lede">Open Friday to Sunday.</h2>
+      <div class="visit-card">
+        <span><strong>7am</strong> until we sell out.</span>
+        <span>1 Ferry Lane, Ferrymead.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="cta" id="cta" style="background:var(--tide-deep);" aria-label="Start a subscription">
+    <div class="section-inner reveal">
+      <p class="eyebrow">Join the tide</p>
+      <h2 class="section-lede">Bread, every week, from the ferry hall.</h2>
+      <a class="btn" href="mailto:hello@ferrymead.example?subject=Start%20a%20subscription">Start a subscription</a>
+    </div>
+  </section>
+
+</main>
+
+<footer style="background:var(--tide-deep);">
+  <span class="foot-mark">Ferrymead Bakehouse</span>
+  <span>1 Ferry Lane &middot; <a href="mailto:hello@ferrymead.example">hello@ferrymead.example</a></span>
+</footer>
+
+</body>
+</html>
