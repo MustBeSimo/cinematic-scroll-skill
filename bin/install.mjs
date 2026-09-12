@@ -10,7 +10,7 @@
  *   npx cinematic-scroll-skill --help
  *
  * This is a convenience layer. The native channels are the Claude Code plugin
- * marketplace (/plugin marketplace add MustBeSimo/cinematic-scroll-skill) and a
+ * marketplace (/plugin marketplace add MustBeSimo/web-design-studio) and a
  * plain `git clone` into ~/.claude/skills/ — see the repo README.
  */
 import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs';
@@ -105,7 +105,7 @@ try {
   console.log(`\n✓ Installed Web Design Studio (${copied} items) →\n  ${dest}\n`);
   console.log('Compatibility identifier: cinematic-scroll');
   console.log('Next: restart Claude Code (or your client), then invoke the skill in chat.');
-  console.log('Docs & live examples: https://mustbesimo.github.io/cinematic-scroll-skill/');
+  console.log('Docs & live examples: https://mustbesimo.github.io/web-design-studio/');
 } catch (err) {
   console.error(`✗ Install failed: ${err.message}`);
   process.exit(1);

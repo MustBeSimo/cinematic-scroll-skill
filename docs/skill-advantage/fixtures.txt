@@ -1,0 +1,12 @@
+Golden fixtures:
+  ✓ components/mode-a/pinned-reveal.html (doctor ≥ 90)
+  ✓ components/mode-a/hero-parallax.html (doctor ≥ 85)
+  ✓ components/mode-a/tilt-card.html (doctor ≥ 90)
+  ✓ components/mode-a/scrub-video.html (doctor ≥ 90)
+  ✓ components/mode-a/kinetic-headline.html (doctor ≥ 90)
+  ✓ components/mode-a/magnetic-cursor.html (doctor ≥ 90)
+
+Trigger set: 23 cases (13 should-fire, 10 near-miss negatives) — run with an LLM judge; targets recall 0.9, precision 0.9.
+Build specs: 3 (run via an agent, score with --target/--spec).
+
+✓ evals: all 6 golden fixtures pass; trigger set well-formed.

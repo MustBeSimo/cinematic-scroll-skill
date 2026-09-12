@@ -6,13 +6,13 @@ which skill and installation method to use; select `cinematic-scroll`.
 
 | Agent | Install in this project |
 |---|---|
-| Claude Code | `npx skills add MustBeSimo/cinematic-scroll-skill --agent claude-code` |
-| Cursor | `npx skills add MustBeSimo/cinematic-scroll-skill --agent cursor` |
-| Hermes | `npx skills add MustBeSimo/cinematic-scroll-skill --agent hermes-agent` |
-| Kimi Code CLI | `npx skills add MustBeSimo/cinematic-scroll-skill --agent kimi-code-cli` |
-| Gemini CLI | `npx skills add MustBeSimo/cinematic-scroll-skill --agent gemini-cli` |
-| OpenClaw | `npx skills add MustBeSimo/cinematic-scroll-skill --agent openclaw` |
-| Other supported agents | `npx skills add MustBeSimo/cinematic-scroll-skill` |
+| Claude Code | `npx skills add MustBeSimo/web-design-studio --agent claude-code` |
+| Cursor | `npx skills add MustBeSimo/web-design-studio --agent cursor` |
+| Hermes | `npx skills add MustBeSimo/web-design-studio --agent hermes-agent` |
+| Kimi Code CLI | `npx skills add MustBeSimo/web-design-studio --agent kimi-code-cli` |
+| Gemini CLI | `npx skills add MustBeSimo/web-design-studio --agent gemini-cli` |
+| OpenClaw | `npx skills add MustBeSimo/web-design-studio --agent openclaw` |
+| Other supported agents | `npx skills add MustBeSimo/web-design-studio` |
 
 Add `--global` to install in your agent's user directory instead. The generic
 command lets you choose the agent interactively. Node.js/npm is needed for `npx`.

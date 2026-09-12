@@ -22,6 +22,12 @@ const errors = [];
 const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 const man = JSON.parse(readFileSync(join(ROOT, "manifest.json"), "utf8"));
 if (pkg.version !== man.version) errors.push(`version drift: package.json ${pkg.version} ≠ manifest.json ${man.version}`);
+const home = readFileSync(join(ROOT, "index.html"), "utf8");
+const release = home.match(/<a\b[^>]*data-release-version="([^"]+)"[^>]*href="([^"]+)"[^>]*>([^<]+)<\/a>/);
+const repository = pkg.repository.url.replace(/^git\+/, "").replace(/\.git$/, "");
+if (!release || release[1] !== pkg.version || release[2] !== `${repository}/releases/tag/v${pkg.version}` || !release[3].startsWith(`v${pkg.version} ·`)) {
+  errors.push("index.html release label/link must match package.json version and repository");
+}
 const skillFm = readFileSync(join(ROOT, "SKILL.md"), "utf8").split(/^---\s*$/m)[1] || "";
 // Standard skill frontmatter carries custom fields under metadata.
 const skillVer = (skillFm.match(/^  version:\s*(.+?)\s*$/m) || skillFm.match(/^version:\s*(.+?)\s*$/m) || [])[1];

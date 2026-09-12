@@ -120,10 +120,10 @@
     "clawhub",
     "skillspector"
   ],
-  "homepage": "https://mustbesimo.github.io/cinematic-scroll-skill/",
+  "homepage": "https://mustbesimo.github.io/web-design-studio/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MustBeSimo/cinematic-scroll-skill.git"
+    "url": "git+https://github.com/MustBeSimo/web-design-studio.git"
   },
   "author": "Simone Leonelli <simone@w230.net>",
   "license": "MIT",

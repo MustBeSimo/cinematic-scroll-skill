@@ -1,0 +1,100 @@
+{
+  "checkedAt": "2026-09-12",
+  "sourceVersion": "2.7.6",
+  "sourceCommit": "5d37540e767365761df550888d9ee94336ac179d",
+  "target": "examples/v3-flagship/index.html",
+  "transport": "file URL; self-contained FIELD build",
+  "sampledScrollFractions": [
+    0,
+    0.5,
+    1
+  ],
+  "settleMs": 1500,
+  "fieldProfiles": [
+    {
+      "name": "desktop",
+      "url": "examples/v3-flagship/index.html",
+      "viewport": "1440x900",
+      "reducedMotion": false,
+      "mobile": false,
+      "javaScript": true,
+      "verdict": "CLEAN",
+      "errors": [],
+      "shots": [
+        "shot-000.png",
+        "shot-050.png",
+        "shot-100.png"
+      ]
+    },
+    {
+      "name": "mobile",
+      "url": "examples/v3-flagship/index.html",
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "mobile": true,
+      "javaScript": true,
+      "verdict": "CLEAN",
+      "errors": [],
+      "shots": [
+        "shot-000.png",
+        "shot-050.png",
+        "shot-100.png"
+      ]
+    },
+    {
+      "name": "reduced-motion",
+      "url": "examples/v3-flagship/index.html",
+      "viewport": "1440x900",
+      "reducedMotion": true,
+      "mobile": false,
+      "javaScript": true,
+      "verdict": "CLEAN",
+      "errors": [],
+      "shots": [
+        "shot-000.png",
+        "shot-050.png",
+        "shot-100.png"
+      ]
+    },
+    {
+      "name": "mobile-reduced-motion",
+      "url": "examples/v3-flagship/index.html",
+      "viewport": "390x844",
+      "reducedMotion": true,
+      "mobile": true,
+      "javaScript": true,
+      "verdict": "CLEAN",
+      "errors": [],
+      "shots": [
+        "shot-000.png",
+        "shot-050.png",
+        "shot-100.png"
+      ]
+    },
+    {
+      "name": "no-js",
+      "url": "examples/v3-flagship/index.html",
+      "viewport": "1440x900",
+      "reducedMotion": false,
+      "mobile": false,
+      "javaScript": false,
+      "verdict": "CLEAN",
+      "errors": [],
+      "shots": [
+        "shot-000.png",
+        "shot-050.png",
+        "shot-100.png"
+      ]
+    }
+  ],
+  "referenceFixtures": {
+    "passed": 6,
+    "total": 6
+  },
+  "verifierTests": {
+    "passed": 9,
+    "total": 9
+  },
+  "headToHeadLLMComparison": false,
+  "documentSha256": "33f63d4c23d33a062ce6fa2db71f9d2f0e370d1164ca26a806b6ff4ef6a29e68"
+}

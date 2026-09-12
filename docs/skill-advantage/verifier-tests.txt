@@ -1,0 +1,17 @@
+✔ targets resolve from the caller, including spaces and absolute paths (1.96725ms)
+✔ runtime failures cannot be optional successes, including under strict (0.6565ms)
+✔ a missing browser is incomplete, not clean (0.555292ms)
+✔ fast polish explicitly remains incomplete (0.547834ms)
+✔ URL targets go to the browser and are never scanned as source files (0.28275ms)
+✔ Mode B compilation failure fails even without a local node_modules directory (0.85825ms)
+✔ missing target and subprocess failure do not pass (0.473291ms)
+✔ invalid thresholds, phases, missing values and unknown flags are rejected (0.139708ms)
+✔ failure takes precedence over skipped evidence (0.071917ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 65.925417

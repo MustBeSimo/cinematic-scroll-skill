@@ -3,27 +3,54 @@
 ### Distinctive websites, interactive 3D and motion—built with your coding agent.
 
 Formerly **Cinematic Scroll**. The product has a broader name; the established
-`cinematic-scroll` install commands, GitHub repository and ClawHub listing stay the same.
+`cinematic-scroll` skill identifier, npm package and ClawHub listing stay the same.
+The repository is now **MustBeSimo/web-design-studio**.
 
 [![npm](https://img.shields.io/npm/v/cinematic-scroll-skill?style=flat-square&logo=npm&color=315efb)](https://www.npmjs.com/package/cinematic-scroll-skill)
-[![CI](https://img.shields.io/github/actions/workflow/status/MustBeSimo/cinematic-scroll-skill/ci.yml?style=flat-square&label=quality%20gate)](https://github.com/MustBeSimo/cinematic-scroll-skill/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/MustBeSimo/web-design-studio/ci.yml?style=flat-square&label=quality%20gate)](https://github.com/MustBeSimo/web-design-studio/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT-813de4?style=flat-square)](./LICENSE)
-[![stars](https://img.shields.io/github/stars/MustBeSimo/cinematic-scroll-skill?style=flat-square&label=stars)](https://github.com/MustBeSimo/cinematic-scroll-skill/stargazers)
+[![stars](https://img.shields.io/github/stars/MustBeSimo/web-design-studio?style=flat-square&label=stars)](https://github.com/MustBeSimo/web-design-studio/stargazers)
 
-<a href="https://mustbesimo.github.io/cinematic-scroll-skill/"><img src="assets/brand/social-preview.jpg" alt="Web Design Studio — the web, with a human touch. Original Renaissance-inspired artwork beside the studio identity." width="100%"></a>
+<a href="https://mustbesimo.github.io/web-design-studio/"><img src="assets/brand/social-preview.jpg" alt="Web Design Studio — the web, with a human touch. Original Renaissance-inspired artwork beside the studio identity." width="100%"></a>
 
 <p align="center">
-  <strong>One sentence in. A distinctive, production-ready website out.</strong><br>
-  <a href="https://mustbesimo.github.io/cinematic-scroll-skill/">Live site</a> ·
-  <a href="https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagships/">Real 3D flagships</a> ·
+  <strong>Your brief, backed by reusable design craft and browser evidence.</strong><br>
+  <a href="https://mustbesimo.github.io/web-design-studio/">Live site</a> ·
+  <a href="https://mustbesimo.github.io/web-design-studio/examples/flagships/">Real 3D flagships</a> ·
   <a href="#install">Install</a> ·
   <a href="https://clawhub.ai/mustbesimo/skills/cinematic-scroll">ClawHub</a> ·
-  <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">Star on GitHub</a>
+  <a href="https://github.com/MustBeSimo/web-design-studio">Star on GitHub</a>
 </p>
 
 Web Design Studio is a free, MIT-licensed design and build skill for coding agents. It turns a product, portfolio, launch, or story into a distinctive website with deliberate art direction, interactive 3D, scroll choreography, resilient motion, and evidence that the result actually works.
 
 It is not a prompt pack and it is not a runtime dependency. The skill guides the agent; the finished website stays yours.
+
+## Why give your agent a skill
+
+**Bring a working standard to every cinematic website.** Web Design Studio packages
+art direction, motion patterns, fallback requirements and verification tools so
+you can reuse the craft instead of reconstructing the instructions for each project.
+Your brand determines the look; the skill gives the agent a process to build and inspect it.
+
+| What you want | What the skill adds |
+| --- | --- |
+| A website that belongs to your brand | Brand precedence, visual references and a content-led story before effects. |
+| Motion that explains the subject | Start → transformation → readable hold → exit, with reusable interaction patterns. |
+| A page that remains usable | Explicit mobile, reduced-motion, no-JS and renderer-failure requirements. |
+| Evidence you can inspect | Static checks and a five-profile browser proof workflow, with failures and missing evidence reported. |
+
+[![What changes when the skill supplies the working context](docs/skill-advantage/workflow.webp)](docs/skill-advantage/README.md)
+
+**Checked on 12 September 2026, source v2.7.6:** 6/6 reference fixtures passed,
+9/9 verifier failure-path tests passed, and FIELD produced clean reports in all
+5 browser profiles. These validate the named examples and checks, not every
+future output or a win rate against an LLM alone. A strong custom prompt can
+specify the same requirements; the benefit is having them packaged for reuse.
+
+[See the visual evidence and test scope](docs/skill-advantage/README.md) ·
+[Download the illustrated guide](docs/skill-advantage/web-design-studio-visual-evidence.docx) ·
+[Release v2.7.6](https://github.com/MustBeSimo/web-design-studio/releases/tag/v2.7.6)
 
 Choose the install route for your agent:
 
@@ -36,7 +63,7 @@ npx clawhub install @mustbesimo/cinematic-scroll
 **Claude Code, Cursor and other agents supported by the skills installer**
 
 ```bash
-npx skills add MustBeSimo/cinematic-scroll-skill
+npx skills add MustBeSimo/web-design-studio
 ```
 
 [Inspect the ClawHub package](https://clawhub.ai/mustbesimo/skills/cinematic-scroll)
@@ -88,40 +115,40 @@ Seven live websites, seven different reasons to use depth. Every flagship is scr
 
 | | |
 |---|---|
-| [![Aureus](examples/aureus-flythrough/poster.jpg)](https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/) **[01 · Aureus](https://mustbesimo.github.io/cinematic-scroll-skill/examples/aureus-flythrough/)**<br><sub>Liquid chrome · camera descent</sub> | [![Atelier Marne](examples/gallery-flythrough/poster.jpg)](https://mustbesimo.github.io/cinematic-scroll-skill/examples/gallery-flythrough/) **[02 · Atelier Marne](https://mustbesimo.github.io/cinematic-scroll-skill/examples/gallery-flythrough/)**<br><sub>Art halls · architectural flythrough</sub> |
-| [![Verdant](examples/jungle-flythrough/poster.jpg)](https://mustbesimo.github.io/cinematic-scroll-skill/examples/jungle-flythrough/) **[03 · Verdant](https://mustbesimo.github.io/cinematic-scroll-skill/examples/jungle-flythrough/)**<br><sub>Instanced foliage · sunlight</sub> | [![Aether](examples/flagship/poster.jpg)](https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/) **[04 · Aether](https://mustbesimo.github.io/cinematic-scroll-skill/examples/flagship/)**<br><sub>Object · world · field · figure</sub> |
-| [![Obsidian](examples/crystalline-monolith/poster.jpg)](https://mustbesimo.github.io/cinematic-scroll-skill/examples/crystalline-monolith/) **[05 · Obsidian](https://mustbesimo.github.io/cinematic-scroll-skill/examples/crystalline-monolith/)**<br><sub>Faceted glass · material response</sub> | [![Weather](examples/volumetric-aether/poster.jpg)](https://mustbesimo.github.io/cinematic-scroll-skill/examples/volumetric-aether/) **[06 · Weather](https://mustbesimo.github.io/cinematic-scroll-skill/examples/volumetric-aether/)**<br><sub>Cloud volume · density control</sub> |
-| [![Nexus](examples/immersive/poster.jpg)](https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/) **[07 · Nexus](https://mustbesimo.github.io/cinematic-scroll-skill/examples/immersive/)**<br><sub>Particles · wave displacement</sub> | **[Explore all 28 examples →](https://mustbesimo.github.io/cinematic-scroll-skill/)**<br><br>Try a live scene, then copy its build prompt and adapt it to your subject. |
+| [![Aureus](examples/aureus-flythrough/poster.jpg)](https://mustbesimo.github.io/web-design-studio/examples/aureus-flythrough/) **[01 · Aureus](https://mustbesimo.github.io/web-design-studio/examples/aureus-flythrough/)**<br><sub>Liquid chrome · camera descent</sub> | [![Atelier Marne](examples/gallery-flythrough/poster.jpg)](https://mustbesimo.github.io/web-design-studio/examples/gallery-flythrough/) **[02 · Atelier Marne](https://mustbesimo.github.io/web-design-studio/examples/gallery-flythrough/)**<br><sub>Art halls · architectural flythrough</sub> |
+| [![Verdant](examples/jungle-flythrough/poster.jpg)](https://mustbesimo.github.io/web-design-studio/examples/jungle-flythrough/) **[03 · Verdant](https://mustbesimo.github.io/web-design-studio/examples/jungle-flythrough/)**<br><sub>Instanced foliage · sunlight</sub> | [![Aether](examples/flagship/poster.jpg)](https://mustbesimo.github.io/web-design-studio/examples/flagship/) **[04 · Aether](https://mustbesimo.github.io/web-design-studio/examples/flagship/)**<br><sub>Object · world · field · figure</sub> |
+| [![Obsidian](examples/crystalline-monolith/poster.jpg)](https://mustbesimo.github.io/web-design-studio/examples/crystalline-monolith/) **[05 · Obsidian](https://mustbesimo.github.io/web-design-studio/examples/crystalline-monolith/)**<br><sub>Faceted glass · material response</sub> | [![Weather](examples/volumetric-aether/poster.jpg)](https://mustbesimo.github.io/web-design-studio/examples/volumetric-aether/) **[06 · Weather](https://mustbesimo.github.io/web-design-studio/examples/volumetric-aether/)**<br><sub>Cloud volume · density control</sub> |
+| [![Nexus](examples/immersive/poster.jpg)](https://mustbesimo.github.io/web-design-studio/examples/immersive/) **[07 · Nexus](https://mustbesimo.github.io/web-design-studio/examples/immersive/)**<br><sub>Particles · wave displacement</sub> | **[Explore all 28 examples →](https://mustbesimo.github.io/web-design-studio/)**<br><br>Try a live scene, then copy its build prompt and adapt it to your subject. |
 
-If an example helps you build something, [star the repository](https://github.com/MustBeSimo/cinematic-scroll-skill) to keep it handy.
+If an example helps you build something, [star the repository](https://github.com/MustBeSimo/web-design-studio) to keep it handy.
 
 ### More than one aesthetic
 
-The motion grammar stays consistent; the art direction does not. Browse the [complete visual collection](https://mustbesimo.github.io/cinematic-scroll-skill/#worlds), including every original editorial and all eleven visual systems.
+The motion grammar stays consistent; the art direction does not. Browse the [complete visual collection](https://mustbesimo.github.io/web-design-studio/#worlds), including every original editorial and all eleven visual systems.
 
 | Live example | Direction | Code |
 |---|---|---|
-| [Classic Touch](https://mustbesimo.github.io/cinematic-scroll-skill/examples/renaissance/) | Renaissance editorial | [Source](./examples/renaissance/) |
-| [Maya Torres](https://mustbesimo.github.io/cinematic-scroll-skill/examples/studio/) | Brutalist creative studio | [Source](./examples/studio/) |
-| [Vantascope](https://mustbesimo.github.io/cinematic-scroll-skill/examples/noir/) | Editorial sci-fi | [Source](./examples/noir/) |
-| [Maison Solenne](https://mustbesimo.github.io/cinematic-scroll-skill/examples/luxe/) | Quiet luxury | [Source](./examples/luxe/) |
-| [Bloom](https://mustbesimo.github.io/cinematic-scroll-skill/examples/pop/) | Playful product story | [Source](./examples/pop/) |
-| [Atelier Nocturne](https://mustbesimo.github.io/cinematic-scroll-skill/examples/atelier/) | Kinetic editorial | [Source](./examples/atelier/) |
-| [Digital Wealth](https://mustbesimo.github.io/cinematic-scroll-skill/examples/digital-wealth/) | Financial product story | [Source](./examples/digital-wealth/) |
-| [Kern](https://mustbesimo.github.io/cinematic-scroll-skill/examples/kern-calibration/) | Mechanical instrument and calibration | [Source](./examples/kern-calibration/) |
-| [Meridian](https://mustbesimo.github.io/cinematic-scroll-skill/examples/symmetric-monument/) | symmetric monument | [Source](./examples/symmetric-monument/) |
-| [Vanta Labs](https://mustbesimo.github.io/cinematic-scroll-skill/examples/clinical-noir/) | clinical noir | [Source](./examples/clinical-noir/) |
-| [Polly & Plot](https://mustbesimo.github.io/cinematic-scroll-skill/examples/storybook-geometry/) | storybook geometry | [Source](./examples/storybook-geometry/) |
-| [Obsidian](https://mustbesimo.github.io/cinematic-scroll-skill/examples/temporal-monument/) | temporal monument | [Source](./examples/temporal-monument/) |
-| [Farsight](https://mustbesimo.github.io/cinematic-scroll-skill/examples/atmospheric-sublime/) | atmospheric sublime | [Source](./examples/atmospheric-sublime/) |
-| [Keepsake](https://mustbesimo.github.io/cinematic-scroll-skill/examples/warm-scrapbook/) | warm scrapbook | [Source](./examples/warm-scrapbook/) |
-| [Drift](https://mustbesimo.github.io/cinematic-scroll-skill/examples/naturalistic-drift/) | naturalistic drift | [Source](./examples/naturalistic-drift/) |
-| [Concrete / Orange](https://mustbesimo.github.io/cinematic-scroll-skill/examples/brutalist-kinetic/) | brutalist kinetic | [Source](./examples/brutalist-kinetic/) |
-| [Chroma](https://mustbesimo.github.io/cinematic-scroll-skill/examples/liquid-chrome/) | liquid chrome | [Source](./examples/liquid-chrome/) |
-| [Verdant Press](https://mustbesimo.github.io/cinematic-scroll-skill/examples/botanical-editorial/) | botanical editorial | [Source](./examples/botanical-editorial/) |
-| [Signal](https://mustbesimo.github.io/cinematic-scroll-skill/examples/data-cinematic/) | data cinematic | [Source](./examples/data-cinematic/) |
-| [Naturally Rooted](https://mustbesimo.github.io/cinematic-scroll-skill/examples/wellness/) | A slower editorial study | [Source](./examples/wellness/) |
-| [Novadeck](https://mustbesimo.github.io/cinematic-scroll-skill/examples/retro/) | A playful digital throwback | [Source](./examples/retro/) |
+| [Classic Touch](https://mustbesimo.github.io/web-design-studio/examples/renaissance/) | Renaissance editorial | [Source](./examples/renaissance/) |
+| [Maya Torres](https://mustbesimo.github.io/web-design-studio/examples/studio/) | Brutalist creative studio | [Source](./examples/studio/) |
+| [Vantascope](https://mustbesimo.github.io/web-design-studio/examples/noir/) | Editorial sci-fi | [Source](./examples/noir/) |
+| [Maison Solenne](https://mustbesimo.github.io/web-design-studio/examples/luxe/) | Quiet luxury | [Source](./examples/luxe/) |
+| [Bloom](https://mustbesimo.github.io/web-design-studio/examples/pop/) | Playful product story | [Source](./examples/pop/) |
+| [Atelier Nocturne](https://mustbesimo.github.io/web-design-studio/examples/atelier/) | Kinetic editorial | [Source](./examples/atelier/) |
+| [Digital Wealth](https://mustbesimo.github.io/web-design-studio/examples/digital-wealth/) | Financial product story | [Source](./examples/digital-wealth/) |
+| [Kern](https://mustbesimo.github.io/web-design-studio/examples/kern-calibration/) | Mechanical instrument and calibration | [Source](./examples/kern-calibration/) |
+| [Meridian](https://mustbesimo.github.io/web-design-studio/examples/symmetric-monument/) | symmetric monument | [Source](./examples/symmetric-monument/) |
+| [Vanta Labs](https://mustbesimo.github.io/web-design-studio/examples/clinical-noir/) | clinical noir | [Source](./examples/clinical-noir/) |
+| [Polly & Plot](https://mustbesimo.github.io/web-design-studio/examples/storybook-geometry/) | storybook geometry | [Source](./examples/storybook-geometry/) |
+| [Obsidian](https://mustbesimo.github.io/web-design-studio/examples/temporal-monument/) | temporal monument | [Source](./examples/temporal-monument/) |
+| [Farsight](https://mustbesimo.github.io/web-design-studio/examples/atmospheric-sublime/) | atmospheric sublime | [Source](./examples/atmospheric-sublime/) |
+| [Keepsake](https://mustbesimo.github.io/web-design-studio/examples/warm-scrapbook/) | warm scrapbook | [Source](./examples/warm-scrapbook/) |
+| [Drift](https://mustbesimo.github.io/web-design-studio/examples/naturalistic-drift/) | naturalistic drift | [Source](./examples/naturalistic-drift/) |
+| [Concrete / Orange](https://mustbesimo.github.io/web-design-studio/examples/brutalist-kinetic/) | brutalist kinetic | [Source](./examples/brutalist-kinetic/) |
+| [Chroma](https://mustbesimo.github.io/web-design-studio/examples/liquid-chrome/) | liquid chrome | [Source](./examples/liquid-chrome/) |
+| [Verdant Press](https://mustbesimo.github.io/web-design-studio/examples/botanical-editorial/) | botanical editorial | [Source](./examples/botanical-editorial/) |
+| [Signal](https://mustbesimo.github.io/web-design-studio/examples/data-cinematic/) | data cinematic | [Source](./examples/data-cinematic/) |
+| [Naturally Rooted](https://mustbesimo.github.io/web-design-studio/examples/wellness/) | A slower editorial study | [Source](./examples/wellness/) |
+| [Novadeck](https://mustbesimo.github.io/web-design-studio/examples/retro/) | A playful digital throwback | [Source](./examples/retro/) |
 
 The visual systems live in [`themes/`](./themes/). The components live in [`components/`](./components/). They are starting points, not a fixed house style.
 
@@ -140,7 +167,7 @@ The normal edition is the complete, useful product—not a trial.
 
 Use Web Design Studio for as many personal or commercial projects as you like. Use Pro when repeated work should compound into a visual memory.
 
-**[Explore Web Design Studio Pro →](https://buy.stripe.com/cNi7sLdNBbief0L0uFfnO09)** · [Compare editions](./references/editions.md) · [See how the stack fits](https://mustbesimo.github.io/cinematic-scroll-skill/stack/)
+**[Explore Web Design Studio Pro →](https://buy.stripe.com/cNi7sLdNBbief0L0uFfnO09)** · [Compare editions](./references/editions.md) · [See how the stack fits](https://mustbesimo.github.io/web-design-studio/stack/)
 
 ## Install
 
@@ -149,7 +176,7 @@ All paths install the same normal edition.
 ### Skills registry
 
 ```bash
-npx skills add MustBeSimo/cinematic-scroll-skill
+npx skills add MustBeSimo/web-design-studio
 ```
 
 ### npm installer
@@ -173,14 +200,14 @@ gated by NVIDIA SkillSpector in CI without a suppression baseline.
 ### Claude Code marketplace
 
 ```text
-/plugin marketplace add MustBeSimo/cinematic-scroll-skill
+/plugin marketplace add MustBeSimo/web-design-studio
 /plugin install cinematic-scroll@mustbesimo
 ```
 
 ### Git clone
 
 ```bash
-git clone https://github.com/MustBeSimo/cinematic-scroll-skill ~/.claude/skills/cinematic-scroll
+git clone https://github.com/MustBeSimo/web-design-studio ~/.claude/skills/cinematic-scroll
 ```
 
 For Claude Desktop, Cursor, Hermes, and alternative OpenClaw paths, see [`COMPATIBILITY.md`](./COMPATIBILITY.md).
@@ -271,7 +298,7 @@ npm run proof -- examples/noir/index.html
 npm run bench -- https://example.com
 ```
 
-[`CinematicBench`](https://mustbesimo.github.io/cinematic-scroll-skill/bench/) is the companion passive benchmark for pacing, performance, accessibility, and motion craft.
+[`CinematicBench`](https://mustbesimo.github.io/web-design-studio/bench/) is the companion passive benchmark for pacing, performance, accessibility, and motion craft.
 
 ## Principles
 
@@ -287,4 +314,4 @@ npm run bench -- https://example.com
 
 MIT © 2026 [Simone Leonelli](https://w230.net). See [LICENSE](./LICENSE).
 
-Built something with it? [Submit it to the showcase](https://github.com/MustBeSimo/cinematic-scroll-skill/issues/new?title=Showcase:%20) or email [simone@w230.net](mailto:simone@w230.net).
+Built something with it? [Submit it to the showcase](https://github.com/MustBeSimo/web-design-studio/issues/new?title=Showcase:%20) or email [simone@w230.net](mailto:simone@w230.net).

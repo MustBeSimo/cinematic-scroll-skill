@@ -688,7 +688,7 @@
       if (!button) return;
       for (const option of picker.querySelectorAll("button")) option.setAttribute("aria-pressed", String(option === button));
       const agent = button.dataset.agent;
-      document.querySelector("#install-command").textContent = "npx skills add MustBeSimo/cinematic-scroll-skill" + (agent ? " --agent " + agent : "");
+      document.querySelector("#install-command").textContent = "npx skills add MustBeSimo/web-design-studio" + (agent ? " --agent " + agent : "");
       document.querySelector("#agent-install-note").textContent = agent ? `Install for ${button.textContent} in this project.` : "The installer lets you choose from its supported coding agents.";
       runtime.refresh();
     });
