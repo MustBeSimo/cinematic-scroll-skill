@@ -48,6 +48,28 @@ Your brand determines the look; the skill gives the agent a process to build and
 future output or a win rate against an LLM alone. A strong custom prompt can
 specify the same requirements; the benefit is having them packaged for reuse.
 
+**Prompt alone vs. the skill — one brief, three builds (13 September 2026).**
+We gave the same model (`claude-sonnet-5`, fresh isolated sessions, same tools and
+caps) one fixed brief three ways and measured every build with the same checks.
+The protocol was committed before any build ran.
+
+| | A · ordinary prompt | B · expert prompt | C · this skill |
+| --- | --- | --- | --- |
+| Runtime + layout (5 browser profiles, 390 / 1440 px) | clean | clean | clean |
+| Brief copy kept verbatim (22 phrases) | 18 | **22** | 19 |
+| Empty-viewport moments at 1440 px | yes | no | no |
+| Agent turns · time · cost | 8 · 173 s · $0.43 | 8 · 178 s · $0.34 | 28 · 308 s · $0.71 |
+
+[![Rows X, Y, Z are the three builds at six scroll depths; the mapping is in the results](docs/skill-advantage/prompt-vs-skill-filmstrip.webp)](bench/skill-ab/RESULTS-BLIND.md)
+
+What that shows: on this brief the skill did **not** make the page more correct than a
+competent expert prompt — all three passed the same checks — and it cost about twice
+as much while drifting further from the supplied copy. Against an ordinary prompt it
+avoided dead scroll frames. Whether it looks better is a judgement the numbers cannot
+make. Three builds prove nothing in general; we publish them because the honest
+answer is more useful than a claim. [Protocol, builds, screenshots and raw
+results](bench/skill-ab/) · [Reveal and verdict](bench/skill-ab/REVEAL.md)
+
 [See the visual evidence and test scope](docs/skill-advantage/README.md) ·
 [Download the illustrated guide](docs/skill-advantage/web-design-studio-visual-evidence.docx) ·
 [Release v2.7.6](https://github.com/MustBeSimo/web-design-studio/releases/tag/v2.7.6)

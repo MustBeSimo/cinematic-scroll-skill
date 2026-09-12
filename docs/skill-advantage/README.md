@@ -78,7 +78,7 @@ and checks above remain historical evidence when the current release advances.
 
 ## Validate the comparative claim
 
-No head-to-head LLM benchmark has been run. Compare a short prompt, a detailed
+A three-build exploratory comparison (one brief, ordinary prompt vs. expert prompt vs. skill, same model) was run on 13 September 2026 — see [`bench/skill-ab/`](../../bench/skill-ab/). It is not a benchmark and found no correctness advantage for the skill on that brief. No larger head-to-head benchmark has been run. Compare a short prompt, a detailed
 expert prompt and the skill-assisted workflow using the same model, assets,
 tools and total token budget, including skill reads. Run three briefs three
 times per condition in fresh contexts: 27 builds. Preserve all first builds,
