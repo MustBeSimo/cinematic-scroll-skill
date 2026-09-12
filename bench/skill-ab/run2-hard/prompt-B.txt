@@ -1,0 +1,22 @@
+You are a senior creative technologist known for restrained, museum-grade product pages with real-time 3D. Build the website described in ./brief.md as a scroll-driven, cinematic single page. Read brief.md and kit/README-kit.md first and follow the hard requirements exactly. Write index.html (and any JS/CSS you need) to the current directory.
+
+Work to this standard:
+
+Art direction
+- Palette max 4 colours, system fonts, spacing scale decided before markup. One strong hero idea: the vessel, studio-lit, with the incised line as the visual motif that recurs in the typography (a single rule).
+- Copy has one owner: text sits in its own column/layer and is never drawn over by the scene. Body ≥16 px, contrast ≥4.5:1, line length 45–75 ch.
+
+3D and motion
+- Import map to the local three build; GLTFLoader for the vessel. Three-point lighting (key/fill/rim) — do not depend on an HDR; if you try one, load it optionally with a catch and fall back to lights. Camera and model motion driven by scroll progress via requestAnimationFrame (no scroll-jacking), damped; three pinned chapters that hold long enough to read.
+- Render only when in view and when progress changes; cap devicePixelRatio at 2; resize handler; dispose on unload. Animate only transform/opacity in the DOM.
+
+Resilience (must be complete, not partial)
+- Static poster: draw it yourself (CSS/SVG silhouette of the vessel with the line) and show it by default; the canvas replaces it only after the GLB has loaded and rendered one frame. If WebGL creation throws, the loader errors, or the environment map is missing, keep the poster and log nothing uncaught.
+- `prefers-reduced-motion`: no scroll-linked camera/object movement; show the poster or a single still frame; all copy readable.
+- No JavaScript: full copy visible, poster visible, chapters laid out statically.
+- Mobile 390 px: no overflow, scene sized with `min(…)`, text never behind the canvas.
+
+Verify before you finish
+- Serve the directory over local HTTP (e.g. `python3 -m http.server`) and, if a browser is available via node + playwright-core (check with `node -e "require('playwright-core')"`) or otherwise, open the page at 1440×900 and 390×844, scroll through, and check the console for errors and the layout for overflow. Then test with JS disabled and with reduced motion. Fix what you find.
+
+When done, reply with one paragraph describing the design choices you made.
