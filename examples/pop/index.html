@@ -74,6 +74,8 @@
     display:flex; align-items:center; justify-content:space-between;
     padding:clamp(16px,2.4vw,24px) clamp(18px,4vw,52px);
     padding-top:max(clamp(16px,2.4vw,24px), env(safe-area-inset-top));
+    /* paper veil so drifting type never collides with the masthead */
+    background:linear-gradient(180deg, color-mix(in srgb,var(--paper) 94%,transparent) 0%, color-mix(in srgb,var(--paper) 72%,transparent) 55%, transparent 100%);
   }
   .masthead .mark{ display:flex; align-items:center; gap:9px; pointer-events:auto; }
   .masthead .mark .glyph{
@@ -404,7 +406,7 @@
     @media (prefers-reduced-motion:reduce){.repo-home-pill,.repo-home-pill .arw{transition:none}
       .repo-home-pill:hover{transform:none}.repo-home-pill:hover .arw{transform:none}}
   </style>
-  <a class="repo-home-pill" href="https://github.com/MustBeSimo/cinematic-scroll-skill"
+  <a class="repo-home-pill" href="https://github.com/MustBeSimo/web-design-studio"
      target="_blank" rel="noopener"
      aria-label="Back to the cinematic-scroll repository on GitHub">
     <span class="arw" aria-hidden="true">&larr;</span> cinematic-scroll
@@ -433,7 +435,7 @@
     <div class="big">your day,<br><span class="grad">but make it bloom.</span></div>
     <a class="fcta" href="#" aria-label="Download BLOOM (demo link)">Download free → it&rsquo;s giving productive</a>
     <p class="meta">
-      By Simone Leonelli · built with the <a href="https://github.com/MustBeSimo/cinematic-scroll-skill">cinematic-scroll</a>
+      By Simone Leonelli · built with the <a href="https://github.com/MustBeSimo/web-design-studio">cinematic-scroll</a>
       Agent Skill · BLOOM is a fictional brand for demo purposes · one of many possible aesthetics.
     </p>
   </footer>

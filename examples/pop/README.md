@@ -50,7 +50,7 @@ to the CSS mock on 404).
 
 Each chapter's floating phone probes one screenshot. The image is shown inside
 a 9:19 phone frame (portrait app screenshot). All paths are **relative** so the
-page works at `https://<user>.github.io/cinematic-scroll-skill/examples/pop/`.
+page works at `https://<user>.github.io/web-design-studio/examples/pop/`.
 
 | Slot (file) | Probed path | Aspect ratio | Target px (W×H) | Generation prompt |
 |---|---|---|---|---|
@@ -81,5 +81,5 @@ nothing important is clipped by the phone's rounded corners.
   copy sits on solid white panels for contrast over the bright gradients, and
   `prefers-reduced-motion` is respected.
 
-Built with the [cinematic-scroll](https://github.com/MustBeSimo/cinematic-scroll-skill)
+Built with the [cinematic-scroll](https://github.com/MustBeSimo/web-design-studio)
 Agent Skill · BLOOM is fictional · one of many possible aesthetics.
