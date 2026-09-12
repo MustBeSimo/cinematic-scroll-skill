@@ -1,10 +1,10 @@
 #!/bin/bash
 # usage: run.sh A|B|C  — one fresh isolated headless build; results in builds/<c>/
 set -u
-c=$1; here="$(cd "$(dirname "$0")" && pwd)"; d="$here/run2-hard/builds/$c"
+c=$1; here="$(cd "$(dirname "$0")" && pwd)"; d="$here/builds/$c"
 cd "$d" || exit 1
 start=$(date +%s)
-claude -p "$(cat "$here/run2-hard/prompt-$c.txt")" \
+claude -p "$(cat "$here/prompt-$c.txt")" \
   --model claude-sonnet-5 --output-format json \
   --setting-sources "" --strict-mcp-config --mcp-config '{"mcpServers":{}}' \
   --allowedTools "Read,Write,Edit,Bash,Glob,Grep" \
