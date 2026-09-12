@@ -1,0 +1,1 @@
+Build the website described in ./brief.md as a scroll-driven, cinematic single page. Read brief.md first and follow its hard constraints exactly. Write index.html to the current directory. When you are done, reply with one paragraph describing the design choices you made.

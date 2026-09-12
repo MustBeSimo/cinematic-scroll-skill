@@ -1,0 +1,20 @@
+You are a senior web designer-developer known for restrained, editorial, motion-led landing pages. Build the website described in ./brief.md as a scroll-driven, cinematic single page. Read brief.md first and follow its hard constraints exactly. Write index.html to the current directory.
+
+Work to this standard:
+
+Art direction
+- Decide a palette (max 4 colours), a type pairing from system fonts, and a spacing scale before writing markup. Commit to one strong visual idea for the hero rather than several weak ones. Let the subject (estuary, tide, old ferry hall, slow bread) drive imagery made with CSS/SVG: e.g. water lines, tide marks, timetable typography.
+- Hierarchy: one clear headline per section, generous whitespace, line length 45–75 characters, body text at least 16 px, contrast at least 4.5:1.
+
+Motion
+- Motion must explain or reveal, never decorate. Each section gets at most one idea (a reveal, a parallax layer, a counter, a sticky element). Animate only transform and opacity. Use IntersectionObserver and/or scroll-linked transforms with requestAnimationFrame; no scroll-jacking, no smooth-scroll hijack.
+- Every animated element must have a complete final state that is also its no-JS state. Under prefers-reduced-motion, disable movement and keep opacity fades short or off.
+
+Engineering
+- Mobile first. Test mentally at 390 px and 1440 px: no horizontal scroll, no text clipped by overflow hidden, no absolutely-positioned text that can collide with other text.
+- Skip-link, semantic landmarks (header/main/section/footer), one h1, focus-visible styles, reduced-motion media query, no layout thrash (avoid animating height/width/top/left).
+
+Verification before you finish
+- Open the file in a headless browser if one is available to you (e.g. via node + playwright-core if present, or `open`), or at minimum re-read your HTML and check: every section's copy present verbatim, no external URLs, JS-disabled readability, reduced-motion branch, overflow at 390 px.
+
+When done, reply with one paragraph describing the design choices you made.
