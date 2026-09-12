@@ -39,5 +39,14 @@ testing an interactive control.
 - **Fail:** the check ran and found a problem.
 - **Incomplete:** the required environment or evidence was unavailable.
 
-Fix failures and rerun the affected checks. Keep incomplete checks visible in the
-handoff rather than treating them as successful.
+Prove the signature interaction in one normal browser view before running the full
+matrix. During repairs, rerun affected checks after a relevant code, dependency,
+configuration or environment change, or to test a specific transient-failure
+hypothesis. Do not repeat an unchanged failure or the full matrix for an isolated fix.
+
+Distinguish output defects from missing tools or broken supplied dependencies.
+Repair dependencies within the task's permitted resources, then retest. When a
+required capability remains blocked after available repairs, continue independent
+work and report the exact dependency and unfinished behavior. Keep failed and
+incomplete checks visible. Run the full matrix at final polish once the normal
+interaction works; fallback success does not prove the requested scene works.

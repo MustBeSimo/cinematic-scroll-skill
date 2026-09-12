@@ -1,7 +1,8 @@
 # Real-time 3D
 
-Use a real-time renderer only when viewpoint, lighting, depth, material response, or
-direct manipulation carries meaning that a still image or short video cannot.
+Use a real-time renderer for requested 3D, camera journeys, lighting, material
+response or direct manipulation. Match the scene to the brief and optimize its
+cost while preserving the defining interaction.
 
 ## Match the mechanism to the subject
 
@@ -16,6 +17,19 @@ direct manipulation carries meaning that a still image or short video cannot.
 
 Choose the mechanism before adapting an example's styling. A museum route need
 not inherit brass walls; a product study need not become a floating chrome orb.
+
+## Dependency preflight
+
+Load the actual renderer and hero asset in a minimal browser view before expanding
+the scene. Follow transitive module imports, including sibling core files in local
+Three.js builds, and keep core and addons on the same version. Inspect the model's
+required extensions; configure reachable Draco, Meshopt or KTX2 decoders when used.
+Confirm the actual canvas renders the subject in two camera or interaction states.
+
+Repair missing paths, imports or decoders within the task's permitted resources.
+If supplied assets are immutable or unavailable, preserve the exact failure and
+continue independent work. Report the scene as unfinished; a poster is fallback
+evidence, not a working real-time result.
 
 ## Scene contract
 

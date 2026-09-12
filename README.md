@@ -42,47 +42,13 @@ Your brand determines the look; the skill gives the agent a process to build and
 
 [![What changes when the skill supplies the working context](docs/skill-advantage/workflow.webp)](docs/skill-advantage/README.md)
 
-**Checked on 12 September 2026, source v2.7.6:** 6/6 reference fixtures passed,
-9/9 verifier failure-path tests passed, and FIELD produced clean reports in all
-5 browser profiles. These validate the named examples and checks, not every
-future output or a win rate against an LLM alone. A strong custom prompt can
-specify the same requirements; the benefit is having them packaged for reuse.
+Start with a product reveal, an interactive material study, or a camera journey
+through a brand world. Adapt **28 examples, 11 visual systems and nine components**
+to your own subject, then use the included checks to inspect the result.
 
-**Prompt alone vs. the skill — one brief, three builds (13 September 2026).**
-We gave the same model (`claude-sonnet-5`, fresh isolated sessions, same tools and
-caps) one fixed brief three ways and measured every build with the same checks.
-The protocol was committed before any build ran.
-
-| | A · ordinary prompt | B · expert prompt | C · this skill |
-| --- | --- | --- | --- |
-| Runtime + layout (5 browser profiles, 390 / 1440 px) | clean | clean | clean |
-| Brief copy kept verbatim (22 phrases) | 18 | **22** | 19 |
-| Empty-viewport moments at 1440 px | yes | no | no |
-| Agent turns · time · cost | 8 · 173 s · $0.43 | 8 · 178 s · $0.34 | 28 · 308 s · $0.71 |
-
-[![Rows X, Y, Z are the three builds at six scroll depths; the mapping is in the results](docs/skill-advantage/prompt-vs-skill-filmstrip.webp)](bench/skill-ab/RESULTS-BLIND.md)
-
-What that shows: on this brief the skill did **not** make the page more correct than a
-competent expert prompt — all three passed the same checks — and it cost about twice
-as much while drifting further from the supplied copy. Against an ordinary prompt it
-avoided dead scroll frames. Whether it looks better is a judgement the numbers cannot
-make. Three builds prove nothing in general; we publish them because the honest
-answer is more useful than a claim. [Protocol, builds, screenshots and raw
-results](bench/skill-ab/) · [Reveal and verdict](bench/skill-ab/REVEAL.md)
-
-**Run 2, a hard brief (real-time 3D from a local GLB, pinned chapters, missing HDR,
-full fallbacks).** The evaluator's kit turned out to be broken for everyone — a missing
-`three.core.js` and a Draco-compressed model with no decoder — so no arm could render 3D.
-What remained was a failure-mode test: all three builds degraded correctly (poster shown,
-zero uncaught errors, no-JS / reduced-motion / no-WebGL / model-removed all clean), all
-three agents spotted the missing core file, none spotted Draco. The skill build kept every
-line of copy verbatim (its run-1 defect, now fixed in `SKILL.md`), but cost ~1.8× the
-ordinary prompt and hit the turn cap while its verify loop chased kit-caused failures; the
-ordinary prompt was the only arm to finish. [Run 2 results](bench/skill-ab/run2-hard/RESULTS-RUN2.md)
-
-[See the visual evidence and test scope](docs/skill-advantage/README.md) ·
-[Download the illustrated guide](docs/skill-advantage/web-design-studio-visual-evidence.docx) ·
-[Release v2.7.6](https://github.com/MustBeSimo/web-design-studio/releases/tag/v2.7.6)
+[Explore the live collection](https://mustbesimo.github.io/web-design-studio/) ·
+[See the visual evidence](docs/skill-advantage/README.md) ·
+[Download the illustrated guide](docs/skill-advantage/web-design-studio-visual-evidence.docx)
 
 Choose the install route for your agent:
 
@@ -137,7 +103,9 @@ service dependency or paid visual-effect tier. Web Design Studio Pro's Motif Eng
 - A deterministic doctor plus browser proof across desktop, mobile, reduced-motion, and no-JS profiles.
 - Optional TasteHQ brand matching when a target URL or embedded grammar is available.
 
-The agent chooses the lightest stack that can carry the story. Most pages do not need WebGL; when real depth matters, the same performance and fallback standards still apply.
+Choose the experience: editorial motion, an interactive 3D object, or an immersive
+camera journey. The agent matches the implementation to your brief and builds the
+responsive and fallback states alongside it.
 
 ## See the proof
 
@@ -183,6 +151,19 @@ The motion grammar stays consistent; the art direction does not. Browse the [com
 | [Novadeck](https://mustbesimo.github.io/web-design-studio/examples/retro/) | A playful digital throwback | [Source](./examples/retro/) |
 
 The visual systems live in [`themes/`](./themes/). The components live in [`components/`](./components/). They are starting points, not a fixed house style.
+
+## Validation and development results
+
+On 12 September 2026, source v2.7.6 passed **6 reference fixtures** and **9 verifier
+failure-path tests**; FIELD returned clean reports in **5 browser profiles**.
+[Test scope and reproduction commands](docs/skill-advantage/README.md#verification-actually-run).
+
+Exploratory prompt comparisons are available with their builds, costs and
+screenshots: [first comparison](bench/skill-ab/REVEAL.md) ·
+[second run](bench/skill-ab/run2-hard/RESULTS-RUN2.md). The first identified areas
+to improve copy fidelity and workflow efficiency; the second exposed a shared
+broken 3D asset kit and could not evaluate 3D quality. These small trials do not
+establish a general advantage over prompting alone.
 
 ## Web Design Studio and Pro
 

@@ -39,7 +39,7 @@ without fetching them.
   continue with a local implementation and identify the missing check honestly.
 - Do not invent product claims, testimonials, metrics, customer logos, or links.
 
-## Choose the smallest complete route
+## Choose the route for the requested experience
 
 | Request | Deliverable | Read |
 |---|---|---|
@@ -47,11 +47,14 @@ without fetching them.
 | New campaign, portfolio, or launch story | A content-led beat sequence with one signature moment | [Story direction](references/story-direction.md) |
 | Improve an existing experience | Inspect first, preserve working behavior, then repair the weak beats | [Verification](references/verification.md) |
 | Interactive hero or visual study | A subject-specific visitor action with a visible consequence | [Interaction design](references/interaction-design.md) |
-| Real-time 3D or camera flight | A justified renderer, bounded scene, and permanent fallback | [Real-time 3D](references/real-time-3d.md) |
+| Real-time 3D or camera flight | The requested scene and interaction, with bounded rendering and a permanent fallback | [Real-time 3D](references/real-time-3d.md) |
 | Richer text, proximity or shader effects | Shared signals and quality settings with scoped cleanup | [Motion toolkit](references/motion-toolkit.md) |
 
-Do not introduce an application framework for a single section. Do not introduce
-WebGL when CSS, SVG, canvas, or authored media communicates the idea more clearly.
+Choose the simplest implementation that delivers the requested experience. Explicit
+3D, camera travel, rich motion or a flagship reference sets the intended ambition.
+Use the matching examples to accelerate the build; optimize resolution, effects and
+asset weight before removing a requested mechanism. A poster completes the fallback,
+not a requested real-time scene. A single section does not require an app framework.
 
 ## 1. Establish the brief
 
@@ -65,6 +68,9 @@ Inspect the applicable project instructions and the current implementation. Reso
 
 When a reversible art-direction assumption is enough, state it briefly and proceed.
 Ask only when the missing answer materially changes scope or output.
+
+Preserve supplied copy verbatim unless the user requests rewriting. Reuse supplied
+section names for labels; do not invent headings, promises, prices or quotes.
 
 ## 2. Direct the story before the effects
 
@@ -144,8 +150,11 @@ At minimum verify:
 - reverse scroll, resize, and restored scroll position for pinned sequences;
 - runtime errors in the actual browser route.
 
-Fix observed problems and repeat the affected checks. Report a check as incomplete
-when it could not run; never convert missing evidence into a pass.
+First prove the signature interaction in one normal browser view. During repairs,
+repeat affected checks after a relevant change; run the full matrix at final polish.
+Use [verification](references/verification.md) to distinguish output defects from
+dependency failures and avoid unchanged retries. Report missing checks as incomplete
+and requested features that remain blocked as unfinished.
 
 ## Handoff
 

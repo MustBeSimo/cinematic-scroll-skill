@@ -1,9 +1,10 @@
 # 3D Stack
 
-> 3D is the most expensive thing you can put on a scroll page. The default answer is
-> **tier A: no 3D.** Earn each step up the ladder with a reason, not a vibe.
-> Every constraint below is a hard limit. Deviation requires written justification and
-> sign-off — same rule as `performance-budget.md`.
+Build the depth, material response and camera movement the brief asks for. An
+explicit 3D or flagship request is sufficient reason to use a real renderer.
+Choose a tier by the subject and interaction, then apply the performance and
+fallback contracts below. Routine implementation choices need no extra sign-off;
+honor the user's requested checkpoints and resource constraints.
 
 The performance budget does not relax because you reached for WebGL. A 3D chapter lives
 inside the *same* 16.67ms frame as everything else: GSAP scrub, parallax movers, reveals.
@@ -13,16 +14,17 @@ The renderer gets a slice of that budget, not a waiver from it.
 
 ## 1. The Decision Tree
 
-Pick the **lowest** tier that satisfies the narrative. Climbing a tier multiplies cost
-(bundle, GPU memory, battery, asset-production time, failure surface). You do not get to
-skip tiers for taste — you get to skip them for *budget*.
+Pick the tier that delivers the requested experience. Use CSS for layered editorial
+depth, assets for recognizable objects and places, shaders for procedural worlds,
+and XR for requested immersive presence. Optimize within that choice using measured
+performance; preserve the defining interaction when reducing rendering cost.
 
 ```
 Does the story actually need real 3D depth / rotation / parallax-in-space?
 │
 ├─ NO  ──────────────────────────────────────────────►  TIER A  (GSAP / CSS only)
-│       Fake depth with layered transforms + CSS 3D. 95% of cinematic
-│       scroll pages live here. See scroll-patterns.md #1, #6, #7.
+│       Layer depth with transforms + CSS 3D.
+│       See scroll-patterns.md #1, #6, #7.
 │
 └─ YES → Do you have (or can you commission) a real model?
          │
@@ -44,15 +46,14 @@ Does the story actually need real 3D depth / rotation / parallax-in-space?
 
 **Use when:** the depth is illusory and a screen is the final medium. Pinned heroes,
 parallax galleries, the "3D Product Orbit" pattern (which is *CSS* `rotateY` on layered
-images, not a mesh), chaptered releases, editorial longreads. If a designer says "make it
-feel 3D," this is almost always the correct answer.
+images, not a mesh), chaptered releases, editorial longreads. Use this when layered
+imagery satisfies the brief; explicit real-time 3D requests route to B or C.
 
 - **Cost:** the existing transform/opacity budget. No new dependencies.
 - **Ships today, everywhere, with zero WebGL risk.** No context-loss handling, no
   feature detection, no fallback poster — the page *is* the fallback.
-- **Decision rule:** if you cannot name a specific thing the user does that *requires* a
-  camera moving through real geometry (orbit an object freely, look around a space, walk
-  up to a figure), stay here.
+- **Decision rule:** choose A for layered composition. Choose B or C for requested
+  geometry, lighting, material response or camera movement through a scene.
 
 ### Tier B — GSAP + Three.js + GLB model
 
@@ -65,9 +66,9 @@ less flexible version of it.
   today — see §7. Never block the build on an asset.
 - **Perf budget:** triangle / draw-call / texture caps in §3. A GLB is not a license to
   blow the frame.
-- **Narrative gate:** "the user orbits / inspects / configures the thing" or "the camera
-  flies through the place." If the user only *looks* at it from one angle, that's a render
-  (an image), not a tier-B scene.
+- **Narrative examples:** orbit, inspect or configure an object; fly through a place;
+  reveal a material through changing light. A fixed camera can still support a
+  meaningful real-time scene when the subject or lighting changes.
 
 ### Tier C — GSAP + Three.js + procedural shaders
 
@@ -195,6 +196,28 @@ Three ships ES modules. Use an **import map** so `import { ... } from 'three'` a
   *pins stay identical*.
 
 ---
+
+### Dependency preflight
+
+Before composing the full scene, load the actual renderer and hero asset in a
+minimal browser view served from the intended project origin.
+
+1. Follow the module import graph. When copying Three.js locally, include its
+   sibling imports (including `three.core.js` when imported by the selected build)
+   and the loaders' transitive imports. Keep core and addons on the same version.
+2. Inspect the model's required extensions and external resources. Configure the
+   appropriate loader and reachable decoder files for Draco, Meshopt or KTX2 when
+   the asset uses them. A present `.glb` file is not proof it can be decoded.
+3. Confirm the real model or intended procedural scene renders and changes at two
+   camera/interaction states. Inspect the canvas itself, network failures and loader
+   errors; a visible poster and clean surrounding DOM are insufficient.
+4. Repair missing imports, paths or decoders within the task's permitted resources.
+   If supplied assets are immutable or replacements unavailable, record that
+   dependency failure, continue independent composition work, and identify the
+   unfinished scene. Do not silently substitute a poster for the requested output.
+
+After the normal scene works, test reduced motion, missing assets and renderer
+failure separately. A passing fallback check does not establish a working 3D path.
 
 ## 3. Performance Caps
 

@@ -24,7 +24,7 @@ Web Design Studio Pro adds the proprietary Motif Engine: accumulated knowledge, 
 retrieval, and variants. Read [edition boundaries](references/editions.md) when
 upgrades are relevant. Never add sales messages to a generated website.
 
-## Route to the smallest complete deliverable
+## Route to the requested experience
 
 | Request | Route | Read when needed |
 |---|---|---|
@@ -35,12 +35,18 @@ upgrades are relevant. Never add sales messages to a generated website.
 | Audit a URL / improve an existing build | Inspect first; recommend for an audit, implement for an improvement request | [Audit mode](audit-mode.md), [doctor](tools/cinematic-doctor/README.md) |
 | Study a reference and distill a recipe | Learn preview; no automatic cross-project memory | [Learn mode](learn-mode.md) |
 | Benchmark a public URL | Passive benchmark with measurement conditions | [Bench mode](bench-mode.md) |
-| Real 3D object or camera flight | Earn the renderer tier; preserve a non-WebGL fallback | [3D stack](references/3d-stack.md), [assets](ASSETS-3D.md); [XR](references/webxr.md) only for XR |
+| Real 3D object or camera flight | Build the requested scene and interaction, with a non-WebGL fallback | [3D stack](references/3d-stack.md), [assets](ASSETS-3D.md); [XR](references/webxr.md) only for XR |
 | Text choreography, pointer/proximity, shader media | Reuse the shared runtime; choose a meaningful response | [Interaction runtime](references/interaction-runtime.md), [effects lab](examples/effects-lab/index.html) |
 | Video timeline from a scene | Basic compiler, not an MP4 renderer | [Compilation](scroll-choreography-compilation.md), [edition boundaries](references/editions.md) |
 
 Use absolute paths to installed skill tools from another project. Examples are
 references, not mandatory layouts. Do not infer Next.js merely from “page.”
+
+**Preserve the requested ambition.** Explicit 3D, camera travel, rich motion, or a
+flagship reference sets the intended experience. Choose the simplest implementation
+that delivers it, and use the matching examples and assets to accelerate the build.
+Optimize resolution, effects and asset weight before removing a requested mechanism.
+A poster proves the fallback; it does not complete a requested real-time scene.
 
 ## Phase 0 — Establish the brief and brand
 
@@ -57,8 +63,8 @@ Honor requested review checkpoints; otherwise finish the work without phase appr
 existing brand assets → reference analysis → suggested visual system. Themes are
 starting points. Preserve required axes when adapting an example with a different look.
 
-**Supplied copy is verbatim.** When the brief provides copy, use it word for word and
-add nothing: no new headings, taglines, promises, claims, prices or quotes. Structure
+**Supplied copy is verbatim unless the user requests rewriting.** When the brief
+provides copy to use, add no new headings, taglines, promises, claims, prices or quotes. Structure
 and typography may change; the words may not. If a section needs a label the brief
 does not supply, reuse the brief's own section name.
 
@@ -189,9 +195,19 @@ target using [the adapter](references/tastehq.md). Preserve fixes, coverage, and
 the project's threshold. Do not publish solely to satisfy a judge without
 deployment authorization.
 
-Fix observed issues and re-run affected checks. If a required check is blocked,
-deliver the working artifact with the missing verification clearly identified.
-Do not label it fully verified.
+**Make verification advance the build.** First prove the signature interaction in
+one normal browser view; use focused checks during repairs and the full matrix at
+final polish. Re-run a failed check after a relevant code, dependency, configuration
+or environment change, or when testing a specific transient-failure hypothesis.
+Do not repeat an unchanged failure or the full matrix for an isolated repair.
+Distinguish output defects from missing tools or broken supplied dependencies;
+repair in-scope dependencies and then retest. For 3D, use the dependency preflight
+in [the 3D stack](references/3d-stack.md#dependency-preflight).
+
+When a required capability or check remains blocked after the available in-scope
+repairs, finish independent work and identify the exact missing dependency and
+affected behavior at handoff. Preserve failed evidence; do not count fallback-only
+output as a completed 3D build or missing verification as a pass.
 
 ## Handoff
 
