@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Meridian</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%230e0d0b'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23c9a96e' stroke-width='1.6'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#0e0d0b;
+    --surface:#17140f;
+    --fg:#f2eee6;
+    --fg-dim:#a79e8e;
+    --accent:#c9a96e;
+    --line:rgba(242,238,230,.14);
+    --scrim-1:rgba(10,9,7,.05);
+    --scrim-2:rgba(10,9,7,.82);
+    --font-display: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --ease-reveal: cubic-bezier(.16,1,.3,1);
+    --ease-exit: cubic-bezier(.7,0,.84,0);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+
+  html{ background:var(--bg); }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:var(--font-body);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,p{ margin:0; }
+
+  a{ color:inherit; }
+
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  /* ---------- fixed 3D / poster stage ---------- */
+
+  .stage{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    background:var(--bg);
+    opacity:1;
+    transition:opacity 600ms var(--ease-exit);
+  }
+  .stage.stage--hidden{ opacity:0; pointer-events:none; }
+
+  .stage canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+    opacity:0;
+    transition:opacity 900ms var(--ease-reveal);
+  }
+  .stage.stage--ready canvas{ opacity:1; }
+  .stage.stage--ready .poster{ opacity:0; }
+
+  .stage::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse 60% 52% at 50% 40%, transparent 0%, rgba(0,0,0,.28) 62%, rgba(0,0,0,.7) 100%);
+  }
+
+  .poster{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:1;
+    transition:opacity 900ms var(--ease-reveal);
+  }
+  .poster svg{
+    width:min(64vw, 60vh);
+    height:min(64vw, 60vh);
+    max-width:640px;
+    max-height:640px;
+  }
+
+  /* ---------- header ---------- */
+
+  .topbar{
+    position:absolute;
+    inset:0 auto auto 0;
+    z-index:2;
+    padding:clamp(1.1rem,3vw,1.75rem);
+    font-family:var(--font-display);
+    font-size:.95rem;
+    letter-spacing:.06em;
+    color:var(--fg-dim);
+    pointer-events:none;
+  }
+
+  /* ---------- structural layout ---------- */
+
+  main{ position:relative; z-index:1; }
+
+  .hero{
+    position:relative;
+    min-height:100svh;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+  }
+  .hero-copy{
+    max-width:min(640px,86vw);
+    padding:clamp(1.5rem,7vw,5rem);
+  }
+  .hero-copy h1{
+    font-family:var(--font-display);
+    font-weight:400;
+    font-size:clamp(2.75rem,9vw,5.25rem);
+    line-height:1.04;
+    letter-spacing:-.01em;
+  }
+  .tagline{
+    font-family:var(--font-display);
+    font-style:italic;
+    color:var(--fg-dim);
+    font-size:clamp(1.05rem,2.3vw,1.4rem);
+    margin-top:.85rem;
+  }
+  .intro{
+    font-size:clamp(1rem,1.6vw,1.1rem);
+    line-height:1.75;
+    color:var(--fg);
+    max-width:36ch;
+    margin-top:1.6rem;
+  }
+
+  .scroll-cue{
+    position:absolute;
+    left:50%;
+    bottom:clamp(1.25rem,4vh,2.5rem);
+    transform:translateX(-50%);
+    width:22px;
+    height:34px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    display:flex;
+    justify-content:center;
+    padding-top:6px;
+  }
+  .scroll-cue span{
+    width:3px;
+    height:7px;
+    border-radius:2px;
+    background:var(--fg-dim);
+    animation:cue-drop 1.8s var(--ease-reveal) infinite;
+  }
+  @keyframes cue-drop{
+    0%{ opacity:0; transform:translateY(0); }
+    35%{ opacity:1; }
+    100%{ opacity:0; transform:translateY(10px); }
+  }
+
+  /* ---------- chapters ---------- */
+
+  .scene{ position:relative; }
+
+  .chapter{
+    position:relative;
+    min-height:100vh;
+  }
+  .chapter-inner{
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    min-height:100vh;
+    padding-block:clamp(2rem,10vh,5rem);
+  }
+
+  .panel{
+    background:linear-gradient(180deg, var(--scrim-1), var(--scrim-2) 55%);
+    border-radius:6px;
+    padding:clamp(1.5rem,4vw,2.5rem) clamp(1.5rem,4vw,2.75rem);
+    max-width:min(460px,86vw);
+    text-align:left;
+  }
+  .eyebrow{
+    display:block;
+    font-family:var(--font-body);
+    font-size:.78rem;
+    font-weight:600;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:.7rem;
+  }
+  .chapter-copy{
+    font-family:var(--font-display);
+    font-size:clamp(1.15rem,2.4vw,1.55rem);
+    line-height:1.5;
+    color:var(--fg);
+  }
+
+  .js-reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity 720ms var(--ease-reveal), transform 720ms var(--ease-reveal);
+  }
+  .js-reveal.is-in{ opacity:1; transform:none; }
+
+  @media (hover:hover) and (pointer:fine) and (min-width:820px){
+    .chapter{ height:220vh; min-height:0; }
+    .chapter-inner{
+      position:sticky;
+      top:0;
+      height:100vh;
+      min-height:0;
+      padding-block:0;
+    }
+  }
+
+  /* ---------- cta + footer ---------- */
+
+  .cta-section{
+    min-height:60vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:clamp(3rem,10vh,6rem) 1.5rem;
+    text-align:center;
+  }
+  .cta{
+    display:inline-block;
+    font-family:var(--font-body);
+    font-size:1rem;
+    letter-spacing:.04em;
+    text-decoration:none;
+    color:var(--bg);
+    background:var(--accent);
+    padding:.95rem 2.4rem;
+    border-radius:999px;
+    transition:transform 300ms var(--ease-reveal), opacity 300ms var(--ease-reveal);
+  }
+  .cta:hover{ transform:translateY(-2px); }
+
+  .site-footer{
+    position:relative;
+    z-index:1;
+    padding:2.5rem 1.5rem 3rem;
+    text-align:center;
+    color:var(--fg-dim);
+    font-size:.85rem;
+    border-top:1px solid var(--line);
+  }
+  .site-footer a{ text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---------- reduced motion: complete static fallback ---------- */
+
+  @media (prefers-reduced-motion: reduce){
+    .stage{ transition:none; }
+    .stage canvas,
+    .stage .poster{ transition:none; }
+    .scroll-cue span{ animation:none; opacity:1; transform:none; }
+    .cta{ transition:none; }
+    .chapter{ height:auto; min-height:0; }
+    .chapter-inner{
+      position:static;
+      height:auto;
+      min-height:0;
+      padding-block:clamp(2.5rem,10vh,4rem);
+    }
+    .js-reveal{ opacity:1; transform:none; transition:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="stage" id="stage">
+    <canvas id="gl" aria-hidden="true"></canvas>
+    <div class="poster" id="poster" aria-hidden="true">
+      <svg viewBox="0 0 400 400" role="presentation">
+        <defs>
+          <radialGradient id="spot" cx="50%" cy="34%" r="65%">
+            <stop offset="0%" stop-color="#2a251c"/>
+            <stop offset="100%" stop-color="#0e0d0b"/>
+          </radialGradient>
+          <linearGradient id="body-shade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#4c4033"/>
+            <stop offset="42%" stop-color="#9c8564"/>
+            <stop offset="58%" stop-color="#b49b76"/>
+            <stop offset="100%" stop-color="#382f24"/>
+          </linearGradient>
+          <linearGradient id="plinth" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1b1812"/>
+            <stop offset="100%" stop-color="#0e0d0b"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="400" height="400" fill="url(#spot)"/>
+        <ellipse cx="200" cy="336" rx="118" ry="14" fill="#000" opacity=".55"/>
+        <path d="M 148 118
+                 C 132 150, 126 190, 132 232
+                 C 137 268, 146 296, 152 318
+                 L 248 318
+                 C 254 296, 263 268, 268 232
+                 C 274 190, 268 150, 252 118
+                 C 238 104, 162 104, 148 118 Z"
+              fill="url(#body-shade)"/>
+        <path d="M 148 118 C 132 150, 126 190, 132 232 C 137 268, 146 296, 152 318 L 168 318 C 162 296, 155 268, 151 232 C 146 190, 151 150, 165 120 Z"
+              fill="#000" opacity=".22"/>
+        <ellipse cx="200" cy="116" rx="42" ry="10" fill="#241f18"/>
+        <ellipse cx="200" cy="113" rx="36" ry="7" fill="#0e0d0b"/>
+        <path d="M 133 208 C 160 218, 240 218, 267 208" fill="none" stroke="#0e0d0b" stroke-width="2" opacity=".8"/>
+        <rect x="70" y="330" width="260" height="8" fill="url(#plinth)"/>
+      </svg>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero" id="hero">
+      <header class="topbar" aria-hidden="true">Meridian</header>
+      <div class="hero-copy">
+        <h1>Meridian</h1>
+        <p class="tagline">One line around the earth.</p>
+        <p class="intro">A single incised line circles the vessel at the height of a resting hand. Everything else is left to the clay.</p>
+      </div>
+      <div class="scroll-cue" aria-hidden="true"><span></span></div>
+    </section>
+
+    <div class="scene" id="scene">
+      <section class="chapter" id="form">
+        <div class="chapter-inner">
+          <div class="panel">
+            <span class="eyebrow">Form</span>
+            <p class="chapter-copy">Thrown in three pulls, trimmed at leather-hard, 240&nbsp;mm tall, 1.9&nbsp;kg.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter" id="glaze">
+        <div class="chapter-inner">
+          <div class="panel">
+            <span class="eyebrow">Glaze</span>
+            <p class="chapter-copy">Ash and feldspar, reduction fired to cone 10. No two lines land in the same place.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="chapter" id="studio">
+        <div class="chapter-inner">
+          <div class="panel">
+            <span class="eyebrow">Studio</span>
+            <p class="chapter-copy">Made in a converted signal box beside the railway. Twelve vessels a month.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="cta-section">
+      <a class="cta" href="mailto:studio@meridian.example">Reserve a vessel</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Meridian Studio &middot; <a href="mailto:studio@meridian.example">studio@meridian.example</a></p>
+  </footer>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./kit/vendor/three/three.module.js",
+      "three/addons/": "./kit/vendor/three/addons/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    const prefersReduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const stage = document.getElementById("stage");
+    const canvas = document.getElementById("gl");
+
+    /* ---------------- chapter text reveals (independent of WebGL) ---------------- */
+
+    function setupReveals(){
+      const targets = document.querySelectorAll(".panel, .hero-copy > *");
+      targets.forEach((el) => el.classList.add("js-reveal"));
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add("is-in");
+        });
+      }, { threshold: 0.35 });
+      targets.forEach((el) => io.observe(el));
+    }
+
+    if (!prefersReduced) setupReveals();
+    else document.querySelectorAll(".panel, .hero-copy > *").forEach((el) => el.classList.add("is-in"));
+
+    /* fade the fixed 3D/poster stage out before the CTA, independent of WebGL state */
+    function setupStageDismiss(){
+      const ctaSection = document.querySelector(".cta-section");
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => stage.classList.toggle("stage--hidden", entry.isIntersecting));
+      }, { threshold: 0.15 });
+      io.observe(ctaSection);
+    }
+    if (!prefersReduced) setupStageDismiss();
+
+    /* ---------------- WebGL feature detection ---------------- */
+
+    function hasWebGL(){
+      try {
+        const c = document.createElement("canvas");
+        return !!(window.WebGLRenderingContext && (c.getContext("webgl2") || c.getContext("webgl")));
+      } catch { return false; }
+    }
+
+    if (!prefersReduced && hasWebGL()){
+      initScene().catch((err) => {
+        console.warn("Meridian: 3D hero unavailable, showing poster.", err);
+      });
+    }
+
+    /* ---------------- the 3D hero ---------------- */
+
+    async function initScene(){
+      let THREE, GLTFLoader;
+      try {
+        [THREE, { GLTFLoader }] = await Promise.all([
+          import("three"),
+          import("three/addons/loaders/GLTFLoader.js"),
+        ]);
+      } catch (err) {
+        throw new Error("three.js unavailable: " + err.message);
+      }
+
+      const isMobile = /iPhone|iPad|iPod|Android/.test(navigator.userAgent);
+      const dprCap = isMobile ? 1 : 1.5;
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: false,
+        powerPreference: "high-performance",
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, dprCap));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0e0d0b);
+
+      const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.05, 100);
+
+      const hemi = new THREE.HemisphereLight(0xfff3e0, 0x0a0806, 0.55);
+      scene.add(hemi);
+
+      const key = new THREE.DirectionalLight(0xfff2df, 2.1);
+      key.position.set(2.4, 3.2, 2.6);
+      scene.add(key);
+
+      const rim = new THREE.DirectionalLight(0xc9a96e, 0.9);
+      rim.position.set(-2.6, 1.2, -2.2);
+      scene.add(rim);
+
+      /* procedural contact shadow: a soft radial gradient, no external asset */
+      const shadowCanvas = document.createElement("canvas");
+      shadowCanvas.width = shadowCanvas.height = 256;
+      const sctx = shadowCanvas.getContext("2d");
+      const grad = sctx.createRadialGradient(128, 128, 10, 128, 128, 128);
+      grad.addColorStop(0, "rgba(0,0,0,0.55)");
+      grad.addColorStop(1, "rgba(0,0,0,0)");
+      sctx.fillStyle = grad;
+      sctx.fillRect(0, 0, 256, 256);
+      const shadowTex = new THREE.CanvasTexture(shadowCanvas);
+      const shadowMat = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false });
+
+      let onScreen = true;
+      let tabVisible = true;
+      let context3D = false;
+      let disposed = false;
+
+      canvas.addEventListener("webglcontextlost", (e) => {
+        e.preventDefault();
+        context3D = false;
+        stage.classList.remove("stage--ready");
+      }, false);
+      canvas.addEventListener("webglcontextrestored", () => {
+        context3D = true;
+      }, false);
+
+      const loader = new GLTFLoader();
+      let gltf;
+      try {
+        gltf = await loader.loadAsync("./kit/assets/vessel.glb");
+      } catch (err) {
+        renderer.dispose();
+        throw err;
+      }
+
+      if (disposed) return;
+
+      const model = gltf.scene;
+      scene.add(model);
+
+      const box = new THREE.Box3().setFromObject(model);
+      const sphere = box.getBoundingSphere(new THREE.Sphere());
+      const center = sphere.center;
+      const R = sphere.radius;
+
+      const shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(R * 3.4, R * 3.4), shadowMat);
+      shadowPlane.rotation.x = -Math.PI / 2;
+      shadowPlane.position.set(center.x, box.min.y + R * 0.01, center.z);
+      scene.add(shadowPlane);
+
+      const keyframes = [
+        { pos: new THREE.Vector3(center.x, center.y + R * 0.18, center.z + R * 3.1), look: new THREE.Vector3(center.x, center.y, center.z) },
+        { pos: new THREE.Vector3(center.x + R * 1.5, center.y - R * 0.05, center.z + R * 1.55), look: new THREE.Vector3(center.x, center.y - R * 0.05, center.z) },
+        { pos: new THREE.Vector3(center.x - R * 1.15, center.y + R * 0.95, center.z + R * 1.3), look: new THREE.Vector3(center.x, center.y + R * 0.32, center.z) },
+        { pos: new THREE.Vector3(center.x + R * 0.35, center.y + R * 0.55, center.z + R * 3.6), look: new THREE.Vector3(center.x, center.y, center.z) },
+      ];
+
+      function smoothstep(t){ return t * t * (3 - 2 * t); }
+
+      function sampleKeyframes(t, out){
+        const segCount = keyframes.length - 1;
+        const scaled = Math.min(Math.max(t, 0), 1) * segCount;
+        let seg = Math.floor(scaled);
+        if (seg >= segCount) seg = segCount - 1;
+        const localT = smoothstep(scaled - seg);
+        const a = keyframes[seg];
+        const b = keyframes[seg + 1];
+        out.pos.lerpVectors(a.pos, b.pos, localT);
+        out.look.lerpVectors(a.look, b.look, localT);
+      }
+
+      let sceneTop = 0;
+      let sceneHeight = 1;
+      let sceneBottom = 1;
+
+      const sceneEl = document.getElementById("scene");
+      const heroEl = document.getElementById("hero");
+
+      function measure(){
+        const heroTop = heroEl.getBoundingClientRect().top + window.scrollY;
+        const rect = sceneEl.getBoundingClientRect();
+        sceneTop = heroTop;
+        sceneBottom = rect.bottom + window.scrollY;
+        sceneHeight = Math.max(sceneBottom - sceneTop - innerHeight, 1);
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight, false);
+      }
+
+      measure();
+
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(measure, 150);
+      });
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => { onScreen = entry.isIntersecting; });
+      }, { threshold: 0 });
+      io.observe(stage);
+
+      document.addEventListener("visibilitychange", () => { tabVisible = !document.hidden; });
+
+      let target = 0;
+      let current = -1;
+
+      function onScroll(){
+        const raw = (window.scrollY - sceneTop) / sceneHeight;
+        target = Math.min(Math.max(raw, 0), 1);
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+
+      const camState = { pos: new THREE.Vector3(), look: new THREE.Vector3() };
+      let rafId;
+      context3D = true;
+
+      function render(){
+        rafId = requestAnimationFrame(render);
+        if (!onScreen || !tabVisible || !context3D) return;
+        const settled = Math.abs(target - current) < 0.0006;
+        if (settled && current >= 0) return;
+        current = current < 0 ? target : current + (target - current) * 0.09;
+        sampleKeyframes(current, camState);
+        camera.position.copy(camState.pos);
+        camera.lookAt(camState.look);
+        renderer.render(scene, camera);
+      }
+
+      if (prefersReduced) {
+        sampleKeyframes(0, camState);
+        camera.position.copy(camState.pos);
+        camera.lookAt(camState.look);
+        renderer.render(scene, camera);
+      } else {
+        render();
+      }
+
+      stage.classList.add("stage--ready");
+
+      window.addEventListener("pagehide", () => {
+        disposed = true;
+        cancelAnimationFrame(rafId);
+        window.removeEventListener("scroll", onScroll);
+        io.disconnect();
+        scene.traverse((obj) => {
+          if (obj.geometry) obj.geometry.dispose();
+          if (obj.material) {
+            const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+            mats.forEach((m) => {
+              Object.values(m).forEach((v) => { if (v && v.isTexture) v.dispose(); });
+              m.dispose();
+            });
+          }
+        });
+        shadowTex.dispose();
+        renderer.dispose();
+      }, { once: true });
+    }
+  </script>
+</body>
+</html>

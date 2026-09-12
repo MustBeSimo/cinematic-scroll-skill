@@ -1,0 +1,313 @@
+/* Meridian — a hand-thrown stoneware vessel. Palette: paper, ink, clay, mute. */
+
+:root {
+  --color-bg: #f3efe7;
+  --color-ink: #201b15;
+  --color-clay: #7a4a30;
+  --color-mute: #5b564c;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 144px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --measure: 60ch;
+  --stage-h-desktop: min(100vh, 900px);
+  --stage-h-mobile: min(52vh, 420px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--color-clay);
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-clay);
+  outline-offset: 3px;
+}
+
+/* ---------- The rule: the recurring incised-line motif ---------- */
+
+.rule {
+  border: none;
+  border-top: 1px solid currentColor;
+  opacity: 0.35;
+  margin: 0;
+}
+
+.rule--tick {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.35;
+}
+
+.rule--tick::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  width: 1px;
+  height: 7px;
+  background: currentColor;
+}
+
+/* ---------- Header ---------- */
+
+.site-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.wordmark {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.header-tagline {
+  margin: 0;
+  color: var(--color-mute);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Scene: sticky 3D hero + scrolling chapters ---------- */
+
+/* Mobile-first: stage and chapters are plain stacked flow — never sharing
+   screen space, so overlap is structurally impossible. The sticky pin-over-
+   scrolling-copy technique is only switched on at desktop widths below,
+   where stage and chapters sit in separate grid columns instead. */
+
+.scene {
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.stage-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-6) 0;
+}
+
+.stage-frame {
+  position: relative;
+  width: min(88vw, 460px);
+  aspect-ratio: 3 / 4;
+}
+
+.stage-frame canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.6s ease;
+}
+
+.poster.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chapter {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-8) var(--space-6);
+  max-width: var(--measure);
+  margin: 0 auto;
+}
+
+.chapter-index {
+  color: var(--color-mute);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-4);
+}
+
+.chapter--intro {
+  justify-content: flex-end;
+}
+
+.hero-name {
+  font-size: clamp(2.1rem, 7vw, 3.2rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-3);
+}
+
+.hero-tagline {
+  font-size: clamp(1.05rem, 3vw, 1.3rem);
+  color: var(--color-clay);
+  margin: 0 0 var(--space-5);
+  font-weight: 500;
+}
+
+.chapter-title {
+  font-size: clamp(1.4rem, 3.2vw, 1.9rem);
+  font-weight: 600;
+  margin: 0 0 var(--space-4);
+}
+
+.chapter-body {
+  margin: 0;
+  color: var(--color-ink);
+  max-width: 58ch;
+}
+
+/* ---------- CTA ---------- */
+
+.cta-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-9) var(--space-6);
+  text-align: center;
+}
+
+.cta-button {
+  display: inline-block;
+  font: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  color: var(--color-bg);
+  background: var(--color-ink);
+  border: none;
+  border-radius: 2px;
+  padding: var(--space-4) var(--space-7);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cta-button:hover {
+  background: var(--color-clay);
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-6);
+  color: var(--color-mute);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ---------- Desktop layout ---------- */
+
+@media (min-width: 900px) {
+  /* Two separate columns, side by side: the sticky stage pins in its own
+     column for the whole scroll range while chapters scroll past in the
+     other. Because the columns never share horizontal space, the copy can
+     never be drawn under the scene, regardless of scroll position. */
+  .scene {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stage-col {
+    grid-column: 1;
+    position: sticky;
+    top: 0;
+    height: var(--stage-h-desktop);
+    padding: 0;
+  }
+
+  .stage-frame {
+    width: min(70%, 480px);
+  }
+
+  .chapters-col {
+    grid-column: 2;
+  }
+
+  .chapter {
+    min-height: var(--stage-h-desktop);
+    margin: 0;
+    padding-left: var(--space-9);
+    padding-right: var(--space-8);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .stage-col {
+    position: static;
+    height: auto;
+  }
+
+  .stage-frame {
+    aspect-ratio: 4 / 5;
+  }
+
+  .chapters-col {
+    padding-top: 0;
+  }
+
+  .chapter {
+    min-height: 0;
+    padding-top: var(--space-7);
+    padding-bottom: var(--space-7);
+  }
+
+  .chapter--intro {
+    justify-content: flex-start;
+  }
+}

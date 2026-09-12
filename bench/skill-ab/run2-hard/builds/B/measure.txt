@@ -1,0 +1,33 @@
+files: index.html main.js measure.log page-proof.log styles.css 
+bytes_index=    5320
+copy_phrases_missing_ci=0/9
+headings: Meridian | Thrown in three pulls | Ash and feldspar | A converted signal box
+external_hosts=
+== probe (asset present)
+  normal          390px uncaught=0 consoleErr=1 failedReq=2 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  normal          1440px uncaught=0 consoleErr=1 failedReq=2 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  reduced-motion  390px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  reduced-motion  1440px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  no-js           390px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  no-js           1440px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  no-webgl        390px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  no-webgl        1440px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  no-js-1440-hero.png          stddev= 33.3 
+  no-js-390-hero.png           stddev= 45.7 
+  no-webgl-1440-hero.png       stddev= 33.3 
+  no-webgl-390-hero.png        stddev= 45.7 
+  normal-1440-hero.png         stddev= 33.3 
+  normal-390-hero.png          stddev= 45.7 
+  reduced-motion-1440-hero.png stddev= 36.4 
+  reduced-motion-390-hero.png  stddev= 45.7 
+== page-proof matrix (skill repo tool, generic checks) over HTTP, wait 6000
+page_proof_exit=1
+== failure injection: kit/assets/vessel.glb removed
+mv: /Users/simoneleonelli/Documents/_Code local/web-design-studio/bench/skill-ab/run2-hard/builds/B/kit/assets/vessel.glb: No such file or directory
+  normal          390px uncaught=0 consoleErr=1 failedReq=2 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  normal          1440px uncaught=0 consoleErr=1 failedReq=2 overflowX=0 clipped=0 hiddenText=0/16 canvas=false
+  normal-1440-hero.png         stddev= 33.3 
+  normal-390-hero.png          stddev= 45.7 
+doctor=82
+turns=41 cost_usd=1.581 is_error=true stop=tool_use
+exit=1 wall_s=748

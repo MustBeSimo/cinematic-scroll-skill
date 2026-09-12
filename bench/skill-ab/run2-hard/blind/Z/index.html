@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meridian — a hand-thrown stoneware vessel</title>
+<meta name="description" content="Meridian. One line around the earth. A hand-thrown stoneware vessel.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f3efe7'/%3E%3Cpath d='M9 26c0-6 3-8 3-12s-3-5-3-8' fill='none' stroke='%237a4a30' stroke-width='2'/%3E%3Cpath d='M23 26c0-6-3-8-3-12s3-5 3-8' fill='none' stroke='%237a4a30' stroke-width='2'/%3E%3Cline x1='8' y1='16' x2='24' y2='16' stroke='%23201b15' stroke-width='1.5'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<header class="site-header">
+  <p class="wordmark">Meridian</p>
+  <p class="header-tagline">Meridian Studio</p>
+</header>
+
+<main>
+
+  <div class="scene" id="scene">
+    <div class="stage-col">
+      <div class="stage-frame" id="stageFrame">
+        <!-- Poster shown by default; JS replaces it with a canvas only once WebGL context,
+             GLTF model and one rendered frame have all succeeded. -->
+        <svg viewBox="0 0 400 500" role="img" aria-labelledby="posterTitle" class="poster" id="poster">
+          <title id="posterTitle">Studio-lit illustration of the Meridian stoneware vessel, a single incised line circling its widest point</title>
+          <defs>
+            <linearGradient id="vesselBody" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#3a2f24"/>
+              <stop offset="42%" stop-color="#5c4a38"/>
+              <stop offset="62%" stop-color="#a9866a"/>
+              <stop offset="100%" stop-color="#2a221a"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="200" cy="430" rx="120" ry="18" fill="#201b15" opacity="0.14"/>
+          <path d="M162 90
+                   C150 96 141 112 139 132
+                   C136 158 150 176 150 198
+                   C150 222 128 238 126 268
+                   C124 300 140 330 150 356
+                   C158 378 164 396 168 408
+                   C170 416 176 420 200 420
+                   C224 420 230 416 232 408
+                   C236 396 242 378 250 356
+                   C260 330 276 300 274 268
+                   C272 238 250 222 250 198
+                   C250 176 264 158 261 132
+                   C259 112 250 96 238 90
+                   C224 84 176 84 162 90 Z"
+                fill="url(#vesselBody)"/>
+          <ellipse cx="200" cy="90" rx="38" ry="9" fill="#201b15" opacity="0.55"/>
+          <ellipse cx="200" cy="87" rx="34" ry="7" fill="#0f0c09"/>
+          <path d="M128 266 C160 274 240 274 272 266" stroke="#f3efe7" stroke-width="1.6" fill="none" opacity="0.85"/>
+          <path d="M236 96 C252 122 258 156 250 196 C244 226 258 244 260 268" stroke="#c9ad8e" stroke-width="3" fill="none" opacity="0.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="chapters-col">
+
+      <div class="chapter chapter--intro" data-chapter="intro">
+        <h1 class="hero-name">Meridian</h1>
+        <p class="hero-tagline">One line around the earth.</p>
+        <hr class="rule" style="max-width:120px;margin:0 0 var(--space-5);color:var(--color-clay);opacity:0.6;">
+        <p class="chapter-body">A single incised line circles the vessel at the height of a resting hand. Everything else is left to the clay.</p>
+      </div>
+
+      <article class="chapter" data-chapter="0">
+        <p class="chapter-index">Form</p>
+        <div class="rule--tick" style="max-width:64px;margin-bottom:var(--space-4);color:var(--color-clay);"></div>
+        <h2 class="chapter-title">Thrown in three pulls</h2>
+        <p class="chapter-body">Thrown in three pulls, trimmed at leather-hard, 240 mm tall, 1.9 kg.</p>
+      </article>
+
+      <article class="chapter" data-chapter="1">
+        <p class="chapter-index">Glaze</p>
+        <div class="rule--tick" style="max-width:64px;margin-bottom:var(--space-4);color:var(--color-clay);"></div>
+        <h2 class="chapter-title">Ash and feldspar</h2>
+        <p class="chapter-body">Ash and feldspar, reduction fired to cone 10. No two lines land in the same place.</p>
+      </article>
+
+      <article class="chapter" data-chapter="2">
+        <p class="chapter-index">Studio</p>
+        <div class="rule--tick" style="max-width:64px;margin-bottom:var(--space-4);color:var(--color-clay);"></div>
+        <h2 class="chapter-title">A converted signal box</h2>
+        <p class="chapter-body">Made in a converted signal box beside the railway. Twelve vessels a month.</p>
+      </article>
+
+    </div>
+  </div>
+
+  <section class="cta-section">
+    <hr class="rule" style="max-width:120px;margin:0 auto var(--space-6);color:var(--color-clay);opacity:0.6;">
+    <a class="cta-button" href="mailto:studio@meridian.example">Reserve a vessel</a>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Meridian Studio · studio@meridian.example</p>
+</footer>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "./kit/vendor/three/three.module.js",
+    "three/addons/": "./kit/vendor/three/addons/"
+  }
+}
+</script>
+<script type="module" src="main.js"></script>
+
+</body>
+</html>

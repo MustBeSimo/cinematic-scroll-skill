@@ -1,0 +1,32 @@
+files: index.html measure.log 
+bytes_index=   19874
+copy_phrases_missing_ci=0/9
+headings: Meridian
+external_hosts=
+== probe (asset present)
+  normal          390px uncaught=0 consoleErr=1 failedReq=2 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  normal          1440px uncaught=0 consoleErr=1 failedReq=2 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  reduced-motion  390px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  reduced-motion  1440px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  no-js           390px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  no-js           1440px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  no-webgl        390px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  no-webgl        1440px uncaught=0 consoleErr=0 failedReq=0 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  no-js-1440-hero.png          stddev= 25.4 
+  no-js-390-hero.png           stddev= 28.6 
+  no-webgl-1440-hero.png       stddev= 25.4 
+  no-webgl-390-hero.png        stddev= 28.6 
+  normal-1440-hero.png         stddev= 25.4 
+  normal-390-hero.png          stddev= 28.6 
+  reduced-motion-1440-hero.png stddev= 25.4 
+  reduced-motion-390-hero.png  stddev= 28.6 
+== page-proof matrix (skill repo tool, generic checks) over HTTP, wait 6000
+page_proof_exit=1
+== failure injection: kit/assets/vessel.glb removed
+  normal          390px uncaught=0 consoleErr=1 failedReq=2 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  normal          1440px uncaught=0 consoleErr=1 failedReq=2 overflowX=0 clipped=0 hiddenText=0/9 canvas=true
+  normal-1440-hero.png         stddev= 25.4 
+  normal-390-hero.png          stddev= 28.6 
+doctor=96
+turns=41 cost_usd=2.003 is_error=true stop=tool_use
+exit=1 wall_s=1035

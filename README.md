@@ -70,6 +70,16 @@ make. Three builds prove nothing in general; we publish them because the honest
 answer is more useful than a claim. [Protocol, builds, screenshots and raw
 results](bench/skill-ab/) · [Reveal and verdict](bench/skill-ab/REVEAL.md)
 
+**Run 2, a hard brief (real-time 3D from a local GLB, pinned chapters, missing HDR,
+full fallbacks).** The evaluator's kit turned out to be broken for everyone — a missing
+`three.core.js` and a Draco-compressed model with no decoder — so no arm could render 3D.
+What remained was a failure-mode test: all three builds degraded correctly (poster shown,
+zero uncaught errors, no-JS / reduced-motion / no-WebGL / model-removed all clean), all
+three agents spotted the missing core file, none spotted Draco. The skill build kept every
+line of copy verbatim (its run-1 defect, now fixed in `SKILL.md`), but cost ~1.8× the
+ordinary prompt and hit the turn cap while its verify loop chased kit-caused failures; the
+ordinary prompt was the only arm to finish. [Run 2 results](bench/skill-ab/run2-hard/RESULTS-RUN2.md)
+
 [See the visual evidence and test scope](docs/skill-advantage/README.md) ·
 [Download the illustrated guide](docs/skill-advantage/web-design-studio-visual-evidence.docx) ·
 [Release v2.7.6](https://github.com/MustBeSimo/web-design-studio/releases/tag/v2.7.6)

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-labelledby="posterTitle">
+  <title id="posterTitle">Meridian, a hand-thrown stoneware vessel with a single incised line, resting against a plain ground.</title>
+  <defs>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#efeae0"/>
+      <stop offset="55%" stop-color="#e4ddcf"/>
+      <stop offset="100%" stop-color="#d3cabb"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="78%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#2a2620" stop-opacity="0.18"/>
+    </radialGradient>
+    <linearGradient id="clay" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#b7a48d"/>
+      <stop offset="38%" stop-color="#9c876f"/>
+      <stop offset="62%" stop-color="#7c6a56"/>
+      <stop offset="100%" stop-color="#5f5142"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d9c9ab" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#5f5142" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2a2620" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#2a2620" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="0" y="0" width="800" height="1000" fill="url(#ground)"/>
+
+  <ellipse cx="400" cy="846" rx="190" ry="26" fill="url(#shadow)"/>
+
+  <path d="M 336,150
+           C 300,168 268,198 254,238
+           C 236,290 236,300 240,332
+           C 248,388 262,404 258,452
+           C 252,512 236,516 240,566
+           C 244,616 262,624 258,672
+           C 254,724 240,742 250,776
+           C 258,802 276,818 306,828
+           L 494,828
+           C 524,818 542,802 550,776
+           C 560,742 546,724 542,672
+           C 538,624 556,616 560,566
+           C 564,516 548,512 542,452
+           C 538,404 552,388 560,332
+           C 564,300 564,290 546,238
+           C 532,198 500,168 464,150
+           C 424,138 376,138 336,150 Z"
+        fill="url(#clay)" stroke="#4a3f34" stroke-width="2" stroke-opacity="0.35"/>
+
+  <path d="M 336,150 C 300,168 268,198 254,238 C 236,290 236,300 240,332 C 248,388 262,404 258,452"
+        fill="none" stroke="url(#rim)" stroke-width="10" stroke-linecap="round" opacity="0.55"/>
+
+  <path d="M 244,556 C 300,572 500,572 556,556"
+        fill="none" stroke="#3c3226" stroke-width="3" stroke-opacity="0.5"/>
+
+  <ellipse cx="400" cy="152" rx="66" ry="14" fill="#6b5a48"/>
+  <ellipse cx="400" cy="150" rx="66" ry="12" fill="#8d795f"/>
+
+  <rect x="0" y="0" width="800" height="1000" fill="url(#vignette)"/>
+</svg>

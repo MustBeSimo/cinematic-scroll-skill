@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Meridian — One line around the earth.</title>
+<meta name="description" content="A single incised line circles the vessel at the height of a resting hand. Everything else is left to the clay.">
+
+<style>
+  :root{
+    --stone-50:#faf8f4;
+    --stone-100:#f1ede4;
+    --stone-200:#e4ddd0;
+    --ink-900:#211d18;
+    --ink-700:#3d372e;
+    --ink-500:#655c4d;
+    --line:#c9beac;
+    --serif: Palatino, "Palatino Linotype", "Iowan Old Style", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+
+  *, *::before, *::after{ box-sizing: border-box; }
+
+  html{
+    background: var(--stone-100);
+    scroll-behavior: auto;
+  }
+
+  body{
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--ink-900);
+    background: var(--stone-100);
+    overflow-x: hidden;
+    min-width: 0;
+  }
+
+  h1, h2{
+    font-family: var(--serif);
+    font-weight: 400;
+    margin: 0;
+  }
+
+  p{ margin: 0; }
+
+  a{ color: inherit; }
+
+  .skip-link{
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: var(--ink-900);
+    color: var(--stone-50);
+    padding: .6em 1em;
+    z-index: 20;
+  }
+  .skip-link:focus{ left: 0; }
+
+  /* ---------- fixed visual layer (poster + canvas) ---------- */
+
+  .visual{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: var(--stone-200);
+  }
+
+  .poster{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    display: block;
+  }
+
+  .scene-canvas{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+  }
+
+  /* Default (no-JS / pre-load / failure) state: poster visible, canvas hidden. */
+  html.scene-ready .poster{ display: none; }
+  html.scene-ready .scene-canvas{ opacity: 1; }
+
+  /* ---------- page content sits above the fixed visual ---------- */
+
+  .page{
+    position: relative;
+    z-index: 1;
+  }
+
+  .panel{
+    background: rgba(250, 248, 244, 0.88);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(33, 29, 24, 0.08);
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+  }
+
+  /* ---------- hero ---------- */
+
+  .hero{
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6vh 1.25rem;
+  }
+
+  .hero .panel{
+    max-width: min(640px, 92vw);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    align-items: center;
+  }
+
+  .hero-name{
+    font-size: clamp(2.4rem, 7vw, 4.2rem);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-tagline{
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+    color: var(--ink-700);
+  }
+
+  .hero-intro{
+    font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+    line-height: 1.7;
+    color: var(--ink-700);
+    max-width: 46ch;
+  }
+
+  .cta{
+    display: inline-block;
+    margin-top: 0.4rem;
+    padding: 0.85em 1.9em;
+    border: 1px solid var(--ink-900);
+    color: var(--ink-900);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .cta:hover, .cta:focus-visible{
+    background: var(--ink-900);
+    color: var(--stone-50);
+  }
+
+  .scroll-cue{
+    position: absolute;
+    bottom: 6vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-500);
+  }
+  .scroll-cue::after{
+    content: "";
+    display: block;
+    width: 1px;
+    height: 28px;
+    margin: 0.6em auto 0;
+    background: var(--ink-500);
+  }
+
+  /* ---------- chapters ---------- */
+
+  .stage{
+    position: relative;
+  }
+
+  .chapter{
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding: 8vh 1.25rem;
+  }
+
+  .chapter .panel{
+    max-width: min(430px, 88vw);
+  }
+
+  .chapter-eyebrow{
+    font-size: 0.75rem;
+    letter-spacing: 0.24em;
+    color: var(--ink-500);
+    margin-bottom: 0.9rem;
+  }
+
+  .chapter h2{
+    font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+    margin-bottom: 0.9rem;
+  }
+
+  .chapter p{
+    font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+    line-height: 1.75;
+    color: var(--ink-700);
+  }
+
+  .chapter[data-chapter="0"]{ justify-content: flex-start; }
+  .chapter[data-chapter="1"]{ justify-content: flex-end; }
+  .chapter[data-chapter="2"]{ justify-content: flex-start; }
+
+  @media (max-width: 700px){
+    .chapter{ justify-content: center !important; }
+    .chapter .panel{ max-width: min(480px, 92vw); }
+  }
+
+  .chapter{
+    opacity: 0.35;
+    transform: translateY(18px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .chapter.is-active{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---------- footer ---------- */
+
+  .site-footer{
+    position: relative;
+    padding: 6vh 1.25rem 8vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .site-footer p{
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-700);
+  }
+
+  /* ---------- reduced motion: no scroll-linked movement, everything readable in place ---------- */
+
+  @media (prefers-reduced-motion: reduce){
+    .chapter{
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+  html.reduced-motion .chapter{
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* ---------- no-js: everything above is already readable in normal flow; just hide the canvas element entirely ---------- */
+
+  noscript .scene-canvas{ display: none; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="visual" aria-hidden="true">
+  <img class="poster" src="poster.svg" alt="Meridian, a hand-thrown stoneware vessel with a single incised line, photographed against a plain ground.">
+  <canvas class="scene-canvas" id="scene"></canvas>
+</div>
+
+<noscript>
+  <style>.scene-canvas{ display:none; }</style>
+</noscript>
+
+<div class="page" id="main">
+
+  <header class="hero">
+    <div class="panel">
+      <h1 class="hero-name">Meridian</h1>
+      <p class="hero-tagline">One line around the earth.</p>
+      <p class="hero-intro">A single incised line circles the vessel at the height of a resting hand. Everything else is left to the clay.</p>
+      <a class="cta" href="mailto:studio@meridian.example">Reserve a vessel</a>
+    </div>
+    <p class="scroll-cue">Scroll</p>
+  </header>
+
+  <div class="stage">
+
+    <section class="chapter" data-chapter="0" id="form">
+      <div class="panel">
+        <p class="chapter-eyebrow">01 — Form</p>
+        <h2>Form</h2>
+        <p>Thrown in three pulls, trimmed at leather-hard, 240 mm tall, 1.9 kg.</p>
+      </div>
+    </section>
+
+    <section class="chapter" data-chapter="1" id="glaze">
+      <div class="panel">
+        <p class="chapter-eyebrow">02 — Glaze</p>
+        <h2>Glaze</h2>
+        <p>Ash and feldspar, reduction fired to cone 10. No two lines land in the same place.</p>
+      </div>
+    </section>
+
+    <section class="chapter" data-chapter="2" id="studio">
+      <div class="panel">
+        <p class="chapter-eyebrow">03 — Studio</p>
+        <h2>Studio</h2>
+        <p>Made in a converted signal box beside the railway. Twelve vessels a month.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="site-footer">
+    <p>Meridian Studio &middot; studio@meridian.example</p>
+  </footer>
+
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "./kit/vendor/three/three.module.js",
+    "three/addons/": "./kit/vendor/three/addons/"
+  }
+}
+</script>
+
+<script type="module">
+  // ---- progressive enhancement: everything below only ever *adds* the
+  // real-time scene on top of a page that is already complete without it.
+
+  const prefersReducedMotion = () =>
+    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReducedMotion()) {
+    document.documentElement.classList.add('reduced-motion');
+  }
+
+  const stage = document.querySelector('.stage');
+  const chapters = Array.from(document.querySelectorAll('.chapter'));
+
+  // Chapter panels fade/settle in as they near the centre of the viewport.
+  // Purely cosmetic and never gates readability: the base CSS already shows
+  // full-opacity text, this only adds a settle-in transition when motion is fine.
+  if ('IntersectionObserver' in window && !prefersReducedMotion()) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.classList.toggle('is-active', entry.isIntersecting);
+      });
+    }, { threshold: 0.35 });
+    chapters.forEach((c) => io.observe(c));
+  } else {
+    chapters.forEach((c) => c.classList.add('is-active'));
+  }
+
+  // ---- WebGL feature detection, before touching three.js at all ----
+  function webglAvailable() {
+    try {
+      const canvas = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext &&
+        (canvas.getContext('webgl2') || canvas.getContext('webgl')));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  if (webglAvailable()) {
+    initScene().catch(() => {
+      // Any failure (module load, GLTF parse, runtime error) leaves the
+      // poster in place. html.scene-ready is simply never added.
+    });
+  }
+
+  async function initScene() {
+    const THREE = await import('three');
+    const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+
+    const canvas = document.getElementById('scene');
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    } catch (e) {
+      return;
+    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xe4ddd0);
+
+    const camera = new THREE.PerspectiveCamera(32, window.innerWidth / window.innerHeight, 0.05, 100);
+
+    // Museum three-point lighting. No environment map is used or required —
+    // studio.hdr is not part of this delivery, so the scene must (and does)
+    // render correctly on plain lights alone.
+    const key = new THREE.DirectionalLight(0xfff3e0, 2.4);
+    key.position.set(2.4, 3.6, 2.2);
+    key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.camera.near = 0.1;
+    key.shadow.camera.far = 20;
+    key.shadow.bias = -0.001;
+    scene.add(key);
+
+    const fill = new THREE.DirectionalLight(0xd8e4ff, 0.7);
+    fill.position.set(-3, 1.6, -1.2);
+    scene.add(fill);
+
+    const rim = new THREE.DirectionalLight(0xffffff, 1.1);
+    rim.position.set(-1.4, 2.6, -3.2);
+    scene.add(rim);
+
+    const hemi = new THREE.HemisphereLight(0xf6f1e6, 0x3a3226, 0.55);
+    scene.add(hemi);
+
+    const groundGeo = new THREE.PlaneGeometry(40, 40);
+    const groundMat = new THREE.ShadowMaterial({ opacity: 0.22 });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    const loader = new GLTFLoader();
+
+    let loaded = false;
+    const failSafe = setTimeout(() => {
+      if (!loaded) {
+        // The model never resolved: leave the poster showing, no scene reveal.
+      }
+    }, 10000);
+
+    let vesselHeight = 1;
+    let vesselRadius = 1;
+
+    loader.load(
+      './kit/assets/vessel.glb',
+      (gltf) => {
+        loaded = true;
+        clearTimeout(failSafe);
+
+        const model = gltf.scene;
+        model.traverse((node) => {
+          if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = false;
+          }
+        });
+
+        // Normalise: sit the vessel on y=0, centred on x/z, regardless of
+        // whatever pivot/units the source file used.
+        const box = new THREE.Box3().setFromObject(model);
+        const size = new THREE.Vector3();
+        const center = new THREE.Vector3();
+        box.getSize(size);
+        box.getCenter(center);
+
+        model.position.x -= center.x;
+        model.position.z -= center.z;
+        model.position.y -= box.min.y;
+
+        scene.add(model);
+
+        vesselHeight = size.y || 1;
+        vesselRadius = Math.max(size.x, size.z, 0.001);
+
+        document.documentElement.classList.add('scene-ready');
+        startRender();
+      },
+      undefined,
+      () => {
+        clearTimeout(failSafe);
+        // Load error: poster remains, nothing else to do.
+      }
+    );
+
+    function keyframes() {
+      const h = vesselHeight;
+      const r = Math.max(vesselRadius, h * 0.3);
+      return [
+        { // hero — wide establishing view of the whole object
+          pos: new THREE.Vector3(0, h * 0.62, r * 3.1),
+          look: new THREE.Vector3(0, h * 0.5, 0),
+        },
+        { // Form — elevated three-quarter view, full silhouette
+          pos: new THREE.Vector3(r * 1.7, h * 0.85, r * 2.0),
+          look: new THREE.Vector3(0, h * 0.48, 0),
+        },
+        { // Glaze — close dolly on the surface and incised line
+          pos: new THREE.Vector3(r * 0.7, h * 0.52, r * 1.05),
+          look: new THREE.Vector3(0, h * 0.5, 0),
+        },
+        { // Studio — pulled back, higher, opposite side
+          pos: new THREE.Vector3(-r * 2.3, h * 1.15, r * 1.6),
+          look: new THREE.Vector3(0, h * 0.4, 0),
+        },
+      ];
+    }
+
+    const tmpPos = new THREE.Vector3();
+    const tmpLook = new THREE.Vector3();
+
+    function applyStaticFraming() {
+      const kf = keyframes();
+      camera.position.copy(kf[1].pos);
+      camera.lookAt(kf[1].look);
+    }
+
+    function updateCameraFromScroll() {
+      const kf = keyframes();
+      const stageRect = stage.getBoundingClientRect();
+      const stageTopDoc = stageRect.top + window.scrollY;
+      const stageBottomDoc = stageTopDoc + stage.offsetHeight;
+      const rangeEnd = Math.max(stageBottomDoc - window.innerHeight, 1);
+
+      const p = Math.min(Math.max(window.scrollY / rangeEnd, 0), 1);
+      const t = p * (kf.length - 1);
+      const i = Math.min(Math.floor(t), kf.length - 2);
+      const frac = t - i;
+
+      tmpPos.lerpVectors(kf[i].pos, kf[i + 1].pos, frac);
+      tmpLook.lerpVectors(kf[i].look, kf[i + 1].look, frac);
+
+      camera.position.copy(tmpPos);
+      camera.lookAt(tmpLook);
+    }
+
+    let running = false;
+    const reduceMotion = prefersReducedMotion();
+
+    function startRender() {
+      if (running) return;
+      running = true;
+
+      if (reduceMotion) {
+        applyStaticFraming();
+      } else {
+        updateCameraFromScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
+      renderLoop();
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        updateCameraFromScroll();
+        ticking = false;
+      });
+    }
+
+    function onResize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false);
+      if (reduceMotion) {
+        applyStaticFraming();
+      } else {
+        updateCameraFromScroll();
+      }
+    }
+    window.addEventListener('resize', onResize, { passive: true });
+
+    function renderLoop() {
+      renderer.render(scene, camera);
+      requestAnimationFrame(renderLoop);
+    }
+  }
+</script>
+
+</body>
+</html>
